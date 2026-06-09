@@ -5,9 +5,9 @@ export default function LandingPage() {
   return (
     <div className="landing">
       <div className="landing-header">
-        <h1>System Design LLD Hub</h1>
+        <h1>System Design LLD Hub By Ashish Thakur</h1>
         <p>Complete Low-Level Designs for Java Spring Boot Interviews</p>
-        <p className="landing-author">by Ashish Thakur</p>
+        <p className="landing-author">Isme full oops java and system design hai full </p>
       </div>
       <div className="topic-grid">
         {topics.map(t => <TopicCard key={t.id} topic={t} />)}
