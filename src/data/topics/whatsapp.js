@@ -597,11 +597,96 @@ export default {
     </div>
 </div>
 
-<!-- ============ 12. BOTTLENECKS ============ -->
+<!-- ============ 8. KEY ARCHITECTURE ============ -->
+<div class="section theme-red">
+    <div class="section-title"><span class="section-num">8</span>Key Architecture Components</div>
 
-<!-- ============ 8. WEBSOCKET DESIGN ============ -->
+    <div class="sub-heading" style="color:#ff5252;border-color:#ff5252">Message Routing &mdash; Consistent Hashing across Servers</div>
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">MessageRoutingService.java</span></div><pre class="code-block">
+<span class="ann">@Service</span>
+<span class="kw">class</span> <span class="cn">MessageRoutingService</span> {
+
+    <span class="cm">// User kis WebSocket server pe connected hai — Redis me track</span>
+    <span class="kw">private final</span> RedisTemplate&lt;String, String&gt; redisTemplate;
+
+    <span class="kw">public void</span> <span class="fn">routeMessage</span>(Long senderId, Long receiverId, ChatMessage msg) {
+        <span class="cm">// 1. Receiver ka server dhoondho</span>
+        String serverAddr = redisTemplate.opsForValue().get(<span class="st">"user-server:"</span> + receiverId);
+
+        <span class="kw">if</span> (serverAddr != <span class="kw">null</span>) {
+            <span class="cm">// 2. Same server pe hai to direct deliver</span>
+            <span class="kw">if</span> (serverAddr.equals(currentServerAddr))
+                webSocketManager.sendToUser(receiverId, msg);
+            <span class="kw">else</span>
+                <span class="cm">// 3. Dusre server pe hai to Kafka se forward</span>
+                kafkaTemplate.send(<span class="st">"msg-route-"</span> + serverAddr, msg);
+        } <span class="kw">else</span> {
+            <span class="cm">// 4. Offline hai — queue me daal do</span>
+            offlineMessageStore.enqueue(receiverId, msg);
+            pushNotificationService.sendPush(receiverId, msg);
+        }
+    }
+}
+    </pre></div>
+
+    <div class="sub-heading" style="color:#ff5252;border-color:#ff5252">E2E Encryption &mdash; Signal Protocol (Key Exchange)</div>
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">EncryptionService.java</span></div><pre class="code-block">
+<span class="ann">@Service</span>
+<span class="kw">class</span> <span class="cn">EncryptionService</span> {
+
+    <span class="cm">// Signal Protocol — server ko plaintext kabhi nahi milta</span>
+
+    <span class="kw">public</span> EncryptionKeys <span class="fn">generateKeyPair</span>(Long userId) {
+        <span class="cm">// 1. Identity key + signed pre-key + one-time pre-keys generate</span>
+        KeyPair identity = Curve25519.generateKeyPair();
+        KeyPair signedPreKey = Curve25519.generateKeyPair();
+        List&lt;KeyPair&gt; oneTimeKeys = generateOneTimePreKeys(100);
+
+        <span class="cm">// 2. Public keys server pe store (private client pe hi rehti)</span>
+        keyBundleRepo.save(<span class="kw">new</span> KeyBundle(userId, identity.getPublic(),
+            signedPreKey.getPublic(), oneTimeKeys.stream().map(KeyPair::getPublic).toList()));
+
+        <span class="kw">return new</span> EncryptionKeys(identity, signedPreKey, oneTimeKeys);
+    }
+
+    <span class="kw">public</span> KeyBundle <span class="fn">fetchKeyBundle</span>(Long receiverId) {
+        <span class="cm">// Sender ko receiver ki public keys do — isse session key banega</span>
+        <span class="kw">return</span> keyBundleRepo.findByUserId(receiverId);
+    }
+}
+    </pre></div>
+
+    <div class="sub-heading" style="color:#ff5252;border-color:#ff5252">Group Message Fan-out &mdash; Kafka Async</div>
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">GroupFanoutService.java</span></div><pre class="code-block">
+<span class="ann">@Service</span>
+<span class="kw">class</span> <span class="cn">GroupFanoutService</span> {
+
+    <span class="kw">public void</span> <span class="fn">fanOutGroupMessage</span>(Long groupId, Long senderId, ChatMessage msg) {
+        <span class="cm">// 1. Group ke saare members fetch karo</span>
+        List&lt;Long&gt; members = groupMemberRepo.findMemberIds(groupId);
+
+        <span class="cm">// 2. Har member ko Kafka event publish — async delivery</span>
+        <span class="kw">for</span> (Long memberId : members) {
+            <span class="kw">if</span> (!memberId.equals(senderId)) {
+                kafkaTemplate.send(<span class="st">"group-msg-fanout"</span>,
+                    <span class="kw">new</span> GroupMsgEvent(groupId, memberId, msg));
+            }
+        }
+    }
+
+    <span class="ann">@KafkaListener</span>(topics = <span class="st">"group-msg-fanout"</span>)
+    <span class="kw">public void</span> <span class="fn">handleFanout</span>(GroupMsgEvent event) {
+        <span class="cm">// 3. Individual routing — online to deliver, offline to queue</span>
+        messageRoutingService.routeMessage(event.getSenderId(),
+            event.getMemberId(), event.getMessage());
+    }
+}
+    </pre></div>
+</div>
+
+<!-- ============ 9. WEBSOCKET DESIGN ============ -->
 <div id="websocket" class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>WebSocket Design (Enhanced)</div>
+    <div class="section-title"><span class="section-num">9</span>WebSocket Design (Enhanced)</div>
 
     <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Connection Management</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -678,7 +763,7 @@ export default {
 
 <!-- ============ 9. MSG STATUS + READ RECEIPT ============ -->
 <div id="msg-status" class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Message Status &amp; Read Receipt Flow</div>
+    <div class="section-title"><span class="section-num">10</span>Message Status &amp; Read Receipt Flow</div>
     <div class="flow-container">
         <div class="flow-box flow-orange">Sender sends message</div>
         <div class="flow-arrow arrow-green"></div>
@@ -712,7 +797,7 @@ export default {
 
 <!-- ============ 10. DESIGN PATTERNS ============ -->
 <div id="patterns" class="section theme-cyan">
-    <div class="section-title"><span class="section-num">10</span>Design Patterns (with Implementation)</div>
+    <div class="section-title"><span class="section-num">11</span>Design Patterns (with Implementation)</div>
     <div class="pattern-grid">
         <div class="pattern-card"><div class="pattern-name">Factory Pattern</div><div class="pattern-use">Message Creation</div></div>
         <div class="pattern-card"><div class="pattern-name">Strategy Pattern</div><div class="pattern-use">Notification Types</div></div>
@@ -790,7 +875,7 @@ export default {
 
 <!-- ============ 11. SEQUENCE FLOW ============ -->
 <div id="sequence" class="section theme-purple">
-    <div class="section-title"><span class="section-num">11</span>LLD Sequence Flow</div>
+    <div class="section-title"><span class="section-num">12</span>LLD Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User A &rarr; MessageController.sendMessage()</div>
         <div class="flow-arrow arrow-green"></div>
@@ -812,7 +897,7 @@ export default {
 
 <!-- ============ 12. BOTTLENECKS ============ -->
 <div id="bottlenecks" class="section theme-red">
-    <div class="section-title"><span class="section-num">12</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Too many messages</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Kafka Queue (async processing)</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Database overload</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Sharding by conversationId</span></div>
@@ -828,7 +913,7 @@ export default {
 
 <!-- ============ 13. EDGE CASES ============ -->
 <div id="edge-cases" class="section theme-amber">
-    <div class="section-title"><span class="section-num">13</span>Edge Cases &amp; Error Handling <span class="new-badge">NEW</span></div>
+    <div class="section-title"><span class="section-num">14</span>Edge Cases &amp; Error Handling <span class="new-badge">NEW</span></div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>OTP Expired</h4>
@@ -869,7 +954,7 @@ export default {
 
 <!-- ============ 14. SECURITY ============ -->
 <div id="security" class="section theme-lime">
-    <div class="section-title"><span class="section-num">14</span>Security (Enhanced)</div>
+    <div class="section-title"><span class="section-num">15</span>Security (Enhanced)</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#9670;</span>
@@ -910,7 +995,7 @@ export default {
 
 <!-- ============ 15. SUMMARY ============ -->
 <div id="summary" class="section theme-green">
-    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Controller &rarr; Service &rarr; Repository &rarr; DB</h4><p>Layered Architecture</p></div>
         <div class="summary-card sc-2"><h4>WebSocket + Session Map</h4><p>Real-Time Messaging</p></div>
