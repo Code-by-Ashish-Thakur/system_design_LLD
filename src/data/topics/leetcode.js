@@ -22,102 +22,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 2. CORE ENTITIES ============ -->
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">2</span>Core Entities</div>
-    <div class="entity-grid">
-        <div class="entity-card">
-            <h3>Problem</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">title</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">slug</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">description</span><span class="field-type">String (HTML)</span></div>
-            <div class="field"><span class="field-name">difficulty</span><span class="field-type">Difficulty</span></div>
-            <div class="field"><span class="field-name">categoryTags</span><span class="field-type">List&lt;String&gt;</span></div>
-            <div class="field"><span class="field-name">companyTags</span><span class="field-type">List&lt;String&gt;</span></div>
-            <div class="field"><span class="field-name">acceptanceRate</span><span class="field-type">Double</span></div>
-            <div class="field"><span class="field-name">totalSubmissions</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">totalAccepted</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">constraints</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">starterCode</span><span class="field-type">Map&lt;Language,String&gt;</span></div>
-            <div class="field"><span class="field-name">isPremium</span><span class="field-type">Boolean</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Submission</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">userId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">problemId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">language</span><span class="field-type">Language</span></div>
-            <div class="field"><span class="field-name">code</span><span class="field-type">String (TEXT)</span></div>
-            <div class="field"><span class="field-name">verdict</span><span class="field-type">Verdict</span></div>
-            <div class="field"><span class="field-name">runtime</span><span class="field-type">Integer (ms)</span></div>
-            <div class="field"><span class="field-name">memory</span><span class="field-type">Integer (KB)</span></div>
-            <div class="field"><span class="field-name">passedTestCases</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">totalTestCases</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">errorOutput</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">contestId</span><span class="field-type">Long (nullable)</span></div>
-            <div class="field"><span class="field-name">submittedAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>TestCase</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">problemId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">input</span><span class="field-type">String (TEXT)</span></div>
-            <div class="field"><span class="field-name">expectedOutput</span><span class="field-type">String (TEXT)</span></div>
-            <div class="field"><span class="field-name">isSample</span><span class="field-type">Boolean</span></div>
-            <div class="field"><span class="field-name">orderIndex</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">timeLimitMs</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">memoryLimitKb</span><span class="field-type">Integer</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>User</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">username</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">email</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">passwordHash</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">role</span><span class="field-type">UserRole</span></div>
-            <div class="field"><span class="field-name">rating</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">totalSolved</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">easySolved</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">mediumSolved</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">hardSolved</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">streak</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">isPremium</span><span class="field-type">Boolean</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card group-card">
-            <h3>Contest</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">title</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">type</span><span class="field-type">ContestType</span></div>
-            <div class="field"><span class="field-name">startTime</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">endTime</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">duration</span><span class="field-type">Integer (min)</span></div>
-            <div class="field"><span class="field-name">problemIds</span><span class="field-type">List&lt;Long&gt;</span></div>
-            <div class="field"><span class="field-name">registeredUsers</span><span class="field-type">Set&lt;Long&gt;</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">ContestStatus</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card group-card">
-            <h3>Discussion</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">problemId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">userId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">title</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">content</span><span class="field-type">String (Markdown)</span></div>
-            <div class="field"><span class="field-name">upvotes</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">downvotes</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">commentCount</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">tags</span><span class="field-type">List&lt;String&gt;</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-    </div>
-</div>
-
-<!-- ============ 3. ENUMS ============ -->
+<!-- ============ 2. ENUMS ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">3</span>Enums</div>
+    <div class="section-title"><span class="section-num">2</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card">
             <h3>Difficulty</h3>
@@ -173,84 +80,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 4. INTERFACES & SOLID ============ -->
-<div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">4</span>Interfaces &amp; SOLID Principles</div>
-
-    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Interface Segregation &mdash; Small, focused interfaces</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="cm">// SRP: Each interface has a single responsibility</span>
-<span class="kw">interface</span> <span class="iface">IProblemService</span> {
-    Problem <span class="fn">createProblem</span>(ProblemRequest req);
-    Problem <span class="fn">getProblemById</span>(Long id);
-    Problem <span class="fn">getProblemBySlug</span>(String slug);
-    Page&lt;Problem&gt; <span class="fn">listProblems</span>(ProblemFilter filter, Pageable pageable);
-    <span class="tp">void</span> <span class="fn">updateProblem</span>(Long id, ProblemRequest req);
-}
-
-<span class="kw">interface</span> <span class="iface">ISubmissionService</span> {
-    Submission <span class="fn">submit</span>(Long userId, Long problemId, String code, Language lang);
-    Submission <span class="fn">runCode</span>(Long userId, Long problemId, String code, Language lang, String customInput);
-    List&lt;Submission&gt; <span class="fn">getSubmissions</span>(Long userId, Long problemId);
-    Submission <span class="fn">getSubmissionById</span>(Long id);
-}
-
-<span class="kw">interface</span> <span class="iface">IJudgeService</span> {
-    JudgeResult <span class="fn">evaluate</span>(Submission submission, List&lt;TestCase&gt; testCases);
-    CompileResult <span class="fn">compile</span>(String code, Language language);
-    ExecutionResult <span class="fn">execute</span>(String compiledPath, String input, <span class="tp">int</span> timeLimitMs, <span class="tp">int</span> memoryLimitKb);
-}
-
-<span class="kw">interface</span> <span class="iface">IContestService</span> {
-    Contest <span class="fn">createContest</span>(ContestRequest req);
-    <span class="tp">void</span> <span class="fn">registerUser</span>(Long contestId, Long userId);
-    List&lt;LeaderboardEntry&gt; <span class="fn">getLeaderboard</span>(Long contestId, <span class="tp">int</span> page, <span class="tp">int</span> size);
-    <span class="tp">void</span> <span class="fn">submitContestSolution</span>(Long contestId, Long userId, Long problemId, String code, Language lang);
-}
-
-<span class="kw">interface</span> <span class="iface">IDiscussionService</span> {
-    Discussion <span class="fn">createPost</span>(Long userId, Long problemId, DiscussionRequest req);
-    Page&lt;Discussion&gt; <span class="fn">getDiscussions</span>(Long problemId, Pageable pageable);
-    <span class="tp">void</span> <span class="fn">upvote</span>(Long discussionId, Long userId);
-    <span class="tp">void</span> <span class="fn">addComment</span>(Long discussionId, Long userId, String content);
-}
-
-<span class="kw">interface</span> <span class="iface">ILeaderboardService</span> {
-    List&lt;LeaderboardEntry&gt; <span class="fn">getGlobalRanking</span>(<span class="tp">int</span> page, <span class="tp">int</span> size);
-    <span class="tp">int</span> <span class="fn">getUserRank</span>(Long userId);
-    <span class="tp">void</span> <span class="fn">updateRating</span>(Long userId, <span class="tp">int</span> delta);
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">SOLID Applied</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="cm">// OCP: Strategy pattern for language-specific compilation</span>
-<span class="kw">interface</span> <span class="iface">ICompiler</span> {
-    CompileResult <span class="fn">compile</span>(String code, String workDir);
-    Language <span class="fn">getSupportedLanguage</span>();
-}
-
-<span class="kw">class</span> <span class="tp">JavaCompiler</span> <span class="kw">implements</span> <span class="iface">ICompiler</span> { <span class="cm">/* javac compilation */</span> }
-<span class="kw">class</span> <span class="tp">PythonCompiler</span> <span class="kw">implements</span> <span class="iface">ICompiler</span> { <span class="cm">/* syntax check only */</span> }
-<span class="kw">class</span> <span class="tp">CppCompiler</span> <span class="kw">implements</span> <span class="iface">ICompiler</span> { <span class="cm">/* g++ compilation */</span> }
-
-<span class="cm">// DIP: High-level JudgeService depends on abstraction, not concrete compilers</span>
-<span class="ann">@Service</span>
-<span class="kw">class</span> <span class="tp">JudgeService</span> <span class="kw">implements</span> <span class="iface">IJudgeService</span> {
-    <span class="kw">private final</span> Map&lt;Language, ICompiler&gt; <span class="fn">compilers</span>;  <span class="cm">// injected via Spring</span>
-
-    <span class="ann">@Autowired</span>
-    <span class="kw">public</span> <span class="fn">JudgeService</span>(List&lt;ICompiler&gt; compilerList) {
-        <span class="kw">this</span>.compilers = compilerList.stream()
-            .collect(Collectors.toMap(ICompiler::getSupportedLanguage, c -&gt; c));
-    }
-}
-    </pre></div>
-</div>
-
-<!-- ============ 5. CLASS DESIGN ============ -->
+<!-- ============ 3. CLASS DESIGN ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">5</span>Class Design</div>
+    <div class="section-title"><span class="section-num">3</span>Class Design</div>
 
     <div class="sub-heading" style="color:#ffab40;border-color:#ffab40">Problem Entity</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -355,54 +187,39 @@ export default {
     </pre></div>
 </div>
 
-<!-- ============ 6. REPOSITORY LAYER ============ -->
-<div class="section theme-indigo">
-    <div class="section-title"><span class="section-num">6</span>Repository Layer</div>
-    <div class="repo-grid">
-        <div class="repo-card">
-            <h3>ProblemRepository</h3>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findBySlug(String slug)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findByDifficulty(Difficulty d, Pageable p)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findByCategoryTagsIn(List tags)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> searchByTitleContaining(String q)</div>
+<!-- ============ 4. DATABASE SCHEMA ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Users, problems, contests, discussions &mdash; ACID transactions for structured data</div>
+            <div class="dbtech-tables"><span>users</span><span>problems</span><span>contests</span><span>discussions</span></div>
         </div>
-        <div class="repo-card">
-            <h3>SubmissionRepository</h3>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findByUserIdAndProblemId(Long uId, Long pId)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findByContestIdAndUserId(Long cId, Long uId)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> countByUserIdAndVerdict(Long uId, Verdict v)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findTopByOrderBySubmittedAtDesc()</div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">MongoDB <span class="dbtech-type">NoSQL</span></div>
+            <div class="dbtech-usage">Code submissions &amp; test results &mdash; flexible schema for varying output formats</div>
+            <div class="dbtech-tables"><span>submissions</span><span>test_results</span></div>
         </div>
-        <div class="repo-card">
-            <h3>ContestRepository</h3>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findByStatus(ContestStatus status)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findUpcomingContests(LocalDateTime now)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findActiveContests(LocalDateTime now)</div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Leaderboard rankings (Sorted Sets), session cache, problem solve counts</div>
+            <div class="dbtech-tables"><span>leaderboard:{contestId}</span><span>session:{userId}</span></div>
         </div>
-        <div class="repo-card">
-            <h3>DiscussionRepository</h3>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findByProblemId(Long pId, Pageable p)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findByUserIdOrderByCreatedAtDesc(Long uId)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findTopByProblemIdOrderByUpvotesDesc(Long pId)</div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Docker <span class="dbtech-type">Sandbox</span></div>
+            <div class="dbtech-usage">Isolated code execution containers &mdash; one per submission with CPU/memory limits</div>
+            <div class="dbtech-tables"><span>judge-{language}-{submissionId}</span></div>
         </div>
-        <div class="repo-card">
-            <h3>TestCaseRepository</h3>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findByProblemId(Long problemId)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findSamplesByProblemId(Long problemId)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> countByProblemId(Long problemId)</div>
-        </div>
-        <div class="repo-card">
-            <h3>UserRepository</h3>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findByUsername(String username)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findByEmail(String email)</div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span> findTopByOrderByRatingDesc(Pageable p)</div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
+            <div class="dbtech-usage">Submission processing queue &mdash; async judge pipeline with priority support</div>
+            <div class="dbtech-tables"><span>submissions</span><span>judge-results</span></div>
         </div>
     </div>
-</div>
 
-<!-- ============ 7. DATABASE SCHEMA ============ -->
-<div class="section theme-pink">
-    <div class="section-title"><span class="section-num">7</span>Database Schema</div>
     <div class="db-grid">
         <div class="db-table">
             <h3>problems</h3>
@@ -497,11 +314,390 @@ export default {
             </ul>
         </div>
     </div>
+
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Examples &mdash; Sample Rows</div>
+    <div class="db-grid">
+        <div class="db-table">
+            <h3>problems &mdash; Example</h3>
+            <ul>
+                <li><span class="pk">id = 1</span></li>
+                <li>title = 'Two Sum'</li>
+                <li>slug = 'two-sum'</li>
+                <li>description = 'Given an array of integers nums...'</li>
+                <li>difficulty = 'EASY'</li>
+                <li>acceptance_rate = 49.20</li>
+                <li>total_submissions = 12500000</li>
+                <li>total_accepted = 6150000</li>
+                <li>constraints = '2 &lt;= nums.length &lt;= 10^4'</li>
+                <li>is_premium = FALSE</li>
+                <li>created_at = '2023-01-15 10:00:00'</li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>submissions &mdash; Example</h3>
+            <ul>
+                <li><span class="pk">id = 101</span></li>
+                <li><span class="fk">user_id = 42</span></li>
+                <li><span class="fk">problem_id = 1</span></li>
+                <li>language = 'JAVA'</li>
+                <li>code = 'class Solution { public int[] twoSum...'</li>
+                <li>verdict = 'ACCEPTED'</li>
+                <li>runtime = 3</li>
+                <li>memory = 42100</li>
+                <li>passed_test_cases = 50</li>
+                <li>total_test_cases = 50</li>
+                <li>error_output = NULL</li>
+                <li><span class="fk">contest_id = NULL</span></li>
+                <li>submitted_at = '2025-06-01 14:30:22'</li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>users &mdash; Example</h3>
+            <ul>
+                <li><span class="pk">id = 42</span></li>
+                <li>username = 'coder42'</li>
+                <li>email = 'coder42@gmail.com'</li>
+                <li>password_hash = '$2a$10$xJk...'</li>
+                <li>role = 'PREMIUM'</li>
+                <li>rating = 2100</li>
+                <li>total_solved = 450</li>
+                <li>easy_solved = 180</li>
+                <li>medium_solved = 200</li>
+                <li>hard_solved = 70</li>
+                <li>streak = 30</li>
+                <li>is_premium = TRUE</li>
+                <li>created_at = '2023-03-10 09:15:00'</li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>contests &mdash; Example</h3>
+            <ul>
+                <li><span class="pk">id = 5</span></li>
+                <li>title = 'Weekly Contest 380'</li>
+                <li>type = 'WEEKLY'</li>
+                <li>start_time = '2025-06-08 08:00:00'</li>
+                <li>end_time = '2025-06-08 09:30:00'</li>
+                <li>duration = 90</li>
+                <li>status = 'ENDED'</li>
+                <li>created_at = '2025-06-01 00:00:00'</li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>test_cases &mdash; Example</h3>
+            <ul>
+                <li><span class="pk">id = 501</span></li>
+                <li><span class="fk">problem_id = 1</span></li>
+                <li>input = '[2,7,11,15]\n9'</li>
+                <li>expected_output = '[0,1]'</li>
+                <li>is_sample = TRUE</li>
+                <li>order_index = 1</li>
+                <li>time_limit_ms = 2000</li>
+                <li>memory_limit_kb = 262144</li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>discussions &mdash; Example</h3>
+            <ul>
+                <li><span class="pk">id = 789</span></li>
+                <li><span class="fk">problem_id = 1</span></li>
+                <li><span class="fk">user_id = 42</span></li>
+                <li>title = 'O(n) HashMap approach - Java'</li>
+                <li>content = '## Approach\nUse a HashMap to store...'</li>
+                <li>upvotes = 245</li>
+                <li>downvotes = 3</li>
+                <li>comment_count = 18</li>
+                <li>created_at = '2025-06-02 16:45:00'</li>
+            </ul>
+        </div>
+    </div>
 </div>
 
-<!-- ============ 8. APIs ============ -->
+<!-- ============ 5. SERVICE LLD ============ -->
+<div class="section theme-yellow">
+    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="service-grid">
+        <div class="service-card">
+            <h3>ProblemService</h3>
+            <p class="svc-desc">Coding problems ko manage karta hai &mdash; create, fetch, filter aur acceptance rate update karta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> createProblem(CreateProblemRequest)</div>
+                <div class="method-return">Returns: <code>Problem</code></div>
+                <div class="params-title">Parameters (CreateProblemRequest):</div>
+                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">slug</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">difficulty</span><span class="param-type">Difficulty</span></div>
+                <div class="param-row"><span class="param-name">categoryTags</span><span class="param-type">List&lt;String&gt;</span></div>
+                <div class="param-row"><span class="param-name">constraints</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">starterCode</span><span class="param-type">Map&lt;Language, String&gt;</span></div>
+                <div class="param-row"><span class="param-name">isPremium</span><span class="param-type">Boolean</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getProblemBySlug(String)</div>
+                <div class="method-return">Returns: <code>Problem</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">slug</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> listProblems(ProblemFilter, Pageable)</div>
+                <div class="method-return">Returns: <code>Page&lt;Problem&gt;</code></div>
+                <div class="params-title">Parameters (ProblemFilter):</div>
+                <div class="param-row"><span class="param-name">difficulty</span><span class="param-type">Difficulty</span></div>
+                <div class="param-row"><span class="param-name">tag</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">searchQuery</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">isPremium</span><span class="param-type">Boolean</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> updateAcceptanceRate(Long)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
+            </div>
+        </div>
+        <div class="service-card">
+            <h3>SubmissionService</h3>
+            <p class="svc-desc">Code submissions handle karta hai &mdash; solution submit karo, test cases run karo, result check karo</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> submit(SubmitRequest)</div>
+                <div class="method-return">Returns: <code>Submission</code></div>
+                <div class="params-title">Parameters (SubmitRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">code</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">language</span><span class="param-type">Language</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> runCode(RunCodeRequest)</div>
+                <div class="method-return">Returns: <code>RunResult</code></div>
+                <div class="params-title">Parameters (RunCodeRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">code</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">language</span><span class="param-type">Language</span></div>
+                <div class="param-row"><span class="param-name">customInput</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getSubmissionStatus(Long)</div>
+                <div class="method-return">Returns: <code>SubmissionStatus</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">submissionId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> getUserSubmissions(Long, Long)</div>
+                <div class="method-return">Returns: <code>List&lt;Submission&gt;</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
+            </div>
+        </div>
+        <div class="service-card">
+            <h3>JudgeService</h3>
+            <p class="svc-desc">Submitted code ko compile, run aur check karta hai &mdash; har test case ke against expected output match karta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> evaluate(EvaluateRequest)</div>
+                <div class="method-return">Returns: <code>JudgeResult</code></div>
+                <div class="params-title">Parameters (EvaluateRequest):</div>
+                <div class="param-row"><span class="param-name">submission</span><span class="param-type">Submission</span></div>
+                <div class="param-row"><span class="param-name">testCases</span><span class="param-type">List&lt;TestCase&gt;</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> compile(CompileRequest)</div>
+                <div class="method-return">Returns: <code>CompileResult</code></div>
+                <div class="params-title">Parameters (CompileRequest):</div>
+                <div class="param-row"><span class="param-name">code</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">language</span><span class="param-type">Language</span></div>
+                <div class="param-row"><span class="param-name">workDir</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> execute(ExecuteRequest)</div>
+                <div class="method-return">Returns: <code>ExecutionResult</code></div>
+                <div class="params-title">Parameters (ExecuteRequest):</div>
+                <div class="param-row"><span class="param-name">binaryPath</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">input</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">timeLimitMs</span><span class="param-type">int</span></div>
+                <div class="param-row"><span class="param-name">memoryLimitKb</span><span class="param-type">int</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> compareOutput(String, String)</div>
+                <div class="method-return">Returns: <code>boolean</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">actualOutput</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">expectedOutput</span><span class="param-type">String</span></div>
+            </div>
+        </div>
+        <div class="service-card">
+            <h3>ContestService</h3>
+            <p class="svc-desc">Coding contests manage karta hai &mdash; contest create karo, users register karo, scores track karo aur rating update karo</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> createContest(CreateContestRequest)</div>
+                <div class="method-return">Returns: <code>Contest</code></div>
+                <div class="params-title">Parameters (CreateContestRequest):</div>
+                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">type</span><span class="param-type">ContestType</span></div>
+                <div class="param-row"><span class="param-name">startTime</span><span class="param-type">LocalDateTime</span></div>
+                <div class="param-row"><span class="param-name">duration</span><span class="param-type">Integer</span></div>
+                <div class="param-row"><span class="param-name">problemIds</span><span class="param-type">List&lt;Long&gt;</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> registerUser(Long, Long)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">contestId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getLeaderboard(Long, Pageable)</div>
+                <div class="method-return">Returns: <code>Page&lt;LeaderboardEntry&gt;</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">contestId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">pageable</span><span class="param-type">Pageable</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> calculateRatings(Long)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">contestId</span><span class="param-type">Long</span></div>
+            </div>
+        </div>
+        <div class="service-card">
+            <h3>LeaderboardService</h3>
+            <p class="svc-desc">Global rankings aur user ratings track karta hai &mdash; Redis Sorted Set se fast rank query hota hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> getGlobalRanking(Pageable)</div>
+                <div class="method-return">Returns: <code>Page&lt;RankEntry&gt;</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">pageable</span><span class="param-type">Pageable</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getUserRank(Long)</div>
+                <div class="method-return">Returns: <code>RankEntry</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> updateRating(Long, int)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">delta</span><span class="param-type">int</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> refreshCache()</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">none</span><span class="param-type">&mdash;</span></div>
+            </div>
+        </div>
+        <div class="service-card">
+            <h3>DiscussionService</h3>
+            <p class="svc-desc">Discussion posts, comments aur upvotes manage karta hai &mdash; har problem ke liye community solutions</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> createPost(CreatePostRequest)</div>
+                <div class="method-return">Returns: <code>Discussion</code></div>
+                <div class="params-title">Parameters (CreatePostRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">content</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">tags</span><span class="param-type">List&lt;String&gt;</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getDiscussions(Long, Pageable)</div>
+                <div class="method-return">Returns: <code>Page&lt;Discussion&gt;</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">pageable</span><span class="param-type">Pageable</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> upvote(Long, Long)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">discussionId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> addComment(CommentRequest)</div>
+                <div class="method-return">Returns: <code>Comment</code></div>
+                <div class="params-title">Parameters (CommentRequest):</div>
+                <div class="param-row"><span class="param-name">discussionId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">content</span><span class="param-type">String</span></div>
+            </div>
+        </div>
+        <div class="service-card">
+            <h3>AuthService</h3>
+            <p class="svc-desc">User signup, login (email + Google/GitHub OAuth) aur JWT token refresh handle karta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> register(RegisterRequest)</div>
+                <div class="method-return">Returns: <code>User</code></div>
+                <div class="params-title">Parameters (RegisterRequest):</div>
+                <div class="param-row"><span class="param-name">username</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">password</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> login(LoginRequest)</div>
+                <div class="method-return">Returns: <code>String (JWT)</code></div>
+                <div class="params-title">Parameters (LoginRequest):</div>
+                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">password</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> oauthLogin(OAuthRequest)</div>
+                <div class="method-return">Returns: <code>String (JWT)</code></div>
+                <div class="params-title">Parameters (OAuthRequest):</div>
+                <div class="param-row"><span class="param-name">provider</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">oauthToken</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> refreshToken(String)</div>
+                <div class="method-return">Returns: <code>String (JWT)</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">refreshToken</span><span class="param-type">String</span></div>
+            </div>
+        </div>
+        <div class="service-card">
+            <h3>SandboxService</h3>
+            <p class="svc-desc">Safe Docker containers create karta hai user code run karne ke liye &mdash; network band, memory limit, time limit sab lagta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> createContainer(Language)</div>
+                <div class="method-return">Returns: <code>String (containerId)</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">language</span><span class="param-type">Language</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> executeInSandbox(SandboxExecRequest)</div>
+                <div class="method-return">Returns: <code>ExecutionResult</code></div>
+                <div class="params-title">Parameters (SandboxExecRequest):</div>
+                <div class="param-row"><span class="param-name">containerId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">code</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">input</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">timeLimitMs</span><span class="param-type">int</span></div>
+                <div class="param-row"><span class="param-name">memoryLimitKb</span><span class="param-type">int</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> destroyContainer(String)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">containerId</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> enforceResourceLimits(ResourceLimitRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (ResourceLimitRequest):</div>
+                <div class="param-row"><span class="param-name">containerId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">cpuCores</span><span class="param-type">int</span></div>
+                <div class="param-row"><span class="param-name">memoryLimitKb</span><span class="param-type">int</span></div>
+                <div class="param-row"><span class="param-name">timeLimitMs</span><span class="param-type">int</span></div>
+                <div class="param-row"><span class="param-name">pidsLimit</span><span class="param-type">int</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 6. APIs ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">8</span>API Endpoints</div>
+    <div class="section-title"><span class="section-num">6</span>API Endpoints</div>
     <div class="api-grid">
         <div class="api-card">
             <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/problems?difficulty=MEDIUM&amp;tag=array&amp;page=0&amp;size=20</span></div>
@@ -571,80 +767,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 9. SERVICE LAYER ============ -->
-<div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">9</span>Service Layer</div>
-    <div class="service-grid">
-        <div class="service-card">
-            <h3>ProblemService</h3>
-            <p class="svc-desc">Manages coding problems — create, view, list with filters, and track acceptance rate</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Add a new coding problem</div><code>Problem createProblem(CreateProblemRequest request)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get a problem by its URL slug (e.g. "two-sum")</div><code>Problem getProblemBySlug(String slug)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> List problems with filters (difficulty, topic, etc.)</div><code>Page&lt;Problem&gt; listProblems(ProblemFilter filter, Pageable pageable)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Recalculate acceptance rate after new submissions</div><code>void updateAcceptanceRate(Long problemId)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>SubmissionService</h3>
-            <p class="svc-desc">Handles code submissions — submit solution, run test cases, check results</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Submit a solution for judging</div><code>Submission submit(Long userId, Long problemId, String code, Language lang)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Run code with custom input (without submitting)</div><code>RunResult runCode(Long userId, Long problemId, String code, String input)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Check the status of a submission (pending, accepted, etc.)</div><code>SubmissionStatus getSubmissionStatus(Long submissionId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all submissions by a user for a problem</div><code>List&lt;Submission&gt; getUserSubmissions(Long userId, Long problemId)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>JudgeService</h3>
-            <p class="svc-desc">Compiles, runs, and checks submitted code against expected answers</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Run all test cases and give final result</div><code>JudgeResult evaluate(Submission submission, List&lt;TestCase&gt; testCases)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Compile the code into a runnable program</div><code>CompileResult compile(String code, Language language)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Run the compiled program with given input</div><code>ExecutionResult execute(String binary, String input, ResourceLimits limits)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Compare user's output with expected output</div><code>boolean compareOutput(String actual, String expected)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>ContestService</h3>
-            <p class="svc-desc">Manages coding contests — create, register users, and track scores</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Create a new contest</div><code>Contest createContest(CreateContestRequest request)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Register a user for a contest</div><code>void registerUser(Long contestId, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get contest leaderboard with rankings</div><code>Page&lt;LeaderboardEntry&gt; getLeaderboard(Long contestId, Pageable pageable)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Calculate rating changes after contest ends</div><code>void calculateRatings(Long contestId)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>LeaderboardService</h3>
-            <p class="svc-desc">Tracks global rankings and user ratings across all problems</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get global ranking list (with pages)</div><code>Page&lt;RankEntry&gt; getGlobalRanking(Pageable pageable)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get a specific user's rank</div><code>RankEntry getUserRank(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Update user's rating after a contest</div><code>void updateRating(Long userId, int delta)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Rebuild the leaderboard cache</div><code>void refreshCache()</code></div>
-        </div>
-        <div class="service-card">
-            <h3>DiscussionService</h3>
-            <p class="svc-desc">Manages discussion posts, comments, and upvotes for each problem</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Create a new discussion post</div><code>Discussion createPost(Long userId, Long problemId, CreatePostRequest request)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all discussions for a problem</div><code>Page&lt;Discussion&gt; getDiscussions(Long problemId, Pageable pageable)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Upvote a helpful discussion</div><code>void upvote(Long discussionId, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Add a comment to a discussion</div><code>Comment addComment(Long discussionId, CommentRequest comment)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>AuthService</h3>
-            <p class="svc-desc">Handles user signup, login (email + Google/GitHub OAuth), and token refresh</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Register a new user</div><code>User register(String username, String email, String password)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Log in with email and password</div><code>String login(String email, String password)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Log in using Google or GitHub</div><code>String oauthLogin(String provider, String token)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get a new token when current one expires</div><code>String refreshToken(String refreshToken)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>SandboxService</h3>
-            <p class="svc-desc">Creates safe Docker containers to run user code without security risks</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Create a new container for a language</div><code>String createContainer(Language language)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Run code inside the safe container</div><code>ExecutionResult executeInSandbox(String containerId, String code)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Destroy the container after execution</div><code>void destroyContainer(String containerId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Set CPU, memory, and time limits</div><code>void enforceResourceLimits(String containerId, ResourceLimits limits)</code></div>
-        </div>
-    </div>
-</div>
-
-<!-- ============ 10. KEY ARCHITECTURE ============ -->
+<!-- ============ 7. KEY ARCHITECTURE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">10</span>Key Architecture &mdash; Code Execution &amp; Judge System</div>
+    <div class="section-title"><span class="section-num">7</span>Key Architecture &mdash; Code Execution &amp; Judge System</div>
 
     <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Code Execution Sandbox (Docker-based)</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -787,9 +912,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 11. DESIGN PATTERNS ============ -->
+<!-- ============ 8. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">11</span>Design Patterns</div>
+    <div class="section-title"><span class="section-num">8</span>Design Patterns</div>
     <div class="pattern-grid">
         <div class="pattern-card">
             <div class="pattern-name">Strategy Pattern</div>
@@ -826,9 +951,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 12. SEQUENCE FLOW ============ -->
+<!-- ============ 9. SEQUENCE FLOW ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">12</span>Sequence Flow &mdash; Code Submission</div>
+    <div class="section-title"><span class="section-num">9</span>Sequence Flow &mdash; Code Submission</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User clicks "Submit" in code editor</div>
         <div class="flow-arrow arrow-green"></div>
@@ -864,9 +989,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 13. CAPACITY ESTIMATION ============ -->
+<!-- ============ 10. CAPACITY ESTIMATION ============ -->
 <div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">13</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
     <div class="assumption-box">
         <h4>Assumptions</h4>
         <div class="assumption-row"><span class="calc-label">Daily Active Users (DAU)</span><span class="calc-value">500K</span></div>
@@ -920,9 +1045,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 14. BOTTLENECKS ============ -->
+<!-- ============ 11. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item">
             <span class="bottleneck-problem">Contest spike (10K+ simultaneous submissions)</span>
@@ -962,9 +1087,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 15. EDGE CASES ============ -->
+<!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-amber">
-    <div class="section-title"><span class="section-num">15</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>Infinite Loop / Fork Bomb</h4>
@@ -1001,9 +1126,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 16. SECURITY ============ -->
+<!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">16</span>Security &amp; Sandboxing</div>
+    <div class="section-title"><span class="section-num">13</span>Security &amp; Sandboxing</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#128737;</span>
@@ -1040,9 +1165,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 17. INTERVIEW SUMMARY ============ -->
+<!-- ============ 14. INTERVIEW SUMMARY ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">17</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Async Judge Pipeline</h4><p>Queue-based code execution with RabbitMQ</p></div>
         <div class="summary-card sc-2"><h4>Docker Sandboxing</h4><p>Isolated execution with resource limits</p></div>

@@ -21,52 +21,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">2</span>Core Entities</div>
-    <div class="entity-grid">
-        <div class="entity-card">
-            <h3>RateLimitRule</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">name</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">endpoint</span><span class="field-type">String (pattern)</span></div>
-            <div class="field"><span class="field-name">keyType</span><span class="field-type">KeyType</span></div>
-            <div class="field"><span class="field-name">algorithm</span><span class="field-type">Algorithm</span></div>
-            <div class="field"><span class="field-name">maxRequests</span><span class="field-type">int</span></div>
-            <div class="field"><span class="field-name">windowSeconds</span><span class="field-type">int</span></div>
-            <div class="field"><span class="field-name">tier</span><span class="field-type">UserTier</span></div>
-            <div class="field"><span class="field-name">active</span><span class="field-type">boolean</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>RateLimitEntry</h3>
-            <div class="field"><span class="field-name">key</span><span class="field-type">String (user:endpoint)</span></div>
-            <div class="field"><span class="field-name">tokens</span><span class="field-type">int (remaining)</span></div>
-            <div class="field"><span class="field-name">lastRefillTime</span><span class="field-type">long (epoch ms)</span></div>
-            <div class="field"><span class="field-name">windowStart</span><span class="field-type">long (epoch ms)</span></div>
-            <div class="field"><span class="field-name">requestCount</span><span class="field-type">int</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>RateLimitLog</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">clientKey</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">endpoint</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">allowed</span><span class="field-type">boolean</span></div>
-            <div class="field"><span class="field-name">remaining</span><span class="field-type">int</span></div>
-            <div class="field"><span class="field-name">retryAfter</span><span class="field-type">int (seconds)</span></div>
-            <div class="field"><span class="field-name">timestamp</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>ClientConfig</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">apiKey</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">tier</span><span class="field-type">UserTier</span></div>
-            <div class="field"><span class="field-name">whitelisted</span><span class="field-type">boolean</span></div>
-            <div class="field"><span class="field-name">customLimits</span><span class="field-type">Map&lt;String,Integer&gt;</span></div>
-        </div>
-    </div>
-</div>
-
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">3</span>Enums</div>
+    <div class="section-title"><span class="section-num">2</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card"><h3>Algorithm</h3><div class="enum-val">TOKEN_BUCKET</div><div class="enum-val">LEAKY_BUCKET</div><div class="enum-val">FIXED_WINDOW</div><div class="enum-val">SLIDING_WINDOW_LOG</div><div class="enum-val">SLIDING_WINDOW_COUNTER</div></div>
         <div class="enum-card"><h3>KeyType</h3><div class="enum-val">USER_ID</div><div class="enum-val">API_KEY</div><div class="enum-val">IP_ADDRESS</div><div class="enum-val">ENDPOINT</div><div class="enum-val">COMPOSITE</div></div>
@@ -75,40 +31,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">4</span>Interfaces &amp; SOLID Principles</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">RateLimiterInterfaces.java — Strategy Pattern</span></div>
-    <pre class="code-block">
-<span class="cm">// OCP — Add new algorithms without modifying existing code</span>
-<span class="cm">// SRP — Each algorithm handles its own counting logic</span>
-<span class="cm">// DIP — Filter depends on IRateLimiter abstraction</span>
-
-<span class="kw">public interface</span> <span class="tp">IRateLimiter</span> {
-    <span class="tp">RateLimitResult</span> <span class="fn">tryAcquire</span>(<span class="tp">String</span> key, <span class="tp">RateLimitRule</span> rule);
-    <span class="tp">Algorithm</span> <span class="fn">getAlgorithm</span>();
-}
-
-<span class="kw">public interface</span> <span class="tp">IKeyResolver</span> {
-    <span class="tp">String</span> <span class="fn">resolve</span>(<span class="tp">HttpServletRequest</span> request, <span class="tp">KeyType</span> keyType);
-}
-
-<span class="kw">public interface</span> <span class="tp">IRuleProvider</span> {
-    <span class="tp">Optional</span>&lt;<span class="tp">RateLimitRule</span>&gt; <span class="fn">getRule</span>(<span class="tp">String</span> endpoint, <span class="tp">UserTier</span> tier);
-    <span class="tp">List</span>&lt;<span class="tp">RateLimitRule</span>&gt; <span class="fn">getAllRules</span>();
-    <span class="kw">void</span> <span class="fn">refreshRules</span>();
-}
-
-<span class="kw">public record</span> <span class="tp">RateLimitResult</span>(
-    <span class="kw">boolean</span> allowed,
-    <span class="kw">int</span> remaining,
-    <span class="kw">long</span> resetAt,
-    <span class="kw">int</span> retryAfterSeconds
-) {}
-    </pre></div>
-</div>
-
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">5</span>Class Design (JPA Entities)</div>
+    <div class="section-title"><span class="section-num">3</span>Class Design (JPA Entities)</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">RateLimitRule.java — JPA Entity</span></div>
     <pre class="code-block">
 <span class="ann">@Entity</span>
@@ -140,29 +64,28 @@ export default {
     </pre></div>
 </div>
 
-<div class="section theme-purple">
-    <div class="section-title"><span class="section-num">6</span>Repository / DAO Layer</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">RateLimitRuleRepository.java</span></div>
-    <pre class="code-block">
-<span class="kw">public interface</span> <span class="tp">RateLimitRuleRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;<span class="tp">RateLimitRule</span>, <span class="tp">Long</span>&gt; {
-    <span class="tp">List</span>&lt;<span class="tp">RateLimitRule</span>&gt; <span class="fn">findByActiveTrue</span>();
-
-    <span class="tp">Optional</span>&lt;<span class="tp">RateLimitRule</span>&gt; <span class="fn">findByEndpointAndTierAndActiveTrue</span>(
-        <span class="tp">String</span> endpoint, <span class="tp">UserTier</span> tier);
-
-    <span class="ann">@Query</span>(<span class="st">"SELECT r FROM RateLimitRule r WHERE :path LIKE REPLACE(r.endpoint, '**', '%') AND r.tier = :tier AND r.active = true"</span>)
-    <span class="tp">Optional</span>&lt;<span class="tp">RateLimitRule</span>&gt; <span class="fn">findMatchingRule</span>(
-        <span class="ann">@Param</span>(<span class="st">"path"</span>) <span class="tp">String</span> path, <span class="ann">@Param</span>(<span class="st">"tier"</span>) <span class="tp">UserTier</span> tier);
-}
-
-<span class="kw">public interface</span> <span class="tp">ClientConfigRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;<span class="tp">ClientConfig</span>, <span class="tp">Long</span>&gt; {
-    <span class="tp">Optional</span>&lt;<span class="tp">ClientConfig</span>&gt; <span class="fn">findByApiKey</span>(<span class="tp">String</span> apiKey);
-}
-    </pre></div>
-</div>
-
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">7</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+
+    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Token bucket counters, sliding window logs, fixed window counters &mdash; atomic Lua scripts</div>
+            <div class="dbtech-tables"><span>bucket:{key}</span><span>window:{key}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Rate limit rules, API key configs, user tier settings</div>
+            <div class="dbtech-tables"><span>rate_limit_rules</span><span>api_keys</span><span>user_tiers</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Prometheus <span class="dbtech-type">Monitoring</span></div>
+            <div class="dbtech-usage">Metrics collection &mdash; allowed/blocked request counts, latency percentiles</div>
+            <div class="dbtech-tables"><span>rate_limit_allowed</span><span>rate_limit_blocked</span></div>
+        </div>
+    </div>
+
     <div class="db-grid">
         <div class="db-card">
             <h3>rate_limit_rules</h3>
@@ -198,7 +121,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>API Endpoints</div>
+    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
     <div class="api-grid">
         <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/rate-limits/status</div><div class="api-desc">Get current rate limit status for caller</div></div>
         <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/admin/rate-limits/rules</div><div class="api-desc">List all rate limit rules (admin)</div></div>
@@ -212,48 +135,182 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Service Layer</div>
+    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>RateLimiterFilter</h3>
-            <p class="svc-desc">Checks every incoming API request and decides if it should be allowed or blocked</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Check and filter each request</div><code>void doFilter(HttpServletRequest request, HttpServletResponse response, FilterChain chain)</code></div>
+            <p class="svc-desc">Har incoming API request ko check karta hai aur decide karta hai allow karein ya block karein &mdash; Spring ka OncePerRequestFilter use karta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> doFilter(FilterRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (FilterRequest):</div>
+                <div class="param-row"><span class="param-name">request</span><span class="param-type">HttpServletRequest</span><span class="param-comment">// incoming HTTP request object</span></div>
+                <div class="param-row"><span class="param-name">response</span><span class="param-type">HttpServletResponse</span><span class="param-comment">// response mein headers set karenge</span></div>
+                <div class="param-row"><span class="param-name">chain</span><span class="param-type">FilterChain</span><span class="param-comment">// allowed ho toh next filter ko forward</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> addRateLimitHeaders(HeaderRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (HeaderRequest):</div>
+                <div class="param-row"><span class="param-name">response</span><span class="param-type">HttpServletResponse</span><span class="param-comment">// jismein headers add karenge</span></div>
+                <div class="param-row"><span class="param-name">result</span><span class="param-type">RateLimitResult</span><span class="param-comment">// remaining, resetAt, retryAfter info</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> sendRateLimitExceeded(ExceededRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (ExceededRequest):</div>
+                <div class="param-row"><span class="param-name">response</span><span class="param-type">HttpServletResponse</span><span class="param-comment">// 429 status code set karega</span></div>
+                <div class="param-row"><span class="param-name">retryAfterSeconds</span><span class="param-type">long</span><span class="param-comment">// kitne seconds baad retry karein</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>TokenBucketLimiter</h3>
-            <p class="svc-desc">Limits requests using token bucket — user gets tokens that refill over time, each request uses one token</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Try to use a token (allow request if tokens available)</div><code>boolean tryAcquire(String key, RateLimitRule rule)</code></div>
+            <p class="svc-desc">Token bucket algorithm se rate limit karta hai &mdash; user ke paas tokens hote hain jo time ke saath refill hote hain, har request ek token consume karti hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> tryAcquire(AcquireRequest)</div>
+                <div class="method-return">Returns: <code>RateLimitResult</code></div>
+                <div class="params-title">Parameters (AcquireRequest):</div>
+                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// unique identifier jaise "user:42:/api/messages"</span></div>
+                <div class="param-row"><span class="param-name">rule</span><span class="param-type">RateLimitRule</span><span class="param-comment">// maxRequests, refillRate, windowSeconds etc.</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getRemainingTokens(TokenQueryRequest)</div>
+                <div class="method-return">Returns: <code>long</code></div>
+                <div class="params-title">Parameters (TokenQueryRequest):</div>
+                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// bucket key jiska remaining token count chahiye</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> resetBucket(ResetRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (ResetRequest):</div>
+                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// admin override &mdash; bucket reset karke full capacity pe laana</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>SlidingWindowLimiter</h3>
-            <p class="svc-desc">Limits requests by counting them in a sliding time window — more accurate than fixed window</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Try to allow request within the time window</div><code>boolean tryAcquire(String key, RateLimitRule rule)</code></div>
+            <p class="svc-desc">Sliding time window mein requests count karta hai &mdash; fixed window se zyada accurate hai, Redis sorted set use karta hai timestamps store karne ke liye</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> tryAcquire(AcquireRequest)</div>
+                <div class="method-return">Returns: <code>RateLimitResult</code></div>
+                <div class="params-title">Parameters (AcquireRequest):</div>
+                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// client identity + endpoint ka composite key</span></div>
+                <div class="param-row"><span class="param-name">rule</span><span class="param-type">RateLimitRule</span><span class="param-comment">// maxRequests aur windowSeconds define karta hai</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getCurrentCount(CountRequest)</div>
+                <div class="method-return">Returns: <code>long</code></div>
+                <div class="params-title">Parameters (CountRequest):</div>
+                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// jis key ka current window count chahiye</span></div>
+                <div class="param-row"><span class="param-name">window</span><span class="param-type">Duration</span><span class="param-comment">// sliding window ki duration (e.g. 60s)</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> cleanupExpiredEntries(CleanupRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (CleanupRequest):</div>
+                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// sorted set se purane timestamps hataane ke liye</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>FixedWindowLimiter</h3>
-            <p class="svc-desc">Limits requests in fixed time blocks (e.g. 100 requests per minute) — simple but less accurate</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Try to allow request within the fixed window</div><code>boolean tryAcquire(String key, RateLimitRule rule)</code></div>
+            <p class="svc-desc">Fixed time blocks mein requests limit karta hai (jaise 100 req/min) &mdash; simple implementation hai but window boundary pe burst ho sakta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> tryAcquire(AcquireRequest)</div>
+                <div class="method-return">Returns: <code>RateLimitResult</code></div>
+                <div class="params-title">Parameters (AcquireRequest):</div>
+                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// rate limit key for this client+endpoint</span></div>
+                <div class="param-row"><span class="param-name">rule</span><span class="param-type">RateLimitRule</span><span class="param-comment">// maxRequests aur windowSeconds milega</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getRemainingQuota(QuotaRequest)</div>
+                <div class="method-return">Returns: <code>long</code></div>
+                <div class="params-title">Parameters (QuotaRequest):</div>
+                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// current window mein kitne requests baaki hain</span></div>
+                <div class="param-row"><span class="param-name">rule</span><span class="param-type">RateLimitRule</span><span class="param-comment">// maxRequests se compare karega</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getTimeUntilReset(ResetTimeRequest)</div>
+                <div class="method-return">Returns: <code>Duration</code></div>
+                <div class="params-title">Parameters (ResetTimeRequest):</div>
+                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// current window kab reset hoga, Retry-After header ke liye</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>KeyResolverService</h3>
-            <p class="svc-desc">Figures out who is making the request — by user ID, API key, or IP address</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Extract the identity key from the request</div><code>String resolve(HttpServletRequest request, KeyType keyType)</code></div>
+            <p class="svc-desc">Pata lagata hai ki request kaun bhej raha hai &mdash; userId, API key, ya IP address se identify karta hai aur composite key banata hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> resolve(ResolveRequest)</div>
+                <div class="method-return">Returns: <code>String</code></div>
+                <div class="params-title">Parameters (ResolveRequest):</div>
+                <div class="param-row"><span class="param-name">request</span><span class="param-type">HttpServletRequest</span><span class="param-comment">// HTTP request se identity extract karega</span></div>
+                <div class="param-row"><span class="param-name">keyType</span><span class="param-type">KeyType</span><span class="param-comment">// USER_ID, API_KEY, IP_ADDRESS, ya COMPOSITE</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> extractIpAddress(IpRequest)</div>
+                <div class="method-return">Returns: <code>String</code></div>
+                <div class="params-title">Parameters (IpRequest):</div>
+                <div class="param-row"><span class="param-name">request</span><span class="param-type">HttpServletRequest</span><span class="param-comment">// X-Forwarded-For handle karta hai proxies ke liye</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getTierByApiKey(TierLookupRequest)</div>
+                <div class="method-return">Returns: <code>UserTier</code></div>
+                <div class="params-title">Parameters (TierLookupRequest):</div>
+                <div class="param-row"><span class="param-name">apiKey</span><span class="param-type">String</span><span class="param-comment">// API key se user ka tier (FREE/PRO/ENTERPRISE) return karega</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>RuleProviderService</h3>
-            <p class="svc-desc">Loads rate limit rules from database and keeps them cached in memory for speed</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get the rate limit rule for an endpoint and user tier</div><code>RateLimitRule getRule(String endpoint, UserTier tier)</code></div>
+            <p class="svc-desc">Database se rate limit rules load karta hai aur memory mein cache rakhta hai &mdash; speed ke liye local cache, freshness ke liye periodic refresh</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> getRule(RuleLookupRequest)</div>
+                <div class="method-return">Returns: <code>Optional&lt;RateLimitRule&gt;</code></div>
+                <div class="params-title">Parameters (RuleLookupRequest):</div>
+                <div class="param-row"><span class="param-name">endpoint</span><span class="param-type">String</span><span class="param-comment">// API path jaise "/api/v1/messages/**"</span></div>
+                <div class="param-row"><span class="param-name">tier</span><span class="param-type">UserTier</span><span class="param-comment">// user ka tier, matching rule dhundhega</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> refreshRulesCache()</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">&mdash;</span><span class="param-type">none</span><span class="param-comment">// DB se saari active rules reload karke cache update karega</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> upsertRule(UpsertRuleRequest)</div>
+                <div class="method-return">Returns: <code>RateLimitRule</code></div>
+                <div class="params-title">Parameters (UpsertRuleRequest):</div>
+                <div class="param-row"><span class="param-name">endpoint</span><span class="param-type">String</span><span class="param-comment">// kis endpoint ke liye rule set karna hai</span></div>
+                <div class="param-row"><span class="param-name">tier</span><span class="param-type">UserTier</span><span class="param-comment">// kis tier ke liye applicable hai</span></div>
+                <div class="param-row"><span class="param-name">maxRequests</span><span class="param-type">int</span><span class="param-comment">// maximum allowed requests in window</span></div>
+                <div class="param-row"><span class="param-name">window</span><span class="param-type">Duration</span><span class="param-comment">// time window duration (e.g. 60 seconds)</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>MetricsService</h3>
-            <p class="svc-desc">Tracks how many requests are allowed or blocked, for monitoring dashboards</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Record if a request was allowed or blocked</div><code>void recordDecision(RateLimitResult result)</code></div>
+            <p class="svc-desc">Kitni requests allow ya block hui, yeh track karta hai &mdash; Prometheus counters update karta hai monitoring dashboards ke liye</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> recordDecision(DecisionRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (DecisionRequest):</div>
+                <div class="param-row"><span class="param-name">result</span><span class="param-type">RateLimitResult</span><span class="param-comment">// allowed/blocked + remaining info record karega</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getMetrics(MetricsQueryRequest)</div>
+                <div class="method-return">Returns: <code>RateLimitMetrics</code></div>
+                <div class="params-title">Parameters (MetricsQueryRequest):</div>
+                <div class="param-row"><span class="param-name">endpoint</span><span class="param-type">String</span><span class="param-comment">// kis endpoint ki metrics chahiye</span></div>
+                <div class="param-row"><span class="param-name">timeRange</span><span class="param-type">Duration</span><span class="param-comment">// last kitne time ki metrics (e.g. last 1 hour)</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getTopBlockedUsers(TopBlockedRequest)</div>
+                <div class="method-return">Returns: <code>List&lt;UserMetric&gt;</code></div>
+                <div class="params-title">Parameters (TopBlockedRequest):</div>
+                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span><span class="param-comment">// top kitne blocked users chahiye (abuse detection ke liye)</span></div>
+            </div>
         </div>
     </div>
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">10</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">7</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">TokenBucketLimiter.java — Redis Lua Script</span></div>
     <pre class="code-block">
 <span class="ann">@Component</span>
@@ -311,7 +368,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">11</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">8</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IRateLimiter implementations (TokenBucket, SlidingWindow, FixedWindow) — select algorithm per rule</p></div>
         <div class="pattern-card"><h3>Factory</h3><p>RateLimiterFactory.create(algorithm) returns the correct IRateLimiter implementation</p></div>
@@ -350,7 +407,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">12</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">9</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">HTTP request hits RateLimiterFilter (OncePerRequestFilter)</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">KeyResolver extracts client identity (userId / API key / IP)</span></div>
@@ -365,7 +422,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">13</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
     <div class="cap-grid">
         <div class="cap-card"><div class="cap-label">API Requests / sec</div><div class="cap-value">100,000 QPS</div></div>
         <div class="cap-card"><div class="cap-label">Redis Operations / sec</div><div class="cap-value">~100K (1 Lua call per request)</div></div>
@@ -388,7 +445,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Redis Single Point of Failure</h3><p>Redis Cluster with 3+ masters; Sentinel for automatic failover; read replicas</p></div>
         <div class="bottleneck-card"><h3>Hot Key Problem</h3><p>Hash-based key distribution; local in-memory cache with Redis sync; key sharding</p></div>
@@ -400,7 +457,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">15</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Redis Down</h3><p>Fail-open with local in-memory fallback limiter; log degradation; alert ops</p></div>
         <div class="edge-card"><h3>Distributed Race Condition</h3><p>Lua scripts are atomic on single Redis node; for cluster, use hash tags {userId}</p></div>
@@ -412,7 +469,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">16</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>DDoS Protection</h3><p>Rate limiting is first line; combine with WAF, IP reputation, CAPTCHA challenges</p></div>
         <div class="security-card"><h3>API Key Rotation</h3><p>Support multiple active keys per client; grace period during rotation</p></div>
@@ -423,7 +480,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">17</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Algorithms</strong><br>Token Bucket (smooth), Sliding Window Log (precise), Fixed Window (simple), Leaky Bucket (constant outflow)</div>
         <div class="summary-card"><strong>Redis Lua</strong><br>Atomic operations prevent race conditions; EVALSHA caches compiled scripts; &lt; 1ms latency</div>

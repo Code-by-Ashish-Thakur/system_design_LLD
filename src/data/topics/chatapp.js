@@ -26,74 +26,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 2. CORE ENTITIES ============ -->
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">2</span>Core Entities</div>
-    <div class="entity-grid">
-        <div class="entity-card">
-            <h3>ChatRoom</h3>
-            <div class="field"><span class="field-name">roomId</span><span class="field-type">String (UUID)</span></div>
-            <div class="field"><span class="field-name">name</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">description</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">roomType</span><span class="field-type">RoomType</span></div>
-            <div class="field"><span class="field-name">createdBy</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">maxParticipants</span><span class="field-type">int</span></div>
-            <div class="field"><span class="field-name">lastMessageAt</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">isArchived</span><span class="field-type">Boolean</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Message</h3>
-            <div class="field"><span class="field-name">messageId</span><span class="field-type">String (UUID)</span></div>
-            <div class="field"><span class="field-name">roomId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">senderId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">content</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">messageType</span><span class="field-type">MessageType</span></div>
-            <div class="field"><span class="field-name">parentMessageId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">isPinned</span><span class="field-type">Boolean</span></div>
-            <div class="field"><span class="field-name">isEdited</span><span class="field-type">Boolean</span></div>
-            <div class="field"><span class="field-name">isDeleted</span><span class="field-type">Boolean</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">updatedAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>User</h3>
-            <div class="field"><span class="field-name">userId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">username</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">email</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">displayName</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">avatarUrl</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">UserStatus</span></div>
-            <div class="field"><span class="field-name">lastSeenAt</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Attachment</h3>
-            <div class="field"><span class="field-name">attachmentId</span><span class="field-type">String (UUID)</span></div>
-            <div class="field"><span class="field-name">messageId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">fileName</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">fileUrl</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">fileSize</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">mimeType</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">thumbnailUrl</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">uploadedAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card group-card">
-            <h3>Participant</h3>
-            <div class="field"><span class="field-name">participantId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">roomId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">userId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">role</span><span class="field-type">ParticipantRole</span></div>
-            <div class="field"><span class="field-name">joinedAt</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">lastReadMessageId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">isMuted</span><span class="field-type">Boolean</span></div>
-        </div>
-    </div>
-</div>
-
-<!-- ============ 3. ENUMS ============ -->
+<!-- ============ 2. ENUMS ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">3</span>Enums</div>
+    <div class="section-title"><span class="section-num">2</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card">
             <h3>RoomType</h3>
@@ -127,55 +62,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 4. INTERFACES ============ -->
-<div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">4</span>Interfaces &amp; SOLID Principles</div>
-
-    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Interface Segregation &mdash; Small, focused interfaces</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">IChatService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">IChatService</span> {
-    <span class="tp">void</span> <span class="fn">sendMessage</span>(String roomId, Long senderId, String content, MessageType type);
-    <span class="tp">void</span> <span class="fn">broadcastToRoom</span>(String roomId, WebSocketEvent event);
-    <span class="tp">void</span> <span class="fn">handleTypingIndicator</span>(String roomId, Long userId, <span class="tp">boolean</span> isTyping);
-    <span class="tp">void</span> <span class="fn">updatePresence</span>(Long userId, UserStatus status);
-}
-    </pre></div>
-
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">IRoomService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">IRoomService</span> {
-    ChatRoom <span class="fn">createRoom</span>(String name, RoomType type, Long createdBy);
-    <span class="tp">void</span> <span class="fn">addParticipant</span>(String roomId, Long userId, ParticipantRole role);
-    <span class="tp">void</span> <span class="fn">removeParticipant</span>(String roomId, Long userId);
-    List&lt;ChatRoom&gt; <span class="fn">getUserRooms</span>(Long userId);
-    <span class="tp">void</span> <span class="fn">archiveRoom</span>(String roomId, Long requesterId);
-}
-    </pre></div>
-
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">IMessageService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">IMessageService</span> {
-    Message <span class="fn">sendMessage</span>(String roomId, Long senderId, String content, MessageType type);
-    Page&lt;Message&gt; <span class="fn">getMessageHistory</span>(String roomId, <span class="tp">int</span> page, <span class="tp">int</span> size);
-    <span class="tp">void</span> <span class="fn">editMessage</span>(String messageId, String newContent, Long userId);
-    <span class="tp">void</span> <span class="fn">deleteMessage</span>(String messageId, Long userId);
-    List&lt;Message&gt; <span class="fn">searchMessages</span>(String roomId, String keyword);
-    <span class="tp">void</span> <span class="fn">pinMessage</span>(String messageId, Long userId);
-}
-    </pre></div>
-
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">IFileService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">IFileService</span> {
-    Attachment <span class="fn">uploadFile</span>(MultipartFile file, String messageId, Long userId);
-    <span class="tp">byte[]</span> <span class="fn">downloadFile</span>(String attachmentId);
-    String <span class="fn">generatePresignedUrl</span>(String attachmentId, <span class="tp">int</span> expiryMinutes);
-    <span class="tp">void</span> <span class="fn">deleteFile</span>(String attachmentId, Long userId);
-    <span class="tp">boolean</span> <span class="fn">validateFileType</span>(String mimeType);
-}
-    </pre></div>
-</div>
-
-<!-- ============ 5. CLASS DESIGN ============ -->
+<!-- ============ 3. CLASS DESIGN ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">5</span>Class Design (with Methods)</div>
+    <div class="section-title"><span class="section-num">3</span>Class Design (with Methods)</div>
 
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">ChatRoom.java</span></div><pre class="code-block">
 <span class="ann">@Entity</span>
@@ -295,69 +184,39 @@ export default {
     </pre></div>
 </div>
 
-<!-- ============ 6. REPOSITORY LAYER ============ -->
-<div class="section theme-indigo">
-    <div class="section-title"><span class="section-num">6</span>Repository / DAO Layer</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Repositories.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">ChatRoomRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;ChatRoom, String&gt; {
-    List&lt;ChatRoom&gt; <span class="fn">findByParticipantsUserIdOrderByLastMessageAtDesc</span>(Long userId);
-    Optional&lt;ChatRoom&gt; <span class="fn">findByRoomTypeAndParticipantsUserIdIn</span>(RoomType type, List&lt;Long&gt; userIds);
-}
+<!-- ============ 4. DATABASE SCHEMA ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">4</span>Database Schema (with FK &amp; Indexes)</div>
 
-<span class="kw">interface</span> <span class="iface">MessageRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Message, String&gt; {
-    <span class="cm">// Paginated history &mdash; most critical query</span>
-    Page&lt;Message&gt; <span class="fn">findByRoomIdAndIsDeletedFalseOrderByCreatedAtDesc</span>(String roomId, Pageable pageable);
-
-    <span class="ann">@Query</span>(<span class="st">"SELECT m FROM Message m WHERE m.roomId = :roomId AND m.content LIKE %:keyword%"</span>)
-    List&lt;Message&gt; <span class="fn">searchMessages</span>(String roomId, String keyword);
-
-    List&lt;Message&gt; <span class="fn">findByRoomIdAndIsPinnedTrue</span>(String roomId);
-
-    <span class="cm">// Messages after a timestamp (for offline sync)</span>
-    List&lt;Message&gt; <span class="fn">findByRoomIdAndCreatedAtAfterOrderByCreatedAtAsc</span>(String roomId, LocalDateTime since);
-}
-
-<span class="kw">interface</span> <span class="iface">ParticipantRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Participant, Long&gt; {
-    List&lt;Participant&gt; <span class="fn">findByRoomId</span>(String roomId);
-    Optional&lt;Participant&gt; <span class="fn">findByRoomIdAndUserId</span>(String roomId, Long userId);
-    <span class="tp">int</span> <span class="fn">countByRoomId</span>(String roomId);
-}
-
-<span class="kw">interface</span> <span class="iface">AttachmentRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Attachment, String&gt; {
-    List&lt;Attachment&gt; <span class="fn">findByMessageId</span>(String messageId);
-}
-
-<span class="kw">interface</span> <span class="iface">UserRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;User, Long&gt; {
-    Optional&lt;User&gt; <span class="fn">findByUsername</span>(String username);
-    Optional&lt;User&gt; <span class="fn">findByEmail</span>(String email);
-}
-    </pre></div>
-    <div class="repo-grid" style="margin-top:20px">
-        <div class="repo-card">
-            <h3>Architecture Flow</h3>
-            <div class="flow-h">
-                <div class="flow-box flow-green" style="min-width:120px">Controller</div>
-                <span class="flow-h-arrow">&#10132;</span>
-                <div class="flow-box flow-blue" style="min-width:120px">Service</div>
-                <span class="flow-h-arrow">&#10132;</span>
-                <div class="flow-box flow-purple" style="min-width:120px">Repository</div>
-                <span class="flow-h-arrow">&#10132;</span>
-                <div class="flow-box flow-pink" style="min-width:120px">Database</div>
-            </div>
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Users, rooms, participants &mdash; relational data with foreign keys</div>
+            <div class="dbtech-tables"><span>users</span><span>chat_rooms</span><span>participants</span></div>
         </div>
-        <div class="repo-card">
-            <h3>Why Repository Layer?</h3>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span><span style="color:#c5cae9"> Decouples business logic from data access</span></div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span><span style="color:#c5cae9"> Enables unit testing with mock repositories</span></div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span><span style="color:#c5cae9"> Spring Data JPA auto-generates SQL queries</span></div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span><span style="color:#c5cae9"> Custom @Query for complex search &amp; sync</span></div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">MongoDB <span class="dbtech-type">NoSQL</span></div>
+            <div class="dbtech-usage">Messages, attachments &mdash; flexible schema, fast writes, cursor-based pagination</div>
+            <div class="dbtech-tables"><span>messages</span><span>attachments</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Presence tracking, WebSocket sessions, typing indicators, unread counts</div>
+            <div class="dbtech-tables"><span>presence:{userId}</span><span>session:{userId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">S3 <span class="dbtech-type">Blob Storage</span></div>
+            <div class="dbtech-usage">File attachments &mdash; images, documents, videos uploaded in chat</div>
+            <div class="dbtech-tables"><span>attachments/{roomId}/{messageId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Elasticsearch <span class="dbtech-type">Search Engine</span></div>
+            <div class="dbtech-usage">Full-text message search across chat rooms</div>
+            <div class="dbtech-tables"><span>messages</span></div>
         </div>
     </div>
-</div>
 
-<!-- ============ 7. DATABASE SCHEMA ============ -->
-<div class="section theme-pink">
-    <div class="section-title"><span class="section-num">7</span>Database Schema (with FK &amp; Indexes)</div>
     <div class="db-grid">
         <div class="db-table">
             <h3>users</h3>
@@ -448,11 +307,12 @@ export default {
             <strong>idx_last_msg</strong> &mdash; Sort rooms by latest activity for the room list view
         </p>
     </div>
+
 </div>
 
-<!-- ============ 8. APIs ============ -->
+<!-- ============ 5. APIs ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">8</span>APIs (REST + WebSocket)</div>
+    <div class="section-title"><span class="section-num">5</span>APIs (REST + WebSocket)</div>
     <div class="api-grid">
         <div class="api-card">
             <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/rooms</span></div>
@@ -502,77 +362,299 @@ export default {
     </div>
 </div>
 
-<!-- ============ 9. SERVICE LAYER ============ -->
+<!-- ============ 6. SERVICE LLD ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">9</span>Service Layer</div>
+    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
     <div class="service-grid">
+
         <div class="service-card">
             <h3>ChatService</h3>
-            <p class="svc-desc">Main service for sending messages, broadcasting to rooms, and showing typing status</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Send a message to a chat room</div><code>Message sendMessage(String roomId, Long senderId, String content)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Send an event to all users in a room</div><code>void broadcastToRoom(String roomId, ChatEvent event)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Show "typing..." to other users</div><code>void handleTypingIndicator(Long userId, String roomId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Update if user is online or offline</div><code>void updatePresence(Long userId, UserStatus status)</code></div>
+            <p class="svc-desc">Real-time messaging ka main service &mdash; room me message bhejo, sabko broadcast karo, typing indicator dikhao aur user ki presence update karo. WebSocket ke through sab kuch real-time hota hai.</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> sendMessage(SendMessageRequest)</div>
+                <div class="method-return">Returns: <code>Message</code></div>
+                <div class="params-title">Parameters (SendMessageRequest):</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">senderId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">content</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">messageType</span><span class="param-type">MessageType</span></div>
+                <div class="param-row"><span class="param-name">parentMessageId</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// thread reply</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> broadcastToRoom(BroadcastRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (BroadcastRequest):</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">event</span><span class="param-type">ChatEvent</span></div>
+                <div class="param-row"><span class="param-name">excludeUserId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// sender ko exclude karo</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> handleTypingIndicator(TypingRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (TypingRequest):</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">isTyping</span><span class="param-type">Boolean</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> updatePresence(PresenceUpdateRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (PresenceUpdateRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">status</span><span class="param-type">UserStatus</span></div>
+            </div>
         </div>
+
         <div class="service-card">
             <h3>RoomService</h3>
-            <p class="svc-desc">Manages chat rooms — creating, adding/removing members, listing rooms</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Create a new chat room</div><code>Room createRoom(String name, RoomType type, Long createdBy)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Add a user to a room</div><code>void addParticipant(String roomId, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Remove a user from a room</div><code>void removeParticipant(String roomId, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all rooms a user is part of</div><code>List&lt;Room&gt; getUserRooms(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Archive a room (hide but keep data)</div><code>void archiveRoom(String roomId)</code></div>
+            <p class="svc-desc">Chat rooms ka management &mdash; naya room banao (private/group/channel), members add/remove karo, user ke saare rooms list karo, aur room archive karo. Room capacity bhi check hoti hai.</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> createRoom(CreateRoomRequest)</div>
+                <div class="method-return">Returns: <code>ChatRoom</code></div>
+                <div class="params-title">Parameters (CreateRoomRequest):</div>
+                <div class="param-row"><span class="param-name">name</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">roomType</span><span class="param-type">RoomType</span></div>
+                <div class="param-row"><span class="param-name">createdBy</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">memberIds</span><span class="param-type">List&lt;Long&gt;</span><span class="param-comment">// initial members</span></div>
+                <div class="param-row"><span class="param-name">maxParticipants</span><span class="param-type">Integer</span><span class="param-opt">[Optional]</span><span class="param-comment">// default 500</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> addParticipant(AddParticipantRequest)</div>
+                <div class="method-return">Returns: <code>Participant</code></div>
+                <div class="params-title">Parameters (AddParticipantRequest):</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">role</span><span class="param-type">ParticipantRole</span><span class="param-opt">[Optional]</span><span class="param-comment">// default MEMBER</span></div>
+                <div class="param-row"><span class="param-name">addedBy</span><span class="param-type">Long</span><span class="param-comment">// admin/owner check</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> removeParticipant(RemoveParticipantRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (RemoveParticipantRequest):</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">removedBy</span><span class="param-type">Long</span><span class="param-comment">// authorization check</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> getUserRooms(userId)</div>
+                <div class="method-return">Returns: <code>List&lt;ChatRoom&gt;</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">5</span> archiveRoom(ArchiveRoomRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (ArchiveRoomRequest):</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">requesterId</span><span class="param-type">Long</span><span class="param-comment">// owner check</span></div>
+            </div>
         </div>
+
         <div class="service-card">
             <h3>MessageService</h3>
-            <p class="svc-desc">Handles messages — send, get history, edit, delete, search, and pin</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Send a new message</div><code>Message sendMessage(String roomId, Long senderId, String content, MessageType type)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get old messages in a room (with pages)</div><code>Page&lt;Message&gt; getMessageHistory(String roomId, int page)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Edit a message you sent</div><code>void editMessage(String messageId, String newContent)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Delete a message</div><code>void deleteMessage(String messageId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Search for messages by keyword</div><code>List&lt;Message&gt; searchMessages(String roomId, String keyword)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Pin an important message in the room</div><code>void pinMessage(String messageId)</code></div>
+            <p class="svc-desc">Messages ka pura lifecycle &mdash; message send karo, purane messages paginate karke dikhao, edit karo (30 min window), soft-delete karo, keyword se search karo, aur important messages pin karo.</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> sendMessage(SendMessageRequest)</div>
+                <div class="method-return">Returns: <code>Message</code></div>
+                <div class="params-title">Parameters (SendMessageRequest):</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">senderId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">content</span><span class="param-type">String</span><span class="param-comment">// max 4000 chars</span></div>
+                <div class="param-row"><span class="param-name">messageType</span><span class="param-type">MessageType</span></div>
+                <div class="param-row"><span class="param-name">parentMessageId</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// thread reply ke liye</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getMessageHistory(MessageHistoryRequest)</div>
+                <div class="method-return">Returns: <code>Page&lt;Message&gt;</code></div>
+                <div class="params-title">Parameters (MessageHistoryRequest):</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">page</span><span class="param-type">Integer</span><span class="param-comment">// default 0</span></div>
+                <div class="param-row"><span class="param-name">size</span><span class="param-type">Integer</span><span class="param-comment">// default 50</span></div>
+                <div class="param-row"><span class="param-name">beforeTimestamp</span><span class="param-type">LocalDateTime</span><span class="param-opt">[Optional]</span><span class="param-comment">// cursor-based pagination</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> editMessage(EditMessageRequest)</div>
+                <div class="method-return">Returns: <code>Message</code></div>
+                <div class="params-title">Parameters (EditMessageRequest):</div>
+                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">newContent</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// ownership check + 30 min window</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> deleteMessage(DeleteMessageRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (DeleteMessageRequest):</div>
+                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// owner ya moderator</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">5</span> searchMessages(SearchMessageRequest)</div>
+                <div class="method-return">Returns: <code>List&lt;Message&gt;</code></div>
+                <div class="params-title">Parameters (SearchMessageRequest):</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">keyword</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">fromUserId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">messageType</span><span class="param-type">MessageType</span><span class="param-opt">[Optional]</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">6</span> pinMessage(PinMessageRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (PinMessageRequest):</div>
+                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// moderator+ role check</span></div>
+            </div>
         </div>
+
         <div class="service-card">
             <h3>FileService</h3>
-            <p class="svc-desc">Handles file uploads, downloads, and file type checks in chat</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Upload a file attached to a message</div><code>Attachment uploadFile(MultipartFile file, String messageId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Download a file by its ID</div><code>byte[] downloadFile(String attachmentId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get a temporary download link</div><code>String generatePresignedUrl(String attachmentId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Check if the file type is allowed</div><code>boolean validateFileType(String mimeType)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Delete a file from storage</div><code>void deleteFile(String attachmentId)</code></div>
+            <p class="svc-desc">Chat me file upload/download ka sara kaam &mdash; S3 pe file upload karo, presigned URL generate karo temporary access ke liye, file type validate karo (whitelist), aur file delete karo storage se.</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> uploadFile(UploadFileRequest)</div>
+                <div class="method-return">Returns: <code>Attachment</code></div>
+                <div class="params-title">Parameters (UploadFileRequest):</div>
+                <div class="param-row"><span class="param-name">file</span><span class="param-type">MultipartFile</span></div>
+                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span><span class="param-comment">// S3 path: attachments/{roomId}/{messageId}</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> downloadFile(attachmentId)</div>
+                <div class="method-return">Returns: <code>byte[]</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">attachmentId</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> generatePresignedUrl(PresignedUrlRequest)</div>
+                <div class="method-return">Returns: <code>String</code></div>
+                <div class="params-title">Parameters (PresignedUrlRequest):</div>
+                <div class="param-row"><span class="param-name">attachmentId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">expiryMinutes</span><span class="param-type">Integer</span><span class="param-comment">// default 60 min</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> validateFileType(mimeType)</div>
+                <div class="method-return">Returns: <code>Boolean</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">mimeType</span><span class="param-type">String</span><span class="param-comment">// whitelist check</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">5</span> deleteFile(DeleteFileRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (DeleteFileRequest):</div>
+                <div class="param-row"><span class="param-name">attachmentId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// ownership check</span></div>
+            </div>
         </div>
+
         <div class="service-card">
             <h3>PresenceService</h3>
-            <p class="svc-desc">Tracks who is online or offline and tells other users when status changes</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Mark user as online</div><code>void markOnline(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Mark user as offline</div><code>void markOffline(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Check if a user is online</div><code>UserStatus getUserStatus(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all online users in a room</div><code>List&lt;Long&gt; getOnlineUsersInRoom(String roomId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Tell everyone in the room about a status change</div><code>void broadcastPresenceChange(Long userId, UserStatus status)</code></div>
+            <p class="svc-desc">User ka online/offline status track karo Redis me &mdash; markOnline/markOffline se status set hota hai, heartbeat (30s ping) se connection alive rehta hai, aur status change hone pe room ke sabko broadcast hota hai.</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> markOnline(userId)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> markOffline(userId)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getUserStatus(userId)</div>
+                <div class="method-return">Returns: <code>UserStatus</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> getOnlineUsersInRoom(roomId)</div>
+                <div class="method-return">Returns: <code>List&lt;Long&gt;</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">5</span> broadcastPresenceChange(PresenceChangeRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (PresenceChangeRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">status</span><span class="param-type">UserStatus</span></div>
+            </div>
         </div>
+
         <div class="service-card">
             <h3>WebSocketSessionManager</h3>
-            <p class="svc-desc">Manages live WebSocket connections for real-time chat</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Save a new connection when user opens chat</div><code>void addSession(Long userId, WebSocketSession session)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Remove connection when user closes chat</div><code>void removeSession(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get a user's active connection</div><code>WebSocketSession getSession(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Check if a user is currently connected</div><code>boolean isConnected(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all connections in a room</div><code>List&lt;WebSocketSession&gt; getSessionsByRoom(String roomId)</code></div>
+            <p class="svc-desc">Live WebSocket connections manage karo &mdash; jab user chat open kare tab session save karo, band kare tab remove karo, room ke saare connections track karo. ConcurrentHashMap se thread-safe hai.</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> addSession(AddSessionRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (AddSessionRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">session</span><span class="param-type">WebSocketSession</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> removeSession(userId)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getSession(userId)</div>
+                <div class="method-return">Returns: <code>WebSocketSession</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> isConnected(userId)</div>
+                <div class="method-return">Returns: <code>Boolean</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">5</span> getSessionsByRoom(roomId)</div>
+                <div class="method-return">Returns: <code>List&lt;WebSocketSession&gt;</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+            </div>
         </div>
+
         <div class="service-card">
             <h3>NotificationService</h3>
-            <p class="svc-desc">Sends push notifications for new messages and mentions</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Notify all members of a room about a new message</div><code>void notifyRoomParticipants(String roomId, Message message)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Notify a user when they are @mentioned</div><code>void sendMentionNotification(Long userId, String roomId, String mentionedBy)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Send a push notification to user's device</div><code>void sendPushNotification(Long userId, String title, String body)</code></div>
+            <p class="svc-desc">Push notifications bhejo users ko &mdash; naye message aane pe room ke saare members ko notify karo, @mention pe specific user ko alert karo, aur FCM/APNs se device pe push notification bhejo.</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> notifyRoomParticipants(RoomNotifyRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (RoomNotifyRequest):</div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">message</span><span class="param-type">Message</span></div>
+                <div class="param-row"><span class="param-name">excludeUserId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// sender ko exclude</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> sendMentionNotification(MentionNotifyRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (MentionNotifyRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// jisko mention kiya</span></div>
+                <div class="param-row"><span class="param-name">roomId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">mentionedBy</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> sendPushNotification(PushNotificationRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (PushNotificationRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">body</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">data</span><span class="param-type">Map&lt;String, String&gt;</span><span class="param-opt">[Optional]</span><span class="param-comment">// extra payload</span></div>
+            </div>
         </div>
+
     </div>
 </div>
 
-<!-- ============ 10. KEY ARCHITECTURE ============ -->
+<!-- ============ 7. KEY ARCHITECTURE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">10</span>Key Architecture &mdash; WebSocket + Room Broadcasting + Presence</div>
+    <div class="section-title"><span class="section-num">7</span>Key Architecture &mdash; WebSocket + Room Broadcasting + Presence</div>
 
     <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">WebSocket Connection &amp; Room Subscription</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">WebSocketSessionManager.java</span></div><pre class="code-block">
@@ -651,9 +733,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 11. DESIGN PATTERNS ============ -->
+<!-- ============ 8. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">11</span>Design Patterns (with Implementation)</div>
+    <div class="section-title"><span class="section-num">8</span>Design Patterns (with Implementation)</div>
     <div class="pattern-grid">
         <div class="pattern-card"><div class="pattern-name">Observer Pattern</div><div class="pattern-use">Room event broadcasting</div></div>
         <div class="pattern-card"><div class="pattern-name">Mediator Pattern</div><div class="pattern-use">Chat room message routing</div></div>
@@ -801,9 +883,9 @@ export default {
     </pre></div>
 </div>
 
-<!-- ============ 12. SEQUENCE FLOW ============ -->
+<!-- ============ 9. SEQUENCE FLOW ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">12</span>Sequence Flow &mdash; Send Message</div>
+    <div class="section-title"><span class="section-num">9</span>Sequence Flow &mdash; Send Message</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User A &rarr; WebSocket frame: {roomId, content, type}</div>
         <div class="flow-arrow arrow-green"></div>
@@ -821,9 +903,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 13. CAPACITY ESTIMATION ============ -->
+<!-- ============ 10. CAPACITY ESTIMATION ============ -->
 <div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">13</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
 
     <div class="assumption-box">
         <h4>Assumptions (Slack/Discord Scale)</h4>
@@ -911,9 +993,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 14. BOTTLENECKS ============ -->
+<!-- ============ 11. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Fan-out in large rooms (1000+ members)</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Async fan-out via Kafka partitioned by roomId</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Message ordering across distributed servers</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Snowflake IDs + per-room ordering with Kafka partitions</span></div>
@@ -925,9 +1007,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 15. EDGE CASES ============ -->
+<!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-amber">
-    <div class="section-title"><span class="section-num">15</span>Edge Cases &amp; Error Handling</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases &amp; Error Handling</div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>Message Ordering</h4>
@@ -964,9 +1046,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 16. SECURITY ============ -->
+<!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">16</span>Security</div>
+    <div class="section-title"><span class="section-num">13</span>Security</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#9670;</span>
@@ -1003,9 +1085,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 17. SUMMARY ============ -->
+<!-- ============ 14. SUMMARY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">17</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>WebSocket + Room Subscriptions</h4><p>Real-time room-based messaging</p></div>
         <div class="summary-card sc-2"><h4>Observer + Mediator + Strategy</h4><p>Clean design pattern usage</p></div>

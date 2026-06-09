@@ -28,90 +28,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 2. CORE ENTITIES ============ -->
-<div id="entities" class="section theme-blue">
-    <div class="section-title"><span class="section-num">2</span>Core Entities</div>
-    <div class="entity-grid">
-        <div class="entity-card">
-            <h3>User</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">phoneNumber</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">name</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">profilePic</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">UserStatus</span></div>
-            <div class="field"><span class="field-name">lastSeen</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">publicKey</span><span class="field-type">String <span class="new-badge">NEW</span></span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Message</h3>
-            <div class="field"><span class="field-name">messageId</span><span class="field-type">String (UUID)</span></div>
-            <div class="field"><span class="field-name">senderId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">receiverId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">conversationId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">content</span><span class="field-type">String (encrypted)</span></div>
-            <div class="field"><span class="field-name">type</span><span class="field-type">MessageType</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">MessageStatus</span></div>
-            <div class="field"><span class="field-name">mediaUrl</span><span class="field-type">String <span class="new-badge">NEW</span></span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">updatedAt</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">isEdited</span><span class="field-type">Boolean</span></div>
-            <div class="field"><span class="field-name">isDeleted</span><span class="field-type">Boolean</span></div>
-            <div class="field"><span class="field-name">deleteType</span><span class="field-type">DeleteType <span class="new-badge">NEW</span></span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Conversation</h3>
-            <div class="field"><span class="field-name">conversationId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">type</span><span class="field-type">ConversationType <span class="new-badge">NEW</span></span></div>
-            <div class="field"><span class="field-name">user1Id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">user2Id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">lastMessage</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">updatedAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card group-card">
-            <h3>Group <span class="new-badge">NEW</span></h3>
-            <div class="field"><span class="field-name">groupId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">name</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">description</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">adminIds</span><span class="field-type">List&lt;Long&gt;</span></div>
-            <div class="field"><span class="field-name">memberIds</span><span class="field-type">List&lt;Long&gt;</span></div>
-            <div class="field"><span class="field-name">createdBy</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">groupPic</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card group-card">
-            <h3>GroupMessage <span class="new-badge">NEW</span></h3>
-            <div class="field"><span class="field-name">messageId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">groupId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">senderId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">content</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">type</span><span class="field-type">MessageType</span></div>
-            <div class="field"><span class="field-name">deliveredTo</span><span class="field-type">Set&lt;Long&gt;</span></div>
-            <div class="field"><span class="field-name">seenBy</span><span class="field-type">Set&lt;Long&gt;</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>OTP</h3>
-            <div class="field"><span class="field-name">phoneNumber</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">otp</span><span class="field-type">String (hashed)</span></div>
-            <div class="field"><span class="field-name">expiryTime</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">attempts</span><span class="field-type">int <span class="new-badge">NEW</span></span></div>
-        </div>
-        <div class="entity-card">
-            <h3>CallSession</h3>
-            <div class="field"><span class="field-name">callId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">callerId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">receiverId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">callType</span><span class="field-type">CallType</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">CallStatus</span></div>
-            <div class="field"><span class="field-name">startTime</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">endTime</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-    </div>
-</div>
-
-<!-- ============ 3. ENUMS ============ -->
+<!-- ============ 2. ENUMS ============ -->
 <div id="enums" class="section theme-purple">
-    <div class="section-title"><span class="section-num">3</span>Enums</div>
+    <div class="section-title"><span class="section-num">2</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card">
             <h3>UserStatus</h3>
@@ -158,80 +77,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 4. INTERFACES (SOLID) ============ -->
-<div id="interfaces" class="section theme-cyan">
-    <div class="section-title"><span class="section-num">4</span>Interfaces &amp; SOLID Principles <span class="new-badge">NEW</span></div>
-
-    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Interface Segregation &mdash; Small, focused interfaces</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">IMessageService</span> {
-    Message <span class="fn">sendMessage</span>(Long senderId, Long receiverId, String content, MessageType type);
-    List&lt;Message&gt; <span class="fn">getMessages</span>(String conversationId, <span class="tp">int</span> page, <span class="tp">int</span> size);
-    <span class="tp">void</span> <span class="fn">editMessage</span>(String messageId, String newContent, Long userId);
-    <span class="tp">void</span> <span class="fn">deleteMessage</span>(String messageId, Long userId, DeleteType deleteType);
-}
-
-<span class="kw">interface</span> <span class="iface">IMessageStatusService</span> {
-    <span class="tp">void</span> <span class="fn">markAsDelivered</span>(String messageId, Long userId);
-    <span class="tp">void</span> <span class="fn">markAsSeen</span>(String messageId, Long userId);
-    MessageStatus <span class="fn">getStatus</span>(String messageId);
-}
-
-<span class="kw">interface</span> <span class="iface">IAuthService</span> {
-    <span class="tp">void</span> <span class="fn">sendOTP</span>(String phoneNumber);
-    String <span class="fn">verifyOTP</span>(String phoneNumber, String otp);  <span class="cm">// returns JWT token</span>
-    <span class="tp">void</span> <span class="fn">logout</span>(Long userId);
-}
-
-<span class="kw">interface</span> <span class="iface">IPresenceService</span> {
-    <span class="tp">void</span> <span class="fn">markOnline</span>(Long userId);
-    <span class="tp">void</span> <span class="fn">markOffline</span>(Long userId);
-    UserStatus <span class="fn">getUserStatus</span>(Long userId);
-    LocalDateTime <span class="fn">getLastSeen</span>(Long userId);
-}
-
-<span class="kw">interface</span> <span class="iface">INotificationService</span> {
-    <span class="tp">void</span> <span class="fn">sendNotification</span>(Long userId, String title, String body);
-}
-
-<span class="kw">interface</span> <span class="iface">IGroupService</span> {
-    Group <span class="fn">createGroup</span>(String name, Long createdBy, List&lt;Long&gt; memberIds);
-    <span class="tp">void</span> <span class="fn">addMember</span>(String groupId, Long adminId, Long newMemberId);
-    <span class="tp">void</span> <span class="fn">removeMember</span>(String groupId, Long adminId, Long memberId);
-    <span class="tp">void</span> <span class="fn">sendGroupMessage</span>(String groupId, Long senderId, String content);
-}
-
-<span class="kw">interface</span> <span class="iface">IMediaService</span> {
-    String <span class="fn">uploadMedia</span>(MultipartFile file, Long userId);  <span class="cm">// returns media URL</span>
-    <span class="tp">byte[]</span> <span class="fn">downloadMedia</span>(String mediaUrl);
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Strategy Pattern &mdash; Notification Interface</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">NotificationStrategy</span> {
-    <span class="tp">void</span> <span class="fn">send</span>(Long userId, String title, String body);
-}
-
-<span class="kw">class</span> <span class="cn">PushNotificationStrategy</span> <span class="kw">implements</span> <span class="iface">NotificationStrategy</span> {
-    <span class="ann">@Override</span>
-    <span class="kw">public void</span> <span class="fn">send</span>(Long userId, String title, String body) {
-        <span class="cm">// Firebase Cloud Messaging / APNs</span>
-    }
-}
-
-<span class="kw">class</span> <span class="cn">SMSNotificationStrategy</span> <span class="kw">implements</span> <span class="iface">NotificationStrategy</span> {
-    <span class="ann">@Override</span>
-    <span class="kw">public void</span> <span class="fn">send</span>(Long userId, String title, String body) {
-        <span class="cm">// Twilio SMS fallback for offline users</span>
-    }
-}
-    </pre></div>
-</div>
-
-<!-- ============ 5. CLASS DESIGN ============ -->
+<!-- ============ 3. CLASS DESIGN ============ -->
 <div id="classes" class="section theme-orange">
-    <div class="section-title"><span class="section-num">5</span>Class Design (with Methods)</div>
+    <div class="section-title"><span class="section-num">3</span>Class Design (with Methods)</div>
 
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
 <span class="ann">@Entity</span>
@@ -311,61 +159,39 @@ export default {
     </pre></div>
 </div>
 
-<!-- ============ 6. REPOSITORY LAYER ============ -->
-<div id="repository" class="section theme-indigo">
-    <div class="section-title"><span class="section-num">6</span>Repository / DAO Layer <span class="new-badge">NEW</span></div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">UserRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;User, Long&gt; {
-    Optional&lt;User&gt; <span class="fn">findByPhoneNumber</span>(String phone);
-}
+<!-- ============ 4. DATABASE SCHEMA ============ -->
+<div id="database" class="section theme-pink">
+    <div class="section-title"><span class="section-num">4</span>Database Schema (with FK &amp; Indexes)</div>
 
-<span class="kw">interface</span> <span class="iface">MessageRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Message, String&gt; {
-    <span class="cm">// Paginated query &mdash; critical for large chats</span>
-    Page&lt;Message&gt; <span class="fn">findByConversationIdOrderByCreatedAtDesc</span>(String convId, Pageable pageable);
-
-    List&lt;Message&gt; <span class="fn">findBySenderIdAndStatus</span>(Long senderId, MessageStatus status);
-
-    <span class="ann">@Query</span>(<span class="st">"SELECT m FROM Message m WHERE m.conversationId = :convId AND m.content LIKE %:keyword%"</span>)
-    List&lt;Message&gt; <span class="fn">searchMessages</span>(String convId, String keyword);
-}
-
-<span class="kw">interface</span> <span class="iface">ConversationRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Conversation, String&gt; {
-    Optional&lt;Conversation&gt; <span class="fn">findByUser1IdAndUser2Id</span>(Long u1, Long u2);
-    List&lt;Conversation&gt; <span class="fn">findByUser1IdOrUser2IdOrderByUpdatedAtDesc</span>(Long u1, Long u2);
-}
-
-<span class="kw">interface</span> <span class="iface">GroupRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Group, String&gt; {
-    List&lt;Group&gt; <span class="fn">findByMemberIdsContaining</span>(Long userId);
-}
-
-<span class="kw">interface</span> <span class="iface">CallRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;CallSession, String&gt; { }
-    </pre></div>
-    <div class="repo-grid" style="margin-top:20px">
-        <div class="repo-card">
-            <h3>Architecture Flow</h3>
-            <div class="flow-h">
-                <div class="flow-box flow-green" style="min-width:120px">Controller</div>
-                <span class="flow-h-arrow">&#10132;</span>
-                <div class="flow-box flow-blue" style="min-width:120px">Service</div>
-                <span class="flow-h-arrow">&#10132;</span>
-                <div class="flow-box flow-purple" style="min-width:120px">Repository</div>
-                <span class="flow-h-arrow">&#10132;</span>
-                <div class="flow-box flow-pink" style="min-width:120px">Database</div>
-            </div>
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Users, conversations, groups &mdash; ACID transactions for structured relational data</div>
+            <div class="dbtech-tables"><span>users</span><span>conversations</span><span>groups</span></div>
         </div>
-        <div class="repo-card">
-            <h3>Why Repository Layer?</h3>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span><span style="color:#c5cae9"> Decouples business logic from DB</span></div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span><span style="color:#c5cae9"> Easier to unit test with mocks</span></div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span><span style="color:#c5cae9"> Spring Data JPA auto-generates SQL</span></div>
-            <div class="method-item"><span class="method-dot" style="background:#8c9eff"></span><span style="color:#c5cae9"> Custom @Query for complex queries</span></div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Cassandra <span class="dbtech-type">NoSQL</span></div>
+            <div class="dbtech-usage">Messages storage &mdash; write-heavy, time-series data partitioned by conversation_id</div>
+            <div class="dbtech-tables"><span>messages</span><span>group_messages</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Online/offline presence, typing indicators, WebSocket session mapping</div>
+            <div class="dbtech-tables"><span>presence:{userId}</span><span>typing:{convId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">S3 <span class="dbtech-type">Blob Storage</span></div>
+            <div class="dbtech-usage">Media files &mdash; images, videos, voice notes, documents</div>
+            <div class="dbtech-tables"><span>media/{userId}/{messageId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
+            <div class="dbtech-usage">Async message delivery, push notifications, event streaming</div>
+            <div class="dbtech-tables"><span>chat-events</span><span>notifications</span></div>
         </div>
     </div>
-</div>
 
-<!-- ============ 7. DATABASE SCHEMA ============ -->
-<div id="database" class="section theme-pink">
-    <div class="section-title"><span class="section-num">7</span>Database Schema (with FK &amp; Indexes)</div>
     <div class="db-grid">
         <div class="db-table">
             <h3>users</h3>
@@ -456,11 +282,61 @@ export default {
             <strong>idx_users</strong> &mdash; Find existing conversation between two users before creating a new one
         </p>
     </div>
+
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Examples &mdash; Sample Data</div>
+    <div class="db-grid">
+        <div class="db-table">
+            <h3>users &mdash; Example Rows</h3>
+            <ul>
+                <li style="color:#80cbc4"><strong>Row 1:</strong> id=1, phone='9876543210', name='Rahul', status='ONLINE', last_seen=NULL</li>
+                <li style="color:#80cbc4"><strong>Row 2:</strong> id=2, phone='9123456789', name='Priya', status='OFFLINE', last_seen='2026-06-09 14:30:00'</li>
+                <li style="color:#80cbc4"><strong>Row 3:</strong> id=3, phone='9988776655', name='Amit', status='ONLINE', last_seen=NULL</li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>messages &mdash; Example Rows</h3>
+            <ul>
+                <li style="color:#80cbc4"><strong>Row 1:</strong> message_id='a1b2-c3d4', sender_id=1, receiver_id=2, conversation_id='conv-001', content='Hey Priya!', type='TEXT', status='SEEN', is_edited=false</li>
+                <li style="color:#80cbc4"><strong>Row 2:</strong> message_id='e5f6-g7h8', sender_id=2, receiver_id=1, conversation_id='conv-001', content='Hi Rahul, kya haal hai?', type='TEXT', status='DELIVERED', is_edited=false</li>
+                <li style="color:#80cbc4"><strong>Row 3:</strong> message_id='i9j0-k1l2', sender_id=1, receiver_id=2, conversation_id='conv-001', media_url='s3://media/1/img.jpg', type='IMAGE', status='SENT', is_edited=false</li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>conversations &mdash; Example Rows</h3>
+            <ul>
+                <li style="color:#80cbc4"><strong>Row 1:</strong> conversation_id='conv-001', type='ONE_TO_ONE', user1_id=1, user2_id=2, updated_at='2026-06-09 14:35:00'</li>
+                <li style="color:#80cbc4"><strong>Row 2:</strong> conversation_id='conv-002', type='ONE_TO_ONE', user1_id=1, user2_id=3, updated_at='2026-06-09 10:00:00'</li>
+                <li style="color:#80cbc4"><strong>Row 3:</strong> conversation_id='conv-grp-001', type='GROUP', user1_id=NULL, user2_id=NULL, updated_at='2026-06-09 15:00:00'</li>
+            </ul>
+        </div>
+        <div class="db-table" style="border-color:rgba(255,171,64,.25)">
+            <h3 style="background:rgba(255,171,64,.15);color:#ffab40">groups &mdash; Example Rows</h3>
+            <ul>
+                <li style="color:#80cbc4"><strong>Row 1:</strong> group_id='grp-001', name='College Friends', description='Batch 2020 group', created_by=1, group_pic='s3://pics/grp1.jpg'</li>
+                <li style="color:#80cbc4"><strong>Row 2:</strong> group_id='grp-002', name='Office Team', description='Dev team chat', created_by=3, group_pic=NULL</li>
+            </ul>
+        </div>
+        <div class="db-table" style="border-color:rgba(255,171,64,.25)">
+            <h3 style="background:rgba(255,171,64,.15);color:#ffab40">group_members &mdash; Example Rows</h3>
+            <ul>
+                <li style="color:#80cbc4"><strong>Row 1:</strong> group_id='grp-001', user_id=1, role='ADMIN', joined_at='2026-01-15 09:00:00'</li>
+                <li style="color:#80cbc4"><strong>Row 2:</strong> group_id='grp-001', user_id=2, role='MEMBER', joined_at='2026-01-15 09:01:00'</li>
+                <li style="color:#80cbc4"><strong>Row 3:</strong> group_id='grp-001', user_id=3, role='MEMBER', joined_at='2026-01-16 11:30:00'</li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>calls &mdash; Example Rows</h3>
+            <ul>
+                <li style="color:#80cbc4"><strong>Row 1:</strong> call_id='call-001', caller_id=1, receiver_id=2, call_type='VOICE', status='ENDED', start_time='2026-06-09 12:00:00', end_time='2026-06-09 12:15:00'</li>
+                <li style="color:#80cbc4"><strong>Row 2:</strong> call_id='call-002', caller_id=3, receiver_id=1, call_type='VIDEO', status='MISSED', start_time='2026-06-09 13:00:00', end_time=NULL</li>
+            </ul>
+        </div>
+    </div>
 </div>
 
-<!-- ============ 8. APIs ============ -->
+<!-- ============ 5. APIs ============ -->
 <div id="apis" class="section theme-teal">
-    <div class="section-title"><span class="section-num">8</span>APIs (with Pagination &amp; Media)</div>
+    <div class="section-title"><span class="section-num">5</span>APIs (with Pagination &amp; Media)</div>
     <div class="api-grid">
         <div class="api-card">
             <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/auth/send-otp</span></div>
@@ -530,82 +406,268 @@ export default {
     </div>
 </div>
 
-<!-- ============ 9. SERVICE LAYER ============ -->
+<!-- ============ 6. SERVICE LLD ============ -->
 <div id="services" class="section theme-yellow">
-    <div class="section-title"><span class="section-num">9</span>Service Layer</div>
+    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>AuthService</h3>
-            <p class="svc-desc">Takes care of user login with OTP, verifying the code, and logging out</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Send OTP to user's phone number</div><code>void sendOTP(String phoneNumber)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Check if OTP is correct, return login token</div><code>String verifyOTP(String phoneNumber, String otp)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Log the user out</div><code>void logout(Long userId)</code></div>
+            <p class="svc-desc">User ka login handle karta hai &mdash; OTP bhejta hai, verify karta hai, aur logout bhi</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> sendOTP(SendOTPRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (SendOTPRequest):</div>
+                <div class="param-row"><span class="param-name">phoneNumber</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> verifyOTP(VerifyOTPRequest)</div>
+                <div class="method-return">Returns: <code>String (JWT Token)</code></div>
+                <div class="params-title">Parameters (VerifyOTPRequest):</div>
+                <div class="param-row"><span class="param-name">phoneNumber</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">otp</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> logout(LogoutRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (LogoutRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>MessageService</h3>
-            <p class="svc-desc">Handles sending, receiving, editing, deleting, and searching messages</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Send a new message to another user</div><code>Message sendMessage(Long senderId, Long receiverId, String content, MessageType type)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all messages in a conversation (with pages)</div><code>List&lt;Message&gt; getMessages(String conversationId, int page, int size)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Edit a message you already sent</div><code>void editMessage(String messageId, String newContent, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Delete a message (for you or for everyone)</div><code>void deleteMessage(String messageId, Long userId, DeleteType deleteType)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Search for messages by keyword</div><code>List&lt;Message&gt; searchMessages(String conversationId, String keyword, int page)</code></div>
+            <p class="svc-desc">Message bhejne, receive karne, edit/delete karne aur search karne ka poora kaam yahi karta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> sendMessage(SendMessageRequest)</div>
+                <div class="method-return">Returns: <code>Message</code></div>
+                <div class="params-title">Parameters (SendMessageRequest):</div>
+                <div class="param-row"><span class="param-name">senderId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">receiverId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">content</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">type</span><span class="param-type">MessageType</span></div>
+                <div class="param-row"><span class="param-name">mediaUrl</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getMessages(GetMessagesRequest)</div>
+                <div class="method-return">Returns: <code>List&lt;Message&gt;</code></div>
+                <div class="params-title">Parameters (GetMessagesRequest):</div>
+                <div class="param-row"><span class="param-name">conversationId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">page</span><span class="param-type">int</span></div>
+                <div class="param-row"><span class="param-name">size</span><span class="param-type">int</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> editMessage(EditMessageRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (EditMessageRequest):</div>
+                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">newContent</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> deleteMessage(DeleteMessageRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (DeleteMessageRequest):</div>
+                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">deleteType</span><span class="param-type">DeleteType</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">5</span> searchMessages(SearchMessagesRequest)</div>
+                <div class="method-return">Returns: <code>List&lt;Message&gt;</code></div>
+                <div class="params-title">Parameters (SearchMessagesRequest):</div>
+                <div class="param-row"><span class="param-name">conversationId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">keyword</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">page</span><span class="param-type">int</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>MessageStatusService <span class="new-badge" style="font-size:.55em">NEW</span></h3>
-            <p class="svc-desc">Tracks if a message is sent, delivered, or seen (read receipts)</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Mark a message as delivered to the user</div><code>void markAsDelivered(String messageId, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Mark a message as seen (blue tick)</div><code>void markAsSeen(String messageId, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get current status of a message</div><code>MessageStatus getStatus(String messageId)</code></div>
+            <p class="svc-desc">Message ka status track karta hai &mdash; sent, delivered ya seen (blue tick wala kaam)</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> markAsDelivered(MarkDeliveredRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (MarkDeliveredRequest):</div>
+                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> markAsSeen(MarkSeenRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (MarkSeenRequest):</div>
+                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getStatus(GetStatusRequest)</div>
+                <div class="method-return">Returns: <code>MessageStatus</code></div>
+                <div class="params-title">Parameters (GetStatusRequest):</div>
+                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>ConversationService</h3>
-            <p class="svc-desc">Manages chat threads between users</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get existing chat or create a new one</div><code>Conversation getOrCreateConversation(Long userId1, Long userId2)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all chats for a user</div><code>List&lt;Conversation&gt; getConversations(Long userId, int page)</code></div>
+            <p class="svc-desc">Do users ke beech chat thread manage karta hai &mdash; naya create ya existing dhundh ke deta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> getOrCreateConversation(GetOrCreateConvRequest)</div>
+                <div class="method-return">Returns: <code>Conversation</code></div>
+                <div class="params-title">Parameters (GetOrCreateConvRequest):</div>
+                <div class="param-row"><span class="param-name">userId1</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">userId2</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getConversations(GetConversationsRequest)</div>
+                <div class="method-return">Returns: <code>List&lt;Conversation&gt;</code></div>
+                <div class="params-title">Parameters (GetConversationsRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">page</span><span class="param-type">int</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>PresenceService</h3>
-            <p class="svc-desc">Tracks if a user is online, offline, or currently typing</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Mark user as online</div><code>void markOnline(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Mark user as offline and save last seen time</div><code>void markOffline(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Check if user is online or offline</div><code>UserStatus getUserStatus(Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Show "typing..." to the other user <span class="new-badge" style="font-size:.55em">NEW</span></div><code>void broadcastTyping(Long userId, String conversationId)</code></div>
+            <p class="svc-desc">User online hai ya offline, last seen kab tha, aur typing indicator &mdash; sab yahi handle karta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> markOnline(MarkOnlineRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (MarkOnlineRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> markOffline(MarkOfflineRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (MarkOfflineRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getUserStatus(GetUserStatusRequest)</div>
+                <div class="method-return">Returns: <code>UserStatus</code></div>
+                <div class="params-title">Parameters (GetUserStatusRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> broadcastTyping(BroadcastTypingRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (BroadcastTypingRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">conversationId</span><span class="param-type">String</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>NotificationService</h3>
-            <p class="svc-desc">Sends push notifications when user is offline, falls back to SMS</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Send push notification to user's device</div><code>void sendPushNotification(Long userId, String title, String body)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Send SMS if push notification fails <span class="new-badge" style="font-size:.55em">NEW</span></div><code>void sendSMSFallback(Long userId, String message)</code></div>
+            <p class="svc-desc">Jab user offline ho toh push notification bhejta hai, agar woh bhi fail ho toh SMS fallback karta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> sendPushNotification(SendPushRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (SendPushRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">body</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> sendSMSFallback(SendSMSRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (SendSMSRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">message</span><span class="param-type">String</span></div>
+            </div>
         </div>
         <div class="service-card" style="border-color:rgba(255,171,64,.3)">
             <h3 style="color:#ffab40">GroupService <span class="new-badge" style="font-size:.55em">NEW</span></h3>
-            <p class="svc-desc">Handles creating groups, adding/removing members, and group messages</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot" style="background:#ffab40"></span> Create a new group with members</div><code>Group createGroup(String name, Long createdBy, List&lt;Long&gt; memberIds)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot" style="background:#ffab40"></span> Add a new member to the group</div><code>void addMember(String groupId, Long adminId, Long newMemberId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot" style="background:#ffab40"></span> Remove a member from the group</div><code>void removeMember(String groupId, Long adminId, Long memberId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot" style="background:#ffab40"></span> Send a message to the group</div><code>void sendGroupMessage(String groupId, Long senderId, String content)</code></div>
+            <p class="svc-desc">Group banana, members add/remove karna, aur group mein message bhejne ka kaam &mdash; sab yahi karta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> createGroup(CreateGroupRequest)</div>
+                <div class="method-return">Returns: <code>Group</code></div>
+                <div class="params-title">Parameters (CreateGroupRequest):</div>
+                <div class="param-row"><span class="param-name">name</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">createdBy</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">memberIds</span><span class="param-type">List&lt;Long&gt;</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> addMember(AddMemberRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (AddMemberRequest):</div>
+                <div class="param-row"><span class="param-name">groupId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">adminId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">newMemberId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> removeMember(RemoveMemberRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (RemoveMemberRequest):</div>
+                <div class="param-row"><span class="param-name">groupId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">adminId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">memberId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> sendGroupMessage(SendGroupMessageRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (SendGroupMessageRequest):</div>
+                <div class="param-row"><span class="param-name">groupId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">senderId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">content</span><span class="param-type">String</span></div>
+            </div>
         </div>
         <div class="service-card" style="border-color:rgba(255,171,64,.3)">
             <h3 style="color:#ffab40">MediaService <span class="new-badge" style="font-size:.55em">NEW</span></h3>
-            <p class="svc-desc">Handles uploading and downloading photos, videos, and documents</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot" style="background:#ffab40"></span> Upload a file (image, video, doc)</div><code>String uploadMedia(MultipartFile file, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot" style="background:#ffab40"></span> Download a file by its URL</div><code>byte[] downloadMedia(String mediaUrl)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot" style="background:#ffab40"></span> Get a temporary download link</div><code>String generatePresignedUrl(String mediaKey, int expiryMinutes)</code></div>
+            <p class="svc-desc">Photos, videos, documents upload/download karna &mdash; S3 pe store karta hai aur presigned URL deta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> uploadMedia(UploadMediaRequest)</div>
+                <div class="method-return">Returns: <code>String (media URL)</code></div>
+                <div class="params-title">Parameters (UploadMediaRequest):</div>
+                <div class="param-row"><span class="param-name">file</span><span class="param-type">MultipartFile</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> downloadMedia(DownloadMediaRequest)</div>
+                <div class="method-return">Returns: <code>byte[]</code></div>
+                <div class="params-title">Parameters (DownloadMediaRequest):</div>
+                <div class="param-row"><span class="param-name">mediaUrl</span><span class="param-type">String</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> generatePresignedUrl(PresignedUrlRequest)</div>
+                <div class="method-return">Returns: <code>String (presigned URL)</code></div>
+                <div class="params-title">Parameters (PresignedUrlRequest):</div>
+                <div class="param-row"><span class="param-name">mediaKey</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">expiryMinutes</span><span class="param-type">int</span></div>
+            </div>
         </div>
         <div class="service-card">
             <h3>CallService</h3>
-            <p class="svc-desc">Manages voice and video calls between users</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Start a new call to another user</div><code>Call startCall(Long callerId, Long receiverId, CallType type)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Accept an incoming call</div><code>void acceptCall(String callId, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Reject an incoming call <span class="new-badge" style="font-size:.55em">NEW</span></div><code>void rejectCall(String callId, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> End an ongoing call</div><code>void endCall(String callId, Long userId)</code></div>
+            <p class="svc-desc">Voice aur video call ka poora flow &mdash; call start, accept, reject aur end sab handle karta hai</p>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> startCall(StartCallRequest)</div>
+                <div class="method-return">Returns: <code>Call</code></div>
+                <div class="params-title">Parameters (StartCallRequest):</div>
+                <div class="param-row"><span class="param-name">callerId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">receiverId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">type</span><span class="param-type">CallType</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> acceptCall(AcceptCallRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (AcceptCallRequest):</div>
+                <div class="param-row"><span class="param-name">callId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> rejectCall(RejectCallRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (RejectCallRequest):</div>
+                <div class="param-row"><span class="param-name">callId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> endCall(EndCallRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (EndCallRequest):</div>
+                <div class="param-row"><span class="param-name">callId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+            </div>
         </div>
     </div>
 </div>
 
-<!-- ============ 10. WEBSOCKET DESIGN ============ -->
+<!-- ============ 7. WEBSOCKET DESIGN ============ -->
 <div id="websocket" class="section theme-blue">
-    <div class="section-title"><span class="section-num">10</span>WebSocket Design (Enhanced)</div>
+    <div class="section-title"><span class="section-num">7</span>WebSocket Design (Enhanced)</div>
 
     <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Connection Management</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -678,9 +740,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 11. MSG STATUS + READ RECEIPT ============ -->
+<!-- ============ 8. MSG STATUS + READ RECEIPT ============ -->
 <div id="msg-status" class="section theme-green">
-    <div class="section-title"><span class="section-num">11</span>Message Status &amp; Read Receipt Flow</div>
+    <div class="section-title"><span class="section-num">8</span>Message Status &amp; Read Receipt Flow</div>
     <div class="flow-container">
         <div class="flow-box flow-orange">Sender sends message</div>
         <div class="flow-arrow arrow-green"></div>
@@ -710,9 +772,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 12. DESIGN PATTERNS ============ -->
+<!-- ============ 9. DESIGN PATTERNS ============ -->
 <div id="patterns" class="section theme-cyan">
-    <div class="section-title"><span class="section-num">12</span>Design Patterns (with Implementation)</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns (with Implementation)</div>
     <div class="pattern-grid">
         <div class="pattern-card"><div class="pattern-name">Factory Pattern</div><div class="pattern-use">Message Creation</div></div>
         <div class="pattern-card"><div class="pattern-name">Strategy Pattern</div><div class="pattern-use">Notification Types</div></div>
@@ -786,9 +848,9 @@ export default {
     </pre></div>
 </div>
 
-<!-- ============ 13. SEQUENCE FLOW ============ -->
+<!-- ============ 10. SEQUENCE FLOW ============ -->
 <div id="sequence" class="section theme-purple">
-    <div class="section-title"><span class="section-num">13</span>LLD Sequence Flow</div>
+    <div class="section-title"><span class="section-num">10</span>LLD Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User A &rarr; MessageController.sendMessage()</div>
         <div class="flow-arrow arrow-green"></div>
@@ -806,9 +868,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 14. CAPACITY ESTIMATION ============ -->
+<!-- ============ 11. CAPACITY ESTIMATION ============ -->
 <div id="capacity" class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">14</span>Capacity Estimation <span class="new-badge">NEW</span></div>
+    <div class="section-title"><span class="section-num">11</span>Capacity Estimation <span class="new-badge">NEW</span></div>
 
     <div class="assumption-box">
         <h4>Assumptions (WhatsApp Scale)</h4>
@@ -918,9 +980,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 15. BOTTLENECKS ============ -->
+<!-- ============ 12. BOTTLENECKS ============ -->
 <div id="bottlenecks" class="section theme-red">
-    <div class="section-title"><span class="section-num">15</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">12</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Too many messages</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Kafka Queue (async processing)</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Database overload</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Sharding by conversationId</span></div>
@@ -932,9 +994,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 16. EDGE CASES ============ -->
+<!-- ============ 13. EDGE CASES ============ -->
 <div id="edge-cases" class="section theme-amber">
-    <div class="section-title"><span class="section-num">16</span>Edge Cases &amp; Error Handling <span class="new-badge">NEW</span></div>
+    <div class="section-title"><span class="section-num">13</span>Edge Cases &amp; Error Handling <span class="new-badge">NEW</span></div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>OTP Expired</h4>
@@ -971,9 +1033,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 17. SECURITY ============ -->
+<!-- ============ 14. SECURITY ============ -->
 <div id="security" class="section theme-lime">
-    <div class="section-title"><span class="section-num">17</span>Security (Enhanced)</div>
+    <div class="section-title"><span class="section-num">14</span>Security (Enhanced)</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#9670;</span>
@@ -1010,9 +1072,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 18. SUMMARY ============ -->
+<!-- ============ 15. SUMMARY ============ -->
 <div id="summary" class="section theme-green">
-    <div class="section-title"><span class="section-num">18</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Controller &rarr; Service &rarr; Repository &rarr; DB</h4><p>Layered Architecture</p></div>
         <div class="summary-card sc-2"><h4>WebSocket + Session Map</h4><p>Real-Time Messaging</p></div>

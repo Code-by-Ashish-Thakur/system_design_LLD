@@ -22,156 +22,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 2. CORE ENTITIES ============ -->
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">2</span>Core Entities</div>
-    <div class="entity-grid">
-        <div class="entity-card">
-            <h3>Product</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">title</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">description</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">price</span><span class="field-type">BigDecimal</span></div>
-            <div class="field"><span class="field-name">mrp</span><span class="field-type">BigDecimal</span></div>
-            <div class="field"><span class="field-name">categoryId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">sellerId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">brand</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">images</span><span class="field-type">List&lt;String&gt;</span></div>
-            <div class="field"><span class="field-name">attributes</span><span class="field-type">Map&lt;String,String&gt;</span></div>
-            <div class="field"><span class="field-name">avgRating</span><span class="field-type">Double</span></div>
-            <div class="field"><span class="field-name">totalReviews</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">ProductStatus</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Category</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">name</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">parentId</span><span class="field-type">Long (nullable)</span></div>
-            <div class="field"><span class="field-name">level</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">slug</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">attributes</span><span class="field-type">List&lt;String&gt;</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Seller</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">businessName</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">gstin</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">email</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">phone</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">rating</span><span class="field-type">Double</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">SellerStatus</span></div>
-            <div class="field"><span class="field-name">warehouseIds</span><span class="field-type">List&lt;Long&gt;</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Review</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">productId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">userId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">rating</span><span class="field-type">Integer (1-5)</span></div>
-            <div class="field"><span class="field-name">title</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">body</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">images</span><span class="field-type">List&lt;String&gt;</span></div>
-            <div class="field"><span class="field-name">verified</span><span class="field-type">Boolean</span></div>
-            <div class="field"><span class="field-name">helpfulCount</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Order</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">orderId</span><span class="field-type">String (UUID)</span></div>
-            <div class="field"><span class="field-name">userId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">totalAmount</span><span class="field-type">BigDecimal</span></div>
-            <div class="field"><span class="field-name">discount</span><span class="field-type">BigDecimal</span></div>
-            <div class="field"><span class="field-name">shippingAddressId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">paymentId</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">OrderStatus</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">updatedAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>OrderItem</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">orderId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">productId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">sellerId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">quantity</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">unitPrice</span><span class="field-type">BigDecimal</span></div>
-            <div class="field"><span class="field-name">totalPrice</span><span class="field-type">BigDecimal</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">OrderStatus</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Inventory</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">productId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">sellerId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">warehouseId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">totalStock</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">reservedStock</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">availableStock</span><span class="field-type">Integer</span></div>
-            <div class="field"><span class="field-name">version</span><span class="field-type">Long</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>DeliveryTracking</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">orderId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">trackingNumber</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">carrier</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">DeliveryStatus</span></div>
-            <div class="field"><span class="field-name">currentLocation</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">estimatedDelivery</span><span class="field-type">LocalDate</span></div>
-            <div class="field"><span class="field-name">deliveredAt</span><span class="field-type">LocalDateTime</span></div>
-            <div class="field"><span class="field-name">events</span><span class="field-type">List&lt;TrackingEvent&gt;</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Return</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">orderId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">orderItemId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">userId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">reason</span><span class="field-type">ReturnReason</span></div>
-            <div class="field"><span class="field-name">description</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">refundAmount</span><span class="field-type">BigDecimal</span></div>
-            <div class="field"><span class="field-name">status</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Wishlist</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">userId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">productId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">addedAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>Address</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">userId</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">fullName</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">phone</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">line1</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">line2</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">city</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">state</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">pincode</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">isDefault</span><span class="field-type">Boolean</span></div>
-        </div>
-        <div class="entity-card">
-            <h3>User</h3>
-            <div class="field"><span class="field-name">id</span><span class="field-type">Long</span></div>
-            <div class="field"><span class="field-name">name</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">email</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">phone</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">passwordHash</span><span class="field-type">String</span></div>
-            <div class="field"><span class="field-name">addresses</span><span class="field-type">List&lt;Address&gt;</span></div>
-            <div class="field"><span class="field-name">createdAt</span><span class="field-type">LocalDateTime</span></div>
-        </div>
-    </div>
-</div>
-
-<!-- ============ 3. ENUMS ============ -->
+<!-- ============ 2. ENUMS ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">3</span>Enums</div>
+    <div class="section-title"><span class="section-num">2</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card">
             <h3>OrderStatus</h3>
@@ -219,76 +72,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 4. INTERFACES ============ -->
-<div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">4</span>Interfaces &amp; SOLID Principles</div>
-
-    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Interface Segregation &mdash; Focused service contracts</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">IProductService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">IProductService</span> {
-    Product <span class="fn">createProduct</span>(ProductRequest req, Long sellerId);
-    Product <span class="fn">getProductById</span>(Long productId);
-    Page&lt;Product&gt; <span class="fn">getProductsByCategory</span>(Long categoryId, Pageable pageable);
-    <span class="tp">void</span> <span class="fn">updateProduct</span>(Long productId, ProductRequest req, Long sellerId);
-    <span class="tp">void</span> <span class="fn">delistProduct</span>(Long productId, Long sellerId);
-}
-    </pre></div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">ISearchService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">ISearchService</span> {
-    SearchResult <span class="fn">search</span>(String query, SearchFilters filters, Pageable pageable);
-    List&lt;String&gt; <span class="fn">autoSuggest</span>(String prefix);
-    <span class="tp">void</span> <span class="fn">indexProduct</span>(Product product);    <span class="cm">// sync to Elasticsearch</span>
-    <span class="tp">void</span> <span class="fn">removeFromIndex</span>(Long productId);
-}
-    </pre></div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">IOrderService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">IOrderService</span> {
-    Order <span class="fn">placeOrder</span>(OrderRequest req, Long userId);
-    Order <span class="fn">getOrder</span>(String orderId);
-    List&lt;Order&gt; <span class="fn">getUserOrders</span>(Long userId, Pageable pageable);
-    <span class="tp">void</span> <span class="fn">cancelOrder</span>(String orderId, Long userId);
-    <span class="tp">void</span> <span class="fn">updateOrderStatus</span>(String orderId, OrderStatus status);
-}
-    </pre></div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">IInventoryService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">IInventoryService</span> {
-    <span class="tp">boolean</span> <span class="fn">checkAvailability</span>(Long productId, <span class="tp">int</span> qty);
-    <span class="tp">void</span> <span class="fn">reserveStock</span>(Long productId, <span class="tp">int</span> qty, String orderId);   <span class="cm">// optimistic lock</span>
-    <span class="tp">void</span> <span class="fn">releaseStock</span>(Long productId, <span class="tp">int</span> qty, String orderId);
-    <span class="tp">void</span> <span class="fn">deductStock</span>(Long productId, <span class="tp">int</span> qty);
-    <span class="tp">int</span> <span class="fn">getAvailableStock</span>(Long productId, Long warehouseId);
-}
-    </pre></div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">ISellerService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">ISellerService</span> {
-    Seller <span class="fn">registerSeller</span>(SellerRequest req);
-    Seller <span class="fn">getSellerById</span>(Long sellerId);
-    <span class="tp">void</span> <span class="fn">verifySeller</span>(Long sellerId);
-    <span class="tp">void</span> <span class="fn">suspendSeller</span>(Long sellerId, String reason);
-    SellerDashboard <span class="fn">getDashboard</span>(Long sellerId);
-}
-    </pre></div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">IDeliveryService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">IDeliveryService</span> {
-    DeliveryTracking <span class="fn">assignDelivery</span>(Long orderId, Long warehouseId);
-    DeliveryTracking <span class="fn">trackDelivery</span>(String trackingNumber);
-    <span class="tp">void</span> <span class="fn">updateDeliveryStatus</span>(String trackingNumber, DeliveryStatus status, String location);
-    <span class="tp">void</span> <span class="fn">markDelivered</span>(String trackingNumber);
-}
-    </pre></div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">IReviewService.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">IReviewService</span> {
-    Review <span class="fn">addReview</span>(Long productId, Long userId, ReviewRequest req);
-    Page&lt;Review&gt; <span class="fn">getReviews</span>(Long productId, Pageable pageable);
-    RatingAggregation <span class="fn">getRatingAggregation</span>(Long productId);
-    <span class="tp">void</span> <span class="fn">markHelpful</span>(Long reviewId, Long userId);
-}
-    </pre></div>
-</div>
-
-<!-- ============ 5. CLASS DESIGN ============ -->
+<!-- ============ 3. CLASS DESIGN ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">5</span>Class Design (with Methods)</div>
+    <div class="section-title"><span class="section-num">3</span>Class Design (with Methods)</div>
 
     <div class="sub-heading" style="color:#ffab40;border-color:#ffab40">Product Search with Elasticsearch</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">ElasticsearchSearchService.java</span></div><pre class="code-block">
@@ -487,74 +273,437 @@ export default {
     </pre></div>
 </div>
 
-<!-- ============ 6. REPOSITORY LAYER ============ -->
-<div class="section theme-indigo">
-    <div class="section-title"><span class="section-num">6</span>Repository / DAO Layer</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Repositories.java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">ProductRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Product, Long&gt; {
-    Page&lt;Product&gt; <span class="fn">findByCategoryIdAndStatus</span>(Long catId, ProductStatus status, Pageable p);
-    List&lt;Product&gt; <span class="fn">findBySellerIdAndStatus</span>(Long sellerId, ProductStatus status);
+<!-- ============ 4. SERVICE LLD ============ -->
+<div class="section theme-yellow">
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
+    <div class="service-grid">
 
-    <span class="ann">@Modifying @Query</span>(<span class="st">"UPDATE Product p SET p.avgRating = :avg, p.totalReviews = :cnt WHERE p.id = :id"</span>)
-    <span class="tp">void</span> <span class="fn">updateRating</span>(Long id, Double avg, Integer cnt);
-}
+        <!-- ========== PRODUCT SERVICE ========== -->
+        <div class="service-card">
+            <h3>ProductService</h3>
+            <p class="svc-desc">Product catalog ka full CRUD &mdash; seller apna product add karta hai, update karta hai, category wise fetch hota hai aur delist bhi kar sakta hai. Ye sabse core service hai Amazon/Flipkart ki.</p>
 
-<span class="kw">interface</span> <span class="iface">OrderRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Order, Long&gt; {
-    Optional&lt;Order&gt; <span class="fn">findByOrderId</span>(String orderId);
-    Page&lt;Order&gt; <span class="fn">findByUserIdOrderByCreatedAtDesc</span>(Long userId, Pageable p);
-    <span class="tp">boolean</span> <span class="fn">existsByUserIdAndProductIdAndStatus</span>(Long userId, Long productId, OrderStatus status);
-}
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> createProduct(CreateProductRequest)</div>
+                <div class="method-return">Returns: <code>Product</code></div>
+                <div class="params-title">Parameters (CreateProductRequest):</div>
+                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">price</span><span class="param-type">BigDecimal</span></div>
+                <div class="param-row"><span class="param-name">mrp</span><span class="param-type">BigDecimal</span></div>
+                <div class="param-row"><span class="param-name">categoryId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">brand</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">images</span><span class="param-type">List&lt;String&gt;</span></div>
+                <div class="param-row"><span class="param-name">attributes</span><span class="param-type">Map&lt;String,String&gt;</span><span class="param-comment">// color, size, material etc</span></div>
+                <div class="param-row"><span class="param-name">status</span><span class="param-type">ProductStatus</span><span class="param-opt">[Optional]</span></div>
+            </div>
 
-<span class="kw">interface</span> <span class="iface">InventoryRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Inventory, Long&gt; {
-    <span class="ann">@Lock</span>(LockModeType.OPTIMISTIC)
-    <span class="ann">@Query</span>(<span class="st">"SELECT i FROM Inventory i WHERE i.productId = :productId"</span>)
-    Optional&lt;Inventory&gt; <span class="fn">findByProductIdWithLock</span>(Long productId);
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getProductById(productId)</div>
+                <div class="method-return">Returns: <code>Product</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+            </div>
 
-    List&lt;Inventory&gt; <span class="fn">findByWarehouseId</span>(Long warehouseId);
-}
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getByCategory(CategoryPageRequest)</div>
+                <div class="method-return">Returns: <code>Page&lt;Product&gt;</code></div>
+                <div class="params-title">Parameters (CategoryPageRequest):</div>
+                <div class="param-row"><span class="param-name">categoryId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
+                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
+            </div>
 
-<span class="kw">interface</span> <span class="iface">ReviewRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Review, Long&gt; {
-    Page&lt;Review&gt; <span class="fn">findByProductIdOrderByCreatedAtDesc</span>(Long productId, Pageable p);
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> updateProduct(UpdateProductRequest)</div>
+                <div class="method-return">Returns: <code>Product</code></div>
+                <div class="params-title">Parameters (UpdateProductRequest):</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span><span class="param-comment">// ownership check</span></div>
+                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">price</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">mrp</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">brand</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">images</span><span class="param-type">List&lt;String&gt;</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">attributes</span><span class="param-type">Map&lt;String,String&gt;</span><span class="param-opt">[Optional]</span></div>
+            </div>
 
-    <span class="ann">@Query</span>(<span class="st">"SELECT AVG(r.rating) FROM Review r WHERE r.productId = :productId"</span>)
-    Double <span class="fn">calculateAverageRating</span>(Long productId);
-
-    Integer <span class="fn">countByProductId</span>(Long productId);
-}
-
-<span class="kw">interface</span> <span class="iface">SellerRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Seller, Long&gt; {
-    Optional&lt;Seller&gt; <span class="fn">findByGstin</span>(String gstin);
-}
-
-<span class="kw">interface</span> <span class="iface">DeliveryTrackingRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;DeliveryTracking, Long&gt; {
-    Optional&lt;DeliveryTracking&gt; <span class="fn">findByTrackingNumber</span>(String trackingNumber);
-    Optional&lt;DeliveryTracking&gt; <span class="fn">findByOrderId</span>(Long orderId);
-}
-
-<span class="kw">interface</span> <span class="iface">WishlistRepository</span> <span class="kw">extends</span> <span class="tp">JpaRepository</span>&lt;Wishlist, Long&gt; {
-    List&lt;Wishlist&gt; <span class="fn">findByUserId</span>(Long userId);
-    <span class="tp">void</span> <span class="fn">deleteByUserIdAndProductId</span>(Long userId, Long productId);
-}
-    </pre></div>
-    <div class="repo-grid" style="margin-top:20px">
-        <div class="repo-card">
-            <h3>Architecture Flow</h3>
-            <div class="flow-h">
-                <div class="flow-box flow-green" style="min-width:120px">Controller</div>
-                <span class="flow-h-arrow">&#10132;</span>
-                <div class="flow-box flow-blue" style="min-width:120px">Service</div>
-                <span class="flow-h-arrow">&#10132;</span>
-                <div class="flow-box flow-purple" style="min-width:120px">Repository</div>
-                <span class="flow-h-arrow">&#10132;</span>
-                <div class="flow-box flow-pink" style="min-width:120px">DB / ES</div>
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">5</span> delistProduct(productId, sellerId)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span><span class="param-comment">// seller apna hi product delist kar sakta</span></div>
             </div>
         </div>
+
+        <!-- ========== SEARCH SERVICE ========== -->
+        <div class="service-card">
+            <h3>SearchService</h3>
+            <p class="svc-desc">Elasticsearch pe product search hota hai &mdash; user keyword type karta hai, auto-suggest aata hai, filters lagaata hai aur results milte hain. Product index bhi yahi service manage karti hai.</p>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> search(SearchRequest)</div>
+                <div class="method-return">Returns: <code>SearchResult</code></div>
+                <div class="params-title">Parameters (SearchRequest):</div>
+                <div class="param-row"><span class="param-name">query</span><span class="param-type">String</span><span class="param-comment">// "wireless headphones"</span></div>
+                <div class="param-row"><span class="param-name">categoryId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">minPrice</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">maxPrice</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">brand</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">minRating</span><span class="param-type">Double</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">sortBy</span><span class="param-type">String</span><span class="param-comment">// relevance, price_asc, price_desc, popularity</span></div>
+                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
+                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> autoSuggest(prefix)</div>
+                <div class="method-return">Returns: <code>List&lt;String&gt;</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">prefix</span><span class="param-type">String</span><span class="param-comment">// user ne "wire" type kiya toh "wireless headphones" suggest hoga</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> indexProduct(product)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">product</span><span class="param-type">Product</span><span class="param-comment">// DB me save hone ke baad Elasticsearch me sync</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> removeFromIndex(productId)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+            </div>
+        </div>
+
+        <!-- ========== ORDER SERVICE ========== -->
+        <div class="service-card">
+            <h3>OrderService</h3>
+            <p class="svc-desc">Order place karna, order details dekhna, cancel karna aur status update karna &mdash; Saga pattern se inventory reserve hota hai, payment hota hai, fail hone pe compensate hota hai.</p>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> placeOrder(PlaceOrderRequest)</div>
+                <div class="method-return">Returns: <code>Order</code></div>
+                <div class="params-title">Parameters (PlaceOrderRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">items</span><span class="param-type">List&lt;CartItem&gt;</span><span class="param-comment">// productId + qty per item</span></div>
+                <div class="param-row"><span class="param-name">addressId</span><span class="param-type">Long</span><span class="param-comment">// shipping address</span></div>
+                <div class="param-row"><span class="param-name">paymentMethod</span><span class="param-type">String</span><span class="param-comment">// UPI, CARD, COD</span></div>
+                <div class="param-row"><span class="param-name">couponCode</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getOrder(orderId)</div>
+                <div class="method-return">Returns: <code>Order</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span><span class="param-comment">// UUID format e.g. ORD-abc123</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getUserOrders(UserOrdersRequest)</div>
+                <div class="method-return">Returns: <code>Page&lt;Order&gt;</code></div>
+                <div class="params-title">Parameters (UserOrdersRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
+                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> cancelOrder(CancelOrderRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (CancelOrderRequest):</div>
+                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// verify ki apna hi order cancel kar raha</span></div>
+                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">5</span> updateOrderStatus(StatusUpdateRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (StatusUpdateRequest):</div>
+                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">status</span><span class="param-type">OrderStatus</span><span class="param-comment">// SHIPPED, DELIVERED etc</span></div>
+            </div>
+        </div>
+
+        <!-- ========== INVENTORY SERVICE ========== -->
+        <div class="service-card">
+            <h3>InventoryService</h3>
+            <p class="svc-desc">Product stock track karna &mdash; availability check, checkout pe stock reserve, cancel pe release, aur confirm pe deduct. Optimistic locking se overselling nahi hota.</p>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> checkAvailability(AvailabilityRequest)</div>
+                <div class="method-return">Returns: <code>boolean</code></div>
+                <div class="params-title">Parameters (AvailabilityRequest):</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span></div>
+                <div class="param-row"><span class="param-name">warehouseId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> reserveStock(ReserveStockRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (ReserveStockRequest):</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span></div>
+                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span><span class="param-comment">// 15 min TTL ke baad auto-release</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> releaseStock(ReleaseStockRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (ReleaseStockRequest):</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span></div>
+                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span><span class="param-comment">// cancel ya timeout pe release</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> deductStock(DeductStockRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (DeductStockRequest):</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span><span class="param-comment">// payment confirm hone ke baad final deduct</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">5</span> getAvailableStock(productId, warehouseId)</div>
+                <div class="method-return">Returns: <code>int</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">warehouseId</span><span class="param-type">Long</span><span class="param-comment">// specific warehouse ka stock check</span></div>
+            </div>
+        </div>
+
+        <!-- ========== SELLER SERVICE ========== -->
+        <div class="service-card">
+            <h3>SellerService</h3>
+            <p class="svc-desc">Seller registration, GSTIN verify, suspend/block karna aur seller dashboard &mdash; naya seller register hota hai, admin verify karta hai, policy violation pe suspend hota hai.</p>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> registerSeller(SellerRegistrationRequest)</div>
+                <div class="method-return">Returns: <code>Seller</code></div>
+                <div class="params-title">Parameters (SellerRegistrationRequest):</div>
+                <div class="param-row"><span class="param-name">businessName</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">gstin</span><span class="param-type">String</span><span class="param-comment">// 15-digit GST number</span></div>
+                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">phone</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">warehouseIds</span><span class="param-type">List&lt;Long&gt;</span><span class="param-opt">[Optional]</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getSellerById(sellerId)</div>
+                <div class="method-return">Returns: <code>Seller</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> verifySeller(sellerId)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span><span class="param-comment">// admin GSTIN aur docs verify karke approve karta</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> suspendSeller(SuspendSellerRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (SuspendSellerRequest):</div>
+                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-comment">// "fake products", "policy violation" etc</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">5</span> getDashboard(sellerId)</div>
+                <div class="method-return">Returns: <code>SellerDashboard</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span><span class="param-comment">// total sales, orders, ratings, revenue dikhata hai</span></div>
+            </div>
+        </div>
+
+        <!-- ========== DELIVERY SERVICE ========== -->
+        <div class="service-card">
+            <h3>DeliveryService</h3>
+            <p class="svc-desc">Delivery assign karna, live tracking, status update aur delivered mark karna &mdash; State Machine se valid transitions enforce hote hain (e.g. DELIVERED ke baad IN_TRANSIT nahi ho sakta).</p>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> assignDelivery(AssignDeliveryRequest)</div>
+                <div class="method-return">Returns: <code>DeliveryTracking</code></div>
+                <div class="params-title">Parameters (AssignDeliveryRequest):</div>
+                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">warehouseId</span><span class="param-type">Long</span><span class="param-comment">// nearest warehouse se pickup</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> trackDelivery(trackingNumber)</div>
+                <div class="method-return">Returns: <code>DeliveryTracking</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">trackingNumber</span><span class="param-type">String</span><span class="param-comment">// e.g. TRK-xyz789</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> updateDeliveryStatus(DeliveryStatusUpdateRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (DeliveryStatusUpdateRequest):</div>
+                <div class="param-row"><span class="param-name">trackingNumber</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">status</span><span class="param-type">DeliveryStatus</span><span class="param-comment">// IN_TRANSIT, AT_HUB, OUT_FOR_DELIVERY</span></div>
+                <div class="param-row"><span class="param-name">location</span><span class="param-type">String</span><span class="param-comment">// "Mumbai Hub", "Delhi Warehouse" etc</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> markDelivered(trackingNumber)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">trackingNumber</span><span class="param-type">String</span><span class="param-comment">// delivery boy OTP verify karke mark delivered</span></div>
+            </div>
+        </div>
+
+        <!-- ========== REVIEW SERVICE ========== -->
+        <div class="service-card">
+            <h3>ReviewService</h3>
+            <p class="svc-desc">Product reviews aur ratings manage karna &mdash; sirf verified purchase wale hi review de sakte hain. Average rating auto-update hota hai product pe. Helpful mark bhi kar sakte ho.</p>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> addReview(AddReviewRequest)</div>
+                <div class="method-return">Returns: <code>Review</code></div>
+                <div class="params-title">Parameters (AddReviewRequest):</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// verified purchase check hota hai</span></div>
+                <div class="param-row"><span class="param-name">rating</span><span class="param-type">Integer</span><span class="param-comment">// 1 to 5</span></div>
+                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">body</span><span class="param-type">String</span></div>
+                <div class="param-row"><span class="param-name">images</span><span class="param-type">List&lt;String&gt;</span><span class="param-opt">[Optional]</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> getReviews(ProductReviewsRequest)</div>
+                <div class="method-return">Returns: <code>Page&lt;Review&gt;</code></div>
+                <div class="params-title">Parameters (ProductReviewsRequest):</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
+                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getRatingAggregation(productId)</div>
+                <div class="method-return">Returns: <code>RatingAggregation</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span><span class="param-comment">// average rating + star-wise breakdown</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">4</span> markHelpful(reviewId, userId)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">reviewId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// ek user ek review pe sirf ek baar helpful mark kar sakta</span></div>
+            </div>
+        </div>
+
+        <!-- ========== WISHLIST SERVICE ========== -->
+        <div class="service-card">
+            <h3>WishlistService</h3>
+            <p class="svc-desc">User apne pasand ke products save kar sakta hai baad me khareedne ke liye &mdash; add, remove aur full wishlist fetch karna.</p>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> addToWishlist(WishlistRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (WishlistRequest):</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> removeFromWishlist(userId, productId)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> getWishlist(userId)</div>
+                <div class="method-return">Returns: <code>List&lt;Product&gt;</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// user ke saved products list</span></div>
+            </div>
+        </div>
+
+        <!-- ========== RETURN SERVICE ========== -->
+        <div class="service-card">
+            <h3>ReturnService</h3>
+            <p class="svc-desc">Return aur refund handle karna &mdash; customer return request raise karta hai, admin approve karta hai, refund process hota hai. Wrong item ya defective pe auto-approve bhi hota hai.</p>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">1</span> initiateReturn(InitiateReturnRequest)</div>
+                <div class="method-return">Returns: <code>Return</code></div>
+                <div class="params-title">Parameters (InitiateReturnRequest):</div>
+                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">orderItemId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">reason</span><span class="param-type">ReturnReason</span><span class="param-comment">// DEFECTIVE, WRONG_ITEM etc</span></div>
+                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
+                <div class="param-row"><span class="param-name">images</span><span class="param-type">List&lt;String&gt;</span><span class="param-opt">[Optional]</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">2</span> approveReturn(returnId)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters:</div>
+                <div class="param-row"><span class="param-name">returnId</span><span class="param-type">Long</span><span class="param-comment">// admin approve karega, refund trigger hoga</span></div>
+            </div>
+
+            <div class="method-block">
+                <div class="method-sig"><span class="method-num">3</span> processRefund(ProcessRefundRequest)</div>
+                <div class="method-return">Returns: <code>void</code></div>
+                <div class="params-title">Parameters (ProcessRefundRequest):</div>
+                <div class="param-row"><span class="param-name">returnId</span><span class="param-type">Long</span></div>
+                <div class="param-row"><span class="param-name">refundAmount</span><span class="param-type">BigDecimal</span></div>
+                <div class="param-row"><span class="param-name">refundMode</span><span class="param-type">String</span><span class="param-comment">// ORIGINAL_PAYMENT, WALLET</span></div>
+            </div>
+        </div>
+
     </div>
 </div>
 
-<!-- ============ 7. DB SCHEMA ============ -->
+<!-- ============ 5. DB SCHEMA ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">7</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">5</span>Database Schema</div>
+
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Products, orders, users, sellers, inventory &mdash; ACID transactions for e-commerce data</div>
+            <div class="dbtech-tables"><span>products</span><span>orders</span><span>users</span><span>sellers</span><span>inventory</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Cart sessions, stock availability cache, product detail cache</div>
+            <div class="dbtech-tables"><span>cart:{userId}</span><span>stock:{productId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Elasticsearch <span class="dbtech-type">Search Engine</span></div>
+            <div class="dbtech-usage">Product search with auto-suggest, filters, faceted search</div>
+            <div class="dbtech-tables"><span>products</span><span>categories</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
+            <div class="dbtech-usage">Order processing pipeline &mdash; order-placed &rarr; inventory-reserved &rarr; payment &rarr; confirmed</div>
+            <div class="dbtech-tables"><span>order-placed</span><span>order-confirmed</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">S3 <span class="dbtech-type">Blob Storage</span></div>
+            <div class="dbtech-usage">Product images, seller documents, invoice PDFs</div>
+            <div class="dbtech-tables"><span>product-images</span><span>documents</span></div>
+        </div>
+    </div>
+
     <div class="db-grid">
         <div class="db-table">
             <h3>products</h3>
@@ -658,9 +807,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 8. APIs ============ -->
+<!-- ============ 6. APIs ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">8</span>REST API Endpoints</div>
+    <div class="section-title"><span class="section-num">6</span>REST API Endpoints</div>
     <div class="api-grid">
         <div class="api-card">
             <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/products/search?q={query}&amp;category={id}&amp;minPrice={}&amp;maxPrice={}&amp;sort={}&amp;page={}&amp;size={}</span></div>
@@ -714,81 +863,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 9. SERVICES ============ -->
-<div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">9</span>Service Layer</div>
-    <div class="service-grid">
-        <div class="service-card">
-            <h3>ProductService</h3>
-            <p class="svc-desc">Manages products — create, view, update, and remove from listing</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Add a new product to the catalog</div><code>Product createProduct(CreateProductRequest request, Long sellerId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get product details by ID</div><code>Product getProductById(Long productId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all products in a category</div><code>Page&lt;Product&gt; getByCategory(Long categoryId, Pageable pageable)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Update product info (price, description, etc.)</div><code>Product updateProduct(Long productId, UpdateProductRequest request)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Remove a product from the store</div><code>void delistProduct(Long productId, Long sellerId)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>SearchService</h3>
-            <p class="svc-desc">Helps users find products using search and auto-suggestions</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Search products by keyword</div><code>Page&lt;Product&gt; search(String query, SearchFilters filters, Pageable pageable)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Show suggestions as user types</div><code>List&lt;String&gt; autoSuggest(String prefix)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Add a product to the search index</div><code>void indexProduct(Product product)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Remove a product from search index</div><code>void removeFromIndex(Long productId)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>OrderService</h3>
-            <p class="svc-desc">Handles placing, viewing, canceling orders and updating order status</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Place a new order</div><code>Order placeOrder(Long userId, PlaceOrderRequest request)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get order details by ID</div><code>Order getOrder(String orderId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all orders for a user</div><code>Page&lt;Order&gt; getUserOrders(Long userId, Pageable pageable)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Cancel an order (if allowed)</div><code>void cancelOrder(String orderId, Long userId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Update order status (shipped, delivered, etc.)</div><code>void updateOrderStatus(String orderId, OrderStatus status)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>InventoryService</h3>
-            <p class="svc-desc">Tracks product stock — check availability, reserve, release, and deduct</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Check if product is in stock</div><code>boolean checkAvailability(Long productId, int quantity)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Reserve stock when user starts checkout</div><code>boolean reserveStock(Long productId, int quantity, String orderId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Release stock if order is canceled</div><code>void releaseStock(Long productId, int quantity, String orderId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Remove stock after order is confirmed</div><code>void deductStock(Long productId, int quantity)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>SellerService</h3>
-            <p class="svc-desc">Manages sellers — registration, verification, suspension, and dashboard</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Register a new seller</div><code>Seller registerSeller(SellerRegistrationRequest request)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Verify seller documents and approve</div><code>void verifySeller(Long sellerId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Suspend a seller for policy violation</div><code>void suspendSeller(Long sellerId, String reason)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get seller's sales dashboard</div><code>SellerDashboard getDashboard(Long sellerId)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>DeliveryService</h3>
-            <p class="svc-desc">Handles delivery — assign driver, track package, update status</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Assign a delivery partner to an order</div><code>Delivery assignDelivery(String orderId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Track where the package is right now</div><code>DeliveryStatus trackDelivery(String orderId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Update delivery status (picked up, on the way, etc.)</div><code>void updateStatus(String deliveryId, DeliveryStatus status)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Mark order as delivered</div><code>void markDelivered(String deliveryId)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>ReviewService</h3>
-            <p class="svc-desc">Manages product reviews and ratings from buyers</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Write a review for a product</div><code>Review addReview(Long userId, Long productId, ReviewRequest request)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all reviews for a product</div><code>Page&lt;Review&gt; getReviews(Long productId, Pageable pageable)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get average rating and star breakdown</div><code>RatingAggregation getRatingAggregation(Long productId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Mark a review as helpful</div><code>void markHelpful(Long reviewId, Long userId)</code></div>
-        </div>
-        <div class="service-card">
-            <h3>WishlistService</h3>
-            <p class="svc-desc">Lets users save products they want to buy later</p>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Save a product to wishlist</div><code>void addToWishlist(Long userId, Long productId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Remove a product from wishlist</div><code>void removeFromWishlist(Long userId, Long productId)</code></div>
-            <div class="svc-fn"><div class="fn-desc"><span class="method-dot"></span> Get all products in user's wishlist</div><code>List&lt;Product&gt; getWishlist(Long userId)</code></div>
-        </div>
-    </div>
-</div>
-
-<!-- ============ 10. KEY ARCHITECTURE ============ -->
+<!-- ============ 7. KEY ARCHITECTURE ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">10</span>Key Architecture Components</div>
+    <div class="section-title"><span class="section-num">7</span>Key Architecture Components</div>
 
     <div class="sub-heading" style="color:#ff5252;border-color:#ff5252">Search Engine &mdash; Elasticsearch</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Elasticsearch Integration</span></div><pre class="code-block">
@@ -878,9 +955,9 @@ export default {
     </pre></div>
 </div>
 
-<!-- ============ 11. DESIGN PATTERNS ============ -->
+<!-- ============ 8. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">11</span>Design Patterns (with Code)</div>
+    <div class="section-title"><span class="section-num">8</span>Design Patterns (with Code)</div>
 
     <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Strategy Pattern &mdash; Search Ranking</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">SearchRankingStrategy.java</span></div><pre class="code-block">
@@ -1097,9 +1174,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 12. SEQUENCE FLOW ============ -->
+<!-- ============ 9. SEQUENCE FLOW ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">12</span>Sequence Flow &mdash; Search to Delivery</div>
+    <div class="section-title"><span class="section-num">9</span>Sequence Flow &mdash; Search to Delivery</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User Searches for Product</div>
         <div class="flow-arrow arrow-green"></div>
@@ -1123,9 +1200,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 13. CAPACITY ESTIMATION ============ -->
+<!-- ============ 10. CAPACITY ESTIMATION ============ -->
 <div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">13</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
     <div class="assumption-box">
         <h4>Base Assumptions</h4>
         <div class="assumption-row"><span class="calc-label">Total products in catalog</span><span class="calc-value">50 Million</span></div>
@@ -1179,9 +1256,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 14. BOTTLENECKS ============ -->
+<!-- ============ 11. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item">
             <span class="bottleneck-problem">Search Latency at Scale</span>
@@ -1206,9 +1283,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 15. EDGE CASES ============ -->
+<!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-amber">
-    <div class="section-title"><span class="section-num">15</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>Flash Sale Overselling</h4>
@@ -1233,9 +1310,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 16. SECURITY ============ -->
+<!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">16</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#9670;</span>
@@ -1256,9 +1333,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 17. SUMMARY ============ -->
+<!-- ============ 14. SUMMARY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">17</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Elasticsearch + CQRS</h4><p>Read-Heavy Product Catalog</p></div>
         <div class="summary-card sc-2"><h4>Saga Pattern + Kafka</h4><p>Distributed Order Processing</p></div>
