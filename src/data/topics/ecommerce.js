@@ -23,8 +23,21 @@ export default {
     </div>
 </div>
 
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; search &amp; checkout &lt; 500ms me ho</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, especially sale time</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; flash sale pe 10x traffic handle karo</div>
+        <div class="req-pill"><span class="num">4</span> Consistency &mdash; inventory &amp; payment ACID guarantee</div>
+        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; payment fail pe graceful retry ho</div>
+        <div class="req-pill"><span class="num">6</span> Security &mdash; user data &amp; payment info encrypted rahe</div>
+    </div>
+</div>
+
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card"><h3>CartStatus</h3><div class="enum-val">ACTIVE</div><div class="enum-val">CHECKED_OUT</div><div class="enum-val">ABANDONED</div><div class="enum-val">MERGED</div></div>
         <div class="enum-card"><h3>OrderStatus</h3><div class="enum-val">CREATED</div><div class="enum-val">PAYMENT_PENDING</div><div class="enum-val">CONFIRMED</div><div class="enum-val">PROCESSING</div><div class="enum-val">SHIPPED</div><div class="enum-val">DELIVERED</div><div class="enum-val">CANCELLED</div><div class="enum-val">RETURNED</div></div>
@@ -33,112 +46,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
-
-    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
-    <div class="dbtech-grid">
-        <div class="dbtech-card">
-            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
-            <div class="dbtech-usage">Products, orders, inventory, coupons &mdash; ACID for inventory locking &amp; order creation</div>
-            <div class="dbtech-tables"><span>products</span><span>orders</span><span>inventory</span><span>coupons</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
-            <div class="dbtech-usage">Shopping cart (TTL-based), stock cache, session store, coupon usage dedup</div>
-            <div class="dbtech-tables"><span>cart:{userId}</span><span>stock:{productId}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Elasticsearch <span class="dbtech-type">Search Engine</span></div>
-            <div class="dbtech-usage">Product search with filters, faceted navigation, auto-suggest</div>
-            <div class="dbtech-tables"><span>products</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
-            <div class="dbtech-usage">Async order pipeline &mdash; inventory-reserved &rarr; payment &rarr; order-confirmed</div>
-            <div class="dbtech-tables"><span>order-events</span><span>stock-updates</span></div>
-        </div>
-    </div>
-
-    <div class="db-grid">
-        <div class="db-card">
-            <h3>carts</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX (nullable)</span></div>
-            <div class="db-row"><span class="col-name">session_id</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">coupon_code</span><span class="col-type">VARCHAR(32)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">subtotal</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">discount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint">DEFAULT 0</span></div>
-            <div class="db-row"><span class="col-name">tax</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint">DEFAULT 0</span></div>
-            <div class="db-row"><span class="col-name">total</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">DEFAULT 'ACTIVE'</span></div>
-            <div class="db-row"><span class="col-name">updated_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>cart_items</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">cart_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">product_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK</span></div>
-            <div class="db-row"><span class="col-name">quantity</span><span class="col-type">INT</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">unit_price</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-        </div>
-        <div class="db-card">
-            <h3>inventory</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">product_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK UNIQUE(product,warehouse)</span></div>
-            <div class="db-row"><span class="col-name">warehouse_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK</span></div>
-            <div class="db-row"><span class="col-name">total_stock</span><span class="col-type">INT</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">reserved</span><span class="col-type">INT</span><span class="col-constraint">DEFAULT 0</span></div>
-            <div class="db-row"><span class="col-name">version</span><span class="col-type">BIGINT</span><span class="col-constraint">OCC</span></div>
-        </div>
-        <div class="db-card">
-            <h3>coupons</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">code</span><span class="col-type">VARCHAR(32)</span><span class="col-constraint">UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">value</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">min_order_amount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">max_discount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">usage_limit</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">used_count</span><span class="col-type">INT</span><span class="col-constraint">DEFAULT 0</span></div>
-            <div class="db-row"><span class="col-name">valid_from</span><span class="col-type">TIMESTAMP</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">valid_to</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>orders</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">order_id</span><span class="col-type">VARCHAR(36)</span><span class="col-constraint">UNIQUE IDX</span></div>
-            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">shipping_address_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK</span></div>
-            <div class="db-row"><span class="col-name">subtotal</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">discount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">tax</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">total</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">payment_id</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-    </div>
-</div>
-
-<div class="section theme-purple">
-    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
-    <div class="api-grid">
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/cart</div><div class="api-desc">Get current user's cart with price breakdown</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/cart/items</div><div class="api-desc">Add item to cart (validates stock)</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/cart/items/{productId}</div><div class="api-desc">Update item quantity</div></div>
-        <div class="api-card"><div class="api-method delete">DELETE</div><div class="api-path">/api/v1/cart/items/{productId}</div><div class="api-desc">Remove item from cart</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/cart/coupon</div><div class="api-desc">Apply coupon code</div></div>
-        <div class="api-card"><div class="api-method delete">DELETE</div><div class="api-path">/api/v1/cart/coupon</div><div class="api-desc">Remove applied coupon</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/checkout</div><div class="api-desc">Place order (reserve stock &rarr; create order &rarr; initiate payment)</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/orders/{orderId}</div><div class="api-desc">Get order details &amp; status</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/orders/{orderId}/cancel</div><div class="api-desc">Cancel order (releases inventory)</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/inventory/{productId}</div><div class="api-desc">Check available stock</div></div>
-    </div>
-</div>
-
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>CartService</h3>
@@ -289,8 +198,136 @@ export default {
     </div>
 </div>
 
+<div class="section theme-purple">
+    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="api-grid">
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/cart</div><div class="api-desc">Get current user's cart with price breakdown</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/cart/items</div><div class="api-desc">Add item to cart (validates stock)</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/cart/items/{productId}</div><div class="api-desc">Update item quantity</div></div>
+        <div class="api-card"><div class="api-method delete">DELETE</div><div class="api-path">/api/v1/cart/items/{productId}</div><div class="api-desc">Remove item from cart</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/cart/coupon</div><div class="api-desc">Apply coupon code</div></div>
+        <div class="api-card"><div class="api-method delete">DELETE</div><div class="api-path">/api/v1/cart/coupon</div><div class="api-desc">Remove applied coupon</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/checkout</div><div class="api-desc">Place order (reserve stock &rarr; create order &rarr; initiate payment)</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/orders/{orderId}</div><div class="api-desc">Get order details &amp; status</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/orders/{orderId}/cancel</div><div class="api-desc">Cancel order (releases inventory)</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/inventory/{productId}</div><div class="api-desc">Check available stock</div></div>
+    </div>
+</div>
+
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
+
+    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Products, orders, inventory, coupons &mdash; ACID for inventory locking &amp; order creation</div>
+            <div class="dbtech-tables"><span>products</span><span>orders</span><span>inventory</span><span>coupons</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Shopping cart (TTL-based), stock cache, session store, coupon usage dedup</div>
+            <div class="dbtech-tables"><span>cart:{userId}</span><span>stock:{productId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Elasticsearch <span class="dbtech-type">Search Engine</span></div>
+            <div class="dbtech-usage">Product search with filters, faceted navigation, auto-suggest</div>
+            <div class="dbtech-tables"><span>products</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
+            <div class="dbtech-usage">Async order pipeline &mdash; inventory-reserved &rarr; payment &rarr; order-confirmed</div>
+            <div class="dbtech-tables"><span>order-events</span><span>stock-updates</span></div>
+        </div>
+    </div>
+
+    <div class="db-grid">
+        <div class="db-card">
+            <h3>carts</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX (nullable)</span></div>
+            <div class="db-row"><span class="col-name">session_id</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">coupon_code</span><span class="col-type">VARCHAR(32)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">subtotal</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">discount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint">DEFAULT 0</span></div>
+            <div class="db-row"><span class="col-name">tax</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint">DEFAULT 0</span></div>
+            <div class="db-row"><span class="col-name">total</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">DEFAULT 'ACTIVE'</span></div>
+            <div class="db-row"><span class="col-name">updated_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>cart_items</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">cart_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">product_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK</span></div>
+            <div class="db-row"><span class="col-name">quantity</span><span class="col-type">INT</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">unit_price</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+        </div>
+        <div class="db-card">
+            <h3>inventory</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">product_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK UNIQUE(product,warehouse)</span></div>
+            <div class="db-row"><span class="col-name">warehouse_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK</span></div>
+            <div class="db-row"><span class="col-name">total_stock</span><span class="col-type">INT</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">reserved</span><span class="col-type">INT</span><span class="col-constraint">DEFAULT 0</span></div>
+            <div class="db-row"><span class="col-name">version</span><span class="col-type">BIGINT</span><span class="col-constraint">OCC</span></div>
+        </div>
+        <div class="db-card">
+            <h3>coupons</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">code</span><span class="col-type">VARCHAR(32)</span><span class="col-constraint">UNIQUE</span></div>
+            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">value</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">min_order_amount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">max_discount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">usage_limit</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">used_count</span><span class="col-type">INT</span><span class="col-constraint">DEFAULT 0</span></div>
+            <div class="db-row"><span class="col-name">valid_from</span><span class="col-type">TIMESTAMP</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">valid_to</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>orders</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">order_id</span><span class="col-type">VARCHAR(36)</span><span class="col-constraint">UNIQUE IDX</span></div>
+            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">shipping_address_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK</span></div>
+            <div class="db-row"><span class="col-name">subtotal</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">discount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">tax</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">total</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">payment_id</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="section theme-blue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="cap-grid">
+        <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">10M</div></div>
+        <div class="cap-card"><div class="cap-label">Carts Created / Day</div><div class="cap-value">5M</div></div>
+        <div class="cap-card"><div class="cap-label">Checkout Rate</div><div class="cap-value">~20% (1M orders/day)</div></div>
+        <div class="cap-card"><div class="cap-label">Peak Orders / sec</div><div class="cap-value">~50 orders/sec (flash sale: 500/sec)</div></div>
+        <div class="cap-card"><div class="cap-label">Inventory Checks / sec</div><div class="cap-value">~5,000 QPS</div></div>
+        <div class="cap-card"><div class="cap-label">Cart Abandonment Rate</div><div class="cap-value">~70%</div></div>
+        <div class="cap-card"><div class="cap-label">Avg Cart Size</div><div class="cap-value">3.5 items</div></div>
+        <div class="cap-card"><div class="cap-label">Reservation TTL</div><div class="cap-value">15 minutes</div></div>
+        <div class="cap-card">
+            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Inventory check QPS</span><span class="calc-value">~5,000 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Peak checkout (flash sale)</span><span class="calc-value">~500 orders/sec</span></div>
+            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~2K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~5 servers</span></div>
+            <div class="calc-result"><span class="calc-label">Total CPU Cores (4 per server)</span><span class="calc-value">~20 cores</span></div>
+            <div class="calc-row"><span class="calc-label">Redis (cart + inventory lock)</span><span class="calc-value">3 nodes</span></div>
+            <div class="calc-row"><span class="calc-label">DB (orders, with replicas)</span><span class="calc-value">3 nodes</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="section theme-blue">
+    <div class="section-title"><span class="section-num">8</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">CheckoutService.java &mdash; Checkout Flow</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span> <span class="ann">@Transactional</span>
@@ -337,7 +374,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IPricingStrategy for discount types (percentage, flat, BOGO) &mdash; add new promotions without code changes</p></div>
         <div class="pattern-card"><h3>Builder</h3><p>Order.builder() constructs complex order from cart items, address, pricing, payment info</p></div>
@@ -349,7 +386,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">User adds items to cart &rarr; CartService validates stock availability</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">User applies coupon &rarr; CouponService validates &amp; calculates discount</span></div>
@@ -364,32 +401,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
-    <div class="cap-grid">
-        <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">10M</div></div>
-        <div class="cap-card"><div class="cap-label">Carts Created / Day</div><div class="cap-value">5M</div></div>
-        <div class="cap-card"><div class="cap-label">Checkout Rate</div><div class="cap-value">~20% (1M orders/day)</div></div>
-        <div class="cap-card"><div class="cap-label">Peak Orders / sec</div><div class="cap-value">~50 orders/sec (flash sale: 500/sec)</div></div>
-        <div class="cap-card"><div class="cap-label">Inventory Checks / sec</div><div class="cap-value">~5,000 QPS</div></div>
-        <div class="cap-card"><div class="cap-label">Cart Abandonment Rate</div><div class="cap-value">~70%</div></div>
-        <div class="cap-card"><div class="cap-label">Avg Cart Size</div><div class="cap-value">3.5 items</div></div>
-        <div class="cap-card"><div class="cap-label">Reservation TTL</div><div class="cap-value">15 minutes</div></div>
-        <div class="cap-card">
-            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Inventory check QPS</span><span class="calc-value">~5,000 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">Peak checkout (flash sale)</span><span class="calc-value">~500 orders/sec</span></div>
-            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~2K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~5 servers</span></div>
-            <div class="calc-result"><span class="calc-label">Total CPU Cores (4 per server)</span><span class="calc-value">~20 cores</span></div>
-            <div class="calc-row"><span class="calc-label">Redis (cart + inventory lock)</span><span class="calc-value">3 nodes</span></div>
-            <div class="calc-row"><span class="calc-label">DB (orders, with replicas)</span><span class="calc-value">3 nodes</span></div>
-        </div>
-    </div>
-</div>
-
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Flash Sale Overselling</h3><p>Optimistic locking with @Version; Redis atomic DECR for hot products; queue-based ordering for extreme cases</p></div>
         <div class="bottleneck-card"><h3>Inventory Hot Row</h3><p>Shard inventory by warehouse; Redis cache for read-heavy stock checks; DB only for writes</p></div>
@@ -401,7 +414,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Price Changed During Checkout</h3><p>Lock price at cart add time; re-validate at checkout; show user if price changed</p></div>
         <div class="edge-card"><h3>Item Out of Stock at Checkout</h3><p>Re-validate all items before reserving; partial checkout option or remove unavailable items</p></div>
@@ -413,7 +426,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>Price Manipulation</h3><p>Server-side price calculation; never trust client-sent prices; validate at every step</p></div>
         <div class="security-card"><h3>Coupon Abuse</h3><p>Per-user usage limits; device fingerprinting; velocity checks on coupon redemption</p></div>
@@ -424,7 +437,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Inventory</strong><br>Optimistic locking (@Version); reserve on checkout, confirm on payment, release on failure/timeout</div>
         <div class="summary-card"><strong>Pricing</strong><br>Strategy pattern for discount types; server-side calculation; tax by shipping state</div>

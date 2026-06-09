@@ -23,6 +23,8 @@ export default {
 </div>
 
 <!-- ============ 2. NON-FUNCTIONAL REQUIREMENTS ============ -->
+
+<!-- ============ 2. NON-FUNCTIONAL REQUIREMENTS ============ -->
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
@@ -34,6 +36,8 @@ export default {
         <div class="req-pill"><span class="num">6</span> Fault Tolerance &mdash; retry + circuit breaker</div>
     </div>
 </div>
+
+<!-- ============ 3. ENUMS ============ -->
 
 <!-- ============ 3. ENUMS ============ -->
 <div class="section theme-purple">
@@ -81,6 +85,8 @@ export default {
         </div>
     </div>
 </div>
+
+<!-- ============ 4. SERVICE LLD ============ -->
 
 <!-- ============ 4. SERVICE LLD ============ -->
 <div class="section theme-yellow">
@@ -294,8 +300,74 @@ export default {
 </div>
 
 <!-- ============ 5. DATABASE ============ -->
+
+<!-- ============ 5. APIs ============ -->
+<div class="section theme-teal">
+    <div class="section-title"><span class="section-num">5</span>REST API Endpoints</div>
+    <div class="api-grid">
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/foods</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request Body (FoodRequest)</div>{ <span class="key">"restaurantId"</span>: <span class="val">1</span>, <span class="key">"foodName"</span>: <span class="val">"Paneer Butter Masala"</span>, <span class="key">"categoryId"</span>: <span class="val">3</span>, <span class="key">"price"</span>: <span class="val">249.00</span>, <span class="key">"discountPrice"</span>: <span class="val">199.00</span>, <span class="key">"isVeg"</span>: <span class="val">true</span>, <span class="key">"preparationTime"</span>: <span class="val">20</span>, <span class="key">"ingredients"</span>: <span class="val">"paneer, butter, cream, tomato"</span>, <span class="key">"tags"</span>: <span class="val">"north indian, bestseller"</span> }</div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"id"</span>: <span class="val">42</span>, <span class="key">"foodName"</span>: <span class="val">"Paneer Butter Masala"</span>, <span class="key">"price"</span>: <span class="val">249.00</span>, <span class="key">"isAvailable"</span>: <span class="val">true</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-put">PUT</span><span class="api-path">/api/v1/foods/{foodId}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request Body (UpdateFoodRequest)</div>{ <span class="key">"foodName"</span>: <span class="val">"Paneer Butter Masala (Large)"</span>, <span class="key">"price"</span>: <span class="val">299.00</span>, <span class="key">"isAvailable"</span>: <span class="val">true</span> }</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"id"</span>: <span class="val">42</span>, <span class="key">"foodName"</span>: <span class="val">"Paneer Butter Masala (Large)"</span>, <span class="key">"price"</span>: <span class="val">299.00</span>, <span class="key">"updated"</span>: <span class="val">true</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-delete">DELETE</span><span class="api-path">/api/v1/foods/{foodId}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Path Param</div><span class="key">foodId</span>: <span class="val">42</span></div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"deleted"</span>: <span class="val">true</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/foods/search?keyword={}&amp;categoryId={}&amp;isVeg={}&amp;minPrice={}&amp;maxPrice={}&amp;sortBy={}&amp;page={}&amp;size={}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Params (SearchFoodRequest)</div><span class="key">keyword</span>: <span class="val">"paneer"</span><br><span class="key">categoryId</span>: <span class="val">3</span><br><span class="key">isVeg</span>: <span class="val">true</span><br><span class="key">minPrice</span>: <span class="val">100</span><br><span class="key">maxPrice</span>: <span class="val">500</span><br><span class="key">sortBy</span>: <span class="val">"price_asc | rating | popularity"</span></div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"foods"</span>: [{ <span class="key">"id"</span>: <span class="val">42</span>, <span class="key">"foodName"</span>: <span class="val">"Paneer Butter Masala"</span>, <span class="key">"price"</span>: <span class="val">249</span> }], <span class="key">"totalResults"</span>: <span class="val">38</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/orders</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"restaurantId"</span>: <span class="val">1</span>, <span class="key">"items"</span>: [{ <span class="key">"foodItemId"</span>: <span class="val">42</span>, <span class="key">"qty"</span>: <span class="val">2</span> }], <span class="key">"addressId"</span>: <span class="val">5</span>, <span class="key">"paymentMode"</span>: <span class="val">"UPI"</span>, <span class="key">"couponCode"</span>: <span class="val">"SAVE50"</span> }</div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"orderId"</span>: <span class="val">"ORD-abc123"</span>, <span class="key">"status"</span>: <span class="val">"PLACED"</span>, <span class="key">"total"</span>: <span class="val">448</span>, <span class="key">"estimatedDelivery"</span>: <span class="val">"35 mins"</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/orders/{orderId}/track</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"orderId"</span>: <span class="val">"ORD-abc123"</span>, <span class="key">"status"</span>: <span class="val">"ON_THE_WAY"</span>, <span class="key">"partnerName"</span>: <span class="val">"Rahul"</span>, <span class="key">"partnerLat"</span>: <span class="val">28.612</span>, <span class="key">"partnerLng"</span>: <span class="val">77.231</span>, <span class="key">"eta"</span>: <span class="val">"8 mins"</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/restaurants/nearby?lat={}&amp;lng={}&amp;radius={}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Params</div><span class="key">lat</span>: <span class="val">28.6139</span><br><span class="key">lng</span>: <span class="val">77.2090</span><br><span class="key">radius</span>: <span class="val">5</span> (km)</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"restaurants"</span>: [{ <span class="key">"id"</span>: <span class="val">1</span>, <span class="key">"name"</span>: <span class="val">"Pizza Palace"</span>, <span class="key">"avgRating"</span>: <span class="val">4.3</span>, <span class="key">"deliveryTime"</span>: <span class="val">"30 mins"</span> }] }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/cart/add</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"foodItemId"</span>: <span class="val">42</span>, <span class="key">"quantity"</span>: <span class="val">2</span> }</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"cartId"</span>: <span class="val">1</span>, <span class="key">"restaurantId"</span>: <span class="val">1</span>, <span class="key">"items"</span>: [...], <span class="key">"total"</span>: <span class="val">498</span> }</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 7. KEY ARCHITECTURE ============ -->
+
+<!-- ============ 6. DATABASE ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">5</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
     <p style="color:#b0bec5;font-size:.9em;margin-bottom:16px"><strong style="color:#ff80ab">SQL kyun?</strong> food_items aur food_category (aur restaurant) ke beech relations, foreign keys, joins aur transactional consistency maintain karni hoti hai, jo relational databases better handle karte hain.<br><strong style="color:#ff80ab">NoSQL kyun nahi?</strong> isme complex relations, joins, foreign key constraints aur strong transactional consistency efficiently maintain karna comparatively difficult hota hai.</p>
@@ -457,70 +529,55 @@ export default {
 </div>
 
 <!-- ============ 6. APIs ============ -->
-<div class="section theme-teal">
-    <div class="section-title"><span class="section-num">6</span>REST API Endpoints</div>
-    <div class="api-grid">
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/foods</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request Body (FoodRequest)</div>{ <span class="key">"restaurantId"</span>: <span class="val">1</span>, <span class="key">"foodName"</span>: <span class="val">"Paneer Butter Masala"</span>, <span class="key">"categoryId"</span>: <span class="val">3</span>, <span class="key">"price"</span>: <span class="val">249.00</span>, <span class="key">"discountPrice"</span>: <span class="val">199.00</span>, <span class="key">"isVeg"</span>: <span class="val">true</span>, <span class="key">"preparationTime"</span>: <span class="val">20</span>, <span class="key">"ingredients"</span>: <span class="val">"paneer, butter, cream, tomato"</span>, <span class="key">"tags"</span>: <span class="val">"north indian, bestseller"</span> }</div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"id"</span>: <span class="val">42</span>, <span class="key">"foodName"</span>: <span class="val">"Paneer Butter Masala"</span>, <span class="key">"price"</span>: <span class="val">249.00</span>, <span class="key">"isAvailable"</span>: <span class="val">true</span> }</div>
-            </div>
+
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="assumption-box">
+        <h4>Base Assumptions</h4>
+        <div class="assumption-row"><span class="calc-label">Daily Active Users (DAU)</span><span class="calc-value">10 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Total restaurants on platform</span><span class="calc-value">500K</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg orders per day</span><span class="calc-value">2 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg food items per restaurant</span><span class="calc-value">50</span></div>
+        <div class="assumption-row"><span class="calc-label">Delivery partners active</span><span class="calc-value">200K</span></div>
+    </div>
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Search Traffic</h4>
+            <div class="calc-row"><span class="calc-label">Searches/day (5 per user)</span><span class="calc-value">50M</span></div>
+            <div class="calc-row"><span class="calc-label">Searches/sec (avg)</span><span class="calc-value">~580 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Peak (lunch/dinner 5x)</span><span class="calc-value">~2,900 QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Elasticsearch Cluster</span><span class="calc-value">10+ nodes</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-put">PUT</span><span class="api-path">/api/v1/foods/{foodId}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request Body (UpdateFoodRequest)</div>{ <span class="key">"foodName"</span>: <span class="val">"Paneer Butter Masala (Large)"</span>, <span class="key">"price"</span>: <span class="val">299.00</span>, <span class="key">"isAvailable"</span>: <span class="val">true</span> }</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"id"</span>: <span class="val">42</span>, <span class="key">"foodName"</span>: <span class="val">"Paneer Butter Masala (Large)"</span>, <span class="key">"price"</span>: <span class="val">299.00</span>, <span class="key">"updated"</span>: <span class="val">true</span> }</div>
-            </div>
+        <div class="cap-card">
+            <h4>Order Processing</h4>
+            <div class="calc-row"><span class="calc-label">Orders/day</span><span class="calc-value">2M</span></div>
+            <div class="calc-row"><span class="calc-label">Orders/sec (avg)</span><span class="calc-value">~23 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Peak dinner time (10x)</span><span class="calc-value">~230 QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Write Throughput</span><span class="calc-value">~230 TPS (peak)</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-delete">DELETE</span><span class="api-path">/api/v1/foods/{foodId}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Path Param</div><span class="key">foodId</span>: <span class="val">42</span></div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"deleted"</span>: <span class="val">true</span> }</div>
-            </div>
+        <div class="cap-card">
+            <h4>Location Updates</h4>
+            <div class="calc-row"><span class="calc-label">Active delivery partners</span><span class="calc-value">200K</span></div>
+            <div class="calc-row"><span class="calc-label">Update frequency</span><span class="calc-value">Every 5 sec</span></div>
+            <div class="calc-row"><span class="calc-label">Location writes/sec</span><span class="calc-value">~40K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Redis GEO cluster</span><span class="calc-value">5+ nodes</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/foods/search?keyword={}&amp;categoryId={}&amp;isVeg={}&amp;minPrice={}&amp;maxPrice={}&amp;sortBy={}&amp;page={}&amp;size={}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Params (SearchFoodRequest)</div><span class="key">keyword</span>: <span class="val">"paneer"</span><br><span class="key">categoryId</span>: <span class="val">3</span><br><span class="key">isVeg</span>: <span class="val">true</span><br><span class="key">minPrice</span>: <span class="val">100</span><br><span class="key">maxPrice</span>: <span class="val">500</span><br><span class="key">sortBy</span>: <span class="val">"price_asc | rating | popularity"</span></div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"foods"</span>: [{ <span class="key">"id"</span>: <span class="val">42</span>, <span class="key">"foodName"</span>: <span class="val">"Paneer Butter Masala"</span>, <span class="key">"price"</span>: <span class="val">249</span> }], <span class="key">"totalResults"</span>: <span class="val">38</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/orders</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"restaurantId"</span>: <span class="val">1</span>, <span class="key">"items"</span>: [{ <span class="key">"foodItemId"</span>: <span class="val">42</span>, <span class="key">"qty"</span>: <span class="val">2</span> }], <span class="key">"addressId"</span>: <span class="val">5</span>, <span class="key">"paymentMode"</span>: <span class="val">"UPI"</span>, <span class="key">"couponCode"</span>: <span class="val">"SAVE50"</span> }</div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"orderId"</span>: <span class="val">"ORD-abc123"</span>, <span class="key">"status"</span>: <span class="val">"PLACED"</span>, <span class="key">"total"</span>: <span class="val">448</span>, <span class="key">"estimatedDelivery"</span>: <span class="val">"35 mins"</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/orders/{orderId}/track</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"orderId"</span>: <span class="val">"ORD-abc123"</span>, <span class="key">"status"</span>: <span class="val">"ON_THE_WAY"</span>, <span class="key">"partnerName"</span>: <span class="val">"Rahul"</span>, <span class="key">"partnerLat"</span>: <span class="val">28.612</span>, <span class="key">"partnerLng"</span>: <span class="val">77.231</span>, <span class="key">"eta"</span>: <span class="val">"8 mins"</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/restaurants/nearby?lat={}&amp;lng={}&amp;radius={}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Params</div><span class="key">lat</span>: <span class="val">28.6139</span><br><span class="key">lng</span>: <span class="val">77.2090</span><br><span class="key">radius</span>: <span class="val">5</span> (km)</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"restaurants"</span>: [{ <span class="key">"id"</span>: <span class="val">1</span>, <span class="key">"name"</span>: <span class="val">"Pizza Palace"</span>, <span class="key">"avgRating"</span>: <span class="val">4.3</span>, <span class="key">"deliveryTime"</span>: <span class="val">"30 mins"</span> }] }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/cart/add</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"foodItemId"</span>: <span class="val">42</span>, <span class="key">"quantity"</span>: <span class="val">2</span> }</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"cartId"</span>: <span class="val">1</span>, <span class="key">"restaurantId"</span>: <span class="val">1</span>, <span class="key">"items"</span>: [...], <span class="key">"total"</span>: <span class="val">498</span> }</div>
-            </div>
+        <div class="cap-card">
+            <h4>Storage</h4>
+            <div class="calc-row"><span class="calc-label">Food items (25M x 2KB)</span><span class="calc-value">~50 GB</span></div>
+            <div class="calc-row"><span class="calc-label">Food images (25M x 3 x 300KB)</span><span class="calc-value">~22 TB (S3)</span></div>
+            <div class="calc-row"><span class="calc-label">Orders/year (2M/day x 1KB)</span><span class="calc-value">~730 GB</span></div>
+            <div class="calc-result"><span class="calc-label">Total</span><span class="calc-value">~1 TB DB + 22 TB S3</span></div>
         </div>
     </div>
 </div>
 
-<!-- ============ 7. KEY ARCHITECTURE ============ -->
+<!-- ============ 11. BOTTLENECKS ============ -->
+
+<!-- ============ 8. KEY ARCHITECTURE ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture Components</div>
+    <div class="section-title"><span class="section-num">8</span>Key Architecture Components</div>
 
     <div class="sub-heading" style="color:#ff5252;border-color:#ff5252">Order Placement Flow &mdash; Saga Pattern</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">OrderServiceImpl.java</span></div><pre class="code-block">
@@ -604,8 +661,10 @@ export default {
 </div>
 
 <!-- ============ 8. DESIGN PATTERNS ============ -->
+
+<!-- ============ 9. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns</div>
 
     <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Strategy Pattern &mdash; Delivery Fee Calculation</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">DeliveryFeeStrategy.java</span></div><pre class="code-block">
@@ -695,8 +754,10 @@ export default {
 </div>
 
 <!-- ============ 9. SEQUENCE FLOW ============ -->
+
+<!-- ============ 10. SEQUENCE FLOW ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow &mdash; Order to Delivery</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow &mdash; Order to Delivery</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User searches food / browses restaurant</div>
         <div class="flow-arrow arrow-green"></div>
@@ -719,47 +780,6 @@ export default {
 </div>
 
 <!-- ============ 10. CAPACITY ESTIMATION ============ -->
-<div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
-    <div class="assumption-box">
-        <h4>Base Assumptions</h4>
-        <div class="assumption-row"><span class="calc-label">Daily Active Users (DAU)</span><span class="calc-value">10 Million</span></div>
-        <div class="assumption-row"><span class="calc-label">Total restaurants on platform</span><span class="calc-value">500K</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg orders per day</span><span class="calc-value">2 Million</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg food items per restaurant</span><span class="calc-value">50</span></div>
-        <div class="assumption-row"><span class="calc-label">Delivery partners active</span><span class="calc-value">200K</span></div>
-    </div>
-    <div class="cap-grid">
-        <div class="cap-card">
-            <h4>Search Traffic</h4>
-            <div class="calc-row"><span class="calc-label">Searches/day (5 per user)</span><span class="calc-value">50M</span></div>
-            <div class="calc-row"><span class="calc-label">Searches/sec (avg)</span><span class="calc-value">~580 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">Peak (lunch/dinner 5x)</span><span class="calc-value">~2,900 QPS</span></div>
-            <div class="calc-result"><span class="calc-label">Elasticsearch Cluster</span><span class="calc-value">10+ nodes</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>Order Processing</h4>
-            <div class="calc-row"><span class="calc-label">Orders/day</span><span class="calc-value">2M</span></div>
-            <div class="calc-row"><span class="calc-label">Orders/sec (avg)</span><span class="calc-value">~23 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">Peak dinner time (10x)</span><span class="calc-value">~230 QPS</span></div>
-            <div class="calc-result"><span class="calc-label">Write Throughput</span><span class="calc-value">~230 TPS (peak)</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>Location Updates</h4>
-            <div class="calc-row"><span class="calc-label">Active delivery partners</span><span class="calc-value">200K</span></div>
-            <div class="calc-row"><span class="calc-label">Update frequency</span><span class="calc-value">Every 5 sec</span></div>
-            <div class="calc-row"><span class="calc-label">Location writes/sec</span><span class="calc-value">~40K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">Redis GEO cluster</span><span class="calc-value">5+ nodes</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>Storage</h4>
-            <div class="calc-row"><span class="calc-label">Food items (25M x 2KB)</span><span class="calc-value">~50 GB</span></div>
-            <div class="calc-row"><span class="calc-label">Food images (25M x 3 x 300KB)</span><span class="calc-value">~22 TB (S3)</span></div>
-            <div class="calc-row"><span class="calc-label">Orders/year (2M/day x 1KB)</span><span class="calc-value">~730 GB</span></div>
-            <div class="calc-result"><span class="calc-label">Total</span><span class="calc-value">~1 TB DB + 22 TB S3</span></div>
-        </div>
-    </div>
-</div>
 
 <!-- ============ 11. BOTTLENECKS ============ -->
 <div class="section theme-red">
@@ -789,6 +809,8 @@ export default {
 </div>
 
 <!-- ============ 12. EDGE CASES ============ -->
+
+<!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-amber">
     <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
@@ -816,6 +838,8 @@ export default {
 </div>
 
 <!-- ============ 13. SECURITY ============ -->
+
+<!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
     <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
@@ -837,6 +861,8 @@ export default {
         </div>
     </div>
 </div>
+
+<!-- ============ 14. SUMMARY ============ -->
 
 <!-- ============ 14. SUMMARY ============ -->
 <div class="section theme-green">

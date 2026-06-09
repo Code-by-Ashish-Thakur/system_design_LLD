@@ -27,8 +27,23 @@ export default {
 </div>
 
 <!-- ============ 2. ENUMS ============ -->
+
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; message delivery &lt; 100ms real-time feel</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime hamesha online</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; millions concurrent WebSocket connections</div>
+        <div class="req-pill"><span class="num">4</span> Message Ordering &mdash; chat me messages sahi order me aaye</div>
+        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; offline pe message queue &amp; retry ho</div>
+        <div class="req-pill"><span class="num">6</span> Real-time &mdash; WebSocket se instant delivery guarantee</div>
+    </div>
+</div>
+
+<!-- ============ 3. ENUMS ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card">
             <h3>RoomType</h3>
@@ -63,186 +78,10 @@ export default {
 </div>
 
 <!-- ============ 3. DATABASE SCHEMA ============ -->
-<div class="section theme-pink">
-    <div class="section-title"><span class="section-num">3</span>Database Schema (with FK &amp; Indexes)</div>
 
-    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
-    <div class="dbtech-grid">
-        <div class="dbtech-card">
-            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
-            <div class="dbtech-usage">Users, rooms, participants &mdash; relational data with foreign keys</div>
-            <div class="dbtech-tables"><span>users</span><span>chat_rooms</span><span>participants</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">MongoDB <span class="dbtech-type">NoSQL</span></div>
-            <div class="dbtech-usage">Messages, attachments &mdash; flexible schema, fast writes, cursor-based pagination</div>
-            <div class="dbtech-tables"><span>messages</span><span>attachments</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
-            <div class="dbtech-usage">Presence tracking, WebSocket sessions, typing indicators, unread counts</div>
-            <div class="dbtech-tables"><span>presence:{userId}</span><span>session:{userId}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">S3 <span class="dbtech-type">Blob Storage</span></div>
-            <div class="dbtech-usage">File attachments &mdash; images, documents, videos uploaded in chat</div>
-            <div class="dbtech-tables"><span>attachments/{roomId}/{messageId}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Elasticsearch <span class="dbtech-type">Search Engine</span></div>
-            <div class="dbtech-usage">Full-text message search across chat rooms</div>
-            <div class="dbtech-tables"><span>messages</span></div>
-        </div>
-    </div>
-
-    <div class="db-grid">
-        <div class="db-table">
-            <h3>users</h3>
-            <ul>
-                <li><span class="pk">user_id BIGINT (PK, AUTO_INCREMENT)</span></li>
-                <li>username VARCHAR(50) UNIQUE</li>
-                <li>email VARCHAR(100) UNIQUE</li>
-                <li>display_name VARCHAR(100)</li>
-                <li>avatar_url VARCHAR(255)</li>
-                <li>status ENUM('ONLINE','AWAY','DND','OFFLINE')</li>
-                <li>last_seen_at TIMESTAMP</li>
-                <li>created_at TIMESTAMP</li>
-                <li><span class="idx">INDEX idx_username (username)</span></li>
-                <li><span class="idx">INDEX idx_email (email)</span></li>
-            </ul>
-        </div>
-        <div class="db-table">
-            <h3>chat_rooms</h3>
-            <ul>
-                <li><span class="pk">room_id VARCHAR(36) (PK)</span></li>
-                <li>name VARCHAR(100)</li>
-                <li>description VARCHAR(500)</li>
-                <li>room_type ENUM('PRIVATE','GROUP','CHANNEL')</li>
-                <li><span class="fk">created_by BIGINT (FK &rarr; users.user_id)</span></li>
-                <li>max_participants INT DEFAULT 500</li>
-                <li>last_message_at TIMESTAMP</li>
-                <li>is_archived BOOLEAN DEFAULT FALSE</li>
-                <li>created_at TIMESTAMP</li>
-                <li><span class="idx">INDEX idx_room_type (room_type)</span></li>
-                <li><span class="idx">INDEX idx_last_msg (last_message_at DESC)</span></li>
-            </ul>
-        </div>
-        <div class="db-table">
-            <h3>messages</h3>
-            <ul>
-                <li><span class="pk">message_id VARCHAR(36) (PK)</span></li>
-                <li><span class="fk">room_id VARCHAR(36) (FK &rarr; chat_rooms)</span></li>
-                <li><span class="fk">sender_id BIGINT (FK &rarr; users.user_id)</span></li>
-                <li>content TEXT</li>
-                <li>message_type ENUM('TEXT','IMAGE','FILE','VIDEO','AUDIO','SYSTEM')</li>
-                <li>parent_message_id VARCHAR(36)</li>
-                <li>is_pinned BOOLEAN DEFAULT FALSE</li>
-                <li>is_edited BOOLEAN DEFAULT FALSE</li>
-                <li>is_deleted BOOLEAN DEFAULT FALSE</li>
-                <li>created_at TIMESTAMP</li>
-                <li>updated_at TIMESTAMP</li>
-                <li>version BIGINT DEFAULT 0</li>
-                <li><span class="idx">INDEX idx_room_time (room_id, created_at DESC)</span></li>
-                <li><span class="idx">INDEX idx_sender (sender_id)</span></li>
-                <li><span class="idx">INDEX idx_pinned (room_id, is_pinned)</span></li>
-            </ul>
-        </div>
-        <div class="db-table">
-            <h3>participants</h3>
-            <ul>
-                <li><span class="pk">participant_id BIGINT (PK, AUTO_INCREMENT)</span></li>
-                <li><span class="fk">room_id VARCHAR(36) (FK &rarr; chat_rooms)</span></li>
-                <li><span class="fk">user_id BIGINT (FK &rarr; users.user_id)</span></li>
-                <li>role ENUM('OWNER','ADMIN','MODERATOR','MEMBER')</li>
-                <li>joined_at TIMESTAMP</li>
-                <li>last_read_message_id VARCHAR(36)</li>
-                <li>is_muted BOOLEAN DEFAULT FALSE</li>
-                <li><span class="pk">UNIQUE (room_id, user_id)</span></li>
-                <li><span class="idx">INDEX idx_user_rooms (user_id)</span></li>
-            </ul>
-        </div>
-        <div class="db-table">
-            <h3>attachments</h3>
-            <ul>
-                <li><span class="pk">attachment_id VARCHAR(36) (PK)</span></li>
-                <li><span class="fk">message_id VARCHAR(36) (FK &rarr; messages)</span></li>
-                <li>file_name VARCHAR(255)</li>
-                <li>file_url VARCHAR(500)</li>
-                <li>file_size BIGINT</li>
-                <li>mime_type VARCHAR(100)</li>
-                <li>thumbnail_url VARCHAR(500)</li>
-                <li>uploaded_at TIMESTAMP</li>
-                <li><span class="idx">INDEX idx_message (message_id)</span></li>
-            </ul>
-        </div>
-    </div>
-    <div style="margin-top:16px;padding:14px 18px;background:rgba(255,128,171,.08);border-radius:12px;border:1px solid rgba(255,128,171,.15)">
-        <strong style="color:#ff80ab">Why these indexes matter:</strong>
-        <p style="color:#b0bec5;font-size:.88em;margin-top:8px;line-height:1.6">
-            <strong>idx_room_time</strong> &mdash; Most frequent query: paginated message history for a room, ordered by time<br>
-            <strong>idx_sender</strong> &mdash; Fast lookup for user's sent messages and admin operations<br>
-            <strong>idx_user_rooms</strong> &mdash; List all rooms a user has joined (sidebar display)<br>
-            <strong>idx_last_msg</strong> &mdash; Sort rooms by latest activity for the room list view
-        </p>
-    </div>
-
-</div>
-
-<!-- ============ 5. APIs ============ -->
-<div class="section theme-teal">
-    <div class="section-title"><span class="section-num">4</span>APIs (REST + WebSocket)</div>
-    <div class="api-grid">
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/rooms</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"name"</span>: <span class="val">"Dev Team"</span>, <span class="key">"roomType"</span>: <span class="val">"GROUP"</span>, <span class="key">"memberIds"</span>: <span class="val">[2,3,4]</span> }</div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"roomId"</span>: <span class="val">"uuid"</span>, <span class="key">"name"</span>: <span class="val">"Dev Team"</span>, <span class="key">"roomType"</span>: <span class="val">"GROUP"</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/rooms/{roomId}/messages</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"content"</span>: <span class="val">"Hello team!"</span>, <span class="key">"messageType"</span>: <span class="val">"TEXT"</span> }</div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"messageId"</span>: <span class="val">"uuid"</span>, <span class="key">"createdAt"</span>: <span class="val">"..."</span> }</div>
-            </div>
-            <div class="api-note">Also broadcasts to all room participants via WebSocket</div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/rooms/{roomId}/messages?page=0&amp;size=50</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Params</div><span class="key">page</span>: <span class="val">0</span> (default)<br><span class="key">size</span>: <span class="val">50</span> (default)<br><span class="key">before</span>: <span class="val">timestamp</span> (cursor)</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"messages"</span>: <span class="val">[...]</span>, <span class="key">"totalPages"</span>: <span class="val">25</span>, <span class="key">"hasNext"</span>: <span class="val">true</span>, <span class="key">"cursor"</span>: <span class="val">"ts"</span> }</div>
-            </div>
-            <div class="api-note">Cursor-based pagination for infinite scroll, newest first</div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/rooms/{roomId}/files</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request (multipart)</div><span class="key">file</span>: <span class="val">binary</span><br><span class="key">messageType</span>: <span class="val">IMAGE | FILE | VIDEO</span></div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"attachmentId"</span>: <span class="val">"uuid"</span>, <span class="key">"fileUrl"</span>: <span class="val">"https://s3.../file"</span>, <span class="key">"fileSize"</span>: <span class="val">204800</span> }</div>
-            </div>
-            <div class="api-note">Upload to S3 &rarr; create attachment record &rarr; create message &rarr; broadcast</div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/rooms/{roomId}/messages/search?q=keyword</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Params</div><span class="key">q</span>: <span class="val">"deployment"</span><br><span class="key">from</span>: <span class="val">userId</span> (optional)<br><span class="key">type</span>: <span class="val">TEXT</span> (optional)</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"results"</span>: <span class="val">[{messageId, content, sender, createdAt}]</span>, <span class="key">"count"</span>: <span class="val">12</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-put">PUT</span><span class="api-path">/api/messages/{messageId}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"content"</span>: <span class="val">"Updated message"</span> }</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"messageId"</span>: <span class="val">"uuid"</span>, <span class="key">"isEdited"</span>: <span class="val">true</span> }</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ============ 6. SERVICE LLD ============ -->
+<!-- ============ 4. SERVICE LLD ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
 
         <div class="service-card">
@@ -411,8 +250,284 @@ export default {
 </div>
 
 <!-- ============ 7. KEY ARCHITECTURE ============ -->
+
+<!-- ============ 5. APIs ============ -->
+<div class="section theme-teal">
+    <div class="section-title"><span class="section-num">5</span>APIs (REST + WebSocket)</div>
+    <div class="api-grid">
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/rooms</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"name"</span>: <span class="val">"Dev Team"</span>, <span class="key">"roomType"</span>: <span class="val">"GROUP"</span>, <span class="key">"memberIds"</span>: <span class="val">[2,3,4]</span> }</div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"roomId"</span>: <span class="val">"uuid"</span>, <span class="key">"name"</span>: <span class="val">"Dev Team"</span>, <span class="key">"roomType"</span>: <span class="val">"GROUP"</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/rooms/{roomId}/messages</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"content"</span>: <span class="val">"Hello team!"</span>, <span class="key">"messageType"</span>: <span class="val">"TEXT"</span> }</div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"messageId"</span>: <span class="val">"uuid"</span>, <span class="key">"createdAt"</span>: <span class="val">"..."</span> }</div>
+            </div>
+            <div class="api-note">Also broadcasts to all room participants via WebSocket</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/rooms/{roomId}/messages?page=0&amp;size=50</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Params</div><span class="key">page</span>: <span class="val">0</span> (default)<br><span class="key">size</span>: <span class="val">50</span> (default)<br><span class="key">before</span>: <span class="val">timestamp</span> (cursor)</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"messages"</span>: <span class="val">[...]</span>, <span class="key">"totalPages"</span>: <span class="val">25</span>, <span class="key">"hasNext"</span>: <span class="val">true</span>, <span class="key">"cursor"</span>: <span class="val">"ts"</span> }</div>
+            </div>
+            <div class="api-note">Cursor-based pagination for infinite scroll, newest first</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/rooms/{roomId}/files</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request (multipart)</div><span class="key">file</span>: <span class="val">binary</span><br><span class="key">messageType</span>: <span class="val">IMAGE | FILE | VIDEO</span></div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"attachmentId"</span>: <span class="val">"uuid"</span>, <span class="key">"fileUrl"</span>: <span class="val">"https://s3.../file"</span>, <span class="key">"fileSize"</span>: <span class="val">204800</span> }</div>
+            </div>
+            <div class="api-note">Upload to S3 &rarr; create attachment record &rarr; create message &rarr; broadcast</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/rooms/{roomId}/messages/search?q=keyword</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Params</div><span class="key">q</span>: <span class="val">"deployment"</span><br><span class="key">from</span>: <span class="val">userId</span> (optional)<br><span class="key">type</span>: <span class="val">TEXT</span> (optional)</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"results"</span>: <span class="val">[{messageId, content, sender, createdAt}]</span>, <span class="key">"count"</span>: <span class="val">12</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-put">PUT</span><span class="api-path">/api/messages/{messageId}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"content"</span>: <span class="val">"Updated message"</span> }</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"messageId"</span>: <span class="val">"uuid"</span>, <span class="key">"isEdited"</span>: <span class="val">true</span> }</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 6. SERVICE LLD ============ -->
+
+<!-- ============ 6. DATABASE SCHEMA ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">6</span>Database Schema (with FK &amp; Indexes)</div>
+
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Users, rooms, participants &mdash; relational data with foreign keys</div>
+            <div class="dbtech-tables"><span>users</span><span>chat_rooms</span><span>participants</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">MongoDB <span class="dbtech-type">NoSQL</span></div>
+            <div class="dbtech-usage">Messages, attachments &mdash; flexible schema, fast writes, cursor-based pagination</div>
+            <div class="dbtech-tables"><span>messages</span><span>attachments</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Presence tracking, WebSocket sessions, typing indicators, unread counts</div>
+            <div class="dbtech-tables"><span>presence:{userId}</span><span>session:{userId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">S3 <span class="dbtech-type">Blob Storage</span></div>
+            <div class="dbtech-usage">File attachments &mdash; images, documents, videos uploaded in chat</div>
+            <div class="dbtech-tables"><span>attachments/{roomId}/{messageId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Elasticsearch <span class="dbtech-type">Search Engine</span></div>
+            <div class="dbtech-usage">Full-text message search across chat rooms</div>
+            <div class="dbtech-tables"><span>messages</span></div>
+        </div>
+    </div>
+
+    <div class="db-grid">
+        <div class="db-table">
+            <h3>users</h3>
+            <ul>
+                <li><span class="pk">user_id BIGINT (PK, AUTO_INCREMENT)</span></li>
+                <li>username VARCHAR(50) UNIQUE</li>
+                <li>email VARCHAR(100) UNIQUE</li>
+                <li>display_name VARCHAR(100)</li>
+                <li>avatar_url VARCHAR(255)</li>
+                <li>status ENUM('ONLINE','AWAY','DND','OFFLINE')</li>
+                <li>last_seen_at TIMESTAMP</li>
+                <li>created_at TIMESTAMP</li>
+                <li><span class="idx">INDEX idx_username (username)</span></li>
+                <li><span class="idx">INDEX idx_email (email)</span></li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>chat_rooms</h3>
+            <ul>
+                <li><span class="pk">room_id VARCHAR(36) (PK)</span></li>
+                <li>name VARCHAR(100)</li>
+                <li>description VARCHAR(500)</li>
+                <li>room_type ENUM('PRIVATE','GROUP','CHANNEL')</li>
+                <li><span class="fk">created_by BIGINT (FK &rarr; users.user_id)</span></li>
+                <li>max_participants INT DEFAULT 500</li>
+                <li>last_message_at TIMESTAMP</li>
+                <li>is_archived BOOLEAN DEFAULT FALSE</li>
+                <li>created_at TIMESTAMP</li>
+                <li><span class="idx">INDEX idx_room_type (room_type)</span></li>
+                <li><span class="idx">INDEX idx_last_msg (last_message_at DESC)</span></li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>messages</h3>
+            <ul>
+                <li><span class="pk">message_id VARCHAR(36) (PK)</span></li>
+                <li><span class="fk">room_id VARCHAR(36) (FK &rarr; chat_rooms)</span></li>
+                <li><span class="fk">sender_id BIGINT (FK &rarr; users.user_id)</span></li>
+                <li>content TEXT</li>
+                <li>message_type ENUM('TEXT','IMAGE','FILE','VIDEO','AUDIO','SYSTEM')</li>
+                <li>parent_message_id VARCHAR(36)</li>
+                <li>is_pinned BOOLEAN DEFAULT FALSE</li>
+                <li>is_edited BOOLEAN DEFAULT FALSE</li>
+                <li>is_deleted BOOLEAN DEFAULT FALSE</li>
+                <li>created_at TIMESTAMP</li>
+                <li>updated_at TIMESTAMP</li>
+                <li>version BIGINT DEFAULT 0</li>
+                <li><span class="idx">INDEX idx_room_time (room_id, created_at DESC)</span></li>
+                <li><span class="idx">INDEX idx_sender (sender_id)</span></li>
+                <li><span class="idx">INDEX idx_pinned (room_id, is_pinned)</span></li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>participants</h3>
+            <ul>
+                <li><span class="pk">participant_id BIGINT (PK, AUTO_INCREMENT)</span></li>
+                <li><span class="fk">room_id VARCHAR(36) (FK &rarr; chat_rooms)</span></li>
+                <li><span class="fk">user_id BIGINT (FK &rarr; users.user_id)</span></li>
+                <li>role ENUM('OWNER','ADMIN','MODERATOR','MEMBER')</li>
+                <li>joined_at TIMESTAMP</li>
+                <li>last_read_message_id VARCHAR(36)</li>
+                <li>is_muted BOOLEAN DEFAULT FALSE</li>
+                <li><span class="pk">UNIQUE (room_id, user_id)</span></li>
+                <li><span class="idx">INDEX idx_user_rooms (user_id)</span></li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>attachments</h3>
+            <ul>
+                <li><span class="pk">attachment_id VARCHAR(36) (PK)</span></li>
+                <li><span class="fk">message_id VARCHAR(36) (FK &rarr; messages)</span></li>
+                <li>file_name VARCHAR(255)</li>
+                <li>file_url VARCHAR(500)</li>
+                <li>file_size BIGINT</li>
+                <li>mime_type VARCHAR(100)</li>
+                <li>thumbnail_url VARCHAR(500)</li>
+                <li>uploaded_at TIMESTAMP</li>
+                <li><span class="idx">INDEX idx_message (message_id)</span></li>
+            </ul>
+        </div>
+    </div>
+    <div style="margin-top:16px;padding:14px 18px;background:rgba(255,128,171,.08);border-radius:12px;border:1px solid rgba(255,128,171,.15)">
+        <strong style="color:#ff80ab">Why these indexes matter:</strong>
+        <p style="color:#b0bec5;font-size:.88em;margin-top:8px;line-height:1.6">
+            <strong>idx_room_time</strong> &mdash; Most frequent query: paginated message history for a room, ordered by time<br>
+            <strong>idx_sender</strong> &mdash; Fast lookup for user's sent messages and admin operations<br>
+            <strong>idx_user_rooms</strong> &mdash; List all rooms a user has joined (sidebar display)<br>
+            <strong>idx_last_msg</strong> &mdash; Sort rooms by latest activity for the room list view
+        </p>
+    </div>
+
+</div>
+
+<!-- ============ 5. APIs ============ -->
+
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+
+    <div class="assumption-box">
+        <h4>Assumptions (Slack/Discord Scale)</h4>
+        <div class="assumption-row"><span class="calc-label">Total Users</span><span class="calc-value">50 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Daily Active Users (DAU)</span><span class="calc-value">10 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg messages sent/user/day</span><span class="calc-value">50 messages</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg message size (text)</span><span class="calc-value">200 bytes</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg rooms per user</span><span class="calc-value">15 rooms</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg file attachment size</span><span class="calc-value">500 KB</span></div>
+        <div class="assumption-row"><span class="calc-label">% messages with files</span><span class="calc-value">8%</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg room size (participants)</span><span class="calc-value">25 users</span></div>
+    </div>
+
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Messages Per Day</h4>
+            <div class="calc-row"><span class="calc-label">DAU</span><span class="calc-value">10M</span></div>
+            <div class="calc-row"><span class="calc-label">&times; 50 msgs/user/day</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Total Messages / Day</span><span class="calc-value">500 Million</span></div>
+            <div class="calc-result"><span class="calc-label">Messages / Second (QPS)</span><span class="calc-value">~5,800 QPS</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Fan-out Per Message</h4>
+            <div class="calc-row"><span class="calc-label">Avg room size</span><span class="calc-value">25 users</span></div>
+            <div class="calc-row"><span class="calc-label">Messages/sec &times; 25 recipients</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">WebSocket Pushes / Second</span><span class="calc-value">~145K pushes/s</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Storage &mdash; Text Messages (per day)</h4>
+            <div class="calc-row"><span class="calc-label">Messages/day</span><span class="calc-value">500M</span></div>
+            <div class="calc-row"><span class="calc-label">&times; 200 bytes / msg</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Text Storage / Day</span><span class="calc-value">~100 GB / day</span></div>
+            <div class="calc-result"><span class="calc-label">Text Storage / Year</span><span class="calc-value">~36 TB / year</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Storage &mdash; File Attachments (per day)</h4>
+            <div class="calc-row"><span class="calc-label">File messages/day</span><span class="calc-value">500M &times; 8% = 40M</span></div>
+            <div class="calc-row"><span class="calc-label">&times; 500 KB / file</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">File Storage / Day</span><span class="calc-value">~20 TB / day</span></div>
+            <div class="calc-result"><span class="calc-label">File Storage / Year</span><span class="calc-value">~7.3 PB / year</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>WebSocket Connections</h4>
+            <div class="calc-row"><span class="calc-label">Concurrent online users</span><span class="calc-value">~2M (20% DAU)</span></div>
+            <div class="calc-row"><span class="calc-label">1 WebSocket / user</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Total Connections</span><span class="calc-value">2M concurrent</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">If 50K conn/server</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">WebSocket Servers Needed</span><span class="calc-value">~40 servers</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Bandwidth Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Text bandwidth</span><span class="calc-value">100 GB / 86400s = ~1.2 MB/s</span></div>
+            <div class="calc-row"><span class="calc-label">File bandwidth</span><span class="calc-value">20 TB / 86400s = ~230 MB/s</span></div>
+            <div class="calc-result"><span class="calc-label">Total Ingress</span><span class="calc-value">~230 MB/s</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Egress (read heavy, 3x)</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Total Egress</span><span class="calc-value">~700 MB/s</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Redis Cache Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Cache recent 100 msgs per active room</span><span class="calc-value"></span></div>
+            <div class="calc-row"><span class="calc-label">Active rooms</span><span class="calc-value">~5M</span></div>
+            <div class="calc-row"><span class="calc-label">Top 20% = 1M rooms</span><span class="calc-value"></span></div>
+            <div class="calc-row"><span class="calc-label">&times; 100 msgs &times; 200 bytes</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Redis Cache Size</span><span class="calc-value">~20 GB</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Total write QPS</span><span class="calc-value">~5,800 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">WebSocket push QPS</span><span class="calc-value">~145K pushes/s</span></div>
+            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~5K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~6 servers</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">CPU cores per server (4 cores)</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Total CPU Cores</span><span class="calc-value">~24 cores</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">WebSocket Servers (50K conn/server)</span><span class="calc-value">~40 servers</span></div>
+            <div class="calc-row"><span class="calc-label">Redis Cluster Nodes</span><span class="calc-value">3 nodes</span></div>
+            <div class="calc-row"><span class="calc-label">DB Read Replicas</span><span class="calc-value">3 replicas</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 11. BOTTLENECKS ============ -->
+
+<!-- ============ 8. KEY ARCHITECTURE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture &mdash; WebSocket + Room Broadcasting + Presence</div>
+    <div class="section-title"><span class="section-num">8</span>Key Architecture &mdash; WebSocket + Room Broadcasting + Presence</div>
 
     <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">WebSocket Connection &amp; Room Subscription</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">WebSocketSessionManager.java</span></div><pre class="code-block">
@@ -492,8 +607,10 @@ export default {
 </div>
 
 <!-- ============ 8. DESIGN PATTERNS ============ -->
+
+<!-- ============ 9. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns (with Implementation)</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns (with Implementation)</div>
     <div class="pattern-grid">
         <div class="pattern-card"><div class="pattern-name">Observer Pattern</div><div class="pattern-use">Room event broadcasting</div></div>
         <div class="pattern-card"><div class="pattern-name">Mediator Pattern</div><div class="pattern-use">Chat room message routing</div></div>
@@ -642,8 +759,10 @@ export default {
 </div>
 
 <!-- ============ 9. SEQUENCE FLOW ============ -->
+
+<!-- ============ 10. SEQUENCE FLOW ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow &mdash; Send Message</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow &mdash; Send Message</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User A &rarr; WebSocket frame: {roomId, content, type}</div>
         <div class="flow-arrow arrow-green"></div>
@@ -662,98 +781,10 @@ export default {
 </div>
 
 <!-- ============ 10. CAPACITY ESTIMATION ============ -->
-<div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
-
-    <div class="assumption-box">
-        <h4>Assumptions (Slack/Discord Scale)</h4>
-        <div class="assumption-row"><span class="calc-label">Total Users</span><span class="calc-value">50 Million</span></div>
-        <div class="assumption-row"><span class="calc-label">Daily Active Users (DAU)</span><span class="calc-value">10 Million</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg messages sent/user/day</span><span class="calc-value">50 messages</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg message size (text)</span><span class="calc-value">200 bytes</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg rooms per user</span><span class="calc-value">15 rooms</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg file attachment size</span><span class="calc-value">500 KB</span></div>
-        <div class="assumption-row"><span class="calc-label">% messages with files</span><span class="calc-value">8%</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg room size (participants)</span><span class="calc-value">25 users</span></div>
-    </div>
-
-    <div class="cap-grid">
-        <div class="cap-card">
-            <h4>Messages Per Day</h4>
-            <div class="calc-row"><span class="calc-label">DAU</span><span class="calc-value">10M</span></div>
-            <div class="calc-row"><span class="calc-label">&times; 50 msgs/user/day</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Total Messages / Day</span><span class="calc-value">500 Million</span></div>
-            <div class="calc-result"><span class="calc-label">Messages / Second (QPS)</span><span class="calc-value">~5,800 QPS</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Fan-out Per Message</h4>
-            <div class="calc-row"><span class="calc-label">Avg room size</span><span class="calc-value">25 users</span></div>
-            <div class="calc-row"><span class="calc-label">Messages/sec &times; 25 recipients</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">WebSocket Pushes / Second</span><span class="calc-value">~145K pushes/s</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Storage &mdash; Text Messages (per day)</h4>
-            <div class="calc-row"><span class="calc-label">Messages/day</span><span class="calc-value">500M</span></div>
-            <div class="calc-row"><span class="calc-label">&times; 200 bytes / msg</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Text Storage / Day</span><span class="calc-value">~100 GB / day</span></div>
-            <div class="calc-result"><span class="calc-label">Text Storage / Year</span><span class="calc-value">~36 TB / year</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Storage &mdash; File Attachments (per day)</h4>
-            <div class="calc-row"><span class="calc-label">File messages/day</span><span class="calc-value">500M &times; 8% = 40M</span></div>
-            <div class="calc-row"><span class="calc-label">&times; 500 KB / file</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">File Storage / Day</span><span class="calc-value">~20 TB / day</span></div>
-            <div class="calc-result"><span class="calc-label">File Storage / Year</span><span class="calc-value">~7.3 PB / year</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>WebSocket Connections</h4>
-            <div class="calc-row"><span class="calc-label">Concurrent online users</span><span class="calc-value">~2M (20% DAU)</span></div>
-            <div class="calc-row"><span class="calc-label">1 WebSocket / user</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Total Connections</span><span class="calc-value">2M concurrent</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">If 50K conn/server</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">WebSocket Servers Needed</span><span class="calc-value">~40 servers</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Bandwidth Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Text bandwidth</span><span class="calc-value">100 GB / 86400s = ~1.2 MB/s</span></div>
-            <div class="calc-row"><span class="calc-label">File bandwidth</span><span class="calc-value">20 TB / 86400s = ~230 MB/s</span></div>
-            <div class="calc-result"><span class="calc-label">Total Ingress</span><span class="calc-value">~230 MB/s</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Egress (read heavy, 3x)</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Total Egress</span><span class="calc-value">~700 MB/s</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Redis Cache Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Cache recent 100 msgs per active room</span><span class="calc-value"></span></div>
-            <div class="calc-row"><span class="calc-label">Active rooms</span><span class="calc-value">~5M</span></div>
-            <div class="calc-row"><span class="calc-label">Top 20% = 1M rooms</span><span class="calc-value"></span></div>
-            <div class="calc-row"><span class="calc-label">&times; 100 msgs &times; 200 bytes</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Redis Cache Size</span><span class="calc-value">~20 GB</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>CPU / Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Total write QPS</span><span class="calc-value">~5,800 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">WebSocket push QPS</span><span class="calc-value">~145K pushes/s</span></div>
-            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~5K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~6 servers</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">CPU cores per server (4 cores)</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Total CPU Cores</span><span class="calc-value">~24 cores</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">WebSocket Servers (50K conn/server)</span><span class="calc-value">~40 servers</span></div>
-            <div class="calc-row"><span class="calc-label">Redis Cluster Nodes</span><span class="calc-value">3 nodes</span></div>
-            <div class="calc-row"><span class="calc-label">DB Read Replicas</span><span class="calc-value">3 replicas</span></div>
-        </div>
-    </div>
-</div>
 
 <!-- ============ 11. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Fan-out in large rooms (1000+ members)</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Async fan-out via Kafka partitioned by roomId</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Message ordering across distributed servers</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Snowflake IDs + per-room ordering with Kafka partitions</span></div>
@@ -766,8 +797,10 @@ export default {
 </div>
 
 <!-- ============ 12. EDGE CASES ============ -->
+
+<!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-amber">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases &amp; Error Handling</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases &amp; Error Handling</div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>Message Ordering</h4>
@@ -805,8 +838,10 @@ export default {
 </div>
 
 <!-- ============ 13. SECURITY ============ -->
+
+<!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">12</span>Security</div>
+    <div class="section-title"><span class="section-num">13</span>Security</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#9670;</span>
@@ -844,8 +879,10 @@ export default {
 </div>
 
 <!-- ============ 14. SUMMARY ============ -->
+
+<!-- ============ 14. SUMMARY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">13</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>WebSocket + Room Subscriptions</h4><p>Real-time room-based messaging</p></div>
         <div class="summary-card sc-2"><h4>Observer + Mediator + Strategy</h4><p>Clean design pattern usage</p></div>

@@ -23,8 +23,21 @@ export default {
     </div>
 </div>
 
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; content load &lt; 200ms me ho</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime globally</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; 200M+ subscribers handle karo</div>
+        <div class="req-pill"><span class="num">4</span> CDN &mdash; global edge caching se buffering zero ho</div>
+        <div class="req-pill"><span class="num">5</span> Personalization &mdash; real-time recommendation update ho</div>
+        <div class="req-pill"><span class="num">6</span> Fault Tolerance &mdash; graceful degradation under peak load</div>
+    </div>
+</div>
+
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card"><h3>ContentType</h3><div class="enum-val">MOVIE</div><div class="enum-val">SERIES</div><div class="enum-val">DOCUMENTARY</div><div class="enum-val">SHORT</div></div>
         <div class="enum-card"><h3>Genre</h3><div class="enum-val">ACTION</div><div class="enum-val">COMEDY</div><div class="enum-val">DRAMA</div><div class="enum-val">THRILLER</div><div class="enum-val">HORROR</div><div class="enum-val">SCI_FI</div><div class="enum-val">ROMANCE</div><div class="enum-val">ANIME</div></div>
@@ -34,114 +47,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
-
-    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
-    <div class="dbtech-grid">
-        <div class="dbtech-card">
-            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
-            <div class="dbtech-usage">Accounts, subscriptions, profiles, billing &mdash; ACID for user &amp; payment data</div>
-            <div class="dbtech-tables"><span>accounts</span><span>subscriptions</span><span>profiles</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Cassandra <span class="dbtech-type">NoSQL</span></div>
-            <div class="dbtech-usage">Watch history &mdash; high write throughput, partitioned by profileId</div>
-            <div class="dbtech-tables"><span>watch_history</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
-            <div class="dbtech-usage">Pre-computed recommendations, active stream count, session tokens</div>
-            <div class="dbtech-tables"><span>reco:{profileId}</span><span>streams:{accountId}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">S3 + CDN <span class="dbtech-type">Content Delivery</span></div>
-            <div class="dbtech-usage">Video files (HLS segments), thumbnails &mdash; served via CloudFront edge</div>
-            <div class="dbtech-tables"><span>content/{contentId}/{resolution}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Elasticsearch <span class="dbtech-type">Search Engine</span></div>
-            <div class="dbtech-usage">Content search by title, genre, actor with fuzzy matching and filters</div>
-            <div class="dbtech-tables"><span>content</span></div>
-        </div>
-    </div>
-
-    <div class="db-grid">
-        <div class="db-card">
-            <h3>content</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">title</span><span class="col-type">VARCHAR(255)</span><span class="col-constraint">FULLTEXT IDX</span></div>
-            <div class="db-row"><span class="col-name">description</span><span class="col-type">TEXT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">age_rating</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">release_year</span><span class="col-type">INT</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">duration</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">avg_rating</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">thumbnail_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">trailer_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
-        </div>
-        <div class="db-card">
-            <h3>episodes</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">content_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK &rarr; content(id) IDX</span></div>
-            <div class="db-row"><span class="col-name">season_number</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">episode_number</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">title</span><span class="col-type">VARCHAR(255)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">duration</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">stream_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
-        </div>
-        <div class="db-card">
-            <h3>profiles</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">account_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">is_kids</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT FALSE</span></div>
-            <div class="db-row"><span class="col-name">maturity_level</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">language</span><span class="col-type">VARCHAR(10)</span><span class="col-constraint"></span></div>
-        </div>
-        <div class="db-card">
-            <h3>subscriptions</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">account_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">plan</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">max_screens</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">max_resolution</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">start_date</span><span class="col-type">DATE</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">end_date</span><span class="col-type">DATE</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>watch_history</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">profile_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">content_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">episode_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK (nullable)</span></div>
-            <div class="db-row"><span class="col-name">watched_seconds</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">completed</span><span class="col-type">BOOLEAN</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">last_watched_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-    </div>
-</div>
-
-<div class="section theme-purple">
-    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
-    <div class="api-grid">
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/browse?genre=ACTION&amp;page=0</div><div class="api-desc">Browse content catalog by genre/type</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/search?q=stranger&amp;year=2024</div><div class="api-desc">Search content with filters</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/content/{id}</div><div class="api-desc">Get content details + episodes (if series)</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/content/{id}/stream</div><div class="api-desc">Get HLS manifest URL (checks subscription + region + DRM)</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/recommendations</div><div class="api-desc">Get personalized recommendations for profile</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/continue-watching</div><div class="api-desc">Get "Continue Watching" row for profile</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/watch-progress</div><div class="api-desc">Update watch progress (called every 30s during playback)</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/watchlist/{contentId}</div><div class="api-desc">Add to My List</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/profiles</div><div class="api-desc">Get all profiles for account</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/profiles</div><div class="api-desc">Create profile (max 5 per account)</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/trending</div><div class="api-desc">Top 10 trending in user's region</div></div>
-    </div>
-</div>
-
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>ContentService</h3>
@@ -289,8 +196,139 @@ export default {
     </div>
 </div>
 
+<div class="section theme-purple">
+    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="api-grid">
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/browse?genre=ACTION&amp;page=0</div><div class="api-desc">Browse content catalog by genre/type</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/search?q=stranger&amp;year=2024</div><div class="api-desc">Search content with filters</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/content/{id}</div><div class="api-desc">Get content details + episodes (if series)</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/content/{id}/stream</div><div class="api-desc">Get HLS manifest URL (checks subscription + region + DRM)</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/recommendations</div><div class="api-desc">Get personalized recommendations for profile</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/continue-watching</div><div class="api-desc">Get "Continue Watching" row for profile</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/watch-progress</div><div class="api-desc">Update watch progress (called every 30s during playback)</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/watchlist/{contentId}</div><div class="api-desc">Add to My List</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/profiles</div><div class="api-desc">Get all profiles for account</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/profiles</div><div class="api-desc">Create profile (max 5 per account)</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/trending</div><div class="api-desc">Top 10 trending in user's region</div></div>
+    </div>
+</div>
+
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
+
+    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Accounts, subscriptions, profiles, billing &mdash; ACID for user &amp; payment data</div>
+            <div class="dbtech-tables"><span>accounts</span><span>subscriptions</span><span>profiles</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Cassandra <span class="dbtech-type">NoSQL</span></div>
+            <div class="dbtech-usage">Watch history &mdash; high write throughput, partitioned by profileId</div>
+            <div class="dbtech-tables"><span>watch_history</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Pre-computed recommendations, active stream count, session tokens</div>
+            <div class="dbtech-tables"><span>reco:{profileId}</span><span>streams:{accountId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">S3 + CDN <span class="dbtech-type">Content Delivery</span></div>
+            <div class="dbtech-usage">Video files (HLS segments), thumbnails &mdash; served via CloudFront edge</div>
+            <div class="dbtech-tables"><span>content/{contentId}/{resolution}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Elasticsearch <span class="dbtech-type">Search Engine</span></div>
+            <div class="dbtech-usage">Content search by title, genre, actor with fuzzy matching and filters</div>
+            <div class="dbtech-tables"><span>content</span></div>
+        </div>
+    </div>
+
+    <div class="db-grid">
+        <div class="db-card">
+            <h3>content</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">title</span><span class="col-type">VARCHAR(255)</span><span class="col-constraint">FULLTEXT IDX</span></div>
+            <div class="db-row"><span class="col-name">description</span><span class="col-type">TEXT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">age_rating</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">release_year</span><span class="col-type">INT</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">duration</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">avg_rating</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">thumbnail_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">trailer_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
+        </div>
+        <div class="db-card">
+            <h3>episodes</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">content_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK &rarr; content(id) IDX</span></div>
+            <div class="db-row"><span class="col-name">season_number</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">episode_number</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">title</span><span class="col-type">VARCHAR(255)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">duration</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">stream_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
+        </div>
+        <div class="db-card">
+            <h3>profiles</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">account_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">is_kids</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT FALSE</span></div>
+            <div class="db-row"><span class="col-name">maturity_level</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">language</span><span class="col-type">VARCHAR(10)</span><span class="col-constraint"></span></div>
+        </div>
+        <div class="db-card">
+            <h3>subscriptions</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">account_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">plan</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">max_screens</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">max_resolution</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">start_date</span><span class="col-type">DATE</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">end_date</span><span class="col-type">DATE</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>watch_history</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">profile_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">content_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">episode_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK (nullable)</span></div>
+            <div class="db-row"><span class="col-name">watched_seconds</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">completed</span><span class="col-type">BOOLEAN</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">last_watched_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="section theme-blue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="cap-grid">
+        <div class="cap-card"><div class="cap-label">Total Subscribers</div><div class="cap-value">250M</div></div>
+        <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">100M</div></div>
+        <div class="cap-card"><div class="cap-label">Concurrent Streams</div><div class="cap-value">~15M peak</div></div>
+        <div class="cap-card"><div class="cap-label">Content Library</div><div class="cap-value">~20,000 titles</div></div>
+        <div class="cap-card"><div class="cap-label">CDN Bandwidth</div><div class="cap-value">~100 Tbps peak</div></div>
+        <div class="cap-card"><div class="cap-label">Watch Progress Writes</div><div class="cap-value">~500K writes/sec</div></div>
+        <div class="cap-card"><div class="cap-label">Recommendation Cache</div><div class="cap-value">~50 GB Redis (250M profiles &times; 200B each)</div></div>
+        <div class="cap-card"><div class="cap-label">Avg Session Duration</div><div class="cap-value">~90 minutes</div></div>
+        <div class="cap-card">
+            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Concurrent streams (peak)</span><span class="calc-value">~15M</span></div>
+            <div class="calc-row"><span class="calc-label">Watch progress writes/sec</span><span class="calc-value">~500K/sec</span></div>
+            <div class="calc-row"><span class="calc-label">Each API server handles</span><span class="calc-value">~10K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">API Servers Needed</span><span class="calc-value">~50 servers</span></div>
+            <div class="calc-result"><span class="calc-label">Total CPU Cores (8 per server)</span><span class="calc-value">~400 cores</span></div>
+            <div class="calc-row"><span class="calc-label">Recommendation Engine</span><span class="calc-value">Spark cluster (100+ nodes)</span></div>
+            <div class="calc-row"><span class="calc-label">Redis Cluster (cache)</span><span class="calc-value">10-20 nodes</span></div>
+            <div class="calc-row"><span class="calc-label">CDN Edge Servers</span><span class="calc-value">10,000+ globally</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="section theme-blue">
+    <div class="section-title"><span class="section-num">8</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">RecommendationEngine.java — Collaborative + Content-Based</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span>
@@ -338,7 +376,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IRecommendationAlgorithm — swap between collaborative filtering, content-based, or hybrid</p></div>
         <div class="pattern-card"><h3>Observer</h3><p>Watch events &rarr; Kafka &rarr; update recommendations, trending lists, analytics pipeline</p></div>
@@ -350,7 +388,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">User opens app &rarr; selects profile &rarr; loads personalized homepage</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">Homepage: Continue Watching + Trending + Recommended rows from Redis cache</span></div>
@@ -365,33 +403,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
-    <div class="cap-grid">
-        <div class="cap-card"><div class="cap-label">Total Subscribers</div><div class="cap-value">250M</div></div>
-        <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">100M</div></div>
-        <div class="cap-card"><div class="cap-label">Concurrent Streams</div><div class="cap-value">~15M peak</div></div>
-        <div class="cap-card"><div class="cap-label">Content Library</div><div class="cap-value">~20,000 titles</div></div>
-        <div class="cap-card"><div class="cap-label">CDN Bandwidth</div><div class="cap-value">~100 Tbps peak</div></div>
-        <div class="cap-card"><div class="cap-label">Watch Progress Writes</div><div class="cap-value">~500K writes/sec</div></div>
-        <div class="cap-card"><div class="cap-label">Recommendation Cache</div><div class="cap-value">~50 GB Redis (250M profiles &times; 200B each)</div></div>
-        <div class="cap-card"><div class="cap-label">Avg Session Duration</div><div class="cap-value">~90 minutes</div></div>
-        <div class="cap-card">
-            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Concurrent streams (peak)</span><span class="calc-value">~15M</span></div>
-            <div class="calc-row"><span class="calc-label">Watch progress writes/sec</span><span class="calc-value">~500K/sec</span></div>
-            <div class="calc-row"><span class="calc-label">Each API server handles</span><span class="calc-value">~10K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">API Servers Needed</span><span class="calc-value">~50 servers</span></div>
-            <div class="calc-result"><span class="calc-label">Total CPU Cores (8 per server)</span><span class="calc-value">~400 cores</span></div>
-            <div class="calc-row"><span class="calc-label">Recommendation Engine</span><span class="calc-value">Spark cluster (100+ nodes)</span></div>
-            <div class="calc-row"><span class="calc-label">Redis Cluster (cache)</span><span class="calc-value">10-20 nodes</span></div>
-            <div class="calc-row"><span class="calc-label">CDN Edge Servers</span><span class="calc-value">10,000+ globally</span></div>
-        </div>
-    </div>
-</div>
-
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Homepage Cold Start</h3><p>Pre-compute personalized homepage per profile (Spark); cache in Redis; fallback to trending</p></div>
         <div class="bottleneck-card"><h3>New User Recommendations</h3><p>Cold start: show popular by region/genre; ask genre preferences on signup; content-based until enough data</p></div>
@@ -403,7 +416,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Max Screens Exceeded</h3><p>Show "too many screens" error; allow user to sign out remote device; admin override</p></div>
         <div class="edge-card"><h3>Content Removed Mid-Watch</h3><p>License expiry: allow finish if started within license period; remove from browse + recommendations</p></div>
@@ -415,7 +428,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>DRM Protection</h3><p>Widevine (Android/Chrome), FairPlay (iOS/Safari), PlayReady (Edge); encrypted HLS segments</p></div>
         <div class="security-card"><h3>Stream URL Security</h3><p>Signed URLs with expiry (1 hour); IP-locked tokens; prevent hotlinking/sharing</p></div>
@@ -426,7 +439,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Recommendations</strong><br>Collaborative filtering (Spark batch) + content-based (real-time fallback); cached in Redis per profile</div>
         <div class="summary-card"><strong>Streaming</strong><br>HLS adaptive bitrate; CDN edge delivery (100 Tbps); signed URLs with DRM</div>

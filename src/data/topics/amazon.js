@@ -23,8 +23,23 @@ export default {
 </div>
 
 <!-- ============ 2. ENUMS ============ -->
+
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; search &amp; browse &lt; 200ms feel ho</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, especially sale events</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; sale pe 100x traffic spike handle karo</div>
+        <div class="req-pill"><span class="num">4</span> Consistency &mdash; inventory &amp; payment strongly consistent rahe</div>
+        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; graceful degradation under heavy load</div>
+        <div class="req-pill"><span class="num">6</span> CDN &mdash; static assets &amp; images globally cached ho</div>
+    </div>
+</div>
+
+<!-- ============ 3. ENUMS ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card">
             <h3>OrderStatus</h3>
@@ -73,8 +88,10 @@ export default {
 </div>
 
 <!-- ============ 3. SERVICE LLD ============ -->
+
+<!-- ============ 4. SERVICE LLD ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">3</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
 
         <!-- ========== PRODUCT SERVICE ========== -->
@@ -285,8 +302,68 @@ export default {
 </div>
 
 <!-- ============ 5. DB SCHEMA ============ -->
+
+<!-- ============ 5. APIs ============ -->
+<div class="section theme-teal">
+    <div class="section-title"><span class="section-num">5</span>REST API Endpoints</div>
+    <div class="api-grid">
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/products/search?q={query}&amp;category={id}&amp;minPrice={}&amp;maxPrice={}&amp;sort={}&amp;page={}&amp;size={}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Parameters</div><span class="key">q</span>: <span class="val">"wireless headphones"</span><br><span class="key">category</span>: <span class="val">42</span><br><span class="key">minPrice</span>: <span class="val">500</span><br><span class="key">maxPrice</span>: <span class="val">5000</span><br><span class="key">sort</span>: <span class="val">"price_asc | relevance | popularity"</span><br><span class="key">page</span>: <span class="val">0</span><br><span class="key">size</span>: <span class="val">20</span></div>
+                <div class="api-json"><div class="label">Response</div>{ <span class="key">"products"</span>: [{ <span class="key">"id"</span>: <span class="val">1</span>, <span class="key">"title"</span>: <span class="val">"..."</span>, <span class="key">"price"</span>: <span class="val">1299</span>, <span class="key">"avgRating"</span>: <span class="val">4.3</span> }], <span class="key">"totalResults"</span>: <span class="val">1542</span>, <span class="key">"facets"</span>: { ... } }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/products/{productId}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Path Param</div><span class="key">productId</span>: <span class="val">12345</span></div>
+                <div class="api-json"><div class="label">Response</div>{ <span class="key">"id"</span>: <span class="val">12345</span>, <span class="key">"title"</span>: <span class="val">"..."</span>, <span class="key">"price"</span>: <span class="val">1299</span>, <span class="key">"seller"</span>: { ... }, <span class="key">"reviews"</span>: { ... }, <span class="key">"inventory"</span>: { <span class="key">"available"</span>: <span class="val">true</span> } }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/orders</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"items"</span>: [{ <span class="key">"productId"</span>: <span class="val">12345</span>, <span class="key">"qty"</span>: <span class="val">2</span> }], <span class="key">"addressId"</span>: <span class="val">5</span>, <span class="key">"paymentMethod"</span>: <span class="val">"UPI"</span> }</div>
+                <div class="api-json"><div class="label">Response</div>{ <span class="key">"orderId"</span>: <span class="val">"ORD-abc123"</span>, <span class="key">"status"</span>: <span class="val">"CONFIRMED"</span>, <span class="key">"total"</span>: <span class="val">2598</span>, <span class="key">"estimatedDelivery"</span>: <span class="val">"2026-06-07"</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/delivery/{trackingNumber}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Path Param</div><span class="key">trackingNumber</span>: <span class="val">"TRK-xyz789"</span></div>
+                <div class="api-json"><div class="label">Response</div>{ <span class="key">"trackingNumber"</span>: <span class="val">"TRK-xyz789"</span>, <span class="key">"status"</span>: <span class="val">"IN_TRANSIT"</span>, <span class="key">"currentLocation"</span>: <span class="val">"Mumbai Hub"</span>, <span class="key">"events"</span>: [...] }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/products/{productId}/reviews</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"rating"</span>: <span class="val">5</span>, <span class="key">"title"</span>: <span class="val">"Excellent!"</span>, <span class="key">"body"</span>: <span class="val">"Great product, fast delivery"</span>, <span class="key">"images"</span>: [<span class="val">"img1.jpg"</span>] }</div>
+                <div class="api-json"><div class="label">Response</div>{ <span class="key">"reviewId"</span>: <span class="val">42</span>, <span class="key">"verified"</span>: <span class="val">true</span>, <span class="key">"status"</span>: <span class="val">"PUBLISHED"</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/sellers</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"businessName"</span>: <span class="val">"TechStore"</span>, <span class="key">"gstin"</span>: <span class="val">"22AAAAA0000A1Z5"</span>, <span class="key">"email"</span>: <span class="val">"seller@tech.com"</span> }</div>
+                <div class="api-json"><div class="label">Response</div>{ <span class="key">"sellerId"</span>: <span class="val">101</span>, <span class="key">"status"</span>: <span class="val">"PENDING_VERIFICATION"</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-put">PUT</span><span class="api-path">/api/v1/sellers/{sellerId}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"businessName"</span>: <span class="val">"TechStore Pro"</span>, <span class="key">"phone"</span>: <span class="val">"+91-9876543210"</span> }</div>
+                <div class="api-json"><div class="label">Response</div>{ <span class="key">"sellerId"</span>: <span class="val">101</span>, <span class="key">"status"</span>: <span class="val">"ACTIVE"</span>, <span class="key">"updated"</span>: <span class="val">true</span> }</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 7. KEY ARCHITECTURE ============ -->
+
+<!-- ============ 6. DB SCHEMA ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -421,64 +498,68 @@ export default {
 </div>
 
 <!-- ============ 6. APIs ============ -->
-<div class="section theme-teal">
-    <div class="section-title"><span class="section-num">5</span>REST API Endpoints</div>
-    <div class="api-grid">
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/products/search?q={query}&amp;category={id}&amp;minPrice={}&amp;maxPrice={}&amp;sort={}&amp;page={}&amp;size={}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Parameters</div><span class="key">q</span>: <span class="val">"wireless headphones"</span><br><span class="key">category</span>: <span class="val">42</span><br><span class="key">minPrice</span>: <span class="val">500</span><br><span class="key">maxPrice</span>: <span class="val">5000</span><br><span class="key">sort</span>: <span class="val">"price_asc | relevance | popularity"</span><br><span class="key">page</span>: <span class="val">0</span><br><span class="key">size</span>: <span class="val">20</span></div>
-                <div class="api-json"><div class="label">Response</div>{ <span class="key">"products"</span>: [{ <span class="key">"id"</span>: <span class="val">1</span>, <span class="key">"title"</span>: <span class="val">"..."</span>, <span class="key">"price"</span>: <span class="val">1299</span>, <span class="key">"avgRating"</span>: <span class="val">4.3</span> }], <span class="key">"totalResults"</span>: <span class="val">1542</span>, <span class="key">"facets"</span>: { ... } }</div>
-            </div>
+
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="assumption-box">
+        <h4>Base Assumptions</h4>
+        <div class="assumption-row"><span class="calc-label">Total products in catalog</span><span class="calc-value">50 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Daily active users (DAU)</span><span class="calc-value">50 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg searches per user/day</span><span class="calc-value">5</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg orders per day</span><span class="calc-value">5 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg product page views/day</span><span class="calc-value">500 Million</span></div>
+    </div>
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Search Traffic</h4>
+            <div class="calc-row"><span class="calc-label">Total searches/day</span><span class="calc-value">250M</span></div>
+            <div class="calc-row"><span class="calc-label">Searches/second (avg)</span><span class="calc-value">~2,900 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Peak (10x avg)</span><span class="calc-value">~29,000 QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Elasticsearch Cluster</span><span class="calc-value">50+ nodes</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/products/{productId}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Path Param</div><span class="key">productId</span>: <span class="val">12345</span></div>
-                <div class="api-json"><div class="label">Response</div>{ <span class="key">"id"</span>: <span class="val">12345</span>, <span class="key">"title"</span>: <span class="val">"..."</span>, <span class="key">"price"</span>: <span class="val">1299</span>, <span class="key">"seller"</span>: { ... }, <span class="key">"reviews"</span>: { ... }, <span class="key">"inventory"</span>: { <span class="key">"available"</span>: <span class="val">true</span> } }</div>
-            </div>
+        <div class="cap-card">
+            <h4>Order Processing</h4>
+            <div class="calc-row"><span class="calc-label">Orders/day</span><span class="calc-value">5M</span></div>
+            <div class="calc-row"><span class="calc-label">Orders/second (avg)</span><span class="calc-value">~58 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Flash sale peak</span><span class="calc-value">~10,000 QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Write Throughput</span><span class="calc-value">10K TPS (peak)</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/orders</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"items"</span>: [{ <span class="key">"productId"</span>: <span class="val">12345</span>, <span class="key">"qty"</span>: <span class="val">2</span> }], <span class="key">"addressId"</span>: <span class="val">5</span>, <span class="key">"paymentMethod"</span>: <span class="val">"UPI"</span> }</div>
-                <div class="api-json"><div class="label">Response</div>{ <span class="key">"orderId"</span>: <span class="val">"ORD-abc123"</span>, <span class="key">"status"</span>: <span class="val">"CONFIRMED"</span>, <span class="key">"total"</span>: <span class="val">2598</span>, <span class="key">"estimatedDelivery"</span>: <span class="val">"2026-06-07"</span> }</div>
-            </div>
+        <div class="cap-card">
+            <h4>Inventory Updates</h4>
+            <div class="calc-row"><span class="calc-label">Updates/order (avg 2 items)</span><span class="calc-value">2</span></div>
+            <div class="calc-row"><span class="calc-label">Total inventory updates/day</span><span class="calc-value">10M</span></div>
+            <div class="calc-row"><span class="calc-label">Updates/second</span><span class="calc-value">~115 QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Redis + DB Write-Behind</span><span class="calc-value">Sub-ms latency</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/delivery/{trackingNumber}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Path Param</div><span class="key">trackingNumber</span>: <span class="val">"TRK-xyz789"</span></div>
-                <div class="api-json"><div class="label">Response</div>{ <span class="key">"trackingNumber"</span>: <span class="val">"TRK-xyz789"</span>, <span class="key">"status"</span>: <span class="val">"IN_TRANSIT"</span>, <span class="key">"currentLocation"</span>: <span class="val">"Mumbai Hub"</span>, <span class="key">"events"</span>: [...] }</div>
-            </div>
+        <div class="cap-card">
+            <h4>Storage</h4>
+            <div class="calc-row"><span class="calc-label">Product data (50M x 5KB)</span><span class="calc-value">~250 GB</span></div>
+            <div class="calc-row"><span class="calc-label">Product images (50M x 5 x 500KB)</span><span class="calc-value">~125 TB (S3)</span></div>
+            <div class="calc-row"><span class="calc-label">Orders/year (5M/day x 1KB)</span><span class="calc-value">~1.8 TB</span></div>
+            <div class="calc-result"><span class="calc-label">Total DB Storage</span><span class="calc-value">~5 TB + 125 TB S3</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/products/{productId}/reviews</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"rating"</span>: <span class="val">5</span>, <span class="key">"title"</span>: <span class="val">"Excellent!"</span>, <span class="key">"body"</span>: <span class="val">"Great product, fast delivery"</span>, <span class="key">"images"</span>: [<span class="val">"img1.jpg"</span>] }</div>
-                <div class="api-json"><div class="label">Response</div>{ <span class="key">"reviewId"</span>: <span class="val">42</span>, <span class="key">"verified"</span>: <span class="val">true</span>, <span class="key">"status"</span>: <span class="val">"PUBLISHED"</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/sellers</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"businessName"</span>: <span class="val">"TechStore"</span>, <span class="key">"gstin"</span>: <span class="val">"22AAAAA0000A1Z5"</span>, <span class="key">"email"</span>: <span class="val">"seller@tech.com"</span> }</div>
-                <div class="api-json"><div class="label">Response</div>{ <span class="key">"sellerId"</span>: <span class="val">101</span>, <span class="key">"status"</span>: <span class="val">"PENDING_VERIFICATION"</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-put">PUT</span><span class="api-path">/api/v1/sellers/{sellerId}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request Body</div>{ <span class="key">"businessName"</span>: <span class="val">"TechStore Pro"</span>, <span class="key">"phone"</span>: <span class="val">"+91-9876543210"</span> }</div>
-                <div class="api-json"><div class="label">Response</div>{ <span class="key">"sellerId"</span>: <span class="val">101</span>, <span class="key">"status"</span>: <span class="val">"ACTIVE"</span>, <span class="key">"updated"</span>: <span class="val">true</span> }</div>
-            </div>
+        <div class="cap-card">
+            <h4>CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Search QPS (peak)</span><span class="calc-value">~29,000 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Product page views QPS</span><span class="calc-value">~5,800 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Order processing (peak)</span><span class="calc-value">~10,000 TPS</span></div>
+            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~5K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~30 servers</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">CPU cores per server (8 cores)</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Total CPU Cores</span><span class="calc-value">~240 cores</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Elasticsearch Cluster</span><span class="calc-value">50+ nodes</span></div>
+            <div class="calc-row"><span class="calc-label">Redis Cluster Nodes</span><span class="calc-value">5-10 nodes</span></div>
+            <div class="calc-row"><span class="calc-label">DB Shards (order DB)</span><span class="calc-value">10+ shards</span></div>
         </div>
     </div>
 </div>
 
-<!-- ============ 7. KEY ARCHITECTURE ============ -->
+<!-- ============ 11. BOTTLENECKS ============ -->
+
+<!-- ============ 8. KEY ARCHITECTURE ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture Components</div>
+    <div class="section-title"><span class="section-num">8</span>Key Architecture Components</div>
 
     <div class="sub-heading" style="color:#ff5252;border-color:#ff5252">Search Engine &mdash; Elasticsearch</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Elasticsearch Integration</span></div><pre class="code-block">
@@ -569,8 +650,10 @@ export default {
 </div>
 
 <!-- ============ 8. DESIGN PATTERNS ============ -->
+
+<!-- ============ 9. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns (with Code)</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns (with Code)</div>
 
     <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Strategy Pattern &mdash; Search Ranking</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">SearchRankingStrategy.java</span></div><pre class="code-block">
@@ -788,8 +871,10 @@ export default {
 </div>
 
 <!-- ============ 9. SEQUENCE FLOW ============ -->
+
+<!-- ============ 10. SEQUENCE FLOW ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow &mdash; Search to Delivery</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow &mdash; Search to Delivery</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User Searches for Product</div>
         <div class="flow-arrow arrow-green"></div>
@@ -814,64 +899,10 @@ export default {
 </div>
 
 <!-- ============ 10. CAPACITY ESTIMATION ============ -->
-<div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
-    <div class="assumption-box">
-        <h4>Base Assumptions</h4>
-        <div class="assumption-row"><span class="calc-label">Total products in catalog</span><span class="calc-value">50 Million</span></div>
-        <div class="assumption-row"><span class="calc-label">Daily active users (DAU)</span><span class="calc-value">50 Million</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg searches per user/day</span><span class="calc-value">5</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg orders per day</span><span class="calc-value">5 Million</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg product page views/day</span><span class="calc-value">500 Million</span></div>
-    </div>
-    <div class="cap-grid">
-        <div class="cap-card">
-            <h4>Search Traffic</h4>
-            <div class="calc-row"><span class="calc-label">Total searches/day</span><span class="calc-value">250M</span></div>
-            <div class="calc-row"><span class="calc-label">Searches/second (avg)</span><span class="calc-value">~2,900 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">Peak (10x avg)</span><span class="calc-value">~29,000 QPS</span></div>
-            <div class="calc-result"><span class="calc-label">Elasticsearch Cluster</span><span class="calc-value">50+ nodes</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>Order Processing</h4>
-            <div class="calc-row"><span class="calc-label">Orders/day</span><span class="calc-value">5M</span></div>
-            <div class="calc-row"><span class="calc-label">Orders/second (avg)</span><span class="calc-value">~58 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">Flash sale peak</span><span class="calc-value">~10,000 QPS</span></div>
-            <div class="calc-result"><span class="calc-label">Write Throughput</span><span class="calc-value">10K TPS (peak)</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>Inventory Updates</h4>
-            <div class="calc-row"><span class="calc-label">Updates/order (avg 2 items)</span><span class="calc-value">2</span></div>
-            <div class="calc-row"><span class="calc-label">Total inventory updates/day</span><span class="calc-value">10M</span></div>
-            <div class="calc-row"><span class="calc-label">Updates/second</span><span class="calc-value">~115 QPS</span></div>
-            <div class="calc-result"><span class="calc-label">Redis + DB Write-Behind</span><span class="calc-value">Sub-ms latency</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>Storage</h4>
-            <div class="calc-row"><span class="calc-label">Product data (50M x 5KB)</span><span class="calc-value">~250 GB</span></div>
-            <div class="calc-row"><span class="calc-label">Product images (50M x 5 x 500KB)</span><span class="calc-value">~125 TB (S3)</span></div>
-            <div class="calc-row"><span class="calc-label">Orders/year (5M/day x 1KB)</span><span class="calc-value">~1.8 TB</span></div>
-            <div class="calc-result"><span class="calc-label">Total DB Storage</span><span class="calc-value">~5 TB + 125 TB S3</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>CPU / Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Search QPS (peak)</span><span class="calc-value">~29,000 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">Product page views QPS</span><span class="calc-value">~5,800 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">Order processing (peak)</span><span class="calc-value">~10,000 TPS</span></div>
-            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~5K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~30 servers</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">CPU cores per server (8 cores)</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Total CPU Cores</span><span class="calc-value">~240 cores</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Elasticsearch Cluster</span><span class="calc-value">50+ nodes</span></div>
-            <div class="calc-row"><span class="calc-label">Redis Cluster Nodes</span><span class="calc-value">5-10 nodes</span></div>
-            <div class="calc-row"><span class="calc-label">DB Shards (order DB)</span><span class="calc-value">10+ shards</span></div>
-        </div>
-    </div>
-</div>
 
 <!-- ============ 11. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item">
             <span class="bottleneck-problem">Search Latency at Scale</span>
@@ -897,8 +928,10 @@ export default {
 </div>
 
 <!-- ============ 12. EDGE CASES ============ -->
+
+<!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-amber">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>Flash Sale Overselling</h4>
@@ -924,8 +957,10 @@ export default {
 </div>
 
 <!-- ============ 13. SECURITY ============ -->
+
+<!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#9670;</span>
@@ -947,8 +982,10 @@ export default {
 </div>
 
 <!-- ============ 14. SUMMARY ============ -->
+
+<!-- ============ 14. SUMMARY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">13</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Elasticsearch + CQRS</h4><p>Read-Heavy Product Catalog</p></div>
         <div class="summary-card sc-2"><h4>Saga Pattern + Kafka</h4><p>Distributed Order Processing</p></div>

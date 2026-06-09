@@ -23,8 +23,21 @@ export default {
     </div>
 </div>
 
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; driver match &lt; 30 sec me ho jaaye</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, ride kabhi drop nahi ho</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; millions concurrent rides handle karo</div>
+        <div class="req-pill"><span class="num">4</span> Real-time &mdash; live GPS tracking har 2-3 sec update</div>
+        <div class="req-pill"><span class="num">5</span> Consistency &mdash; ride state machine ACID hona chahiye</div>
+        <div class="req-pill"><span class="num">6</span> Fault Tolerance &mdash; server crash pe bhi ride lost nahi ho</div>
+    </div>
+</div>
+
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card"><h3>RideStatus</h3><div class="enum-val">REQUESTED</div><div class="enum-val">DRIVER_ASSIGNED</div><div class="enum-val">DRIVER_ARRIVED</div><div class="enum-val">IN_PROGRESS</div><div class="enum-val">COMPLETED</div><div class="enum-val">CANCELLED</div><div class="enum-val">NO_DRIVERS</div></div>
         <div class="enum-card"><h3>DriverStatus</h3><div class="enum-val">OFFLINE</div><div class="enum-val">AVAILABLE</div><div class="enum-val">BUSY</div><div class="enum-val">ON_RIDE</div></div>
@@ -34,165 +47,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
-
-    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
-    <div class="dbtech-grid">
-        <div class="dbtech-card">
-            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
-            <div class="dbtech-usage">Rides, users, drivers, ratings &mdash; ACID transactions for ride booking</div>
-            <div class="dbtech-tables"><span>rides</span><span>riders</span><span>drivers</span><span>ratings</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Redis GEO <span class="dbtech-type">In-Memory</span></div>
-            <div class="dbtech-usage">Real-time driver locations (GEOADD/GEORADIUS), surge pricing zones, session cache</div>
-            <div class="dbtech-tables"><span>driver:locations</span><span>surge:{zoneId}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
-            <div class="dbtech-usage">Ride events, driver notifications, location updates, pricing recalculation</div>
-            <div class="dbtech-tables"><span>ride-events</span><span>location-updates</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">TimescaleDB <span class="dbtech-type">Time-Series</span></div>
-            <div class="dbtech-usage">Driver location history &mdash; time-series data for route tracking and ETA calculation</div>
-            <div class="dbtech-tables"><span>location_history</span></div>
-        </div>
-    </div>
-
-    <div class="db-grid">
-        <div class="db-card">
-            <h3>rides</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">ride_id</span><span class="col-type">VARCHAR(36)</span><span class="col-constraint">UNIQUE IDX</span></div>
-            <div class="db-row"><span class="col-name">rider_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">driver_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">pickup_lat</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">pickup_lng</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">drop_lat</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">drop_lng</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">ride_type</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">estimated_fare</span><span class="col-type">DECIMAL(10,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">actual_fare</span><span class="col-type">DECIMAL(10,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">surge_multiplier</span><span class="col-type">DOUBLE</span><span class="col-constraint">DEFAULT 1.0</span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>drivers</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">phone</span><span class="col-type">VARCHAR(15)</span><span class="col-constraint">UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">vehicle_number</span><span class="col-type">VARCHAR(20)</span><span class="col-constraint">UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">vehicle_type</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">current_lat</span><span class="col-type">DOUBLE</span><span class="col-constraint">SPATIAL IDX</span></div>
-            <div class="db-row"><span class="col-name">current_lng</span><span class="col-type">DOUBLE</span><span class="col-constraint">SPATIAL IDX</span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">rating</span><span class="col-type">DOUBLE</span><span class="col-constraint">DEFAULT 5.0</span></div>
-        </div>
-        <div class="db-card">
-            <h3>location_history (time-series)</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">driver_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">ride_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">lat</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">lng</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">speed</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">timestamp</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>ratings</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">ride_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">from_user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK</span></div>
-            <div class="db-row"><span class="col-name">to_user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">score</span><span class="col-type">INT</span><span class="col-constraint">CHECK(1-5)</span></div>
-            <div class="db-row"><span class="col-name">comment</span><span class="col-type">TEXT</span><span class="col-constraint"></span></div>
-        </div>
-    </div>
-
-    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Query Examples</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">PostgreSQL &mdash; Core Ride Queries</span></div>
-    <pre class="code-block">
-<span class="cm">-- 1. Rider ki ride history (latest first, paginated)</span>
-<span class="kw">SELECT</span> * <span class="kw">FROM</span> rides
-<span class="kw">WHERE</span> rider_id = <span class="cn">1001</span>
-<span class="kw">ORDER BY</span> created_at <span class="kw">DESC</span>
-<span class="kw">LIMIT</span> <span class="cn">10</span> <span class="kw">OFFSET</span> <span class="cn">0</span>;
-
-<span class="cm">-- 2. Driver ka current active ride dhundho</span>
-<span class="kw">SELECT</span> * <span class="kw">FROM</span> rides
-<span class="kw">WHERE</span> driver_id = <span class="cn">5001</span>
-  <span class="kw">AND</span> status <span class="kw">IN</span> (<span class="st">'DRIVER_ASSIGNED'</span>, <span class="st">'DRIVER_ARRIVED'</span>, <span class="st">'IN_PROGRESS'</span>);
-
-<span class="cm">-- 3. Nearby available drivers (ST_Distance_Sphere) &mdash; 5km radius</span>
-<span class="kw">SELECT</span> id, name, vehicle_type,
-       ST_Distance_Sphere(
-           POINT(current_lng, current_lat),
-           POINT(<span class="cn">77.209</span>, <span class="cn">28.613</span>)
-       ) / <span class="cn">1000</span> <span class="kw">AS</span> distance_km
-<span class="kw">FROM</span> drivers
-<span class="kw">WHERE</span> status = <span class="st">'AVAILABLE'</span>
-  <span class="kw">AND</span> vehicle_type = <span class="st">'SEDAN'</span>
-<span class="kw">HAVING</span> distance_km &lt;= <span class="cn">5</span>
-<span class="kw">ORDER BY</span> distance_km <span class="kw">ASC</span>
-<span class="kw">LIMIT</span> <span class="cn">20</span>;
-
-<span class="cm">-- 4. Driver ki average rating nikalo</span>
-<span class="kw">SELECT</span> to_user_id <span class="kw">AS</span> driver_id,
-       <span class="fn">AVG</span>(score) <span class="kw">AS</span> avg_rating,
-       <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total_reviews
-<span class="kw">FROM</span> ratings
-<span class="kw">WHERE</span> to_user_id = <span class="cn">5001</span>
-<span class="kw">GROUP BY</span> to_user_id;
-
-<span class="cm">-- 5. Surge zone ke liye demand/supply ratio</span>
-<span class="kw">SELECT</span>
-    (<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> rides <span class="kw">WHERE</span> status = <span class="st">'REQUESTED'</span>
-     <span class="kw">AND</span> created_at > NOW() - INTERVAL <span class="st">'5 minutes'</span>) <span class="kw">AS</span> demand,
-    (<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> drivers <span class="kw">WHERE</span> status = <span class="st">'AVAILABLE'</span>) <span class="kw">AS</span> supply;
-    </pre></div>
-
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">Redis GEO &mdash; Real-time Location Commands</span></div>
-    <pre class="code-block">
-<span class="cm">// 1. Driver ki location update karo (har 3 sec)</span>
-GEOADD driver:locations <span class="cn">77.209</span> <span class="cn">28.613</span> <span class="st">"driver:5001"</span>
-
-<span class="cm">// 2. Pickup ke paas 5km mein available drivers dhundho</span>
-GEORADIUS driver:locations <span class="cn">77.209</span> <span class="cn">28.613</span> <span class="cn">5</span> km
-    ASC COUNT <span class="cn">20</span> WITHDIST
-
-<span class="cm">// 3. Driver ki current location nikalo</span>
-GEOPOS driver:locations <span class="st">"driver:5001"</span>
-
-<span class="cm">// 4. Surge multiplier cache karo zone ke liye</span>
-SET surge:zone_delhi_cp <span class="cn">2.5</span> EX <span class="cn">30</span>
-GET surge:zone_delhi_cp
-
-<span class="cm">// 5. Ride accept ke liye distributed lock (SETNX)</span>
-SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">10</span>
-    </pre></div>
-</div>
-
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
-    <div class="api-grid">
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/rides/request</div><div class="api-desc">Request a ride (pickup, drop, rideType)</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/rides/estimate</div><div class="api-desc">Get fare estimate &amp; ETA without booking</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/rides/{rideId}/accept</div><div class="api-desc">Driver accepts ride request</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/rides/{rideId}/start</div><div class="api-desc">Driver starts ride (OTP verified)</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/rides/{rideId}/complete</div><div class="api-desc">Driver completes ride at drop location</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/rides/{rideId}/cancel</div><div class="api-desc">Cancel ride (applies fee if after threshold)</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/rides/{rideId}/rate</div><div class="api-desc">Rate driver/rider (1-5 stars)</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/drivers/location</div><div class="api-desc">Update driver's current location (every 3s)</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/drivers/availability</div><div class="api-desc">Toggle driver online/offline</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/rides/{rideId}/track</div><div class="api-desc">WebSocket: real-time driver location updates</div></div>
-    </div>
-</div>
-
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
 
         <div class="service-card">
@@ -339,8 +195,191 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
     </div>
 </div>
 
+<div class="section theme-blue">
+    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="api-grid">
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/rides/request</div><div class="api-desc">Request a ride (pickup, drop, rideType)</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/rides/estimate</div><div class="api-desc">Get fare estimate &amp; ETA without booking</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/rides/{rideId}/accept</div><div class="api-desc">Driver accepts ride request</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/rides/{rideId}/start</div><div class="api-desc">Driver starts ride (OTP verified)</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/rides/{rideId}/complete</div><div class="api-desc">Driver completes ride at drop location</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/rides/{rideId}/cancel</div><div class="api-desc">Cancel ride (applies fee if after threshold)</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/rides/{rideId}/rate</div><div class="api-desc">Rate driver/rider (1-5 stars)</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/drivers/location</div><div class="api-desc">Update driver's current location (every 3s)</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/drivers/availability</div><div class="api-desc">Toggle driver online/offline</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/rides/{rideId}/track</div><div class="api-desc">WebSocket: real-time driver location updates</div></div>
+    </div>
+</div>
+
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
+
+    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Rides, users, drivers, ratings &mdash; ACID transactions for ride booking</div>
+            <div class="dbtech-tables"><span>rides</span><span>riders</span><span>drivers</span><span>ratings</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis GEO <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Real-time driver locations (GEOADD/GEORADIUS), surge pricing zones, session cache</div>
+            <div class="dbtech-tables"><span>driver:locations</span><span>surge:{zoneId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
+            <div class="dbtech-usage">Ride events, driver notifications, location updates, pricing recalculation</div>
+            <div class="dbtech-tables"><span>ride-events</span><span>location-updates</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">TimescaleDB <span class="dbtech-type">Time-Series</span></div>
+            <div class="dbtech-usage">Driver location history &mdash; time-series data for route tracking and ETA calculation</div>
+            <div class="dbtech-tables"><span>location_history</span></div>
+        </div>
+    </div>
+
+    <div class="db-grid">
+        <div class="db-card">
+            <h3>rides</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">ride_id</span><span class="col-type">VARCHAR(36)</span><span class="col-constraint">UNIQUE IDX</span></div>
+            <div class="db-row"><span class="col-name">rider_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">driver_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">pickup_lat</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">pickup_lng</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">drop_lat</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">drop_lng</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">ride_type</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">estimated_fare</span><span class="col-type">DECIMAL(10,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">actual_fare</span><span class="col-type">DECIMAL(10,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">surge_multiplier</span><span class="col-type">DOUBLE</span><span class="col-constraint">DEFAULT 1.0</span></div>
+            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>drivers</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">phone</span><span class="col-type">VARCHAR(15)</span><span class="col-constraint">UNIQUE</span></div>
+            <div class="db-row"><span class="col-name">vehicle_number</span><span class="col-type">VARCHAR(20)</span><span class="col-constraint">UNIQUE</span></div>
+            <div class="db-row"><span class="col-name">vehicle_type</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">current_lat</span><span class="col-type">DOUBLE</span><span class="col-constraint">SPATIAL IDX</span></div>
+            <div class="db-row"><span class="col-name">current_lng</span><span class="col-type">DOUBLE</span><span class="col-constraint">SPATIAL IDX</span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">rating</span><span class="col-type">DOUBLE</span><span class="col-constraint">DEFAULT 5.0</span></div>
+        </div>
+        <div class="db-card">
+            <h3>location_history (time-series)</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">driver_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">ride_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">lat</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">lng</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">speed</span><span class="col-type">DOUBLE</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">timestamp</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>ratings</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">ride_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK UNIQUE</span></div>
+            <div class="db-row"><span class="col-name">from_user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK</span></div>
+            <div class="db-row"><span class="col-name">to_user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">score</span><span class="col-type">INT</span><span class="col-constraint">CHECK(1-5)</span></div>
+            <div class="db-row"><span class="col-name">comment</span><span class="col-type">TEXT</span><span class="col-constraint"></span></div>
+        </div>
+    </div>
+
+    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Query Examples</div>
+    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">PostgreSQL &mdash; Core Ride Queries</span></div>
+    <pre class="code-block">
+<span class="cm">-- 1. Rider ki ride history (latest first, paginated)</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> rides
+<span class="kw">WHERE</span> rider_id = <span class="cn">1001</span>
+<span class="kw">ORDER BY</span> created_at <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="cn">10</span> <span class="kw">OFFSET</span> <span class="cn">0</span>;
+
+<span class="cm">-- 2. Driver ka current active ride dhundho</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> rides
+<span class="kw">WHERE</span> driver_id = <span class="cn">5001</span>
+  <span class="kw">AND</span> status <span class="kw">IN</span> (<span class="st">'DRIVER_ASSIGNED'</span>, <span class="st">'DRIVER_ARRIVED'</span>, <span class="st">'IN_PROGRESS'</span>);
+
+<span class="cm">-- 3. Nearby available drivers (ST_Distance_Sphere) &mdash; 5km radius</span>
+<span class="kw">SELECT</span> id, name, vehicle_type,
+       ST_Distance_Sphere(
+           POINT(current_lng, current_lat),
+           POINT(<span class="cn">77.209</span>, <span class="cn">28.613</span>)
+       ) / <span class="cn">1000</span> <span class="kw">AS</span> distance_km
+<span class="kw">FROM</span> drivers
+<span class="kw">WHERE</span> status = <span class="st">'AVAILABLE'</span>
+  <span class="kw">AND</span> vehicle_type = <span class="st">'SEDAN'</span>
+<span class="kw">HAVING</span> distance_km &lt;= <span class="cn">5</span>
+<span class="kw">ORDER BY</span> distance_km <span class="kw">ASC</span>
+<span class="kw">LIMIT</span> <span class="cn">20</span>;
+
+<span class="cm">-- 4. Driver ki average rating nikalo</span>
+<span class="kw">SELECT</span> to_user_id <span class="kw">AS</span> driver_id,
+       <span class="fn">AVG</span>(score) <span class="kw">AS</span> avg_rating,
+       <span class="fn">COUNT</span>(*) <span class="kw">AS</span> total_reviews
+<span class="kw">FROM</span> ratings
+<span class="kw">WHERE</span> to_user_id = <span class="cn">5001</span>
+<span class="kw">GROUP BY</span> to_user_id;
+
+<span class="cm">-- 5. Surge zone ke liye demand/supply ratio</span>
+<span class="kw">SELECT</span>
+    (<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> rides <span class="kw">WHERE</span> status = <span class="st">'REQUESTED'</span>
+     <span class="kw">AND</span> created_at > NOW() - INTERVAL <span class="st">'5 minutes'</span>) <span class="kw">AS</span> demand,
+    (<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">FROM</span> drivers <span class="kw">WHERE</span> status = <span class="st">'AVAILABLE'</span>) <span class="kw">AS</span> supply;
+    </pre></div>
+
+    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">Redis GEO &mdash; Real-time Location Commands</span></div>
+    <pre class="code-block">
+<span class="cm">// 1. Driver ki location update karo (har 3 sec)</span>
+GEOADD driver:locations <span class="cn">77.209</span> <span class="cn">28.613</span> <span class="st">"driver:5001"</span>
+
+<span class="cm">// 2. Pickup ke paas 5km mein available drivers dhundho</span>
+GEORADIUS driver:locations <span class="cn">77.209</span> <span class="cn">28.613</span> <span class="cn">5</span> km
+    ASC COUNT <span class="cn">20</span> WITHDIST
+
+<span class="cm">// 3. Driver ki current location nikalo</span>
+GEOPOS driver:locations <span class="st">"driver:5001"</span>
+
+<span class="cm">// 4. Surge multiplier cache karo zone ke liye</span>
+SET surge:zone_delhi_cp <span class="cn">2.5</span> EX <span class="cn">30</span>
+GET surge:zone_delhi_cp
+
+<span class="cm">// 5. Ride accept ke liye distributed lock (SETNX)</span>
+SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">10</span>
+    </pre></div>
+</div>
+
+<div class="section theme-green">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="cap-grid">
+        <div class="cap-card"><div class="cap-label">Daily Rides</div><div class="cap-value">15M rides/day</div></div>
+        <div class="cap-card"><div class="cap-label">Active Drivers</div><div class="cap-value">5M online at peak</div></div>
+        <div class="cap-card"><div class="cap-label">Location Updates / sec</div><div class="cap-value">~1.7M (5M drivers &times; every 3s)</div></div>
+        <div class="cap-card"><div class="cap-label">Redis GEO Memory</div><div class="cap-value">~1 GB for 5M driver locations</div></div>
+        <div class="cap-card"><div class="cap-label">Matching QPS</div><div class="cap-value">~200 ride requests/sec</div></div>
+        <div class="cap-card"><div class="cap-label">WebSocket Connections</div><div class="cap-value">~10M concurrent (riders + drivers)</div></div>
+        <div class="cap-card"><div class="cap-label">Location History Storage</div><div class="cap-value">~500 GB/day (TimescaleDB, 7-day retention)</div></div>
+        <div class="cap-card"><div class="cap-label">Avg Trip Duration</div><div class="cap-value">~20 minutes</div></div>
+        <div class="cap-card">
+            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Location update QPS</span><span class="calc-value">~1.7M/sec</span></div>
+            <div class="calc-row"><span class="calc-label">Matching QPS</span><span class="calc-value">~200/sec</span></div>
+            <div class="calc-row"><span class="calc-label">Each location server handles</span><span class="calc-value">~50K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Location Servers Needed</span><span class="calc-value">~34 servers</span></div>
+            <div class="calc-row"><span class="calc-label">Each matching server handles</span><span class="calc-value">~50 matches/sec</span></div>
+            <div class="calc-result"><span class="calc-label">Matching Servers Needed</span><span class="calc-value">~4 servers</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">WebSocket Servers (50K conn/server)</span><span class="calc-value">~200 servers</span></div>
+            <div class="calc-result"><span class="calc-label">Total CPU Cores (all services)</span><span class="calc-value">~1,000+ cores</span></div>
+            <div class="calc-row"><span class="calc-label">Redis GEO Cluster</span><span class="calc-value">5-10 nodes</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="section theme-green">
+    <div class="section-title"><span class="section-num">8</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">MatchingEngine.java &mdash; GeoSpatial + Scoring</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span>
@@ -375,7 +414,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IPricingStrategy for ride types (Mini, Sedan, SUV) &mdash; different base fare, per-km, per-min rates</p></div>
         <div class="pattern-card"><h3>Observer</h3><p>Location updates trigger WebSocket push to rider; ride status changes trigger notifications</p></div>
@@ -387,7 +426,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">Rider opens app &rarr; enters pickup &amp; drop &rarr; gets fare estimate</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">Rider confirms &rarr; POST /rides/request (status = REQUESTED)</span></div>
@@ -402,34 +441,8 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
-    <div class="cap-grid">
-        <div class="cap-card"><div class="cap-label">Daily Rides</div><div class="cap-value">15M rides/day</div></div>
-        <div class="cap-card"><div class="cap-label">Active Drivers</div><div class="cap-value">5M online at peak</div></div>
-        <div class="cap-card"><div class="cap-label">Location Updates / sec</div><div class="cap-value">~1.7M (5M drivers &times; every 3s)</div></div>
-        <div class="cap-card"><div class="cap-label">Redis GEO Memory</div><div class="cap-value">~1 GB for 5M driver locations</div></div>
-        <div class="cap-card"><div class="cap-label">Matching QPS</div><div class="cap-value">~200 ride requests/sec</div></div>
-        <div class="cap-card"><div class="cap-label">WebSocket Connections</div><div class="cap-value">~10M concurrent (riders + drivers)</div></div>
-        <div class="cap-card"><div class="cap-label">Location History Storage</div><div class="cap-value">~500 GB/day (TimescaleDB, 7-day retention)</div></div>
-        <div class="cap-card"><div class="cap-label">Avg Trip Duration</div><div class="cap-value">~20 minutes</div></div>
-        <div class="cap-card">
-            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Location update QPS</span><span class="calc-value">~1.7M/sec</span></div>
-            <div class="calc-row"><span class="calc-label">Matching QPS</span><span class="calc-value">~200/sec</span></div>
-            <div class="calc-row"><span class="calc-label">Each location server handles</span><span class="calc-value">~50K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">Location Servers Needed</span><span class="calc-value">~34 servers</span></div>
-            <div class="calc-row"><span class="calc-label">Each matching server handles</span><span class="calc-value">~50 matches/sec</span></div>
-            <div class="calc-result"><span class="calc-label">Matching Servers Needed</span><span class="calc-value">~4 servers</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">WebSocket Servers (50K conn/server)</span><span class="calc-value">~200 servers</span></div>
-            <div class="calc-result"><span class="calc-label">Total CPU Cores (all services)</span><span class="calc-value">~1,000+ cores</span></div>
-            <div class="calc-row"><span class="calc-label">Redis GEO Cluster</span><span class="calc-value">5-10 nodes</span></div>
-        </div>
-    </div>
-</div>
-
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Location Update Storm</h3><p>Redis GEO for writes; batch WebSocket pushes; Kafka for location history persistence</p></div>
         <div class="bottleneck-card"><h3>Matching at Scale</h3><p>GeoHash-based partitioning; pre-computed supply-demand index; locality-based sharding</p></div>
@@ -441,7 +454,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>No Drivers Available</h3><p>Retry with expanding radius (5&rarr;10&rarr;15km); queue request for 60s; notify when driver found</p></div>
         <div class="edge-card"><h3>Driver GPS Lost</h3><p>Detect no location update &gt; 30s; show "last known" to rider; auto-cancel if &gt; 5min</p></div>
@@ -453,7 +466,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>OTP for Ride Start</h3><p>4-digit OTP sent to rider; driver must verify before starting &mdash; prevents wrong passenger</p></div>
         <div class="security-card"><h3>SOS / Emergency</h3><p>Panic button shares live location with emergency contacts + support; auto-call 911</p></div>
@@ -464,7 +477,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Matching</strong><br>Redis GEORADIUS for nearby drivers; score by distance + rating; 30s accept timeout</div>
         <div class="summary-card"><strong>Location</strong><br>Redis GEO for real-time; WebSocket push to rider; Kafka &rarr; TimescaleDB for history</div>

@@ -23,8 +23,21 @@ export default {
     </div>
 </div>
 
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; payment process &lt; 2 sec me complete ho</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.999% uptime, paisa kabhi fail nahi ho</div>
+        <div class="req-pill"><span class="num">3</span> Strong Consistency &mdash; ACID guarantee har transaction me</div>
+        <div class="req-pill"><span class="num">4</span> Idempotency &mdash; duplicate payment kabhi nahi hona chahiye</div>
+        <div class="req-pill"><span class="num">5</span> Scalability &mdash; peak sale time pe bhi handle karo</div>
+        <div class="req-pill"><span class="num">6</span> Security &mdash; PCI DSS compliance + encryption at rest &amp; transit</div>
+    </div>
+</div>
+
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card"><h3>PaymentStatus</h3><div class="enum-val">INITIATED</div><div class="enum-val">PENDING</div><div class="enum-val">AUTHORIZED</div><div class="enum-val">CAPTURED</div><div class="enum-val">FAILED</div><div class="enum-val">REFUNDED</div><div class="enum-val">PARTIALLY_REFUNDED</div></div>
         <div class="enum-card"><h3>PaymentMethod</h3><div class="enum-val">UPI</div><div class="enum-val">CREDIT_CARD</div><div class="enum-val">DEBIT_CARD</div><div class="enum-val">NET_BANKING</div><div class="enum-val">WALLET</div><div class="enum-val">EMI</div></div>
@@ -35,104 +48,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
-
-    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
-    <div class="dbtech-grid">
-        <div class="dbtech-card">
-            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
-            <div class="dbtech-usage">Payments, wallets, ledger entries, refunds &mdash; ACID critical for financial data</div>
-            <div class="dbtech-tables"><span>payments</span><span>wallets</span><span>refunds</span><span>ledger_entries</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
-            <div class="dbtech-usage">Idempotency key deduplication, rate limiting, payment session cache</div>
-            <div class="dbtech-tables"><span>idempotent:{key}</span><span>rate:{userId}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
-            <div class="dbtech-usage">Webhook event processing, async reconciliation, payment status updates</div>
-            <div class="dbtech-tables"><span>payment-events</span><span>webhook-events</span></div>
-        </div>
-    </div>
-
-    <div class="db-grid">
-        <div class="db-card">
-            <h3>payments</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK AUTO_INCREMENT</span></div>
-            <div class="db-row"><span class="col-name">payment_id</span><span class="col-type">VARCHAR(36)</span><span class="col-constraint">UNIQUE IDX</span></div>
-            <div class="db-row"><span class="col-name">order_id</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">amount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">currency</span><span class="col-type">VARCHAR(3)</span><span class="col-constraint">DEFAULT 'INR'</span></div>
-            <div class="db-row"><span class="col-name">method</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">gateway</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">gateway_txn_id</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">idempotency_key</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">version</span><span class="col-type">BIGINT</span><span class="col-constraint">DEFAULT 0</span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>wallets</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">balance</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint">DEFAULT 0.00</span></div>
-            <div class="db-row"><span class="col-name">currency</span><span class="col-type">VARCHAR(3)</span><span class="col-constraint">DEFAULT 'INR'</span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">DEFAULT 'ACTIVE'</span></div>
-            <div class="db-row"><span class="col-name">version</span><span class="col-type">BIGINT</span><span class="col-constraint">OCC</span></div>
-        </div>
-        <div class="db-card">
-            <h3>refunds</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">payment_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">amount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">gateway_refund_id</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>ledger_entries</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">payment_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">debit_account</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">credit_account</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">amount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>webhook_events</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">event_id</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint">UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">event_type</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">payload</span><span class="col-type">JSON</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">processed</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT FALSE</span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint"></span></div>
-        </div>
-    </div>
-
-</div>
-
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
-    <div class="api-grid">
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/payments</div><div class="api-desc">Initiate payment (requires Idempotency-Key header)</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/payments/{paymentId}</div><div class="api-desc">Get payment status &amp; details</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/payments/{paymentId}/capture</div><div class="api-desc">Capture authorized payment</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/payments/{paymentId}/refund</div><div class="api-desc">Initiate full/partial refund</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/payments?userId={id}&amp;page=0</div><div class="api-desc">List user's payment history (paginated)</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/webhooks/razorpay</div><div class="api-desc">Razorpay webhook endpoint (signature verified)</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/wallets/balance</div><div class="api-desc">Get wallet balance for authenticated user</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/wallets/topup</div><div class="api-desc">Top up wallet balance</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/ledger/{paymentId}</div><div class="api-desc">Get ledger entries for a payment</div></div>
-    </div>
-</div>
-
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>PaymentService</h3>
@@ -280,8 +197,128 @@ export default {
     </div>
 </div>
 
+<div class="section theme-blue">
+    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="api-grid">
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/payments</div><div class="api-desc">Initiate payment (requires Idempotency-Key header)</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/payments/{paymentId}</div><div class="api-desc">Get payment status &amp; details</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/payments/{paymentId}/capture</div><div class="api-desc">Capture authorized payment</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/payments/{paymentId}/refund</div><div class="api-desc">Initiate full/partial refund</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/payments?userId={id}&amp;page=0</div><div class="api-desc">List user's payment history (paginated)</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/webhooks/razorpay</div><div class="api-desc">Razorpay webhook endpoint (signature verified)</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/wallets/balance</div><div class="api-desc">Get wallet balance for authenticated user</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/wallets/topup</div><div class="api-desc">Top up wallet balance</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/ledger/{paymentId}</div><div class="api-desc">Get ledger entries for a payment</div></div>
+    </div>
+</div>
+
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
+
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Payments, wallets, ledger entries, refunds &mdash; ACID critical for financial data</div>
+            <div class="dbtech-tables"><span>payments</span><span>wallets</span><span>refunds</span><span>ledger_entries</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Idempotency key deduplication, rate limiting, payment session cache</div>
+            <div class="dbtech-tables"><span>idempotent:{key}</span><span>rate:{userId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
+            <div class="dbtech-usage">Webhook event processing, async reconciliation, payment status updates</div>
+            <div class="dbtech-tables"><span>payment-events</span><span>webhook-events</span></div>
+        </div>
+    </div>
+
+    <div class="db-grid">
+        <div class="db-card">
+            <h3>payments</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK AUTO_INCREMENT</span></div>
+            <div class="db-row"><span class="col-name">payment_id</span><span class="col-type">VARCHAR(36)</span><span class="col-constraint">UNIQUE IDX</span></div>
+            <div class="db-row"><span class="col-name">order_id</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">amount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">currency</span><span class="col-type">VARCHAR(3)</span><span class="col-constraint">DEFAULT 'INR'</span></div>
+            <div class="db-row"><span class="col-name">method</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">gateway</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">gateway_txn_id</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">idempotency_key</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">UNIQUE</span></div>
+            <div class="db-row"><span class="col-name">version</span><span class="col-type">BIGINT</span><span class="col-constraint">DEFAULT 0</span></div>
+            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>wallets</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK UNIQUE</span></div>
+            <div class="db-row"><span class="col-name">balance</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint">DEFAULT 0.00</span></div>
+            <div class="db-row"><span class="col-name">currency</span><span class="col-type">VARCHAR(3)</span><span class="col-constraint">DEFAULT 'INR'</span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">DEFAULT 'ACTIVE'</span></div>
+            <div class="db-row"><span class="col-name">version</span><span class="col-type">BIGINT</span><span class="col-constraint">OCC</span></div>
+        </div>
+        <div class="db-card">
+            <h3>refunds</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">payment_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">amount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">gateway_refund_id</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>ledger_entries</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">payment_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">debit_account</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">credit_account</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">amount</span><span class="col-type">DECIMAL(12,2)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>webhook_events</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">event_id</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint">UNIQUE</span></div>
+            <div class="db-row"><span class="col-name">event_type</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">payload</span><span class="col-type">JSON</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">processed</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT FALSE</span></div>
+            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint"></span></div>
+        </div>
+    </div>
+
+</div>
+
+<div class="section theme-green">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="cap-grid">
+        <div class="cap-card"><div class="cap-label">Daily Transactions</div><div class="cap-value">10M payments/day</div></div>
+        <div class="cap-card"><div class="cap-label">Peak TPS</div><div class="cap-value">~500 txn/sec</div></div>
+        <div class="cap-card"><div class="cap-label">Avg Payment Size</div><div class="cap-value">~1 KB (record)</div></div>
+        <div class="cap-card"><div class="cap-label">Daily Storage</div><div class="cap-value">~10 GB (payments + ledger)</div></div>
+        <div class="cap-card"><div class="cap-label">Yearly Storage</div><div class="cap-value">~3.6 TB (never delete financial data)</div></div>
+        <div class="cap-card"><div class="cap-label">Webhook Latency</div><div class="cap-value">Process within 5 seconds of receipt</div></div>
+        <div class="cap-card"><div class="cap-label">Refund Rate</div><div class="cap-value">~3-5% of total payments</div></div>
+        <div class="cap-card"><div class="cap-label">Reconciliation</div><div class="cap-value">Daily batch; 99.99% match rate target</div></div>
+        <div class="cap-card">
+            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Peak TPS</span><span class="calc-value">~500 txn/sec</span></div>
+            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~100 TPS (heavy processing)</span></div>
+            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~5 servers</span></div>
+            <div class="calc-result"><span class="calc-label">Total CPU Cores (8 per server)</span><span class="calc-value">~40 cores</span></div>
+            <div class="calc-row"><span class="calc-label">DB (primary + replicas)</span><span class="calc-value">3 nodes (HA)</span></div>
+            <div class="calc-row"><span class="calc-label">Redis (idempotency cache)</span><span class="calc-value">3 nodes</span></div>
+            <div class="calc-row"><span class="calc-label">Kafka (webhooks + events)</span><span class="calc-value">3 brokers</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="section theme-green">
+    <div class="section-title"><span class="section-num">8</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">PaymentService.java &mdash; Idempotency + State Machine</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span> <span class="ann">@Transactional</span>
@@ -333,7 +370,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IPaymentGateway implementations (Razorpay, Stripe) &mdash; swap gateways without modifying service</p></div>
         <div class="pattern-card"><h3>State Machine</h3><p>Payment status transitions: INITIATED&rarr;PENDING&rarr;AUTHORIZED&rarr;CAPTURED; invalid transitions throw</p></div>
@@ -345,7 +382,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">Client sends POST /api/v1/payments with Idempotency-Key header</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">PaymentService checks idempotency &mdash; returns existing if duplicate</span></div>
@@ -360,32 +397,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
-    <div class="cap-grid">
-        <div class="cap-card"><div class="cap-label">Daily Transactions</div><div class="cap-value">10M payments/day</div></div>
-        <div class="cap-card"><div class="cap-label">Peak TPS</div><div class="cap-value">~500 txn/sec</div></div>
-        <div class="cap-card"><div class="cap-label">Avg Payment Size</div><div class="cap-value">~1 KB (record)</div></div>
-        <div class="cap-card"><div class="cap-label">Daily Storage</div><div class="cap-value">~10 GB (payments + ledger)</div></div>
-        <div class="cap-card"><div class="cap-label">Yearly Storage</div><div class="cap-value">~3.6 TB (never delete financial data)</div></div>
-        <div class="cap-card"><div class="cap-label">Webhook Latency</div><div class="cap-value">Process within 5 seconds of receipt</div></div>
-        <div class="cap-card"><div class="cap-label">Refund Rate</div><div class="cap-value">~3-5% of total payments</div></div>
-        <div class="cap-card"><div class="cap-label">Reconciliation</div><div class="cap-value">Daily batch; 99.99% match rate target</div></div>
-        <div class="cap-card">
-            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Peak TPS</span><span class="calc-value">~500 txn/sec</span></div>
-            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~100 TPS (heavy processing)</span></div>
-            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~5 servers</span></div>
-            <div class="calc-result"><span class="calc-label">Total CPU Cores (8 per server)</span><span class="calc-value">~40 cores</span></div>
-            <div class="calc-row"><span class="calc-label">DB (primary + replicas)</span><span class="calc-value">3 nodes (HA)</span></div>
-            <div class="calc-row"><span class="calc-label">Redis (idempotency cache)</span><span class="calc-value">3 nodes</span></div>
-            <div class="calc-row"><span class="calc-label">Kafka (webhooks + events)</span><span class="calc-value">3 brokers</span></div>
-        </div>
-    </div>
-</div>
-
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Double Payment (double click)</h3><p>Idempotency key (UUID) in UNIQUE index; return existing payment on duplicate</p></div>
         <div class="bottleneck-card"><h3>Gateway Timeout</h3><p>30s timeout with async webhook fallback; stale payment cleanup job marks PENDING&rarr;FAILED after 15min</p></div>
@@ -397,7 +410,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Partial Refund Exceeds Total</h3><p>Track totalRefunded per payment; validate: totalRefunded + newRefund &le; originalAmount</p></div>
         <div class="edge-card"><h3>Webhook Before API Response</h3><p>Payment created first (INITIATED); webhook can arrive before API returns &mdash; both paths update atomically</p></div>
@@ -409,7 +422,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>PCI-DSS Compliance</h3><p>Never store raw card numbers; use gateway tokenization; SAQ-A for redirect flow</p></div>
         <div class="security-card"><h3>Webhook Verification</h3><p>HMAC-SHA256 signature verification; reject if signature mismatch; IP whitelist</p></div>
@@ -421,7 +434,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Idempotency</strong><br>UUID key in UNIQUE index; return existing on duplicate; prevents double charge</div>
         <div class="summary-card"><strong>State Machine</strong><br>INITIATED&rarr;PENDING&rarr;AUTHORIZED&rarr;CAPTURED&rarr;REFUNDED; reject invalid transitions</div>

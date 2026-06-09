@@ -25,8 +25,23 @@ export default {
 </div>
 
 <!-- ============ 2. ENUMS ============ -->
+
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; notification &lt; 1 sec me deliver ho</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, koi notification miss nahi ho</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; millions notifications per minute handle</div>
+        <div class="req-pill"><span class="num">4</span> Priority Based &mdash; urgent notifications pehle jaaye</div>
+        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; retry with exponential backoff on failure</div>
+        <div class="req-pill"><span class="num">6</span> Multi-channel &mdash; push, SMS, email, in-app sab support karo</div>
+    </div>
+</div>
+
+<!-- ============ 3. ENUMS ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card">
             <h3>NotificationChannel</h3>
@@ -79,157 +94,10 @@ export default {
 </div>
 
 <!-- ============ 3. DATABASE SCHEMA ============ -->
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
 
-    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
-    <div class="dbtech-grid">
-        <div class="dbtech-card">
-            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
-            <div class="dbtech-usage">Templates, user preferences, notification rules &mdash; structured config data</div>
-            <div class="dbtech-tables"><span>templates</span><span>user_preferences</span><span>rules</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">MongoDB <span class="dbtech-type">NoSQL</span></div>
-            <div class="dbtech-usage">Notification logs &mdash; high-volume append-only with TTL expiry</div>
-            <div class="dbtech-tables"><span>notification_log</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
-            <div class="dbtech-usage">Deduplication cache, rate limiting, DND schedule checks</div>
-            <div class="dbtech-tables"><span>dedup:{userId}</span><span>rate:{channel}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
-            <div class="dbtech-usage">Priority-based notification routing &mdash; separate topics per channel</div>
-            <div class="dbtech-tables"><span>push-queue</span><span>email-queue</span><span>sms-queue</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Firebase / APNs <span class="dbtech-type">Push Infra</span></div>
-            <div class="dbtech-usage">Mobile push notification delivery to Android and iOS devices</div>
-            <div class="dbtech-tables"><span>FCM</span><span>APNs</span></div>
-        </div>
-    </div>
-
-    <div class="db-grid">
-        <div class="db-card">
-            <h3>notifications</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK AUTO_INCREMENT</span></div>
-            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK &rarr; users(id) IDX</span></div>
-            <div class="db-row"><span class="col-name">channel</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">priority</span><span class="col-type">ENUM</span><span class="col-constraint">DEFAULT 'NORMAL'</span></div>
-            <div class="db-row"><span class="col-name">template_id</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">FK</span></div>
-            <div class="db-row"><span class="col-name">title</span><span class="col-type">VARCHAR(255)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">body</span><span class="col-type">TEXT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX DEFAULT 'PENDING'</span></div>
-            <div class="db-row"><span class="col-name">retry_count</span><span class="col-type">INT</span><span class="col-constraint">DEFAULT 0</span></div>
-            <div class="db-row"><span class="col-name">scheduled_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">sent_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>notification_templates</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint">UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">channel</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">title_template</span><span class="col-type">VARCHAR(512)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">body_template</span><span class="col-type">TEXT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">active</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT TRUE</span></div>
-        </div>
-        <div class="db-card">
-            <h3>device_tokens</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">token</span><span class="col-type">VARCHAR(512)</span><span class="col-constraint">UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">platform</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">active</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT TRUE</span></div>
-        </div>
-        <div class="db-card">
-            <h3>user_preferences</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">channel</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">enabled</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT TRUE</span></div>
-            <div class="db-row"><span class="col-name">quiet_hours_start</span><span class="col-type">TIME</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">quiet_hours_end</span><span class="col-type">TIME</span><span class="col-constraint"></span></div>
-        </div>
-        <div class="db-card">
-            <h3>notification_logs</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">notification_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">provider</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">error_code</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">attempt_number</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">latency_ms</span><span class="col-type">BIGINT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-    </div>
-
-</div>
-
-<!-- ============ 4. API ENDPOINTS ============ -->
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
-    <div class="api-grid">
-        <div class="api-card">
-            <div class="api-method post">POST</div>
-            <div class="api-path">/api/v1/notifications</div>
-            <div class="api-desc">Send notification (async 202 Accepted)</div>
-        </div>
-        <div class="api-card">
-            <div class="api-method post">POST</div>
-            <div class="api-path">/api/v1/notifications/bulk</div>
-            <div class="api-desc">Send bulk notifications (batch)</div>
-        </div>
-        <div class="api-card">
-            <div class="api-method post">POST</div>
-            <div class="api-path">/api/v1/notifications/schedule</div>
-            <div class="api-desc">Schedule future notification delivery</div>
-        </div>
-        <div class="api-card">
-            <div class="api-method get">GET</div>
-            <div class="api-path">/api/v1/notifications?page=0&amp;size=20</div>
-            <div class="api-desc">Get user's notification center (paginated)</div>
-        </div>
-        <div class="api-card">
-            <div class="api-method get">GET</div>
-            <div class="api-path">/api/v1/notifications/unread-count</div>
-            <div class="api-desc">Get unread notification count</div>
-        </div>
-        <div class="api-card">
-            <div class="api-method put">PUT</div>
-            <div class="api-path">/api/v1/notifications/{id}/read</div>
-            <div class="api-desc">Mark single notification as read</div>
-        </div>
-        <div class="api-card">
-            <div class="api-method put">PUT</div>
-            <div class="api-path">/api/v1/notifications/read-all</div>
-            <div class="api-desc">Mark all notifications as read</div>
-        </div>
-        <div class="api-card">
-            <div class="api-method get">GET</div>
-            <div class="api-path">/api/v1/preferences</div>
-            <div class="api-desc">Get user notification preferences</div>
-        </div>
-        <div class="api-card">
-            <div class="api-method put">PUT</div>
-            <div class="api-path">/api/v1/preferences</div>
-            <div class="api-desc">Update notification preferences</div>
-        </div>
-        <div class="api-card">
-            <div class="api-method post">POST</div>
-            <div class="api-path">/api/v1/devices/token</div>
-            <div class="api-desc">Register device push token</div>
-        </div>
-    </div>
-</div>
-
-<!-- ============ 5. SERVICE LLD ============ -->
+<!-- ============ 4. SERVICE LLD ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
 
         <!-- ========== NOTIFICATION SERVICE ========== -->
@@ -458,8 +326,190 @@ export default {
 </div>
 
 <!-- ============ 6. KEY ARCHITECTURE ============ -->
+
+<!-- ============ 5. API ENDPOINTS ============ -->
+<div class="section theme-blue">
+    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="api-grid">
+        <div class="api-card">
+            <div class="api-method post">POST</div>
+            <div class="api-path">/api/v1/notifications</div>
+            <div class="api-desc">Send notification (async 202 Accepted)</div>
+        </div>
+        <div class="api-card">
+            <div class="api-method post">POST</div>
+            <div class="api-path">/api/v1/notifications/bulk</div>
+            <div class="api-desc">Send bulk notifications (batch)</div>
+        </div>
+        <div class="api-card">
+            <div class="api-method post">POST</div>
+            <div class="api-path">/api/v1/notifications/schedule</div>
+            <div class="api-desc">Schedule future notification delivery</div>
+        </div>
+        <div class="api-card">
+            <div class="api-method get">GET</div>
+            <div class="api-path">/api/v1/notifications?page=0&amp;size=20</div>
+            <div class="api-desc">Get user's notification center (paginated)</div>
+        </div>
+        <div class="api-card">
+            <div class="api-method get">GET</div>
+            <div class="api-path">/api/v1/notifications/unread-count</div>
+            <div class="api-desc">Get unread notification count</div>
+        </div>
+        <div class="api-card">
+            <div class="api-method put">PUT</div>
+            <div class="api-path">/api/v1/notifications/{id}/read</div>
+            <div class="api-desc">Mark single notification as read</div>
+        </div>
+        <div class="api-card">
+            <div class="api-method put">PUT</div>
+            <div class="api-path">/api/v1/notifications/read-all</div>
+            <div class="api-desc">Mark all notifications as read</div>
+        </div>
+        <div class="api-card">
+            <div class="api-method get">GET</div>
+            <div class="api-path">/api/v1/preferences</div>
+            <div class="api-desc">Get user notification preferences</div>
+        </div>
+        <div class="api-card">
+            <div class="api-method put">PUT</div>
+            <div class="api-path">/api/v1/preferences</div>
+            <div class="api-desc">Update notification preferences</div>
+        </div>
+        <div class="api-card">
+            <div class="api-method post">POST</div>
+            <div class="api-path">/api/v1/devices/token</div>
+            <div class="api-desc">Register device push token</div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 5. SERVICE LLD ============ -->
+
+<!-- ============ 6. DATABASE SCHEMA ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
+
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Templates, user preferences, notification rules &mdash; structured config data</div>
+            <div class="dbtech-tables"><span>templates</span><span>user_preferences</span><span>rules</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">MongoDB <span class="dbtech-type">NoSQL</span></div>
+            <div class="dbtech-usage">Notification logs &mdash; high-volume append-only with TTL expiry</div>
+            <div class="dbtech-tables"><span>notification_log</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Deduplication cache, rate limiting, DND schedule checks</div>
+            <div class="dbtech-tables"><span>dedup:{userId}</span><span>rate:{channel}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
+            <div class="dbtech-usage">Priority-based notification routing &mdash; separate topics per channel</div>
+            <div class="dbtech-tables"><span>push-queue</span><span>email-queue</span><span>sms-queue</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Firebase / APNs <span class="dbtech-type">Push Infra</span></div>
+            <div class="dbtech-usage">Mobile push notification delivery to Android and iOS devices</div>
+            <div class="dbtech-tables"><span>FCM</span><span>APNs</span></div>
+        </div>
+    </div>
+
+    <div class="db-grid">
+        <div class="db-card">
+            <h3>notifications</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK AUTO_INCREMENT</span></div>
+            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK &rarr; users(id) IDX</span></div>
+            <div class="db-row"><span class="col-name">channel</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">priority</span><span class="col-type">ENUM</span><span class="col-constraint">DEFAULT 'NORMAL'</span></div>
+            <div class="db-row"><span class="col-name">template_id</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">FK</span></div>
+            <div class="db-row"><span class="col-name">title</span><span class="col-type">VARCHAR(255)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">body</span><span class="col-type">TEXT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX DEFAULT 'PENDING'</span></div>
+            <div class="db-row"><span class="col-name">retry_count</span><span class="col-type">INT</span><span class="col-constraint">DEFAULT 0</span></div>
+            <div class="db-row"><span class="col-name">scheduled_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">sent_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>notification_templates</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint">UNIQUE</span></div>
+            <div class="db-row"><span class="col-name">channel</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">title_template</span><span class="col-type">VARCHAR(512)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">body_template</span><span class="col-type">TEXT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">active</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT TRUE</span></div>
+        </div>
+        <div class="db-card">
+            <h3>device_tokens</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">token</span><span class="col-type">VARCHAR(512)</span><span class="col-constraint">UNIQUE</span></div>
+            <div class="db-row"><span class="col-name">platform</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">active</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT TRUE</span></div>
+        </div>
+        <div class="db-card">
+            <h3>user_preferences</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">channel</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">type</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">enabled</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT TRUE</span></div>
+            <div class="db-row"><span class="col-name">quiet_hours_start</span><span class="col-type">TIME</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">quiet_hours_end</span><span class="col-type">TIME</span><span class="col-constraint"></span></div>
+        </div>
+        <div class="db-card">
+            <h3>notification_logs</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">notification_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">provider</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">error_code</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">attempt_number</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">latency_ms</span><span class="col-type">BIGINT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ============ 4. API ENDPOINTS ============ -->
+
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-green">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="cap-grid">
+        <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">50M</div></div>
+        <div class="cap-card"><div class="cap-label">Notifications / Day</div><div class="cap-value">500M (~10 per user)</div></div>
+        <div class="cap-card"><div class="cap-label">Peak QPS</div><div class="cap-value">~11,500 notif/sec</div></div>
+        <div class="cap-card"><div class="cap-label">Kafka Throughput</div><div class="cap-value">~15K events/sec</div></div>
+        <div class="cap-card"><div class="cap-label">Avg Notification Size</div><div class="cap-value">~500 bytes</div></div>
+        <div class="cap-card"><div class="cap-label">Daily Storage</div><div class="cap-value">~250 GB/day</div></div>
+        <div class="cap-card"><div class="cap-label">Monthly Storage</div><div class="cap-value">~7.5 TB (30-day)</div></div>
+        <div class="cap-card"><div class="cap-label">Push Latency (p99)</div><div class="cap-value">&lt; 2 seconds</div></div>
+        <div class="cap-card">
+            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Peak QPS</span><span class="calc-value">~11,500/sec</span></div>
+            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~3K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~4 servers</span></div>
+            <div class="calc-row"><span class="calc-label">CPU cores per server (4 cores)</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Total CPU Cores</span><span class="calc-value">~16 cores</span></div>
+            <div class="calc-row"><span class="calc-label">Kafka Consumer Workers</span><span class="calc-value">~20 workers</span></div>
+            <div class="calc-row"><span class="calc-label">Kafka Brokers</span><span class="calc-value">3-5 brokers</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 11. BOTTLENECKS ============ -->
+
+<!-- ============ 8. KEY ARCHITECTURE ============ -->
+<div class="section theme-green">
+    <div class="section-title"><span class="section-num">8</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">NotificationDispatcher.java — Strategy + Kafka Pipeline</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span>
@@ -508,8 +558,10 @@ export default {
 </div>
 
 <!-- ============ 7. DESIGN PATTERNS ============ -->
+
+<!-- ============ 9. DESIGN PATTERNS ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>Channel-specific senders (Push, Email, SMS) implement INotificationSender — swap providers without modifying dispatch</p></div>
         <div class="pattern-card"><h3>Observer</h3><p>Kafka event-driven: services publish NotificationEvent, consumers react asynchronously</p></div>
@@ -550,8 +602,10 @@ export default {
 </div>
 
 <!-- ============ 9. SEQUENCE FLOW ============ -->
+
+<!-- ============ 10. SEQUENCE FLOW ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">Client calls POST /api/v1/notifications &rarr; 202 Accepted</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">NotificationService checks user preferences &amp; quiet hours</span></div>
@@ -568,33 +622,10 @@ export default {
 </div>
 
 <!-- ============ 10. CAPACITY ESTIMATION ============ -->
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
-    <div class="cap-grid">
-        <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">50M</div></div>
-        <div class="cap-card"><div class="cap-label">Notifications / Day</div><div class="cap-value">500M (~10 per user)</div></div>
-        <div class="cap-card"><div class="cap-label">Peak QPS</div><div class="cap-value">~11,500 notif/sec</div></div>
-        <div class="cap-card"><div class="cap-label">Kafka Throughput</div><div class="cap-value">~15K events/sec</div></div>
-        <div class="cap-card"><div class="cap-label">Avg Notification Size</div><div class="cap-value">~500 bytes</div></div>
-        <div class="cap-card"><div class="cap-label">Daily Storage</div><div class="cap-value">~250 GB/day</div></div>
-        <div class="cap-card"><div class="cap-label">Monthly Storage</div><div class="cap-value">~7.5 TB (30-day)</div></div>
-        <div class="cap-card"><div class="cap-label">Push Latency (p99)</div><div class="cap-value">&lt; 2 seconds</div></div>
-        <div class="cap-card">
-            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Peak QPS</span><span class="calc-value">~11,500/sec</span></div>
-            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~3K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~4 servers</span></div>
-            <div class="calc-row"><span class="calc-label">CPU cores per server (4 cores)</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Total CPU Cores</span><span class="calc-value">~16 cores</span></div>
-            <div class="calc-row"><span class="calc-label">Kafka Consumer Workers</span><span class="calc-value">~20 workers</span></div>
-            <div class="calc-row"><span class="calc-label">Kafka Brokers</span><span class="calc-value">3-5 brokers</span></div>
-        </div>
-    </div>
-</div>
 
 <!-- ============ 11. BOTTLENECKS ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Burst Traffic (flash sales)</h3><p>Kafka priority queues absorb spikes; auto-scale consumers with K8s HPA on consumer lag</p></div>
         <div class="bottleneck-card"><h3>Provider Rate Limits</h3><p>Token bucket per provider + circuit breaker; failover to secondary (SES &rarr; SendGrid)</p></div>
@@ -606,8 +637,10 @@ export default {
 </div>
 
 <!-- ============ 12. EDGE CASES ============ -->
+
+<!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Duplicate Notifications</h3><p>Idempotency key (userId + templateId + hash) in Redis with 5-min TTL</p></div>
         <div class="edge-card"><h3>User Uninstalls App</h3><p>FCM returns NotRegistered &rarr; mark token inactive, fall back to email/SMS</p></div>
@@ -621,8 +654,10 @@ export default {
 </div>
 
 <!-- ============ 13. SECURITY ============ -->
+
+<!-- ============ 13. SECURITY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>Template Injection</h3><p>Sanitize all params; allow-list for placeholder keys; escape HTML in emails</p></div>
         <div class="security-card"><h3>PII Protection</h3><p>Mask sensitive data in logs; encrypt body at rest; GDPR-compliant retention</p></div>
@@ -634,8 +669,10 @@ export default {
 </div>
 
 <!-- ============ 14. INTERVIEW SUMMARY ============ -->
+
+<!-- ============ 14. INTERVIEW SUMMARY ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Architecture</strong><br>Event-driven Kafka priority queues + Strategy pattern for multi-channel</div>
         <div class="summary-card"><strong>Multi-Channel</strong><br>Push (FCM/APNs), Email (SES), SMS (Twilio), In-App (WebSocket)</div>

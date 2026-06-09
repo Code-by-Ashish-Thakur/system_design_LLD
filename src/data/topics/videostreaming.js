@@ -23,8 +23,21 @@ export default {
     </div>
 </div>
 
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; video start &lt; 2 sec me hona chahiye</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, stream kabhi buffer nahi ho</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; millions concurrent viewers handle karo</div>
+        <div class="req-pill"><span class="num">4</span> CDN &mdash; edge caching se global delivery fast ho</div>
+        <div class="req-pill"><span class="num">5</span> Adaptive Bitrate &mdash; network ke hisaab se quality auto-adjust</div>
+        <div class="req-pill"><span class="num">6</span> Fault Tolerance &mdash; chunk failure pe seamless retry</div>
+    </div>
+</div>
+
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card"><h3>VideoStatus</h3><div class="enum-val">UPLOADING</div><div class="enum-val">PROCESSING</div><div class="enum-val">TRANSCODING</div><div class="enum-val">READY</div><div class="enum-val">FAILED</div><div class="enum-val">DELETED</div></div>
         <div class="enum-card"><h3>Resolution</h3><div class="enum-val">R_360P</div><div class="enum-val">R_480P</div><div class="enum-val">R_720P</div><div class="enum-val">R_1080P</div><div class="enum-val">R_1440P</div><div class="enum-val">R_4K</div></div>
@@ -35,118 +48,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
-
-    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
-    <div class="dbtech-grid">
-        <div class="dbtech-card">
-            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
-            <div class="dbtech-usage">Videos metadata, users, channels, subscriptions &mdash; structured relational data</div>
-            <div class="dbtech-tables"><span>videos</span><span>users</span><span>channels</span><span>subscriptions</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">S3 <span class="dbtech-type">Blob Storage</span></div>
-            <div class="dbtech-usage">Raw uploads &amp; transcoded video files &mdash; multi-resolution HLS/DASH segments</div>
-            <div class="dbtech-tables"><span>raw-uploads</span><span>transcoded/{resolution}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
-            <div class="dbtech-usage">View counters (atomic INCR), active stream sessions, CDN token cache</div>
-            <div class="dbtech-tables"><span>views:{videoId}</span><span>session:{userId}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Elasticsearch <span class="dbtech-type">Search Engine</span></div>
-            <div class="dbtech-usage">Full-text search on video titles, descriptions, tags with fuzzy matching</div>
-            <div class="dbtech-tables"><span>videos</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
-            <div class="dbtech-usage">Transcode job queue, view count flush, content moderation pipeline</div>
-            <div class="dbtech-tables"><span>transcode-jobs</span><span>view-events</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">CDN <span class="dbtech-type">Edge Cache</span></div>
-            <div class="dbtech-usage">Video segment delivery from nearest edge server &mdash; CloudFront / Akamai</div>
-            <div class="dbtech-tables"><span>global edge locations</span></div>
-        </div>
-    </div>
-
-    <div class="db-grid">
-        <div class="db-card">
-            <h3>videos</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK AUTO_INCREMENT</span></div>
-            <div class="db-row"><span class="col-name">title</span><span class="col-type">VARCHAR(255)</span><span class="col-constraint">FULLTEXT IDX</span></div>
-            <div class="db-row"><span class="col-name">description</span><span class="col-type">TEXT</span><span class="col-constraint">FULLTEXT IDX</span></div>
-            <div class="db-row"><span class="col-name">channel_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK → channels(id) IDX</span></div>
-            <div class="db-row"><span class="col-name">original_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">thumbnail_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">duration</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">visibility</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">view_count</span><span class="col-type">BIGINT</span><span class="col-constraint">DEFAULT 0</span></div>
-            <div class="db-row"><span class="col-name">like_count</span><span class="col-type">BIGINT</span><span class="col-constraint">DEFAULT 0</span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>video_variants</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">video_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK → videos(id) IDX</span></div>
-            <div class="db-row"><span class="col-name">resolution</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">codec</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">bitrate</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">file_size</span><span class="col-type">BIGINT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">hls_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
-        </div>
-        <div class="db-card">
-            <h3>channels</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">owner_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK → users(id)</span></div>
-            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">handle</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">subscriber_count</span><span class="col-type">BIGINT</span><span class="col-constraint">DEFAULT 0</span></div>
-            <div class="db-row"><span class="col-name">verified</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT FALSE</span></div>
-        </div>
-        <div class="db-card">
-            <h3>comments</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">video_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK</span></div>
-            <div class="db-row"><span class="col-name">parent_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK (self-ref)</span></div>
-            <div class="db-row"><span class="col-name">content</span><span class="col-type">TEXT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">like_count</span><span class="col-type">INT</span><span class="col-constraint">DEFAULT 0</span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-        <div class="db-card">
-            <h3>watch_history</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">video_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
-            <div class="db-row"><span class="col-name">watched_seconds</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">completed</span><span class="col-type">BOOLEAN</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">last_watched_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-    </div>
-</div>
-
-<div class="section theme-purple">
-    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
-    <div class="api-grid">
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/videos/upload</div><div class="api-desc">Upload video (multipart, returns uploadId)</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/videos/upload/{uploadId}/chunk</div><div class="api-desc">Upload chunk for resumable upload</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/videos/{id}</div><div class="api-desc">Get video metadata + stream URLs</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/videos/{id}/stream?resolution=1080p</div><div class="api-desc">Get HLS manifest for adaptive streaming</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/videos/search?q=java&amp;page=0</div><div class="api-desc">Search videos with fulltext + filters</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/videos/{id}/comments</div><div class="api-desc">Add comment (supports nested replies)</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/videos/{id}/like</div><div class="api-desc">Like / unlike a video</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/videos/{id}/watch-progress</div><div class="api-desc">Update watch progress for resume</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/channels/{id}/videos?page=0</div><div class="api-desc">List channel videos (paginated)</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/channels/{id}/subscribe</div><div class="api-desc">Subscribe / unsubscribe from channel</div></div>
-    </div>
-</div>
-
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>VideoUploadService</h3>
@@ -290,8 +192,144 @@ export default {
     </div>
 </div>
 
+<div class="section theme-purple">
+    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="api-grid">
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/videos/upload</div><div class="api-desc">Upload video (multipart, returns uploadId)</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/videos/upload/{uploadId}/chunk</div><div class="api-desc">Upload chunk for resumable upload</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/videos/{id}</div><div class="api-desc">Get video metadata + stream URLs</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/videos/{id}/stream?resolution=1080p</div><div class="api-desc">Get HLS manifest for adaptive streaming</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/videos/search?q=java&amp;page=0</div><div class="api-desc">Search videos with fulltext + filters</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/videos/{id}/comments</div><div class="api-desc">Add comment (supports nested replies)</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/videos/{id}/like</div><div class="api-desc">Like / unlike a video</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/videos/{id}/watch-progress</div><div class="api-desc">Update watch progress for resume</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/channels/{id}/videos?page=0</div><div class="api-desc">List channel videos (paginated)</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/channels/{id}/subscribe</div><div class="api-desc">Subscribe / unsubscribe from channel</div></div>
+    </div>
+</div>
+
+<div class="section theme-blue">
+    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
+
+    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Videos metadata, users, channels, subscriptions &mdash; structured relational data</div>
+            <div class="dbtech-tables"><span>videos</span><span>users</span><span>channels</span><span>subscriptions</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">S3 <span class="dbtech-type">Blob Storage</span></div>
+            <div class="dbtech-usage">Raw uploads &amp; transcoded video files &mdash; multi-resolution HLS/DASH segments</div>
+            <div class="dbtech-tables"><span>raw-uploads</span><span>transcoded/{resolution}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">View counters (atomic INCR), active stream sessions, CDN token cache</div>
+            <div class="dbtech-tables"><span>views:{videoId}</span><span>session:{userId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Elasticsearch <span class="dbtech-type">Search Engine</span></div>
+            <div class="dbtech-usage">Full-text search on video titles, descriptions, tags with fuzzy matching</div>
+            <div class="dbtech-tables"><span>videos</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
+            <div class="dbtech-usage">Transcode job queue, view count flush, content moderation pipeline</div>
+            <div class="dbtech-tables"><span>transcode-jobs</span><span>view-events</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">CDN <span class="dbtech-type">Edge Cache</span></div>
+            <div class="dbtech-usage">Video segment delivery from nearest edge server &mdash; CloudFront / Akamai</div>
+            <div class="dbtech-tables"><span>global edge locations</span></div>
+        </div>
+    </div>
+
+    <div class="db-grid">
+        <div class="db-card">
+            <h3>videos</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK AUTO_INCREMENT</span></div>
+            <div class="db-row"><span class="col-name">title</span><span class="col-type">VARCHAR(255)</span><span class="col-constraint">FULLTEXT IDX</span></div>
+            <div class="db-row"><span class="col-name">description</span><span class="col-type">TEXT</span><span class="col-constraint">FULLTEXT IDX</span></div>
+            <div class="db-row"><span class="col-name">channel_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK → channels(id) IDX</span></div>
+            <div class="db-row"><span class="col-name">original_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">thumbnail_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">duration</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">visibility</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">view_count</span><span class="col-type">BIGINT</span><span class="col-constraint">DEFAULT 0</span></div>
+            <div class="db-row"><span class="col-name">like_count</span><span class="col-type">BIGINT</span><span class="col-constraint">DEFAULT 0</span></div>
+            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>video_variants</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">video_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK → videos(id) IDX</span></div>
+            <div class="db-row"><span class="col-name">resolution</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">codec</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">bitrate</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">file_size</span><span class="col-type">BIGINT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">hls_url</span><span class="col-type">VARCHAR(1024)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span><span class="col-constraint"></span></div>
+        </div>
+        <div class="db-card">
+            <h3>channels</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">owner_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK → users(id)</span></div>
+            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">handle</span><span class="col-type">VARCHAR(64)</span><span class="col-constraint">UNIQUE</span></div>
+            <div class="db-row"><span class="col-name">subscriber_count</span><span class="col-type">BIGINT</span><span class="col-constraint">DEFAULT 0</span></div>
+            <div class="db-row"><span class="col-name">verified</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT FALSE</span></div>
+        </div>
+        <div class="db-card">
+            <h3>comments</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">video_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK</span></div>
+            <div class="db-row"><span class="col-name">parent_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK (self-ref)</span></div>
+            <div class="db-row"><span class="col-name">content</span><span class="col-type">TEXT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">like_count</span><span class="col-type">INT</span><span class="col-constraint">DEFAULT 0</span></div>
+            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+        <div class="db-card">
+            <h3>watch_history</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">video_id</span><span class="col-type">BIGINT</span><span class="col-constraint">FK IDX</span></div>
+            <div class="db-row"><span class="col-name">watched_seconds</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">completed</span><span class="col-type">BOOLEAN</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">last_watched_at</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+    </div>
+</div>
+
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="cap-grid">
+        <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">100M</div></div>
+        <div class="cap-card"><div class="cap-label">Videos Uploaded / Day</div><div class="cap-value">500K</div></div>
+        <div class="cap-card"><div class="cap-label">Avg Video Size (raw)</div><div class="cap-value">500 MB</div></div>
+        <div class="cap-card"><div class="cap-label">Daily Upload Storage</div><div class="cap-value">250 TB/day (raw)</div></div>
+        <div class="cap-card"><div class="cap-label">Transcoded Variants</div><div class="cap-value">4 per video × 500K = 2M jobs/day</div></div>
+        <div class="cap-card"><div class="cap-label">Stream Requests / sec</div><div class="cap-value">~50,000 QPS</div></div>
+        <div class="cap-card"><div class="cap-label">CDN Bandwidth</div><div class="cap-value">~40 Tbps peak</div></div>
+        <div class="cap-card"><div class="cap-label">View Count Writes</div><div class="cap-value">Buffered in Redis, batch flush every 30s</div></div>
+        <div class="cap-card">
+            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Stream QPS (peak)</span><span class="calc-value">~50,000 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Each API server handles</span><span class="calc-value">~5K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">API Servers Needed</span><span class="calc-value">~10 servers</span></div>
+            <div class="calc-row"><span class="calc-label">Transcode jobs/day</span><span class="calc-value">2M jobs</span></div>
+            <div class="calc-row"><span class="calc-label">Avg transcode time</span><span class="calc-value">~30 min per job</span></div>
+            <div class="calc-result"><span class="calc-label">Transcode Workers (GPU)</span><span class="calc-value">~400 workers</span></div>
+            <div class="calc-result"><span class="calc-label">Total CPU Cores (API)</span><span class="calc-value">~80 cores</span></div>
+            <div class="calc-row"><span class="calc-label">CDN Edge Servers</span><span class="calc-value">1000+ globally</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="section theme-green">
+    <div class="section-title"><span class="section-num">8</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">TranscodingPipeline.java — Processing Pipeline</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span>
@@ -338,7 +376,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>ITranscoder implementations for H264, H265, VP9 — swap codecs without changing pipeline</p></div>
         <div class="pattern-card"><h3>Observer</h3><p>VideoUploadEvent triggers transcoding, thumbnail generation, moderation in parallel</p></div>
@@ -350,7 +388,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">Creator uploads video via chunked multipart to S3</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">Upload service creates Video record (status=UPLOADING)</span></div>
@@ -367,33 +405,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
-    <div class="cap-grid">
-        <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">100M</div></div>
-        <div class="cap-card"><div class="cap-label">Videos Uploaded / Day</div><div class="cap-value">500K</div></div>
-        <div class="cap-card"><div class="cap-label">Avg Video Size (raw)</div><div class="cap-value">500 MB</div></div>
-        <div class="cap-card"><div class="cap-label">Daily Upload Storage</div><div class="cap-value">250 TB/day (raw)</div></div>
-        <div class="cap-card"><div class="cap-label">Transcoded Variants</div><div class="cap-value">4 per video × 500K = 2M jobs/day</div></div>
-        <div class="cap-card"><div class="cap-label">Stream Requests / sec</div><div class="cap-value">~50,000 QPS</div></div>
-        <div class="cap-card"><div class="cap-label">CDN Bandwidth</div><div class="cap-value">~40 Tbps peak</div></div>
-        <div class="cap-card"><div class="cap-label">View Count Writes</div><div class="cap-value">Buffered in Redis, batch flush every 30s</div></div>
-        <div class="cap-card">
-            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Stream QPS (peak)</span><span class="calc-value">~50,000 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">Each API server handles</span><span class="calc-value">~5K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">API Servers Needed</span><span class="calc-value">~10 servers</span></div>
-            <div class="calc-row"><span class="calc-label">Transcode jobs/day</span><span class="calc-value">2M jobs</span></div>
-            <div class="calc-row"><span class="calc-label">Avg transcode time</span><span class="calc-value">~30 min per job</span></div>
-            <div class="calc-result"><span class="calc-label">Transcode Workers (GPU)</span><span class="calc-value">~400 workers</span></div>
-            <div class="calc-result"><span class="calc-label">Total CPU Cores (API)</span><span class="calc-value">~80 cores</span></div>
-            <div class="calc-row"><span class="calc-label">CDN Edge Servers</span><span class="calc-value">1000+ globally</span></div>
-        </div>
-    </div>
-</div>
-
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Transcoding CPU Bottleneck</h3><p>GPU-accelerated workers (NVENC); auto-scale K8s pods by queue depth; priority queue for popular creators</p></div>
         <div class="bottleneck-card"><h3>Storage Cost Explosion</h3><p>Tiered storage: hot (SSD) for recent, warm (S3 IA) for old, cold (Glacier) for archive. Delete unpopular variants</p></div>
@@ -405,7 +418,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Transcode Failure</h3><p>Retry failed variant 3×; if still fails, mark video as PARTIALLY_READY with available resolutions</p></div>
         <div class="edge-card"><h3>Corrupt Upload</h3><p>Validate video header/codec on upload; checksum verification; reject unsupported formats early</p></div>
@@ -417,7 +430,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>Signed URLs</h3><p>Time-limited signed URLs for stream access; prevent hotlinking; rotate signing keys</p></div>
         <div class="security-card"><h3>DRM Protection</h3><p>Widevine/FairPlay for premium content; encrypted HLS segments; license server</p></div>
@@ -429,7 +442,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Upload</strong><br>Chunked resumable upload to S3; TUS protocol for reliability</div>
         <div class="summary-card"><strong>Transcoding</strong><br>Kafka fan-out to FFmpeg workers; 4 resolutions × H264; GPU acceleration</div>

@@ -21,8 +21,21 @@ export default {
     </div>
 </div>
 
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; rate check &lt; 1ms me hona chahiye</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; limiter down hone pe system crash nahi ho</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; millions requests/sec handle karo</div>
+        <div class="req-pill"><span class="num">4</span> Consistency &mdash; distributed counter sab nodes pe sync rahe</div>
+        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; Redis down pe local fallback kaam kare</div>
+        <div class="req-pill"><span class="num">6</span> Accuracy &mdash; counting me drift nahi hona chahiye</div>
+    </div>
+</div>
+
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card"><h3>Algorithm</h3><div class="enum-val">TOKEN_BUCKET</div><div class="enum-val">LEAKY_BUCKET</div><div class="enum-val">FIXED_WINDOW</div><div class="enum-val">SLIDING_WINDOW_LOG</div><div class="enum-val">SLIDING_WINDOW_COUNTER</div></div>
         <div class="enum-card"><h3>KeyType</h3><div class="enum-val">USER_ID</div><div class="enum-val">API_KEY</div><div class="enum-val">IP_ADDRESS</div><div class="enum-val">ENDPOINT</div><div class="enum-val">COMPOSITE</div></div>
@@ -31,78 +44,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
-
-    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
-    <div class="dbtech-grid">
-        <div class="dbtech-card">
-            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
-            <div class="dbtech-usage">Token bucket counters, sliding window logs, fixed window counters &mdash; atomic Lua scripts</div>
-            <div class="dbtech-tables"><span>bucket:{key}</span><span>window:{key}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
-            <div class="dbtech-usage">Rate limit rules, API key configs, user tier settings</div>
-            <div class="dbtech-tables"><span>rate_limit_rules</span><span>api_keys</span><span>user_tiers</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Prometheus <span class="dbtech-type">Monitoring</span></div>
-            <div class="dbtech-usage">Metrics collection &mdash; allowed/blocked request counts, latency percentiles</div>
-            <div class="dbtech-tables"><span>rate_limit_allowed</span><span>rate_limit_blocked</span></div>
-        </div>
-    </div>
-
-    <div class="db-grid">
-        <div class="db-card">
-            <h3>rate_limit_rules</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK AUTO_INCREMENT</span></div>
-            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">endpoint</span><span class="col-type">VARCHAR(256)</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">key_type</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">algorithm</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">max_requests</span><span class="col-type">INT</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">window_seconds</span><span class="col-type">INT</span><span class="col-constraint">NOT NULL</span></div>
-            <div class="db-row"><span class="col-name">refill_rate</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">tier</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">active</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT TRUE</span></div>
-        </div>
-        <div class="db-card">
-            <h3>client_configs</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">api_key</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint">UNIQUE IDX</span></div>
-            <div class="db-row"><span class="col-name">tier</span><span class="col-type">ENUM</span><span class="col-constraint">DEFAULT 'FREE'</span></div>
-            <div class="db-row"><span class="col-name">whitelisted</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT FALSE</span></div>
-            <div class="db-row"><span class="col-name">custom_limits</span><span class="col-type">JSON</span><span class="col-constraint"></span></div>
-        </div>
-        <div class="db-card">
-            <h3>rate_limit_logs (partitioned by day)</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
-            <div class="db-row"><span class="col-name">client_key</span><span class="col-type">VARCHAR(256)</span><span class="col-constraint">IDX</span></div>
-            <div class="db-row"><span class="col-name">endpoint</span><span class="col-type">VARCHAR(256)</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">allowed</span><span class="col-type">BOOLEAN</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">remaining</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
-            <div class="db-row"><span class="col-name">timestamp</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
-        </div>
-    </div>
-</div>
-
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
-    <div class="api-grid">
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/rate-limits/status</div><div class="api-desc">Get current rate limit status for caller</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/admin/rate-limits/rules</div><div class="api-desc">List all rate limit rules (admin)</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/admin/rate-limits/rules</div><div class="api-desc">Create new rate limit rule</div></div>
-        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/admin/rate-limits/rules/{id}</div><div class="api-desc">Update rule (live, no restart)</div></div>
-        <div class="api-card"><div class="api-method delete">DELETE</div><div class="api-path">/api/v1/admin/rate-limits/rules/{id}</div><div class="api-desc">Deactivate a rate limit rule</div></div>
-        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/admin/rate-limits/metrics</div><div class="api-desc">Get throttling metrics &amp; top blocked clients</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/admin/rate-limits/whitelist</div><div class="api-desc">Add API key to whitelist</div></div>
-        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/admin/rate-limits/reset/{clientKey}</div><div class="api-desc">Reset rate limit counters for a client</div></div>
-    </div>
-</div>
-
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>RateLimiterFilter</h3>
@@ -226,8 +169,101 @@ export default {
     </div>
 </div>
 
+<div class="section theme-blue">
+    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="api-grid">
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/rate-limits/status</div><div class="api-desc">Get current rate limit status for caller</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/admin/rate-limits/rules</div><div class="api-desc">List all rate limit rules (admin)</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/admin/rate-limits/rules</div><div class="api-desc">Create new rate limit rule</div></div>
+        <div class="api-card"><div class="api-method put">PUT</div><div class="api-path">/api/v1/admin/rate-limits/rules/{id}</div><div class="api-desc">Update rule (live, no restart)</div></div>
+        <div class="api-card"><div class="api-method delete">DELETE</div><div class="api-path">/api/v1/admin/rate-limits/rules/{id}</div><div class="api-desc">Deactivate a rate limit rule</div></div>
+        <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/admin/rate-limits/metrics</div><div class="api-desc">Get throttling metrics &amp; top blocked clients</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/admin/rate-limits/whitelist</div><div class="api-desc">Add API key to whitelist</div></div>
+        <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/admin/rate-limits/reset/{clientKey}</div><div class="api-desc">Reset rate limit counters for a client</div></div>
+    </div>
+</div>
+
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
+
+    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Token bucket counters, sliding window logs, fixed window counters &mdash; atomic Lua scripts</div>
+            <div class="dbtech-tables"><span>bucket:{key}</span><span>window:{key}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Rate limit rules, API key configs, user tier settings</div>
+            <div class="dbtech-tables"><span>rate_limit_rules</span><span>api_keys</span><span>user_tiers</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Prometheus <span class="dbtech-type">Monitoring</span></div>
+            <div class="dbtech-usage">Metrics collection &mdash; allowed/blocked request counts, latency percentiles</div>
+            <div class="dbtech-tables"><span>rate_limit_allowed</span><span>rate_limit_blocked</span></div>
+        </div>
+    </div>
+
+    <div class="db-grid">
+        <div class="db-card">
+            <h3>rate_limit_rules</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK AUTO_INCREMENT</span></div>
+            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">endpoint</span><span class="col-type">VARCHAR(256)</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">key_type</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">algorithm</span><span class="col-type">ENUM</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">max_requests</span><span class="col-type">INT</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">window_seconds</span><span class="col-type">INT</span><span class="col-constraint">NOT NULL</span></div>
+            <div class="db-row"><span class="col-name">refill_rate</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">tier</span><span class="col-type">ENUM</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">active</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT TRUE</span></div>
+        </div>
+        <div class="db-card">
+            <h3>client_configs</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">api_key</span><span class="col-type">VARCHAR(128)</span><span class="col-constraint">UNIQUE IDX</span></div>
+            <div class="db-row"><span class="col-name">tier</span><span class="col-type">ENUM</span><span class="col-constraint">DEFAULT 'FREE'</span></div>
+            <div class="db-row"><span class="col-name">whitelisted</span><span class="col-type">BOOLEAN</span><span class="col-constraint">DEFAULT FALSE</span></div>
+            <div class="db-row"><span class="col-name">custom_limits</span><span class="col-type">JSON</span><span class="col-constraint"></span></div>
+        </div>
+        <div class="db-card">
+            <h3>rate_limit_logs (partitioned by day)</h3>
+            <div class="db-row"><span class="col-name">id</span><span class="col-type">BIGINT</span><span class="col-constraint">PK</span></div>
+            <div class="db-row"><span class="col-name">client_key</span><span class="col-type">VARCHAR(256)</span><span class="col-constraint">IDX</span></div>
+            <div class="db-row"><span class="col-name">endpoint</span><span class="col-type">VARCHAR(256)</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">allowed</span><span class="col-type">BOOLEAN</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">remaining</span><span class="col-type">INT</span><span class="col-constraint"></span></div>
+            <div class="db-row"><span class="col-name">timestamp</span><span class="col-type">TIMESTAMP</span><span class="col-constraint">IDX</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="section theme-green">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="cap-grid">
+        <div class="cap-card"><div class="cap-label">API Requests / sec</div><div class="cap-value">100,000 QPS</div></div>
+        <div class="cap-card"><div class="cap-label">Redis Operations / sec</div><div class="cap-value">~100K (1 Lua call per request)</div></div>
+        <div class="cap-card"><div class="cap-label">Unique Keys in Redis</div><div class="cap-value">~10M (users × endpoints)</div></div>
+        <div class="cap-card"><div class="cap-label">Redis Memory per Key</div><div class="cap-value">~200 bytes (token bucket)</div></div>
+        <div class="cap-card"><div class="cap-label">Total Redis Memory</div><div class="cap-value">~2 GB for 10M keys</div></div>
+        <div class="cap-card"><div class="cap-label">Lua Script Latency</div><div class="cap-value">&lt; 1ms (p99)</div></div>
+        <div class="cap-card"><div class="cap-label">Filter Overhead</div><div class="cap-value">&lt; 2ms added latency per request</div></div>
+        <div class="cap-card"><div class="cap-label">Log Storage</div><div class="cap-value">~8.6 TB/day (if logging all, sample at 1%)</div></div>
+        <div class="cap-card">
+            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">API QPS</span><span class="calc-value">100,000 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Rate limiter runs as filter on each server</span><span class="calc-value"></span></div>
+            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~10K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~10 servers</span></div>
+            <div class="calc-result"><span class="calc-label">Total CPU Cores (4 per server)</span><span class="calc-value">~40 cores</span></div>
+            <div class="calc-row"><span class="calc-label">Redis Cluster (rate limit data)</span><span class="calc-value">3-5 nodes</span></div>
+        </div>
+    </div>
+</div>
+
+<div class="section theme-green">
+    <div class="section-title"><span class="section-num">8</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">TokenBucketLimiter.java — Redis Lua Script</span></div>
     <pre class="code-block">
 <span class="ann">@Component</span>
@@ -285,7 +321,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IRateLimiter implementations (TokenBucket, SlidingWindow, FixedWindow) — select algorithm per rule</p></div>
         <div class="pattern-card"><h3>Factory</h3><p>RateLimiterFactory.create(algorithm) returns the correct IRateLimiter implementation</p></div>
@@ -324,7 +360,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">HTTP request hits RateLimiterFilter (OncePerRequestFilter)</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">KeyResolver extracts client identity (userId / API key / IP)</span></div>
@@ -338,31 +374,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
-    <div class="cap-grid">
-        <div class="cap-card"><div class="cap-label">API Requests / sec</div><div class="cap-value">100,000 QPS</div></div>
-        <div class="cap-card"><div class="cap-label">Redis Operations / sec</div><div class="cap-value">~100K (1 Lua call per request)</div></div>
-        <div class="cap-card"><div class="cap-label">Unique Keys in Redis</div><div class="cap-value">~10M (users × endpoints)</div></div>
-        <div class="cap-card"><div class="cap-label">Redis Memory per Key</div><div class="cap-value">~200 bytes (token bucket)</div></div>
-        <div class="cap-card"><div class="cap-label">Total Redis Memory</div><div class="cap-value">~2 GB for 10M keys</div></div>
-        <div class="cap-card"><div class="cap-label">Lua Script Latency</div><div class="cap-value">&lt; 1ms (p99)</div></div>
-        <div class="cap-card"><div class="cap-label">Filter Overhead</div><div class="cap-value">&lt; 2ms added latency per request</div></div>
-        <div class="cap-card"><div class="cap-label">Log Storage</div><div class="cap-value">~8.6 TB/day (if logging all, sample at 1%)</div></div>
-        <div class="cap-card">
-            <h4 style="color:#82b1ff;margin-bottom:8px">CPU / Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">API QPS</span><span class="calc-value">100,000 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">Rate limiter runs as filter on each server</span><span class="calc-value"></span></div>
-            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~10K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~10 servers</span></div>
-            <div class="calc-result"><span class="calc-label">Total CPU Cores (4 per server)</span><span class="calc-value">~40 cores</span></div>
-            <div class="calc-row"><span class="calc-label">Redis Cluster (rate limit data)</span><span class="calc-value">3-5 nodes</span></div>
-        </div>
-    </div>
-</div>
-
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Redis Single Point of Failure</h3><p>Redis Cluster with 3+ masters; Sentinel for automatic failover; read replicas</p></div>
         <div class="bottleneck-card"><h3>Hot Key Problem</h3><p>Hash-based key distribution; local in-memory cache with Redis sync; key sharding</p></div>
@@ -374,7 +387,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Redis Down</h3><p>Fail-open with local in-memory fallback limiter; log degradation; alert ops</p></div>
         <div class="edge-card"><h3>Distributed Race Condition</h3><p>Lua scripts are atomic on single Redis node; for cluster, use hash tags {userId}</p></div>
@@ -386,7 +399,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>DDoS Protection</h3><p>Rate limiting is first line; combine with WAF, IP reputation, CAPTCHA challenges</p></div>
         <div class="security-card"><h3>API Key Rotation</h3><p>Support multiple active keys per client; grace period during rotation</p></div>
@@ -397,7 +410,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Algorithms</strong><br>Token Bucket (smooth), Sliding Window Log (precise), Fixed Window (simple), Leaky Bucket (constant outflow)</div>
         <div class="summary-card"><strong>Redis Lua</strong><br>Atomic operations prevent race conditions; EVALSHA caches compiled scripts; &lt; 1ms latency</div>

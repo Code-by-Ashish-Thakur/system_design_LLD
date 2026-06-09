@@ -23,8 +23,23 @@ export default {
 </div>
 
 <!-- ============ 2. ENUMS ============ -->
+
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; code compile &amp; run &lt; 5 sec me ho</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.9% uptime especially contest time</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; contest ke time 100K+ concurrent submissions</div>
+        <div class="req-pill"><span class="num">4</span> Isolation &mdash; har submission sandboxed environment me run ho</div>
+        <div class="req-pill"><span class="num">5</span> Consistency &mdash; submission result atomic update hona chahiye</div>
+        <div class="req-pill"><span class="num">6</span> Security &mdash; malicious code execution se system safe rahe</div>
+    </div>
+</div>
+
+<!-- ============ 3. ENUMS ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card">
             <h3>Difficulty</h3>
@@ -81,8 +96,280 @@ export default {
 </div>
 
 <!-- ============ 3. DATABASE SCHEMA ============ -->
+
+<!-- ============ 4. SERVICE LLD ============ -->
+<div class="section theme-yellow">
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
+    <div class="service-grid">
+        <div class="service-card">
+            <h3>ProblemService</h3>
+            <p class="svc-desc">Coding problems ko manage karta hai &mdash; create, fetch, filter aur acceptance rate update karta hai</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ProblemService</span> {
+
+    <span class="cm">// Naya problem create karo with all details</span>
+    <span class="tp">Problem</span> <span class="fn">createProblem</span>(<span class="tp">String</span> title, <span class="tp">String</span> slug,
+        <span class="tp">String</span> description, <span class="tp">Difficulty</span> difficulty,
+        <span class="tp">List&lt;String&gt;</span> categoryTags, <span class="tp">String</span> constraints,
+        <span class="tp">Map&lt;Language, String&gt;</span> starterCode, <span class="tp">Boolean</span> isPremium)
+
+    <span class="cm">// Slug se ek problem fetch karo</span>
+    <span class="tp">Problem</span> <span class="fn">getProblemBySlug</span>(<span class="tp">String</span> slug)
+
+    <span class="cm">// Filter lagake problems ki list nikalo with pagination</span>
+    <span class="tp">Page&lt;Problem&gt;</span> <span class="fn">listProblems</span>(<span class="tp">Difficulty</span> difficulty,
+        <span class="tp">String</span> tag, <span class="tp">String</span> searchQuery,
+        <span class="tp">Boolean</span> isPremium, <span class="tp">Pageable</span> pageable)
+
+    <span class="cm">// Problem ka acceptance rate recalculate karo</span>
+    <span class="kw">void</span> <span class="fn">updateAcceptanceRate</span>(<span class="tp">Long</span> problemId)
+}
+</pre></div>
+        </div>
+        <div class="service-card">
+            <h3>SubmissionService</h3>
+            <p class="svc-desc">Code submissions handle karta hai &mdash; solution submit karo, test cases run karo, result check karo</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SubmissionService</span> {
+
+    <span class="cm">// User ka code submit karo judging ke liye</span>
+    <span class="tp">Submission</span> <span class="fn">submit</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> problemId,
+        <span class="tp">String</span> code, <span class="tp">Language</span> language)
+
+    <span class="cm">// Custom input pe code run karo bina submit kiye</span>
+    <span class="tp">RunResult</span> <span class="fn">runCode</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> problemId,
+        <span class="tp">String</span> code, <span class="tp">Language</span> language,
+        <span class="tp">String</span> customInput)
+
+    <span class="cm">// Submission ka current status check karo</span>
+    <span class="tp">SubmissionStatus</span> <span class="fn">getSubmissionStatus</span>(<span class="tp">Long</span> submissionId)
+
+    <span class="cm">// User ki saari submissions nikalo ek problem ke liye</span>
+    <span class="tp">List&lt;Submission&gt;</span> <span class="fn">getUserSubmissions</span>(<span class="tp">Long</span> userId,
+        <span class="tp">Long</span> problemId)
+}
+</pre></div>
+        </div>
+        <div class="service-card">
+            <h3>JudgeService</h3>
+            <p class="svc-desc">Submitted code ko compile, run aur check karta hai &mdash; har test case ke against expected output match karta hai</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">JudgeService</span> {
+
+    <span class="cm">// Submission ko saare test cases pe evaluate karo</span>
+    <span class="tp">JudgeResult</span> <span class="fn">evaluate</span>(<span class="tp">Submission</span> submission,
+        <span class="tp">List&lt;TestCase&gt;</span> testCases)
+
+    <span class="cm">// Code ko compile karo sandbox mein</span>
+    <span class="tp">CompileResult</span> <span class="fn">compile</span>(<span class="tp">String</span> code,
+        <span class="tp">Language</span> language, <span class="tp">String</span> workDir)
+
+    <span class="cm">// Compiled binary ko ek test case pe run karo</span>
+    <span class="tp">ExecutionResult</span> <span class="fn">execute</span>(<span class="tp">String</span> binaryPath,
+        <span class="tp">String</span> input, <span class="tp">int</span> timeLimitMs,
+        <span class="tp">int</span> memoryLimitKb)
+
+    <span class="cm">// Actual output ko expected output se compare karo</span>
+    <span class="tp">boolean</span> <span class="fn">compareOutput</span>(<span class="tp">String</span> actualOutput,
+        <span class="tp">String</span> expectedOutput)
+}
+</pre></div>
+        </div>
+        <div class="service-card">
+            <h3>ContestService</h3>
+            <p class="svc-desc">Coding contests manage karta hai &mdash; contest create karo, users register karo, scores track karo aur rating update karo</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ContestService</span> {
+
+    <span class="cm">// Naya coding contest create karo</span>
+    <span class="tp">Contest</span> <span class="fn">createContest</span>(<span class="tp">String</span> title,
+        <span class="tp">ContestType</span> type, <span class="tp">LocalDateTime</span> startTime,
+        <span class="tp">Integer</span> duration, <span class="tp">List&lt;Long&gt;</span> problemIds)
+
+    <span class="cm">// User ko contest mein register karo</span>
+    <span class="kw">void</span> <span class="fn">registerUser</span>(<span class="tp">Long</span> contestId, <span class="tp">Long</span> userId)
+
+    <span class="cm">// Contest ka leaderboard fetch karo with pagination</span>
+    <span class="tp">Page&lt;LeaderboardEntry&gt;</span> <span class="fn">getLeaderboard</span>(<span class="tp">Long</span> contestId,
+        <span class="tp">Pageable</span> pageable)
+
+    <span class="cm">// Contest khatam hone pe ratings calculate karo</span>
+    <span class="kw">void</span> <span class="fn">calculateRatings</span>(<span class="tp">Long</span> contestId)
+}
+</pre></div>
+        </div>
+        <div class="service-card">
+            <h3>LeaderboardService</h3>
+            <p class="svc-desc">Global rankings aur user ratings track karta hai &mdash; Redis Sorted Set se fast rank query hota hai</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">LeaderboardService</span> {
+
+    <span class="cm">// Global ranking list nikalo with pagination</span>
+    <span class="tp">Page&lt;RankEntry&gt;</span> <span class="fn">getGlobalRanking</span>(<span class="tp">Pageable</span> pageable)
+
+    <span class="cm">// Ek user ka rank aur rating fetch karo</span>
+    <span class="tp">RankEntry</span> <span class="fn">getUserRank</span>(<span class="tp">Long</span> userId)
+
+    <span class="cm">// User ki rating update karo delta se</span>
+    <span class="kw">void</span> <span class="fn">updateRating</span>(<span class="tp">Long</span> userId, <span class="tp">int</span> delta)
+
+    <span class="cm">// Redis cache ko refresh karo DB se</span>
+    <span class="kw">void</span> <span class="fn">refreshCache</span>()
+}
+</pre></div>
+        </div>
+        <div class="service-card">
+            <h3>DiscussionService</h3>
+            <p class="svc-desc">Discussion posts, comments aur upvotes manage karta hai &mdash; har problem ke liye community solutions</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">DiscussionService</span> {
+
+    <span class="cm">// Naya discussion post create karo problem ke liye</span>
+    <span class="tp">Discussion</span> <span class="fn">createPost</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> problemId,
+        <span class="tp">String</span> title, <span class="tp">String</span> content,
+        <span class="tp">List&lt;String&gt;</span> tags)
+
+    <span class="cm">// Problem ki saari discussions fetch karo</span>
+    <span class="tp">Page&lt;Discussion&gt;</span> <span class="fn">getDiscussions</span>(<span class="tp">Long</span> problemId,
+        <span class="tp">Pageable</span> pageable)
+
+    <span class="cm">// Discussion ko upvote karo</span>
+    <span class="kw">void</span> <span class="fn">upvote</span>(<span class="tp">Long</span> discussionId, <span class="tp">Long</span> userId)
+
+    <span class="cm">// Discussion pe comment add karo</span>
+    <span class="tp">Comment</span> <span class="fn">addComment</span>(<span class="tp">Long</span> discussionId,
+        <span class="tp">Long</span> userId, <span class="tp">String</span> content)
+}
+</pre></div>
+        </div>
+        <div class="service-card">
+            <h3>AuthService</h3>
+            <p class="svc-desc">User signup, login (email + Google/GitHub OAuth) aur JWT token refresh handle karta hai</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">AuthService</span> {
+
+    <span class="cm">// Naya user register karo email/password se</span>
+    <span class="tp">User</span> <span class="fn">register</span>(<span class="tp">String</span> username, <span class="tp">String</span> email,
+        <span class="tp">String</span> password)
+
+    <span class="cm">// Email aur password se login karo, JWT milega</span>
+    <span class="tp">String</span> <span class="fn">login</span>(<span class="tp">String</span> email, <span class="tp">String</span> password)
+
+    <span class="cm">// Google/GitHub OAuth se login karo</span>
+    <span class="tp">String</span> <span class="fn">oauthLogin</span>(<span class="tp">String</span> provider,
+        <span class="tp">String</span> oauthToken)
+
+    <span class="cm">// Expired JWT ko refresh karo naya token leke</span>
+    <span class="tp">String</span> <span class="fn">refreshToken</span>(<span class="tp">String</span> refreshToken)
+}
+</pre></div>
+        </div>
+        <div class="service-card">
+            <h3>SandboxService</h3>
+            <p class="svc-desc">Safe Docker containers create karta hai user code run karne ke liye &mdash; network band, memory limit, time limit sab lagta hai</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SandboxService</span> {
+
+    <span class="cm">// Language ke hisaab se Docker container banao</span>
+    <span class="tp">String</span> <span class="fn">createContainer</span>(<span class="tp">Language</span> language)
+
+    <span class="cm">// Sandbox mein code execute karo with limits</span>
+    <span class="tp">ExecutionResult</span> <span class="fn">executeInSandbox</span>(<span class="tp">String</span> containerId,
+        <span class="tp">String</span> code, <span class="tp">String</span> input,
+        <span class="tp">int</span> timeLimitMs, <span class="tp">int</span> memoryLimitKb)
+
+    <span class="cm">// Container destroy karo execution ke baad</span>
+    <span class="kw">void</span> <span class="fn">destroyContainer</span>(<span class="tp">String</span> containerId)
+
+    <span class="cm">// CPU, memory, PID limits enforce karo container pe</span>
+    <span class="kw">void</span> <span class="fn">enforceResourceLimits</span>(<span class="tp">String</span> containerId,
+        <span class="tp">int</span> cpuCores, <span class="tp">int</span> memoryLimitKb,
+        <span class="tp">int</span> timeLimitMs, <span class="tp">int</span> pidsLimit)
+}
+</pre></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 5. APIs ============ -->
+
+<!-- ============ 5. APIs ============ -->
+<div class="section theme-teal">
+    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="api-grid">
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/problems?difficulty=MEDIUM&amp;tag=array&amp;page=0&amp;size=20</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Params</div><span class="key">difficulty</span>: <span class="val">EASY | MEDIUM | HARD</span><br><span class="key">tag</span>: <span class="val">"array"</span><br><span class="key">page</span>: <span class="val">0</span>, <span class="key">size</span>: <span class="val">20</span></div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"problems"</span>: <span class="val">[{id, title, difficulty, acceptanceRate, ...}]</span>, <span class="key">"totalPages"</span>: <span class="val">50</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/problems/{slug}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Path Param</div><span class="key">slug</span>: <span class="val">"two-sum"</span></div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"problem"</span>: <span class="val">{id, title, description, sampleTestCases, starterCode, ...}</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/submissions</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"problemId"</span>: <span class="val">1</span>, <span class="key">"language"</span>: <span class="val">"JAVA"</span>, <span class="key">"code"</span>: <span class="val">"class Solution { ... }"</span> }</div>
+                <div class="api-json"><div class="label">Response 202</div>{ <span class="key">"submissionId"</span>: <span class="val">12345</span>, <span class="key">"status"</span>: <span class="val">"QUEUED"</span> }</div>
+            </div>
+            <div class="api-note">Async &mdash; returns immediately, client polls for result or uses WebSocket</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/submissions/{id}/status</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200 (Pending)</div>{ <span class="key">"status"</span>: <span class="val">"RUNNING"</span>, <span class="key">"testCasesPassed"</span>: <span class="val">5</span> }</div>
+                <div class="api-json"><div class="label">Response 200 (Done)</div>{ <span class="key">"verdict"</span>: <span class="val">"ACCEPTED"</span>, <span class="key">"runtime"</span>: <span class="val">12</span>, <span class="key">"memory"</span>: <span class="val">42100</span>, <span class="key">"passed"</span>: <span class="val">50</span>, <span class="key">"total"</span>: <span class="val">50</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/submissions/run</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"problemId"</span>: <span class="val">1</span>, <span class="key">"language"</span>: <span class="val">"PYTHON"</span>, <span class="key">"code"</span>: <span class="val">"..."</span>, <span class="key">"customInput"</span>: <span class="val">"[2,7,11,15]\\n9"</span> }</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"output"</span>: <span class="val">"[0,1]"</span>, <span class="key">"runtime"</span>: <span class="val">5</span>, <span class="key">"expected"</span>: <span class="val">"[0,1]"</span>, <span class="key">"match"</span>: <span class="val">true</span> }</div>
+            </div>
+            <div class="api-note">Run against sample test cases only &mdash; does not count as official submission</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/contests/{id}/register</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"userId"</span>: <span class="val">42</span> }</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"registered"</span>: <span class="val">true</span>, <span class="key">"contestId"</span>: <span class="val">5</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/contests/{id}/leaderboard?page=0&amp;size=50</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"entries"</span>: <span class="val">[{rank, username, score, finishTime, ...}]</span>, <span class="key">"totalParticipants"</span>: <span class="val">12000</span> }</div>
+                <div class="api-json"><div class="label">Sorting</div><span class="key">primary</span>: <span class="val">score DESC</span><br><span class="key">tiebreak</span>: <span class="val">finishTime ASC</span><br><span class="key">penalty</span>: <span class="val">+5 min per wrong attempt</span></div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/discussions</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"problemId"</span>: <span class="val">1</span>, <span class="key">"title"</span>: <span class="val">"O(n) HashMap approach"</span>, <span class="key">"content"</span>: <span class="val">"## Approach\\n..."</span> }</div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"discussionId"</span>: <span class="val">789</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/users/{username}/profile</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"username"</span>: <span class="val">"coder42"</span>, <span class="key">"rating"</span>: <span class="val">2100</span>, <span class="key">"totalSolved"</span>: <span class="val">450</span>, <span class="key">"streak"</span>: <span class="val">30</span> }</div>
+                <div class="api-json"><div class="label">Stats Breakdown</div><span class="key">easy</span>: <span class="val">180</span>, <span class="key">medium</span>: <span class="val">200</span>, <span class="key">hard</span>: <span class="val">70</span><br><span class="key">submissions</span>: <span class="val">1200</span>, <span class="key">acceptRate</span>: <span class="val">62.5%</span></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 6. KEY ARCHITECTURE ============ -->
+
+<!-- ============ 6. DATABASE SCHEMA ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -306,274 +593,68 @@ export default {
 </div>
 
 <!-- ============ 4. SERVICE LLD ============ -->
-<div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
-    <div class="service-grid">
-        <div class="service-card">
-            <h3>ProblemService</h3>
-            <p class="svc-desc">Coding problems ko manage karta hai &mdash; create, fetch, filter aur acceptance rate update karta hai</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">ProblemService</span> {
 
-    <span class="cm">// Naya problem create karo with all details</span>
-    <span class="tp">Problem</span> <span class="fn">createProblem</span>(<span class="tp">String</span> title, <span class="tp">String</span> slug,
-        <span class="tp">String</span> description, <span class="tp">Difficulty</span> difficulty,
-        <span class="tp">List&lt;String&gt;</span> categoryTags, <span class="tp">String</span> constraints,
-        <span class="tp">Map&lt;Language, String&gt;</span> starterCode, <span class="tp">Boolean</span> isPremium)
-
-    <span class="cm">// Slug se ek problem fetch karo</span>
-    <span class="tp">Problem</span> <span class="fn">getProblemBySlug</span>(<span class="tp">String</span> slug)
-
-    <span class="cm">// Filter lagake problems ki list nikalo with pagination</span>
-    <span class="tp">Page&lt;Problem&gt;</span> <span class="fn">listProblems</span>(<span class="tp">Difficulty</span> difficulty,
-        <span class="tp">String</span> tag, <span class="tp">String</span> searchQuery,
-        <span class="tp">Boolean</span> isPremium, <span class="tp">Pageable</span> pageable)
-
-    <span class="cm">// Problem ka acceptance rate recalculate karo</span>
-    <span class="kw">void</span> <span class="fn">updateAcceptanceRate</span>(<span class="tp">Long</span> problemId)
-}
-</pre></div>
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="assumption-box">
+        <h4>Assumptions</h4>
+        <div class="assumption-row"><span class="calc-label">Daily Active Users (DAU)</span><span class="calc-value">500K</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg submissions per user/day</span><span class="calc-value">5</span></div>
+        <div class="assumption-row"><span class="calc-label">Weekly contests</span><span class="calc-value">2 (15K participants each)</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg code size per submission</span><span class="calc-value">2 KB</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg test cases per problem</span><span class="calc-value">50</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg execution time per test case</span><span class="calc-value">200 ms</span></div>
+    </div>
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Submissions per Day</h4>
+            <div class="calc-row"><span class="calc-label">500K users &times; 5 subs</span><span class="calc-value">2.5M/day</span></div>
+            <div class="calc-row"><span class="calc-label">Per second (avg)</span><span class="calc-value">~29 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Peak (contest + normal)</span><span class="calc-value">~500 QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Judge Workers Needed (peak)</span><span class="calc-value">~50 containers</span></div>
         </div>
-        <div class="service-card">
-            <h3>SubmissionService</h3>
-            <p class="svc-desc">Code submissions handle karta hai &mdash; solution submit karo, test cases run karo, result check karo</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">SubmissionService</span> {
-
-    <span class="cm">// User ka code submit karo judging ke liye</span>
-    <span class="tp">Submission</span> <span class="fn">submit</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> problemId,
-        <span class="tp">String</span> code, <span class="tp">Language</span> language)
-
-    <span class="cm">// Custom input pe code run karo bina submit kiye</span>
-    <span class="tp">RunResult</span> <span class="fn">runCode</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> problemId,
-        <span class="tp">String</span> code, <span class="tp">Language</span> language,
-        <span class="tp">String</span> customInput)
-
-    <span class="cm">// Submission ka current status check karo</span>
-    <span class="tp">SubmissionStatus</span> <span class="fn">getSubmissionStatus</span>(<span class="tp">Long</span> submissionId)
-
-    <span class="cm">// User ki saari submissions nikalo ek problem ke liye</span>
-    <span class="tp">List&lt;Submission&gt;</span> <span class="fn">getUserSubmissions</span>(<span class="tp">Long</span> userId,
-        <span class="tp">Long</span> problemId)
-}
-</pre></div>
+        <div class="cap-card">
+            <h4>Storage (Submissions)</h4>
+            <div class="calc-row"><span class="calc-label">Code: 2.5M &times; 2 KB</span><span class="calc-value">5 GB/day</span></div>
+            <div class="calc-row"><span class="calc-label">Metadata per submission</span><span class="calc-value">~500 bytes</span></div>
+            <div class="calc-row"><span class="calc-label">Total per day</span><span class="calc-value">~6.25 GB/day</span></div>
+            <div class="calc-result"><span class="calc-label">Per Year</span><span class="calc-value">~2.28 TB</span></div>
         </div>
-        <div class="service-card">
-            <h3>JudgeService</h3>
-            <p class="svc-desc">Submitted code ko compile, run aur check karta hai &mdash; har test case ke against expected output match karta hai</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">JudgeService</span> {
-
-    <span class="cm">// Submission ko saare test cases pe evaluate karo</span>
-    <span class="tp">JudgeResult</span> <span class="fn">evaluate</span>(<span class="tp">Submission</span> submission,
-        <span class="tp">List&lt;TestCase&gt;</span> testCases)
-
-    <span class="cm">// Code ko compile karo sandbox mein</span>
-    <span class="tp">CompileResult</span> <span class="fn">compile</span>(<span class="tp">String</span> code,
-        <span class="tp">Language</span> language, <span class="tp">String</span> workDir)
-
-    <span class="cm">// Compiled binary ko ek test case pe run karo</span>
-    <span class="tp">ExecutionResult</span> <span class="fn">execute</span>(<span class="tp">String</span> binaryPath,
-        <span class="tp">String</span> input, <span class="tp">int</span> timeLimitMs,
-        <span class="tp">int</span> memoryLimitKb)
-
-    <span class="cm">// Actual output ko expected output se compare karo</span>
-    <span class="tp">boolean</span> <span class="fn">compareOutput</span>(<span class="tp">String</span> actualOutput,
-        <span class="tp">String</span> expectedOutput)
-}
-</pre></div>
+        <div class="cap-card">
+            <h4>Execution Compute</h4>
+            <div class="calc-row"><span class="calc-label">Subs/day &times; 50 test cases</span><span class="calc-value">125M executions</span></div>
+            <div class="calc-row"><span class="calc-label">Avg 200ms per execution</span><span class="calc-value">25M sec CPU/day</span></div>
+            <div class="calc-row"><span class="calc-label">CPU cores needed (avg)</span><span class="calc-value">~289 cores</span></div>
+            <div class="calc-result"><span class="calc-label">Peak (10x)</span><span class="calc-value">~2,890 cores</span></div>
         </div>
-        <div class="service-card">
-            <h3>ContestService</h3>
-            <p class="svc-desc">Coding contests manage karta hai &mdash; contest create karo, users register karo, scores track karo aur rating update karo</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">ContestService</span> {
-
-    <span class="cm">// Naya coding contest create karo</span>
-    <span class="tp">Contest</span> <span class="fn">createContest</span>(<span class="tp">String</span> title,
-        <span class="tp">ContestType</span> type, <span class="tp">LocalDateTime</span> startTime,
-        <span class="tp">Integer</span> duration, <span class="tp">List&lt;Long&gt;</span> problemIds)
-
-    <span class="cm">// User ko contest mein register karo</span>
-    <span class="kw">void</span> <span class="fn">registerUser</span>(<span class="tp">Long</span> contestId, <span class="tp">Long</span> userId)
-
-    <span class="cm">// Contest ka leaderboard fetch karo with pagination</span>
-    <span class="tp">Page&lt;LeaderboardEntry&gt;</span> <span class="fn">getLeaderboard</span>(<span class="tp">Long</span> contestId,
-        <span class="tp">Pageable</span> pageable)
-
-    <span class="cm">// Contest khatam hone pe ratings calculate karo</span>
-    <span class="kw">void</span> <span class="fn">calculateRatings</span>(<span class="tp">Long</span> contestId)
-}
-</pre></div>
+        <div class="cap-card">
+            <h4>API Read Traffic</h4>
+            <div class="calc-row"><span class="calc-label">Problem page views</span><span class="calc-value">~5M/day</span></div>
+            <div class="calc-row"><span class="calc-label">Leaderboard queries</span><span class="calc-value">~2M/day</span></div>
+            <div class="calc-row"><span class="calc-label">Discussion page views</span><span class="calc-value">~3M/day</span></div>
+            <div class="calc-result"><span class="calc-label">Read QPS (avg)</span><span class="calc-value">~116 QPS</span></div>
         </div>
-        <div class="service-card">
-            <h3>LeaderboardService</h3>
-            <p class="svc-desc">Global rankings aur user ratings track karta hai &mdash; Redis Sorted Set se fast rank query hota hai</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">LeaderboardService</span> {
-
-    <span class="cm">// Global ranking list nikalo with pagination</span>
-    <span class="tp">Page&lt;RankEntry&gt;</span> <span class="fn">getGlobalRanking</span>(<span class="tp">Pageable</span> pageable)
-
-    <span class="cm">// Ek user ka rank aur rating fetch karo</span>
-    <span class="tp">RankEntry</span> <span class="fn">getUserRank</span>(<span class="tp">Long</span> userId)
-
-    <span class="cm">// User ki rating update karo delta se</span>
-    <span class="kw">void</span> <span class="fn">updateRating</span>(<span class="tp">Long</span> userId, <span class="tp">int</span> delta)
-
-    <span class="cm">// Redis cache ko refresh karo DB se</span>
-    <span class="kw">void</span> <span class="fn">refreshCache</span>()
-}
-</pre></div>
-        </div>
-        <div class="service-card">
-            <h3>DiscussionService</h3>
-            <p class="svc-desc">Discussion posts, comments aur upvotes manage karta hai &mdash; har problem ke liye community solutions</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">DiscussionService</span> {
-
-    <span class="cm">// Naya discussion post create karo problem ke liye</span>
-    <span class="tp">Discussion</span> <span class="fn">createPost</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> problemId,
-        <span class="tp">String</span> title, <span class="tp">String</span> content,
-        <span class="tp">List&lt;String&gt;</span> tags)
-
-    <span class="cm">// Problem ki saari discussions fetch karo</span>
-    <span class="tp">Page&lt;Discussion&gt;</span> <span class="fn">getDiscussions</span>(<span class="tp">Long</span> problemId,
-        <span class="tp">Pageable</span> pageable)
-
-    <span class="cm">// Discussion ko upvote karo</span>
-    <span class="kw">void</span> <span class="fn">upvote</span>(<span class="tp">Long</span> discussionId, <span class="tp">Long</span> userId)
-
-    <span class="cm">// Discussion pe comment add karo</span>
-    <span class="tp">Comment</span> <span class="fn">addComment</span>(<span class="tp">Long</span> discussionId,
-        <span class="tp">Long</span> userId, <span class="tp">String</span> content)
-}
-</pre></div>
-        </div>
-        <div class="service-card">
-            <h3>AuthService</h3>
-            <p class="svc-desc">User signup, login (email + Google/GitHub OAuth) aur JWT token refresh handle karta hai</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">AuthService</span> {
-
-    <span class="cm">// Naya user register karo email/password se</span>
-    <span class="tp">User</span> <span class="fn">register</span>(<span class="tp">String</span> username, <span class="tp">String</span> email,
-        <span class="tp">String</span> password)
-
-    <span class="cm">// Email aur password se login karo, JWT milega</span>
-    <span class="tp">String</span> <span class="fn">login</span>(<span class="tp">String</span> email, <span class="tp">String</span> password)
-
-    <span class="cm">// Google/GitHub OAuth se login karo</span>
-    <span class="tp">String</span> <span class="fn">oauthLogin</span>(<span class="tp">String</span> provider,
-        <span class="tp">String</span> oauthToken)
-
-    <span class="cm">// Expired JWT ko refresh karo naya token leke</span>
-    <span class="tp">String</span> <span class="fn">refreshToken</span>(<span class="tp">String</span> refreshToken)
-}
-</pre></div>
-        </div>
-        <div class="service-card">
-            <h3>SandboxService</h3>
-            <p class="svc-desc">Safe Docker containers create karta hai user code run karne ke liye &mdash; network band, memory limit, time limit sab lagta hai</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">SandboxService</span> {
-
-    <span class="cm">// Language ke hisaab se Docker container banao</span>
-    <span class="tp">String</span> <span class="fn">createContainer</span>(<span class="tp">Language</span> language)
-
-    <span class="cm">// Sandbox mein code execute karo with limits</span>
-    <span class="tp">ExecutionResult</span> <span class="fn">executeInSandbox</span>(<span class="tp">String</span> containerId,
-        <span class="tp">String</span> code, <span class="tp">String</span> input,
-        <span class="tp">int</span> timeLimitMs, <span class="tp">int</span> memoryLimitKb)
-
-    <span class="cm">// Container destroy karo execution ke baad</span>
-    <span class="kw">void</span> <span class="fn">destroyContainer</span>(<span class="tp">String</span> containerId)
-
-    <span class="cm">// CPU, memory, PID limits enforce karo container pe</span>
-    <span class="kw">void</span> <span class="fn">enforceResourceLimits</span>(<span class="tp">String</span> containerId,
-        <span class="tp">int</span> cpuCores, <span class="tp">int</span> memoryLimitKb,
-        <span class="tp">int</span> timeLimitMs, <span class="tp">int</span> pidsLimit)
-}
-</pre></div>
+        <div class="cap-card">
+            <h4>CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">API servers (Read + Write)</span><span class="calc-value">~150 QPS total</span></div>
+            <div class="calc-row"><span class="calc-label">Each API server handles</span><span class="calc-value">~2K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">API Servers Needed</span><span class="calc-value">~3 servers</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Judge Worker CPU (peak)</span><span class="calc-value">~2,890 cores</span></div>
+            <div class="calc-row"><span class="calc-label">Each worker = 1 core</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Judge Worker Machines (peak)</span><span class="calc-value">~360 machines (8 cores each)</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Normal load workers</span><span class="calc-value">~50 containers</span></div>
+            <div class="calc-row"><span class="calc-label">Redis (leaderboard + cache)</span><span class="calc-value">3 nodes</span></div>
+            <div class="calc-row"><span class="calc-label">DB Read Replicas</span><span class="calc-value">2-3 replicas</span></div>
         </div>
     </div>
 </div>
 
-<!-- ============ 5. APIs ============ -->
-<div class="section theme-teal">
-    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
-    <div class="api-grid">
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/problems?difficulty=MEDIUM&amp;tag=array&amp;page=0&amp;size=20</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Params</div><span class="key">difficulty</span>: <span class="val">EASY | MEDIUM | HARD</span><br><span class="key">tag</span>: <span class="val">"array"</span><br><span class="key">page</span>: <span class="val">0</span>, <span class="key">size</span>: <span class="val">20</span></div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"problems"</span>: <span class="val">[{id, title, difficulty, acceptanceRate, ...}]</span>, <span class="key">"totalPages"</span>: <span class="val">50</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/problems/{slug}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Path Param</div><span class="key">slug</span>: <span class="val">"two-sum"</span></div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"problem"</span>: <span class="val">{id, title, description, sampleTestCases, starterCode, ...}</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/submissions</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"problemId"</span>: <span class="val">1</span>, <span class="key">"language"</span>: <span class="val">"JAVA"</span>, <span class="key">"code"</span>: <span class="val">"class Solution { ... }"</span> }</div>
-                <div class="api-json"><div class="label">Response 202</div>{ <span class="key">"submissionId"</span>: <span class="val">12345</span>, <span class="key">"status"</span>: <span class="val">"QUEUED"</span> }</div>
-            </div>
-            <div class="api-note">Async &mdash; returns immediately, client polls for result or uses WebSocket</div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/submissions/{id}/status</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Response 200 (Pending)</div>{ <span class="key">"status"</span>: <span class="val">"RUNNING"</span>, <span class="key">"testCasesPassed"</span>: <span class="val">5</span> }</div>
-                <div class="api-json"><div class="label">Response 200 (Done)</div>{ <span class="key">"verdict"</span>: <span class="val">"ACCEPTED"</span>, <span class="key">"runtime"</span>: <span class="val">12</span>, <span class="key">"memory"</span>: <span class="val">42100</span>, <span class="key">"passed"</span>: <span class="val">50</span>, <span class="key">"total"</span>: <span class="val">50</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/submissions/run</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"problemId"</span>: <span class="val">1</span>, <span class="key">"language"</span>: <span class="val">"PYTHON"</span>, <span class="key">"code"</span>: <span class="val">"..."</span>, <span class="key">"customInput"</span>: <span class="val">"[2,7,11,15]\\n9"</span> }</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"output"</span>: <span class="val">"[0,1]"</span>, <span class="key">"runtime"</span>: <span class="val">5</span>, <span class="key">"expected"</span>: <span class="val">"[0,1]"</span>, <span class="key">"match"</span>: <span class="val">true</span> }</div>
-            </div>
-            <div class="api-note">Run against sample test cases only &mdash; does not count as official submission</div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/contests/{id}/register</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"userId"</span>: <span class="val">42</span> }</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"registered"</span>: <span class="val">true</span>, <span class="key">"contestId"</span>: <span class="val">5</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/contests/{id}/leaderboard?page=0&amp;size=50</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"entries"</span>: <span class="val">[{rank, username, score, finishTime, ...}]</span>, <span class="key">"totalParticipants"</span>: <span class="val">12000</span> }</div>
-                <div class="api-json"><div class="label">Sorting</div><span class="key">primary</span>: <span class="val">score DESC</span><br><span class="key">tiebreak</span>: <span class="val">finishTime ASC</span><br><span class="key">penalty</span>: <span class="val">+5 min per wrong attempt</span></div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/discussions</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"problemId"</span>: <span class="val">1</span>, <span class="key">"title"</span>: <span class="val">"O(n) HashMap approach"</span>, <span class="key">"content"</span>: <span class="val">"## Approach\\n..."</span> }</div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"discussionId"</span>: <span class="val">789</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/users/{username}/profile</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"username"</span>: <span class="val">"coder42"</span>, <span class="key">"rating"</span>: <span class="val">2100</span>, <span class="key">"totalSolved"</span>: <span class="val">450</span>, <span class="key">"streak"</span>: <span class="val">30</span> }</div>
-                <div class="api-json"><div class="label">Stats Breakdown</div><span class="key">easy</span>: <span class="val">180</span>, <span class="key">medium</span>: <span class="val">200</span>, <span class="key">hard</span>: <span class="val">70</span><br><span class="key">submissions</span>: <span class="val">1200</span>, <span class="key">acceptRate</span>: <span class="val">62.5%</span></div>
-            </div>
-        </div>
-    </div>
-</div>
+<!-- ============ 10. BOTTLENECKS ============ -->
 
-<!-- ============ 6. KEY ARCHITECTURE ============ -->
+<!-- ============ 8. KEY ARCHITECTURE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture &mdash; Code Execution &amp; Judge System</div>
+    <div class="section-title"><span class="section-num">8</span>Key Architecture &mdash; Code Execution &amp; Judge System</div>
 
     <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Code Execution Sandbox (Docker-based)</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -717,8 +798,10 @@ export default {
 </div>
 
 <!-- ============ 7. DESIGN PATTERNS ============ -->
+
+<!-- ============ 9. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns</div>
     <div class="pattern-grid">
         <div class="pattern-card">
             <div class="pattern-name">Strategy Pattern</div>
@@ -756,8 +839,10 @@ export default {
 </div>
 
 <!-- ============ 8. SEQUENCE FLOW ============ -->
+
+<!-- ============ 10. SEQUENCE FLOW ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow &mdash; Code Submission</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow &mdash; Code Submission</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User clicks "Submit" in code editor</div>
         <div class="flow-arrow arrow-green"></div>
@@ -794,64 +879,10 @@ export default {
 </div>
 
 <!-- ============ 9. CAPACITY ESTIMATION ============ -->
-<div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
-    <div class="assumption-box">
-        <h4>Assumptions</h4>
-        <div class="assumption-row"><span class="calc-label">Daily Active Users (DAU)</span><span class="calc-value">500K</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg submissions per user/day</span><span class="calc-value">5</span></div>
-        <div class="assumption-row"><span class="calc-label">Weekly contests</span><span class="calc-value">2 (15K participants each)</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg code size per submission</span><span class="calc-value">2 KB</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg test cases per problem</span><span class="calc-value">50</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg execution time per test case</span><span class="calc-value">200 ms</span></div>
-    </div>
-    <div class="cap-grid">
-        <div class="cap-card">
-            <h4>Submissions per Day</h4>
-            <div class="calc-row"><span class="calc-label">500K users &times; 5 subs</span><span class="calc-value">2.5M/day</span></div>
-            <div class="calc-row"><span class="calc-label">Per second (avg)</span><span class="calc-value">~29 QPS</span></div>
-            <div class="calc-row"><span class="calc-label">Peak (contest + normal)</span><span class="calc-value">~500 QPS</span></div>
-            <div class="calc-result"><span class="calc-label">Judge Workers Needed (peak)</span><span class="calc-value">~50 containers</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>Storage (Submissions)</h4>
-            <div class="calc-row"><span class="calc-label">Code: 2.5M &times; 2 KB</span><span class="calc-value">5 GB/day</span></div>
-            <div class="calc-row"><span class="calc-label">Metadata per submission</span><span class="calc-value">~500 bytes</span></div>
-            <div class="calc-row"><span class="calc-label">Total per day</span><span class="calc-value">~6.25 GB/day</span></div>
-            <div class="calc-result"><span class="calc-label">Per Year</span><span class="calc-value">~2.28 TB</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>Execution Compute</h4>
-            <div class="calc-row"><span class="calc-label">Subs/day &times; 50 test cases</span><span class="calc-value">125M executions</span></div>
-            <div class="calc-row"><span class="calc-label">Avg 200ms per execution</span><span class="calc-value">25M sec CPU/day</span></div>
-            <div class="calc-row"><span class="calc-label">CPU cores needed (avg)</span><span class="calc-value">~289 cores</span></div>
-            <div class="calc-result"><span class="calc-label">Peak (10x)</span><span class="calc-value">~2,890 cores</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>API Read Traffic</h4>
-            <div class="calc-row"><span class="calc-label">Problem page views</span><span class="calc-value">~5M/day</span></div>
-            <div class="calc-row"><span class="calc-label">Leaderboard queries</span><span class="calc-value">~2M/day</span></div>
-            <div class="calc-row"><span class="calc-label">Discussion page views</span><span class="calc-value">~3M/day</span></div>
-            <div class="calc-result"><span class="calc-label">Read QPS (avg)</span><span class="calc-value">~116 QPS</span></div>
-        </div>
-        <div class="cap-card">
-            <h4>CPU / Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">API servers (Read + Write)</span><span class="calc-value">~150 QPS total</span></div>
-            <div class="calc-row"><span class="calc-label">Each API server handles</span><span class="calc-value">~2K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">API Servers Needed</span><span class="calc-value">~3 servers</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Judge Worker CPU (peak)</span><span class="calc-value">~2,890 cores</span></div>
-            <div class="calc-row"><span class="calc-label">Each worker = 1 core</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Judge Worker Machines (peak)</span><span class="calc-value">~360 machines (8 cores each)</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Normal load workers</span><span class="calc-value">~50 containers</span></div>
-            <div class="calc-row"><span class="calc-label">Redis (leaderboard + cache)</span><span class="calc-value">3 nodes</span></div>
-            <div class="calc-row"><span class="calc-label">DB Read Replicas</span><span class="calc-value">2-3 replicas</span></div>
-        </div>
-    </div>
-</div>
 
-<!-- ============ 10. BOTTLENECKS ============ -->
+<!-- ============ 11. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item">
             <span class="bottleneck-problem">Contest spike (10K+ simultaneous submissions)</span>
@@ -892,8 +923,10 @@ export default {
 </div>
 
 <!-- ============ 12. EDGE CASES ============ -->
+
+<!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-amber">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>Infinite Loop / Fork Bomb</h4>
@@ -931,8 +964,10 @@ export default {
 </div>
 
 <!-- ============ 13. SECURITY ============ -->
+
+<!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">12</span>Security &amp; Sandboxing</div>
+    <div class="section-title"><span class="section-num">13</span>Security &amp; Sandboxing</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#128737;</span>
@@ -970,8 +1005,10 @@ export default {
 </div>
 
 <!-- ============ 14. INTERVIEW SUMMARY ============ -->
+
+<!-- ============ 14. INTERVIEW SUMMARY ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">13</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Async Judge Pipeline</h4><p>Queue-based code execution with RabbitMQ</p></div>
         <div class="summary-card sc-2"><h4>Docker Sandboxing</h4><p>Isolated execution with resource limits</p></div>

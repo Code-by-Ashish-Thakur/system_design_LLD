@@ -23,8 +23,23 @@ export default {
 </div>
 
 <!-- ============ 2. ENUMS ============ -->
+
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; redirect &lt; 10ms me hona chahiye</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, link kabhi fail nahi hona chahiye</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; billions of URLs store &amp; serve karo</div>
+        <div class="req-pill"><span class="num">4</span> Uniqueness &mdash; short URL globally unique hona chahiye</div>
+        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; cache miss pe DB fallback seamless ho</div>
+        <div class="req-pill"><span class="num">6</span> Analytics &mdash; real-time click tracking bina latency badhaye</div>
+    </div>
+</div>
+
+<!-- ============ 3. ENUMS ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card">
             <h3>UrlStatus</h3>
@@ -66,8 +81,249 @@ export default {
 </div>
 
 <!-- ============ 3. DATABASE SCHEMA ============ -->
+
+<!-- ============ 4. SERVICE LLD ============ -->
+<div class="section theme-yellow">
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
+    <div class="service-grid">
+        <div class="service-card">
+            <h3>UrlService</h3>
+            <p class="svc-desc">Short URL banana ke liye main service hai &mdash; create, resolve, deactivate aur user ke URLs list karta hai</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">UrlService</span> {
+
+    <span class="cm">// nayi short URL create karta hai request aur userId se</span>
+    <span class="tp">ShortUrl</span> <span class="fn">createShortUrl</span>(<span class="tp">CreateUrlRequest</span> request,
+        <span class="tp">Long</span> userId)
+
+    <span class="cm">// shortCode se original URL resolve karta hai</span>
+    <span class="tp">String</span> <span class="fn">resolveUrl</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// URL ko deactivate karta hai user ke liye</span>
+    <span class="tp">void</span> <span class="fn">deactivateUrl</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">Long</span> userId)
+
+    <span class="cm">// user ki saari URLs paginated list mein deta hai</span>
+    <span class="tp">Page&lt;ShortUrl&gt;</span> <span class="fn">getUserUrls</span>(<span class="tp">Long</span> userId,
+        <span class="tp">Pageable</span> pageable)
+
+    <span class="cm">// duplicate URL check karta hai same user ke liye</span>
+    <span class="tp">Optional&lt;ShortUrl&gt;</span> <span class="fn">handleDuplicateUrl</span>(<span class="tp">String</span> originalUrl,
+        <span class="tp">Long</span> userId)
+}
+</pre></div>
+        </div>
+
+        <div class="service-card">
+            <h3>RedirectService</h3>
+            <p class="svc-desc">Short URL se original URL pe redirect karta hai &mdash; pehle cache check karta hai, phir DB, speed ke liye</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RedirectService</span> {
+
+    <span class="cm">// shortCode se redirect karta hai, request se analytics track karta hai</span>
+    <span class="tp">String</span> <span class="fn">redirect</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">HttpServletRequest</span> request)
+
+    <span class="cm">// pehle cache mein dekhta hai shortCode ke liye</span>
+    <span class="tp">Optional&lt;String&gt;</span> <span class="fn">checkCacheFirst</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// cache miss hone pe DB se fetch karta hai</span>
+    <span class="tp">String</span> <span class="fn">fallbackToDb</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// URL accessible hai ya nahi validate karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">validateAccessible</span>(<span class="tp">String</span> url)
+}
+</pre></div>
+        </div>
+
+        <div class="service-card">
+            <h3>AnalyticsService</h3>
+            <p class="svc-desc">Har click track karta hai aur stats report karta hai &mdash; kitne clicks aaye, kahan se aaye, daily breakdown</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">AnalyticsService</span> {
+
+    <span class="cm">// har click event record karta hai request details ke saath</span>
+    <span class="tp">void</span> <span class="fn">recordClick</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">HttpServletRequest</span> request)
+
+    <span class="cm">// date range ke hisaab se click stats deta hai</span>
+    <span class="tp">ClickStats</span> <span class="fn">getClickStats</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">DateRange</span> range)
+
+    <span class="cm">// daily breakdown deta hai given days ke liye</span>
+    <span class="tp">List&lt;DailyStats&gt;</span> <span class="fn">getDailyBreakdown</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">int</span> days)
+
+    <span class="cm">// scheduled cron job &mdash; daily stats aggregate karta hai</span>
+    <span class="tp">void</span> <span class="fn">aggregateDailyStats</span>()
+}
+</pre></div>
+        </div>
+
+        <div class="service-card">
+            <h3>IdGeneratorService</h3>
+            <p class="svc-desc">Unique short codes generate karta hai URLs ke liye &mdash; collision handle karta hai aur batch mein IDs pre-generate karta hai</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">IdGeneratorService</span> {
+
+    <span class="cm">// configured strategy se unique 7-char short code generate karta hai</span>
+    <span class="tp">String</span> <span class="fn">generateId</span>()
+
+    <span class="cm">// collision hone pe naya unique code generate karta hai</span>
+    <span class="tp">String</span> <span class="fn">handleCollision</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// batch mein IDs pre-generate karta hai performance ke liye</span>
+    <span class="tp">List&lt;String&gt;</span> <span class="fn">preGenerateIds</span>(<span class="tp">int</span> batchSize)
+}
+</pre></div>
+        </div>
+
+        <div class="service-card">
+            <h3>CacheService</h3>
+            <p class="svc-desc">Popular URLs ko Redis mein cache karta hai taaki redirect fast ho &mdash; put, get, evict aur startup pe warm-up</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">CacheService</span> {
+
+    <span class="cm">// shortCode aur originalUrl ko cache mein store karta hai</span>
+    <span class="tp">void</span> <span class="fn">put</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">String</span> originalUrl)
+
+    <span class="cm">// cache se originalUrl fetch karta hai shortCode ke liye</span>
+    <span class="tp">Optional&lt;String&gt;</span> <span class="fn">get</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// cache se shortCode ki entry hata deta hai</span>
+    <span class="tp">void</span> <span class="fn">evict</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// startup pe hot URLs ko cache mein load karta hai</span>
+    <span class="tp">void</span> <span class="fn">warmUpCache</span>(<span class="tp">List&lt;ShortUrl&gt;</span> hotUrls)
+}
+</pre></div>
+        </div>
+
+        <div class="service-card">
+            <h3>UrlValidationService</h3>
+            <p class="svc-desc">URL valid hai ya nahi check karta hai &mdash; format, malicious site detection, custom alias availability aur sanitization</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">UrlValidationService</span> {
+
+    <span class="cm">// URL ka format valid hai ya nahi check karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">isValidUrl</span>(<span class="tp">String</span> url)
+
+    <span class="cm">// URL malicious hai ya nahi detect karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">isMalicious</span>(<span class="tp">String</span> url)
+
+    <span class="cm">// custom alias available hai ya already taken check karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">isCustomAliasAvailable</span>(<span class="tp">String</span> alias)
+
+    <span class="cm">// URL ko sanitize karke clean URL return karta hai</span>
+    <span class="tp">String</span> <span class="fn">sanitizeUrl</span>(<span class="tp">String</span> url)
+}
+</pre></div>
+        </div>
+
+        <div class="service-card">
+            <h3>ExpirationService</h3>
+            <p class="svc-desc">Expired URLs ko clean up karta hai &mdash; expiry schedule karta hai aur users ko notification bhejta hai before expiry</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ExpirationService</span> {
+
+    <span class="cm">// URL ke liye expiration schedule karta hai</span>
+    <span class="tp">void</span> <span class="fn">scheduleExpiration</span>(<span class="tp">ShortUrl</span> url)
+
+    <span class="cm">// cron job &mdash; expired URLs ko cleanup karta hai</span>
+    <span class="tp">void</span> <span class="fn">cleanupExpiredUrls</span>()
+
+    <span class="cm">// cron job &mdash; jaldi expire hone wale URLs ke users ko notify karta hai</span>
+    <span class="tp">void</span> <span class="fn">notifyExpiringUrls</span>()
+}
+</pre></div>
+        </div>
+
+        <div class="service-card">
+            <h3>AuthService</h3>
+            <p class="svc-desc">User signup, login aur API key management handle karta hai &mdash; JWT token generate karta hai auth ke liye</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">AuthService</span> {
+
+    <span class="cm">// naya user register karta hai email aur password se</span>
+    <span class="tp">User</span> <span class="fn">register</span>(<span class="tp">String</span> email,
+        <span class="tp">String</span> password)
+
+    <span class="cm">// user login karke JWT token return karta hai</span>
+    <span class="tp">String</span> <span class="fn">login</span>(<span class="tp">String</span> email,
+        <span class="tp">String</span> password)
+
+    <span class="cm">// API key valid hai ya nahi check karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">validateApiKey</span>(<span class="tp">String</span> apiKey)
+
+    <span class="cm">// userId se JWT token generate karta hai</span>
+    <span class="tp">String</span> <span class="fn">generateJwt</span>(<span class="tp">Long</span> userId)
+}
+</pre></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 6. KEY ARCHITECTURE FLOW ============ -->
+
+<!-- ============ 5. APIs ============ -->
+<div class="section theme-teal">
+    <div class="section-title"><span class="section-num">5</span>APIs (with Request/Response)</div>
+    <div class="api-grid">
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/urls/shorten</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"originalUrl"</span>: <span class="val">"https://example.com/very/long/path"</span>,<br>&nbsp;&nbsp;<span class="key">"customAlias"</span>: <span class="val">"my-link"</span>,<br>&nbsp;&nbsp;<span class="key">"expiresIn"</span>: <span class="val">"THIRTY_DAYS"</span> }</div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"shortCode"</span>: <span class="val">"aB3xK9p"</span>,<br>&nbsp;&nbsp;<span class="key">"shortUrl"</span>: <span class="val">"https://short.ly/aB3xK9p"</span>,<br>&nbsp;&nbsp;<span class="key">"expiresAt"</span>: <span class="val">"2026-07-04T00:00:00"</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/{shortCode}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Path Param</div><span class="key">shortCode</span>: <span class="val">"aB3xK9p"</span></div>
+                <div class="api-json"><div class="label">Response 302</div><span class="key">Location</span>: <span class="val">https://example.com/very/long/path</span><br><br><div class="label" style="color:#ff5252">Response 404</div>{ <span class="key">"error"</span>: <span class="val">"Short URL not found or expired"</span> }</div>
+            </div>
+            <div class="api-note">HTTP 302 (temporary redirect) &mdash; allows analytics tracking on every visit. 301 would be cached by browser.</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/urls/{shortCode}/analytics?from=2026-01-01&amp;to=2026-06-01</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Params</div><span class="key">from</span>: <span class="val">2026-01-01</span><br><span class="key">to</span>: <span class="val">2026-06-01</span></div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"totalClicks"</span>: <span class="val">15420</span>,<br>&nbsp;&nbsp;<span class="key">"uniqueVisitors"</span>: <span class="val">8930</span>,<br>&nbsp;&nbsp;<span class="key">"topCountries"</span>: <span class="val">[{"US": 5200}, {"IN": 3100}]</span>,<br>&nbsp;&nbsp;<span class="key">"deviceBreakdown"</span>: <span class="val">{"MOBILE": 60, "DESKTOP": 35, "TABLET": 5}</span>,<br>&nbsp;&nbsp;<span class="key">"dailyStats"</span>: <span class="val">[...]</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/urls?page=0&amp;size=20</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Params</div><span class="key">page</span>: <span class="val">0</span> (default)<br><span class="key">size</span>: <span class="val">20</span> (default)</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"urls"</span>: <span class="val">[{shortCode, originalUrl, clickCount, ...}]</span>,<br>&nbsp;&nbsp;<span class="key">"totalPages"</span>: <span class="val">5</span>,<br>&nbsp;&nbsp;<span class="key">"totalElements"</span>: <span class="val">98</span>,<br>&nbsp;&nbsp;<span class="key">"hasNext"</span>: <span class="val">true</span> }</div>
+            </div>
+            <div class="api-note">Paginated &mdash; returns user's URLs sorted by created_at DESC</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-delete">DELETE</span><span class="api-path">/api/v1/urls/{shortCode}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Path Param</div><span class="key">shortCode</span>: <span class="val">"aB3xK9p"</span></div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"success"</span>: <span class="val">true</span>,<br>&nbsp;&nbsp;<span class="key">"message"</span>: <span class="val">"URL deactivated"</span> }<br><br><div class="label" style="color:#ff5252">Response 403</div>{ <span class="key">"error"</span>: <span class="val">"Not authorized"</span> }</div>
+            </div>
+            <div class="api-note">Soft delete &mdash; marks status as DISABLED, evicts from cache</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/urls/bulk</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"urls"</span>: [<br>&nbsp;&nbsp;{ <span class="key">"originalUrl"</span>: <span class="val">"https://a.com"</span> },<br>&nbsp;&nbsp;{ <span class="key">"originalUrl"</span>: <span class="val">"https://b.com"</span> }<br>] }</div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"results"</span>: [<br>&nbsp;&nbsp;{ <span class="key">"shortUrl"</span>: <span class="val">"https://short.ly/xY7kL"</span> },<br>&nbsp;&nbsp;{ <span class="key">"shortUrl"</span>: <span class="val">"https://short.ly/mN3pQ"</span> }<br>] }</div>
+            </div>
+            <div class="api-note">Batch creation &mdash; max 100 URLs per request. Subject to daily quota.</div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 5. SERVICE LLD ============ -->
+
+<!-- ============ 6. DATABASE SCHEMA ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">3</span>Database Schema (with FK &amp; Indexes)</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema (with FK &amp; Indexes)</div>
 
     <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -269,243 +525,107 @@ INCR url:counter
 </div>
 
 <!-- ============ 4. APIs ============ -->
-<div class="section theme-teal">
-    <div class="section-title"><span class="section-num">4</span>APIs (with Request/Response)</div>
-    <div class="api-grid">
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/urls/shorten</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"originalUrl"</span>: <span class="val">"https://example.com/very/long/path"</span>,<br>&nbsp;&nbsp;<span class="key">"customAlias"</span>: <span class="val">"my-link"</span>,<br>&nbsp;&nbsp;<span class="key">"expiresIn"</span>: <span class="val">"THIRTY_DAYS"</span> }</div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"shortCode"</span>: <span class="val">"aB3xK9p"</span>,<br>&nbsp;&nbsp;<span class="key">"shortUrl"</span>: <span class="val">"https://short.ly/aB3xK9p"</span>,<br>&nbsp;&nbsp;<span class="key">"expiresAt"</span>: <span class="val">"2026-07-04T00:00:00"</span> }</div>
-            </div>
+
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+
+    <div class="assumption-box">
+        <h4>Assumptions (Bitly-Scale URL Shortener)</h4>
+        <div class="assumption-row"><span class="calc-label">New URLs created / month</span><span class="calc-value">500 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Read:Write ratio</span><span class="calc-value">100:1 (read heavy)</span></div>
+        <div class="assumption-row"><span class="calc-label">Redirects per month</span><span class="calc-value">50 Billion</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg original URL size</span><span class="calc-value">200 bytes</span></div>
+        <div class="assumption-row"><span class="calc-label">Short code length</span><span class="calc-value">7 characters</span></div>
+        <div class="assumption-row"><span class="calc-label">URL retention period</span><span class="calc-value">5 years</span></div>
+        <div class="assumption-row"><span class="calc-label">Total unique URLs (5 yrs)</span><span class="calc-value">30 Billion</span></div>
+    </div>
+
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Write QPS (URL Creation)</h4>
+            <div class="calc-row"><span class="calc-label">URLs / month</span><span class="calc-value">500M</span></div>
+            <div class="calc-row"><span class="calc-label">500M / 30 / 86400</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Write QPS</span><span class="calc-value">~200 QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Peak (3x)</span><span class="calc-value">~600 QPS</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/{shortCode}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Path Param</div><span class="key">shortCode</span>: <span class="val">"aB3xK9p"</span></div>
-                <div class="api-json"><div class="label">Response 302</div><span class="key">Location</span>: <span class="val">https://example.com/very/long/path</span><br><br><div class="label" style="color:#ff5252">Response 404</div>{ <span class="key">"error"</span>: <span class="val">"Short URL not found or expired"</span> }</div>
-            </div>
-            <div class="api-note">HTTP 302 (temporary redirect) &mdash; allows analytics tracking on every visit. 301 would be cached by browser.</div>
+
+        <div class="cap-card">
+            <h4>Read QPS (Redirects)</h4>
+            <div class="calc-row"><span class="calc-label">Redirects / month</span><span class="calc-value">50B</span></div>
+            <div class="calc-row"><span class="calc-label">50B / 30 / 86400</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Read QPS</span><span class="calc-value">~20K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Peak (3x)</span><span class="calc-value">~60K QPS</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/urls/{shortCode}/analytics?from=2026-01-01&amp;to=2026-06-01</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Params</div><span class="key">from</span>: <span class="val">2026-01-01</span><br><span class="key">to</span>: <span class="val">2026-06-01</span></div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"totalClicks"</span>: <span class="val">15420</span>,<br>&nbsp;&nbsp;<span class="key">"uniqueVisitors"</span>: <span class="val">8930</span>,<br>&nbsp;&nbsp;<span class="key">"topCountries"</span>: <span class="val">[{"US": 5200}, {"IN": 3100}]</span>,<br>&nbsp;&nbsp;<span class="key">"deviceBreakdown"</span>: <span class="val">{"MOBILE": 60, "DESKTOP": 35, "TABLET": 5}</span>,<br>&nbsp;&nbsp;<span class="key">"dailyStats"</span>: <span class="val">[...]</span> }</div>
-            </div>
+
+        <div class="cap-card">
+            <h4>Storage &mdash; URL Records (5 years)</h4>
+            <div class="calc-row"><span class="calc-label">Total URLs (5 yrs)</span><span class="calc-value">30 Billion</span></div>
+            <div class="calc-row"><span class="calc-label">Avg row size (with indexes)</span><span class="calc-value">~500 bytes</span></div>
+            <div class="calc-result"><span class="calc-label">URL Table Storage</span><span class="calc-value">~15 TB</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/urls?page=0&amp;size=20</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Params</div><span class="key">page</span>: <span class="val">0</span> (default)<br><span class="key">size</span>: <span class="val">20</span> (default)</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"urls"</span>: <span class="val">[{shortCode, originalUrl, clickCount, ...}]</span>,<br>&nbsp;&nbsp;<span class="key">"totalPages"</span>: <span class="val">5</span>,<br>&nbsp;&nbsp;<span class="key">"totalElements"</span>: <span class="val">98</span>,<br>&nbsp;&nbsp;<span class="key">"hasNext"</span>: <span class="val">true</span> }</div>
-            </div>
-            <div class="api-note">Paginated &mdash; returns user's URLs sorted by created_at DESC</div>
+
+        <div class="cap-card">
+            <h4>Storage &mdash; Click Analytics (per year)</h4>
+            <div class="calc-row"><span class="calc-label">Clicks / year</span><span class="calc-value">600B</span></div>
+            <div class="calc-row"><span class="calc-label">Click row size</span><span class="calc-value">~200 bytes</span></div>
+            <div class="calc-result"><span class="calc-label">Analytics Storage / Year</span><span class="calc-value">~120 TB / year</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Strategy</span><span class="calc-value">Partition by month, archive old data</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-delete">DELETE</span><span class="api-path">/api/v1/urls/{shortCode}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Path Param</div><span class="key">shortCode</span>: <span class="val">"aB3xK9p"</span></div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"success"</span>: <span class="val">true</span>,<br>&nbsp;&nbsp;<span class="key">"message"</span>: <span class="val">"URL deactivated"</span> }<br><br><div class="label" style="color:#ff5252">Response 403</div>{ <span class="key">"error"</span>: <span class="val">"Not authorized"</span> }</div>
-            </div>
-            <div class="api-note">Soft delete &mdash; marks status as DISABLED, evicts from cache</div>
+
+        <div class="cap-card">
+            <h4>Cache Sizing (Redis)</h4>
+            <div class="calc-row"><span class="calc-label">Cache top 20% hot URLs</span><span class="calc-value"></span></div>
+            <div class="calc-row"><span class="calc-label">30B &times; 20% = 6B URLs</span><span class="calc-value"></span></div>
+            <div class="calc-row"><span class="calc-label">Key (15B) + Value (200B) = 215B</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Full Hot Set</span><span class="calc-value">~1.3 TB</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Practical: cache recent + frequent</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Realistic Redis Size</span><span class="calc-value">~100-200 GB</span></div>
         </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/urls/bulk</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"urls"</span>: [<br>&nbsp;&nbsp;{ <span class="key">"originalUrl"</span>: <span class="val">"https://a.com"</span> },<br>&nbsp;&nbsp;{ <span class="key">"originalUrl"</span>: <span class="val">"https://b.com"</span> }<br>] }</div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"results"</span>: [<br>&nbsp;&nbsp;{ <span class="key">"shortUrl"</span>: <span class="val">"https://short.ly/xY7kL"</span> },<br>&nbsp;&nbsp;{ <span class="key">"shortUrl"</span>: <span class="val">"https://short.ly/mN3pQ"</span> }<br>] }</div>
-            </div>
-            <div class="api-note">Batch creation &mdash; max 100 URLs per request. Subject to daily quota.</div>
+
+        <div class="cap-card">
+            <h4>Bandwidth</h4>
+            <div class="calc-row"><span class="calc-label">Incoming (writes): 200 &times; 500B</span><span class="calc-value">~100 KB/s</span></div>
+            <div class="calc-row"><span class="calc-label">Outgoing (reads): 20K &times; 500B</span><span class="calc-value">~10 MB/s</span></div>
+            <div class="calc-result"><span class="calc-label">Total Bandwidth</span><span class="calc-value">~10 MB/s</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Conclusion</span><span class="calc-value">Network is NOT the bottleneck</span></div>
         </div>
+
+        <div class="cap-card">
+            <h4>Short Code Space (62^7)</h4>
+            <div class="calc-row"><span class="calc-label">62^7 possible codes</span><span class="calc-value">3.52 Trillion</span></div>
+            <div class="calc-row"><span class="calc-label">URLs needed (5 yrs)</span><span class="calc-value">30 Billion</span></div>
+            <div class="calc-result"><span class="calc-label">Utilization</span><span class="calc-value">&lt; 1%</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Collision risk (counter)</span><span class="calc-value">Zero</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Read QPS (peak)</span><span class="calc-value">60K</span></div>
+            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~5K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~12 servers</span></div>
+            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Redis instances (cluster)</span><span class="calc-value">3-5 nodes</span></div>
+            <div class="calc-result"><span class="calc-label">DB Read Replicas</span><span class="calc-value">3-5 replicas</span></div>
+        </div>
+    </div>
+
+    <div style="margin-top:20px;padding:16px;background:rgba(130,177,255,.08);border-radius:12px;border:1px solid rgba(130,177,255,.15)">
+        <strong style="color:#82b1ff">Key Takeaway for Interview:</strong>
+        <p style="color:#b0bec5;font-size:.88em;margin-top:8px;line-height:1.7">
+            URL Shortener is <strong style="color:#69f0ae">extremely read-heavy</strong> (100:1 ratio). Key design decisions:
+            <strong style="color:#ffcc80">20K read QPS</strong> (Redis cache handles 99%+),
+            <strong style="color:#ffcc80">7-char Base62 codes</strong> (3.5T capacity, &lt;1% used in 5 years),
+            <strong style="color:#ffcc80">HTTP 302</strong> (not 301) to track analytics,
+            and <strong style="color:#ffcc80">counter-based ID generation</strong> (zero collisions, O(1) performance).
+        </p>
     </div>
 </div>
 
-<!-- ============ 5. SERVICE LLD ============ -->
-<div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
-    <div class="service-grid">
-        <div class="service-card">
-            <h3>UrlService</h3>
-            <p class="svc-desc">Short URL banana ke liye main service hai &mdash; create, resolve, deactivate aur user ke URLs list karta hai</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">UrlService</span> {
+<!-- ============ 10. BOTTLENECKS & SOLUTIONS ============ -->
 
-    <span class="cm">// nayi short URL create karta hai request aur userId se</span>
-    <span class="tp">ShortUrl</span> <span class="fn">createShortUrl</span>(<span class="tp">CreateUrlRequest</span> request,
-        <span class="tp">Long</span> userId)
-
-    <span class="cm">// shortCode se original URL resolve karta hai</span>
-    <span class="tp">String</span> <span class="fn">resolveUrl</span>(<span class="tp">String</span> shortCode)
-
-    <span class="cm">// URL ko deactivate karta hai user ke liye</span>
-    <span class="tp">void</span> <span class="fn">deactivateUrl</span>(<span class="tp">String</span> shortCode,
-        <span class="tp">Long</span> userId)
-
-    <span class="cm">// user ki saari URLs paginated list mein deta hai</span>
-    <span class="tp">Page&lt;ShortUrl&gt;</span> <span class="fn">getUserUrls</span>(<span class="tp">Long</span> userId,
-        <span class="tp">Pageable</span> pageable)
-
-    <span class="cm">// duplicate URL check karta hai same user ke liye</span>
-    <span class="tp">Optional&lt;ShortUrl&gt;</span> <span class="fn">handleDuplicateUrl</span>(<span class="tp">String</span> originalUrl,
-        <span class="tp">Long</span> userId)
-}
-</pre></div>
-        </div>
-
-        <div class="service-card">
-            <h3>RedirectService</h3>
-            <p class="svc-desc">Short URL se original URL pe redirect karta hai &mdash; pehle cache check karta hai, phir DB, speed ke liye</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">RedirectService</span> {
-
-    <span class="cm">// shortCode se redirect karta hai, request se analytics track karta hai</span>
-    <span class="tp">String</span> <span class="fn">redirect</span>(<span class="tp">String</span> shortCode,
-        <span class="tp">HttpServletRequest</span> request)
-
-    <span class="cm">// pehle cache mein dekhta hai shortCode ke liye</span>
-    <span class="tp">Optional&lt;String&gt;</span> <span class="fn">checkCacheFirst</span>(<span class="tp">String</span> shortCode)
-
-    <span class="cm">// cache miss hone pe DB se fetch karta hai</span>
-    <span class="tp">String</span> <span class="fn">fallbackToDb</span>(<span class="tp">String</span> shortCode)
-
-    <span class="cm">// URL accessible hai ya nahi validate karta hai</span>
-    <span class="tp">boolean</span> <span class="fn">validateAccessible</span>(<span class="tp">String</span> url)
-}
-</pre></div>
-        </div>
-
-        <div class="service-card">
-            <h3>AnalyticsService</h3>
-            <p class="svc-desc">Har click track karta hai aur stats report karta hai &mdash; kitne clicks aaye, kahan se aaye, daily breakdown</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">AnalyticsService</span> {
-
-    <span class="cm">// har click event record karta hai request details ke saath</span>
-    <span class="tp">void</span> <span class="fn">recordClick</span>(<span class="tp">String</span> shortCode,
-        <span class="tp">HttpServletRequest</span> request)
-
-    <span class="cm">// date range ke hisaab se click stats deta hai</span>
-    <span class="tp">ClickStats</span> <span class="fn">getClickStats</span>(<span class="tp">String</span> shortCode,
-        <span class="tp">DateRange</span> range)
-
-    <span class="cm">// daily breakdown deta hai given days ke liye</span>
-    <span class="tp">List&lt;DailyStats&gt;</span> <span class="fn">getDailyBreakdown</span>(<span class="tp">String</span> shortCode,
-        <span class="tp">int</span> days)
-
-    <span class="cm">// scheduled cron job &mdash; daily stats aggregate karta hai</span>
-    <span class="tp">void</span> <span class="fn">aggregateDailyStats</span>()
-}
-</pre></div>
-        </div>
-
-        <div class="service-card">
-            <h3>IdGeneratorService</h3>
-            <p class="svc-desc">Unique short codes generate karta hai URLs ke liye &mdash; collision handle karta hai aur batch mein IDs pre-generate karta hai</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">IdGeneratorService</span> {
-
-    <span class="cm">// configured strategy se unique 7-char short code generate karta hai</span>
-    <span class="tp">String</span> <span class="fn">generateId</span>()
-
-    <span class="cm">// collision hone pe naya unique code generate karta hai</span>
-    <span class="tp">String</span> <span class="fn">handleCollision</span>(<span class="tp">String</span> shortCode)
-
-    <span class="cm">// batch mein IDs pre-generate karta hai performance ke liye</span>
-    <span class="tp">List&lt;String&gt;</span> <span class="fn">preGenerateIds</span>(<span class="tp">int</span> batchSize)
-}
-</pre></div>
-        </div>
-
-        <div class="service-card">
-            <h3>CacheService</h3>
-            <p class="svc-desc">Popular URLs ko Redis mein cache karta hai taaki redirect fast ho &mdash; put, get, evict aur startup pe warm-up</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">CacheService</span> {
-
-    <span class="cm">// shortCode aur originalUrl ko cache mein store karta hai</span>
-    <span class="tp">void</span> <span class="fn">put</span>(<span class="tp">String</span> shortCode,
-        <span class="tp">String</span> originalUrl)
-
-    <span class="cm">// cache se originalUrl fetch karta hai shortCode ke liye</span>
-    <span class="tp">Optional&lt;String&gt;</span> <span class="fn">get</span>(<span class="tp">String</span> shortCode)
-
-    <span class="cm">// cache se shortCode ki entry hata deta hai</span>
-    <span class="tp">void</span> <span class="fn">evict</span>(<span class="tp">String</span> shortCode)
-
-    <span class="cm">// startup pe hot URLs ko cache mein load karta hai</span>
-    <span class="tp">void</span> <span class="fn">warmUpCache</span>(<span class="tp">List&lt;ShortUrl&gt;</span> hotUrls)
-}
-</pre></div>
-        </div>
-
-        <div class="service-card">
-            <h3>UrlValidationService</h3>
-            <p class="svc-desc">URL valid hai ya nahi check karta hai &mdash; format, malicious site detection, custom alias availability aur sanitization</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">UrlValidationService</span> {
-
-    <span class="cm">// URL ka format valid hai ya nahi check karta hai</span>
-    <span class="tp">boolean</span> <span class="fn">isValidUrl</span>(<span class="tp">String</span> url)
-
-    <span class="cm">// URL malicious hai ya nahi detect karta hai</span>
-    <span class="tp">boolean</span> <span class="fn">isMalicious</span>(<span class="tp">String</span> url)
-
-    <span class="cm">// custom alias available hai ya already taken check karta hai</span>
-    <span class="tp">boolean</span> <span class="fn">isCustomAliasAvailable</span>(<span class="tp">String</span> alias)
-
-    <span class="cm">// URL ko sanitize karke clean URL return karta hai</span>
-    <span class="tp">String</span> <span class="fn">sanitizeUrl</span>(<span class="tp">String</span> url)
-}
-</pre></div>
-        </div>
-
-        <div class="service-card">
-            <h3>ExpirationService</h3>
-            <p class="svc-desc">Expired URLs ko clean up karta hai &mdash; expiry schedule karta hai aur users ko notification bhejta hai before expiry</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">ExpirationService</span> {
-
-    <span class="cm">// URL ke liye expiration schedule karta hai</span>
-    <span class="tp">void</span> <span class="fn">scheduleExpiration</span>(<span class="tp">ShortUrl</span> url)
-
-    <span class="cm">// cron job &mdash; expired URLs ko cleanup karta hai</span>
-    <span class="tp">void</span> <span class="fn">cleanupExpiredUrls</span>()
-
-    <span class="cm">// cron job &mdash; jaldi expire hone wale URLs ke users ko notify karta hai</span>
-    <span class="tp">void</span> <span class="fn">notifyExpiringUrls</span>()
-}
-</pre></div>
-        </div>
-
-        <div class="service-card">
-            <h3>AuthService</h3>
-            <p class="svc-desc">User signup, login aur API key management handle karta hai &mdash; JWT token generate karta hai auth ke liye</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">AuthService</span> {
-
-    <span class="cm">// naya user register karta hai email aur password se</span>
-    <span class="tp">User</span> <span class="fn">register</span>(<span class="tp">String</span> email,
-        <span class="tp">String</span> password)
-
-    <span class="cm">// user login karke JWT token return karta hai</span>
-    <span class="tp">String</span> <span class="fn">login</span>(<span class="tp">String</span> email,
-        <span class="tp">String</span> password)
-
-    <span class="cm">// API key valid hai ya nahi check karta hai</span>
-    <span class="tp">boolean</span> <span class="fn">validateApiKey</span>(<span class="tp">String</span> apiKey)
-
-    <span class="cm">// userId se JWT token generate karta hai</span>
-    <span class="tp">String</span> <span class="fn">generateJwt</span>(<span class="tp">Long</span> userId)
-}
-</pre></div>
-        </div>
-    </div>
-</div>
-
-<!-- ============ 6. KEY ARCHITECTURE FLOW ============ -->
+<!-- ============ 8. KEY ARCHITECTURE FLOW ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">6</span>Key Architecture Flow</div>
+    <div class="section-title"><span class="section-num">8</span>Key Architecture Flow</div>
 
     <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Base62 Encoding &mdash; How Short Codes Are Generated</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -616,8 +736,10 @@ INCR url:counter
 </div>
 
 <!-- ============ 7. DESIGN PATTERNS ============ -->
+
+<!-- ============ 9. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">7</span>Design Patterns (with Implementation)</div>
+    <div class="section-title"><span class="section-num">9</span>Design Patterns (with Implementation)</div>
     <div class="pattern-grid">
         <div class="pattern-card"><div class="pattern-name">Builder Pattern</div><div class="pattern-use">URL Creation with optional fields</div></div>
         <div class="pattern-card"><div class="pattern-name">Strategy Pattern</div><div class="pattern-use">ID Generation (Base62 / MD5 / Snowflake)</div></div>
@@ -706,8 +828,10 @@ Url url = <span class="kw">new</span> UrlBuilder()
 </div>
 
 <!-- ============ 8. SEQUENCE FLOW ============ -->
+
+<!-- ============ 10. SEQUENCE FLOW ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">10</span>Sequence Flow</div>
 
     <div class="sub-heading" style="color:#b388ff;border-color:#b388ff">Create Short URL Flow</div>
     <div class="flow-container">
@@ -747,103 +871,10 @@ Url url = <span class="kw">new</span> UrlBuilder()
 </div>
 
 <!-- ============ 9. CAPACITY ESTIMATION ============ -->
-<div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
 
-    <div class="assumption-box">
-        <h4>Assumptions (Bitly-Scale URL Shortener)</h4>
-        <div class="assumption-row"><span class="calc-label">New URLs created / month</span><span class="calc-value">500 Million</span></div>
-        <div class="assumption-row"><span class="calc-label">Read:Write ratio</span><span class="calc-value">100:1 (read heavy)</span></div>
-        <div class="assumption-row"><span class="calc-label">Redirects per month</span><span class="calc-value">50 Billion</span></div>
-        <div class="assumption-row"><span class="calc-label">Avg original URL size</span><span class="calc-value">200 bytes</span></div>
-        <div class="assumption-row"><span class="calc-label">Short code length</span><span class="calc-value">7 characters</span></div>
-        <div class="assumption-row"><span class="calc-label">URL retention period</span><span class="calc-value">5 years</span></div>
-        <div class="assumption-row"><span class="calc-label">Total unique URLs (5 yrs)</span><span class="calc-value">30 Billion</span></div>
-    </div>
-
-    <div class="cap-grid">
-        <div class="cap-card">
-            <h4>Write QPS (URL Creation)</h4>
-            <div class="calc-row"><span class="calc-label">URLs / month</span><span class="calc-value">500M</span></div>
-            <div class="calc-row"><span class="calc-label">500M / 30 / 86400</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Write QPS</span><span class="calc-value">~200 QPS</span></div>
-            <div class="calc-result"><span class="calc-label">Peak (3x)</span><span class="calc-value">~600 QPS</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Read QPS (Redirects)</h4>
-            <div class="calc-row"><span class="calc-label">Redirects / month</span><span class="calc-value">50B</span></div>
-            <div class="calc-row"><span class="calc-label">50B / 30 / 86400</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Read QPS</span><span class="calc-value">~20K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">Peak (3x)</span><span class="calc-value">~60K QPS</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Storage &mdash; URL Records (5 years)</h4>
-            <div class="calc-row"><span class="calc-label">Total URLs (5 yrs)</span><span class="calc-value">30 Billion</span></div>
-            <div class="calc-row"><span class="calc-label">Avg row size (with indexes)</span><span class="calc-value">~500 bytes</span></div>
-            <div class="calc-result"><span class="calc-label">URL Table Storage</span><span class="calc-value">~15 TB</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Storage &mdash; Click Analytics (per year)</h4>
-            <div class="calc-row"><span class="calc-label">Clicks / year</span><span class="calc-value">600B</span></div>
-            <div class="calc-row"><span class="calc-label">Click row size</span><span class="calc-value">~200 bytes</span></div>
-            <div class="calc-result"><span class="calc-label">Analytics Storage / Year</span><span class="calc-value">~120 TB / year</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Strategy</span><span class="calc-value">Partition by month, archive old data</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Cache Sizing (Redis)</h4>
-            <div class="calc-row"><span class="calc-label">Cache top 20% hot URLs</span><span class="calc-value"></span></div>
-            <div class="calc-row"><span class="calc-label">30B &times; 20% = 6B URLs</span><span class="calc-value"></span></div>
-            <div class="calc-row"><span class="calc-label">Key (15B) + Value (200B) = 215B</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Full Hot Set</span><span class="calc-value">~1.3 TB</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Practical: cache recent + frequent</span><span class="calc-value"></span></div>
-            <div class="calc-result"><span class="calc-label">Realistic Redis Size</span><span class="calc-value">~100-200 GB</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Bandwidth</h4>
-            <div class="calc-row"><span class="calc-label">Incoming (writes): 200 &times; 500B</span><span class="calc-value">~100 KB/s</span></div>
-            <div class="calc-row"><span class="calc-label">Outgoing (reads): 20K &times; 500B</span><span class="calc-value">~10 MB/s</span></div>
-            <div class="calc-result"><span class="calc-label">Total Bandwidth</span><span class="calc-value">~10 MB/s</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Conclusion</span><span class="calc-value">Network is NOT the bottleneck</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Short Code Space (62^7)</h4>
-            <div class="calc-row"><span class="calc-label">62^7 possible codes</span><span class="calc-value">3.52 Trillion</span></div>
-            <div class="calc-row"><span class="calc-label">URLs needed (5 yrs)</span><span class="calc-value">30 Billion</span></div>
-            <div class="calc-result"><span class="calc-label">Utilization</span><span class="calc-value">&lt; 1%</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Collision risk (counter)</span><span class="calc-value">Zero</span></div>
-        </div>
-
-        <div class="cap-card">
-            <h4>Server Estimation</h4>
-            <div class="calc-row"><span class="calc-label">Read QPS (peak)</span><span class="calc-value">60K</span></div>
-            <div class="calc-row"><span class="calc-label">Each server handles</span><span class="calc-value">~5K QPS</span></div>
-            <div class="calc-result"><span class="calc-label">App Servers Needed</span><span class="calc-value">~12 servers</span></div>
-            <div class="calc-row" style="margin-top:6px"><span class="calc-label">Redis instances (cluster)</span><span class="calc-value">3-5 nodes</span></div>
-            <div class="calc-result"><span class="calc-label">DB Read Replicas</span><span class="calc-value">3-5 replicas</span></div>
-        </div>
-    </div>
-
-    <div style="margin-top:20px;padding:16px;background:rgba(130,177,255,.08);border-radius:12px;border:1px solid rgba(130,177,255,.15)">
-        <strong style="color:#82b1ff">Key Takeaway for Interview:</strong>
-        <p style="color:#b0bec5;font-size:.88em;margin-top:8px;line-height:1.7">
-            URL Shortener is <strong style="color:#69f0ae">extremely read-heavy</strong> (100:1 ratio). Key design decisions:
-            <strong style="color:#ffcc80">20K read QPS</strong> (Redis cache handles 99%+),
-            <strong style="color:#ffcc80">7-char Base62 codes</strong> (3.5T capacity, &lt;1% used in 5 years),
-            <strong style="color:#ffcc80">HTTP 302</strong> (not 301) to track analytics,
-            and <strong style="color:#ffcc80">counter-based ID generation</strong> (zero collisions, O(1) performance).
-        </p>
-    </div>
-</div>
-
-<!-- ============ 10. BOTTLENECKS & SOLUTIONS ============ -->
+<!-- ============ 11. BOTTLENECKS & SOLUTIONS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Hot URL (millions of clicks)</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Redis cache with LRU + local in-memory cache (Caffeine)</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">DB read overload at 20K QPS</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Cache-aside pattern: 99% cache hit ratio eliminates DB reads</span></div>
@@ -856,8 +887,10 @@ Url url = <span class="kw">new</span> UrlBuilder()
 </div>
 
 <!-- ============ 11. EDGE CASES ============ -->
+
+<!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-amber">
-    <div class="section-title"><span class="section-num">11</span>Edge Cases &amp; Error Handling</div>
+    <div class="section-title"><span class="section-num">12</span>Edge Cases &amp; Error Handling</div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>URL Expiration</h4>
@@ -895,8 +928,10 @@ Url url = <span class="kw">new</span> UrlBuilder()
 </div>
 
 <!-- ============ 13. SECURITY ============ -->
+
+<!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">12</span>Security</div>
+    <div class="section-title"><span class="section-num">13</span>Security</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#9670;</span>
@@ -934,8 +969,10 @@ Url url = <span class="kw">new</span> UrlBuilder()
 </div>
 
 <!-- ============ 14. INTERVIEW SUMMARY ============ -->
+
+<!-- ============ 14. INTERVIEW SUMMARY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">13</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Base62 Counter</h4><p>7-char codes, 3.5T capacity, zero collisions</p></div>
         <div class="summary-card sc-2"><h4>HTTP 302 Redirect</h4><p>Not 301 &mdash; enables click analytics tracking</p></div>

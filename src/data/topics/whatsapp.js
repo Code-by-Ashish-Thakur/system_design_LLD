@@ -29,8 +29,23 @@ export default {
 </div>
 
 <!-- ============ 2. ENUMS ============ -->
+
+<!-- ============ NON-FUNCTIONAL REQUIREMENTS ============ -->
+<div class="section theme-pink">
+    <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
+    <div class="req-grid">
+        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; message delivery &lt; 100ms hona chahiye</div>
+        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, kabhi down nahi</div>
+        <div class="req-pill"><span class="num">3</span> Scalability &mdash; 2B+ users handle karna padega</div>
+        <div class="req-pill"><span class="num">4</span> Message Ordering &mdash; messages same order me milne chahiye</div>
+        <div class="req-pill"><span class="num">5</span> E2E Encryption &mdash; end-to-end encryption mandatory hai</div>
+        <div class="req-pill"><span class="num">6</span> Fault Tolerance &mdash; offline hone pe bhi message queue me save ho</div>
+    </div>
+</div>
+
+<!-- ============ 3. ENUMS ============ -->
 <div id="enums" class="section theme-purple">
-    <div class="section-title"><span class="section-num">2</span>Enums</div>
+    <div class="section-title"><span class="section-num">3</span>Enums</div>
     <div class="enum-grid">
         <div class="enum-card">
             <h3>UserStatus</h3>
@@ -78,206 +93,10 @@ export default {
 </div>
 
 <!-- ============ 3. DATABASE SCHEMA ============ -->
-<div id="database" class="section theme-pink">
-    <div class="section-title"><span class="section-num">3</span>Database Schema (with FK &amp; Indexes)</div>
 
-    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
-    <div class="dbtech-grid">
-        <div class="dbtech-card">
-            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
-            <div class="dbtech-usage">Users, conversations, groups &mdash; ACID transactions for structured relational data</div>
-            <div class="dbtech-tables"><span>users</span><span>conversations</span><span>groups</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Cassandra <span class="dbtech-type">NoSQL</span></div>
-            <div class="dbtech-usage">Messages storage &mdash; write-heavy, time-series data partitioned by conversation_id</div>
-            <div class="dbtech-tables"><span>messages</span><span>group_messages</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
-            <div class="dbtech-usage">Online/offline presence, typing indicators, WebSocket session mapping</div>
-            <div class="dbtech-tables"><span>presence:{userId}</span><span>typing:{convId}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">S3 <span class="dbtech-type">Blob Storage</span></div>
-            <div class="dbtech-usage">Media files &mdash; images, videos, voice notes, documents</div>
-            <div class="dbtech-tables"><span>media/{userId}/{messageId}</span></div>
-        </div>
-        <div class="dbtech-card">
-            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
-            <div class="dbtech-usage">Async message delivery, push notifications, event streaming</div>
-            <div class="dbtech-tables"><span>chat-events</span><span>notifications</span></div>
-        </div>
-    </div>
-
-    <div class="db-grid">
-        <div class="db-table">
-            <h3>users</h3>
-            <ul>
-                <li><span class="pk">id BIGINT (PK, AUTO_INCREMENT)</span></li>
-                <li>phone_number VARCHAR(15) UNIQUE</li>
-                <li>name VARCHAR(100)</li>
-                <li>profile_pic VARCHAR(255)</li>
-                <li>status ENUM('ONLINE','OFFLINE')</li>
-                <li>last_seen TIMESTAMP</li>
-                <li>public_key TEXT</li>
-                <li><span class="idx">INDEX idx_phone (phone_number)</span></li>
-            </ul>
-        </div>
-        <div class="db-table">
-            <h3>messages</h3>
-            <ul>
-                <li><span class="pk">message_id VARCHAR(36) (PK)</span></li>
-                <li><span class="fk">sender_id BIGINT (FK &rarr; users.id)</span></li>
-                <li><span class="fk">receiver_id BIGINT (FK &rarr; users.id)</span></li>
-                <li><span class="fk">conversation_id VARCHAR(36) (FK)</span></li>
-                <li>content TEXT</li>
-                <li>media_url VARCHAR(255)</li>
-                <li>message_type ENUM</li>
-                <li>message_status ENUM</li>
-                <li>delete_type ENUM</li>
-                <li>created_at TIMESTAMP</li>
-                <li>updated_at TIMESTAMP</li>
-                <li>is_edited BOOLEAN DEFAULT FALSE</li>
-                <li>is_deleted BOOLEAN DEFAULT FALSE</li>
-                <li>version BIGINT DEFAULT 0</li>
-                <li><span class="idx">INDEX idx_conv_time (conversation_id, created_at DESC)</span></li>
-                <li><span class="idx">INDEX idx_sender (sender_id)</span></li>
-                <li><span class="idx">INDEX idx_receiver (receiver_id)</span></li>
-            </ul>
-        </div>
-        <div class="db-table">
-            <h3>conversations</h3>
-            <ul>
-                <li><span class="pk">conversation_id VARCHAR(36) (PK)</span></li>
-                <li>type ENUM('ONE_TO_ONE','GROUP')</li>
-                <li><span class="fk">user1_id BIGINT (FK &rarr; users.id)</span></li>
-                <li><span class="fk">user2_id BIGINT (FK &rarr; users.id)</span></li>
-                <li>updated_at TIMESTAMP</li>
-                <li><span class="idx">INDEX idx_users (user1_id, user2_id)</span></li>
-            </ul>
-        </div>
-        <div class="db-table" style="border-color:rgba(255,171,64,.25)">
-            <h3 style="background:rgba(255,171,64,.15);color:#ffab40">groups <span class="new-badge">NEW</span></h3>
-            <ul>
-                <li><span class="pk">group_id VARCHAR(36) (PK)</span></li>
-                <li>name VARCHAR(100)</li>
-                <li>description VARCHAR(500)</li>
-                <li><span class="fk">created_by BIGINT (FK &rarr; users.id)</span></li>
-                <li>group_pic VARCHAR(255)</li>
-                <li>created_at TIMESTAMP</li>
-            </ul>
-        </div>
-        <div class="db-table" style="border-color:rgba(255,171,64,.25)">
-            <h3 style="background:rgba(255,171,64,.15);color:#ffab40">group_members <span class="new-badge">NEW</span></h3>
-            <ul>
-                <li><span class="fk">group_id VARCHAR(36) (FK &rarr; groups)</span></li>
-                <li><span class="fk">user_id BIGINT (FK &rarr; users.id)</span></li>
-                <li>role ENUM('ADMIN','MEMBER')</li>
-                <li>joined_at TIMESTAMP</li>
-                <li><span class="pk">PK (group_id, user_id)</span></li>
-            </ul>
-        </div>
-        <div class="db-table">
-            <h3>calls</h3>
-            <ul>
-                <li><span class="pk">call_id VARCHAR(36) (PK)</span></li>
-                <li><span class="fk">caller_id BIGINT (FK &rarr; users.id)</span></li>
-                <li><span class="fk">receiver_id BIGINT (FK &rarr; users.id)</span></li>
-                <li>call_type ENUM('VOICE','VIDEO')</li>
-                <li>status ENUM('RINGING','CONNECTED','ENDED','MISSED','REJECTED')</li>
-                <li>start_time TIMESTAMP</li>
-                <li>end_time TIMESTAMP</li>
-            </ul>
-        </div>
-    </div>
-    <div style="margin-top:16px;padding:14px 18px;background:rgba(255,128,171,.08);border-radius:12px;border:1px solid rgba(255,128,171,.15)">
-        <strong style="color:#ff80ab">Why these indexes matter:</strong>
-        <p style="color:#b0bec5;font-size:.88em;margin-top:8px;line-height:1.6">
-            <strong>idx_conv_time</strong> &mdash; Most frequent query: "load latest messages in a chat" (pagination)<br>
-            <strong>idx_sender / idx_receiver</strong> &mdash; Fast lookup for undelivered messages when user comes online<br>
-            <strong>idx_phone</strong> &mdash; Login lookup by phone number (OTP flow)<br>
-            <strong>idx_users</strong> &mdash; Find existing conversation between two users before creating a new one
-        </p>
-    </div>
-
-</div>
-
-<!-- ============ 4. APIs ============ -->
-<div id="apis" class="section theme-teal">
-    <div class="section-title"><span class="section-num">4</span>APIs (with Pagination &amp; Media)</div>
-    <div class="api-grid">
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/auth/send-otp</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"phone"</span>: <span class="val">"9999999999"</span> }</div>
-                <div class="api-json"><div class="label">Response</div>{ <span class="key">"success"</span>: <span class="val">true</span>, <span class="key">"expiresIn"</span>: <span class="val">300</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/auth/verify-otp</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"phone"</span>: <span class="val">"9999999999"</span>, <span class="key">"otp"</span>: <span class="val">"123456"</span> }</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"token"</span>: <span class="val">"jwt-token"</span> }<br><br><div class="label" style="color:#ff5252">Response 401</div>{ <span class="key">"error"</span>: <span class="val">"Invalid or expired OTP"</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/messages/send</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"receiverId"</span>: <span class="val">2</span>, <span class="key">"content"</span>: <span class="val">"Hello"</span>, <span class="key">"type"</span>: <span class="val">"TEXT"</span> }</div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"messageId"</span>: <span class="val">"uuid"</span>, <span class="key">"status"</span>: <span class="val">"SENT"</span>, <span class="key">"createdAt"</span>: <span class="val">"..."</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/messages/{conversationId}?page=0&amp;size=20</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Params</div><span class="key">page</span>: <span class="val">0</span> (default)<br><span class="key">size</span>: <span class="val">20</span> (default)</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"messages"</span>: <span class="val">[...]</span>, <span class="key">"totalPages"</span>: <span class="val">15</span>, <span class="key">"hasNext"</span>: <span class="val">true</span> }</div>
-            </div>
-            <div class="api-note">Paginated &mdash; loads 20 messages at a time, newest first</div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-put">PUT</span><span class="api-path">/messages/{messageId}</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"content"</span>: <span class="val">"Updated text"</span> }</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"success"</span>: <span class="val">true</span>, <span class="key">"isEdited"</span>: <span class="val">true</span> }<br><br><div class="label" style="color:#ff5252">Response 403</div>{ <span class="key">"error"</span>: <span class="val">"Edit window expired (15 min)"</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-delete">DELETE</span><span class="api-path">/messages/{messageId}?type=DELETE_FOR_EVERYONE</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Param</div><span class="key">type</span>: <span class="val">DELETE_FOR_ME</span> | <span class="val">DELETE_FOR_EVERYONE</span></div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"success"</span>: <span class="val">true</span> }</div>
-            </div>
-        </div>
-        <div class="api-card">
-            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/messages/search?keyword=hello&amp;conversationId=abc</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Query Params</div><span class="key">keyword</span>: <span class="val">"hello"</span><br><span class="key">conversationId</span>: <span class="val">"abc"</span> (optional)</div>
-                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"results"</span>: <span class="val">[{messageId, content, ...}]</span> }</div>
-            </div>
-        </div>
-        <div class="api-card" style="border-color:rgba(255,171,64,.3)">
-            <div class="api-header" style="background:rgba(255,171,64,.08)"><span class="api-method method-post">POST</span><span class="api-path">/media/upload</span> <span class="new-badge">NEW</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request (multipart)</div><span class="key">file</span>: <span class="val">binary</span><br><span class="key">type</span>: <span class="val">IMAGE | VIDEO | AUDIO</span></div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"mediaUrl"</span>: <span class="val">"https://s3.../img.jpg"</span> }</div>
-            </div>
-            <div class="api-note">Upload to S3, then send message with mediaUrl</div>
-        </div>
-        <div class="api-card" style="border-color:rgba(255,171,64,.3)">
-            <div class="api-header" style="background:rgba(255,171,64,.08)"><span class="api-method method-post">POST</span><span class="api-path">/groups/create</span> <span class="new-badge">NEW</span></div>
-            <div class="api-body">
-                <div class="api-json"><div class="label">Request</div>{ <span class="key">"name"</span>: <span class="val">"Friends"</span>, <span class="key">"memberIds"</span>: <span class="val">[2,3,4]</span> }</div>
-                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"groupId"</span>: <span class="val">"uuid"</span> }</div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ============ 5. SERVICE LLD ============ -->
+<!-- ============ 4. SERVICE LLD ============ -->
 <div id="services" class="section theme-yellow">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>AuthService</h3>
@@ -463,211 +282,212 @@ export default {
 </div>
 
 <!-- ============ 6. WEBSOCKET DESIGN ============ -->
-<div id="websocket" class="section theme-blue">
-    <div class="section-title"><span class="section-num">6</span>WebSocket Design (Enhanced)</div>
 
-    <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Connection Management</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="cm">// In-memory session map &mdash; tracks who is connected</span>
-<span class="kw">class</span> <span class="cn">WebSocketSessionManager</span> {
-    <span class="cm">// ConcurrentHashMap for thread safety</span>
-    Map&lt;Long, WebSocketSession&gt; <span class="fn">activeSessions</span> = <span class="kw">new</span> ConcurrentHashMap&lt;&gt;();
-
-    <span class="kw">void</span> <span class="fn">addSession</span>(Long userId, WebSocketSession session);
-    <span class="kw">void</span> <span class="fn">removeSession</span>(Long userId);
-    <span class="kw">boolean</span> <span class="fn">isConnected</span>(Long userId);
-    WebSocketSession <span class="fn">getSession</span>(Long userId);
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Message Delivery Flow</div>
-    <div class="flow-container">
-        <div class="flow-box flow-green">User A sends message</div>
-        <div class="flow-arrow arrow-green"></div>
-        <div class="flow-box flow-blue">WebSocket Server receives</div>
-        <div class="flow-arrow arrow-blue"></div>
-        <div class="flow-box flow-purple">MessageService saves to DB</div>
-        <div class="flow-arrow arrow-purple"></div>
-        <div class="flow-box flow-orange">Check: Is User B online?</div>
-    </div>
-    <div class="two-col">
-        <div style="text-align:center">
-            <div style="color:#25d366;font-weight:700;margin-bottom:10px">User B is ONLINE</div>
-            <div class="flow-container" style="padding:10px">
-                <div class="flow-box flow-green" style="font-size:.85em">Push via WebSocket instantly</div>
-                <div class="flow-arrow arrow-green"></div>
-                <div class="flow-box flow-green" style="font-size:.85em">Status &rarr; DELIVERED</div>
-                <div class="flow-arrow arrow-green"></div>
-                <div class="flow-box flow-green" style="font-size:.85em">Send delivery ACK to User A</div>
+<!-- ============ 5. APIs ============ -->
+<div id="apis" class="section theme-teal">
+    <div class="section-title"><span class="section-num">5</span>APIs (with Pagination &amp; Media)</div>
+    <div class="api-grid">
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/auth/send-otp</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"phone"</span>: <span class="val">"9999999999"</span> }</div>
+                <div class="api-json"><div class="label">Response</div>{ <span class="key">"success"</span>: <span class="val">true</span>, <span class="key">"expiresIn"</span>: <span class="val">300</span> }</div>
             </div>
         </div>
-        <div style="text-align:center">
-            <div style="color:#ff5252;font-weight:700;margin-bottom:10px">User B is OFFLINE</div>
-            <div class="flow-container" style="padding:10px">
-                <div class="flow-box flow-red" style="font-size:.85em">Queue in Kafka / Redis</div>
-                <div class="flow-arrow" style="background:#ff5252"><div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff5252"></div></div>
-                <div class="flow-box flow-red" style="font-size:.85em">Send Push Notification (FCM)</div>
-                <div class="flow-arrow" style="background:#ff5252"><div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff5252"></div></div>
-                <div class="flow-box flow-red" style="font-size:.85em">Deliver queued msgs on reconnect</div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/auth/verify-otp</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"phone"</span>: <span class="val">"9999999999"</span>, <span class="key">"otp"</span>: <span class="val">"123456"</span> }</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"token"</span>: <span class="val">"jwt-token"</span> }<br><br><div class="label" style="color:#ff5252">Response 401</div>{ <span class="key">"error"</span>: <span class="val">"Invalid or expired OTP"</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/messages/send</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"receiverId"</span>: <span class="val">2</span>, <span class="key">"content"</span>: <span class="val">"Hello"</span>, <span class="key">"type"</span>: <span class="val">"TEXT"</span> }</div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"messageId"</span>: <span class="val">"uuid"</span>, <span class="key">"status"</span>: <span class="val">"SENT"</span>, <span class="key">"createdAt"</span>: <span class="val">"..."</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/messages/{conversationId}?page=0&amp;size=20</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Params</div><span class="key">page</span>: <span class="val">0</span> (default)<br><span class="key">size</span>: <span class="val">20</span> (default)</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"messages"</span>: <span class="val">[...]</span>, <span class="key">"totalPages"</span>: <span class="val">15</span>, <span class="key">"hasNext"</span>: <span class="val">true</span> }</div>
+            </div>
+            <div class="api-note">Paginated &mdash; loads 20 messages at a time, newest first</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-put">PUT</span><span class="api-path">/messages/{messageId}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"content"</span>: <span class="val">"Updated text"</span> }</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"success"</span>: <span class="val">true</span>, <span class="key">"isEdited"</span>: <span class="val">true</span> }<br><br><div class="label" style="color:#ff5252">Response 403</div>{ <span class="key">"error"</span>: <span class="val">"Edit window expired (15 min)"</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-delete">DELETE</span><span class="api-path">/messages/{messageId}?type=DELETE_FOR_EVERYONE</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Param</div><span class="key">type</span>: <span class="val">DELETE_FOR_ME</span> | <span class="val">DELETE_FOR_EVERYONE</span></div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"success"</span>: <span class="val">true</span> }</div>
+            </div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/messages/search?keyword=hello&amp;conversationId=abc</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Query Params</div><span class="key">keyword</span>: <span class="val">"hello"</span><br><span class="key">conversationId</span>: <span class="val">"abc"</span> (optional)</div>
+                <div class="api-json"><div class="label">Response 200</div>{ <span class="key">"results"</span>: <span class="val">[{messageId, content, ...}]</span> }</div>
+            </div>
+        </div>
+        <div class="api-card" style="border-color:rgba(255,171,64,.3)">
+            <div class="api-header" style="background:rgba(255,171,64,.08)"><span class="api-method method-post">POST</span><span class="api-path">/media/upload</span> <span class="new-badge">NEW</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request (multipart)</div><span class="key">file</span>: <span class="val">binary</span><br><span class="key">type</span>: <span class="val">IMAGE | VIDEO | AUDIO</span></div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"mediaUrl"</span>: <span class="val">"https://s3.../img.jpg"</span> }</div>
+            </div>
+            <div class="api-note">Upload to S3, then send message with mediaUrl</div>
+        </div>
+        <div class="api-card" style="border-color:rgba(255,171,64,.3)">
+            <div class="api-header" style="background:rgba(255,171,64,.08)"><span class="api-method method-post">POST</span><span class="api-path">/groups/create</span> <span class="new-badge">NEW</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{ <span class="key">"name"</span>: <span class="val">"Friends"</span>, <span class="key">"memberIds"</span>: <span class="val">[2,3,4]</span> }</div>
+                <div class="api-json"><div class="label">Response 201</div>{ <span class="key">"groupId"</span>: <span class="val">"uuid"</span> }</div>
             </div>
         </div>
     </div>
+</div>
 
-    <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Typing Indicator <span class="new-badge">NEW</span></div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="cm">// WebSocket event types</span>
-<span class="kw">enum</span> <span class="cn">WebSocketEventType</span> {
-    MESSAGE, TYPING_START, TYPING_STOP, STATUS_UPDATE, READ_RECEIPT, CALL_SIGNAL
-}
+<!-- ============ 5. SERVICE LLD ============ -->
 
-<span class="cm">// Client sends TYPING_START &rarr; Server forwards to receiver &rarr; UI shows "typing..."</span>
-<span class="cm">// Auto-expires after 3 seconds if no new TYPING_START received</span>
-    </pre></div>
+<!-- ============ 6. DATABASE SCHEMA ============ -->
+<div id="database" class="section theme-pink">
+    <div class="section-title"><span class="section-num">6</span>Database Schema (with FK &amp; Indexes)</div>
 
-    <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Heartbeat &amp; Reconnection</div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px">
-        <div style="background:rgba(79,195,247,.06);border:1px solid rgba(79,195,247,.15);border-radius:12px;padding:16px">
-            <strong style="color:#4fc3f7">Heartbeat (Ping/Pong)</strong>
-            <p style="color:#b0bec5;font-size:.85em;margin-top:6px">Client sends ping every 30s. If server gets no ping for 60s, mark user OFFLINE and update lastSeen.</p>
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Users, conversations, groups &mdash; ACID transactions for structured relational data</div>
+            <div class="dbtech-tables"><span>users</span><span>conversations</span><span>groups</span></div>
         </div>
-        <div style="background:rgba(79,195,247,.06);border:1px solid rgba(79,195,247,.15);border-radius:12px;padding:16px">
-            <strong style="color:#4fc3f7">Reconnection</strong>
-            <p style="color:#b0bec5;font-size:.85em;margin-top:6px">Client uses exponential backoff (1s, 2s, 4s, 8s...). On reconnect, fetch all queued undelivered messages.</p>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Cassandra <span class="dbtech-type">NoSQL</span></div>
+            <div class="dbtech-usage">Messages storage &mdash; write-heavy, time-series data partitioned by conversation_id</div>
+            <div class="dbtech-tables"><span>messages</span><span>group_messages</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">Online/offline presence, typing indicators, WebSocket session mapping</div>
+            <div class="dbtech-tables"><span>presence:{userId}</span><span>typing:{convId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">S3 <span class="dbtech-type">Blob Storage</span></div>
+            <div class="dbtech-usage">Media files &mdash; images, videos, voice notes, documents</div>
+            <div class="dbtech-tables"><span>media/{userId}/{messageId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
+            <div class="dbtech-usage">Async message delivery, push notifications, event streaming</div>
+            <div class="dbtech-tables"><span>chat-events</span><span>notifications</span></div>
         </div>
     </div>
+
+    <div class="db-grid">
+        <div class="db-table">
+            <h3>users</h3>
+            <ul>
+                <li><span class="pk">id BIGINT (PK, AUTO_INCREMENT)</span></li>
+                <li>phone_number VARCHAR(15) UNIQUE</li>
+                <li>name VARCHAR(100)</li>
+                <li>profile_pic VARCHAR(255)</li>
+                <li>status ENUM('ONLINE','OFFLINE')</li>
+                <li>last_seen TIMESTAMP</li>
+                <li>public_key TEXT</li>
+                <li><span class="idx">INDEX idx_phone (phone_number)</span></li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>messages</h3>
+            <ul>
+                <li><span class="pk">message_id VARCHAR(36) (PK)</span></li>
+                <li><span class="fk">sender_id BIGINT (FK &rarr; users.id)</span></li>
+                <li><span class="fk">receiver_id BIGINT (FK &rarr; users.id)</span></li>
+                <li><span class="fk">conversation_id VARCHAR(36) (FK)</span></li>
+                <li>content TEXT</li>
+                <li>media_url VARCHAR(255)</li>
+                <li>message_type ENUM</li>
+                <li>message_status ENUM</li>
+                <li>delete_type ENUM</li>
+                <li>created_at TIMESTAMP</li>
+                <li>updated_at TIMESTAMP</li>
+                <li>is_edited BOOLEAN DEFAULT FALSE</li>
+                <li>is_deleted BOOLEAN DEFAULT FALSE</li>
+                <li>version BIGINT DEFAULT 0</li>
+                <li><span class="idx">INDEX idx_conv_time (conversation_id, created_at DESC)</span></li>
+                <li><span class="idx">INDEX idx_sender (sender_id)</span></li>
+                <li><span class="idx">INDEX idx_receiver (receiver_id)</span></li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>conversations</h3>
+            <ul>
+                <li><span class="pk">conversation_id VARCHAR(36) (PK)</span></li>
+                <li>type ENUM('ONE_TO_ONE','GROUP')</li>
+                <li><span class="fk">user1_id BIGINT (FK &rarr; users.id)</span></li>
+                <li><span class="fk">user2_id BIGINT (FK &rarr; users.id)</span></li>
+                <li>updated_at TIMESTAMP</li>
+                <li><span class="idx">INDEX idx_users (user1_id, user2_id)</span></li>
+            </ul>
+        </div>
+        <div class="db-table" style="border-color:rgba(255,171,64,.25)">
+            <h3 style="background:rgba(255,171,64,.15);color:#ffab40">groups <span class="new-badge">NEW</span></h3>
+            <ul>
+                <li><span class="pk">group_id VARCHAR(36) (PK)</span></li>
+                <li>name VARCHAR(100)</li>
+                <li>description VARCHAR(500)</li>
+                <li><span class="fk">created_by BIGINT (FK &rarr; users.id)</span></li>
+                <li>group_pic VARCHAR(255)</li>
+                <li>created_at TIMESTAMP</li>
+            </ul>
+        </div>
+        <div class="db-table" style="border-color:rgba(255,171,64,.25)">
+            <h3 style="background:rgba(255,171,64,.15);color:#ffab40">group_members <span class="new-badge">NEW</span></h3>
+            <ul>
+                <li><span class="fk">group_id VARCHAR(36) (FK &rarr; groups)</span></li>
+                <li><span class="fk">user_id BIGINT (FK &rarr; users.id)</span></li>
+                <li>role ENUM('ADMIN','MEMBER')</li>
+                <li>joined_at TIMESTAMP</li>
+                <li><span class="pk">PK (group_id, user_id)</span></li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>calls</h3>
+            <ul>
+                <li><span class="pk">call_id VARCHAR(36) (PK)</span></li>
+                <li><span class="fk">caller_id BIGINT (FK &rarr; users.id)</span></li>
+                <li><span class="fk">receiver_id BIGINT (FK &rarr; users.id)</span></li>
+                <li>call_type ENUM('VOICE','VIDEO')</li>
+                <li>status ENUM('RINGING','CONNECTED','ENDED','MISSED','REJECTED')</li>
+                <li>start_time TIMESTAMP</li>
+                <li>end_time TIMESTAMP</li>
+            </ul>
+        </div>
+    </div>
+    <div style="margin-top:16px;padding:14px 18px;background:rgba(255,128,171,.08);border-radius:12px;border:1px solid rgba(255,128,171,.15)">
+        <strong style="color:#ff80ab">Why these indexes matter:</strong>
+        <p style="color:#b0bec5;font-size:.88em;margin-top:8px;line-height:1.6">
+            <strong>idx_conv_time</strong> &mdash; Most frequent query: "load latest messages in a chat" (pagination)<br>
+            <strong>idx_sender / idx_receiver</strong> &mdash; Fast lookup for undelivered messages when user comes online<br>
+            <strong>idx_phone</strong> &mdash; Login lookup by phone number (OTP flow)<br>
+            <strong>idx_users</strong> &mdash; Find existing conversation between two users before creating a new one
+        </p>
+    </div>
+
 </div>
 
-<!-- ============ 7. MSG STATUS + READ RECEIPT ============ -->
-<div id="msg-status" class="section theme-green">
-    <div class="section-title"><span class="section-num">7</span>Message Status &amp; Read Receipt Flow</div>
-    <div class="flow-container">
-        <div class="flow-box flow-orange">Sender sends message</div>
-        <div class="flow-arrow arrow-green"></div>
-        <div class="flow-box" style="background:rgba(158,158,158,.15);border:1px solid #9e9e9e;color:#9e9e9e">SENT &#10003; &mdash; saved in DB</div>
-        <div class="flow-arrow arrow-green"></div>
-        <div class="flow-box" style="background:rgba(79,195,247,.15);border:1px solid #4fc3f7;color:#4fc3f7">DELIVERED &#10003;&#10003; &mdash; receiver's device got it</div>
-        <div class="flow-arrow arrow-green"></div>
-        <div class="flow-box" style="background:rgba(37,211,102,.15);border:1px solid #25d366;color:#25d366">SEEN &#10003;&#10003; &mdash; receiver opened the chat</div>
-    </div>
-    <div class="tick-grid">
-        <div class="tick-card tick-sent"><div class="tick-icon">&#10003;</div><div class="tick-label">Single Tick</div><div class="tick-desc">SENT</div></div>
-        <div class="tick-card tick-delivered"><div class="tick-icon">&#10003;&#10003;</div><div class="tick-label">Double Tick</div><div class="tick-desc">DELIVERED</div></div>
-        <div class="tick-card tick-seen"><div class="tick-icon" style="color:#25d366">&#10003;&#10003;</div><div class="tick-label">Blue Tick</div><div class="tick-desc">SEEN</div></div>
-    </div>
+<!-- ============ 4. APIs ============ -->
 
-    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Read Receipt Reverse Flow <span class="new-badge">NEW</span></div>
-    <div class="flow-container">
-        <div class="flow-box flow-teal">User B opens chat</div>
-        <div class="flow-arrow arrow-green"></div>
-        <div class="flow-box flow-blue">Client sends READ_RECEIPT via WebSocket</div>
-        <div class="flow-arrow arrow-blue"></div>
-        <div class="flow-box flow-purple">Server updates message status &rarr; SEEN</div>
-        <div class="flow-arrow arrow-green"></div>
-        <div class="flow-box flow-green">Server pushes SEEN ACK to User A via WebSocket</div>
-        <div class="flow-arrow arrow-green"></div>
-        <div class="flow-box flow-orange">User A's UI updates tick to blue</div>
-    </div>
-</div>
-
-<!-- ============ 9. DESIGN PATTERNS ============ -->
-<div id="patterns" class="section theme-cyan">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns (with Implementation)</div>
-    <div class="pattern-grid">
-        <div class="pattern-card"><div class="pattern-name">Factory Pattern</div><div class="pattern-use">Message Creation</div></div>
-        <div class="pattern-card"><div class="pattern-name">Strategy Pattern</div><div class="pattern-use">Notification Types</div></div>
-        <div class="pattern-card"><div class="pattern-name">Observer Pattern</div><div class="pattern-use">WebSocket Events</div></div>
-        <div class="pattern-card"><div class="pattern-name">Singleton Pattern</div><div class="pattern-use">Config &amp; Session Manager</div></div>
-    </div>
-
-    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Factory Pattern &mdash; MessageFactory</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">MessageFactory</span> {
-    <span class="kw">public static</span> Message <span class="fn">createMessage</span>(Long sender, Long receiver, String content, MessageType type) {
-        Message msg = <span class="kw">new</span> Message();
-        msg.setMessageId(UUID.randomUUID().toString());
-        msg.setSenderId(sender);
-        msg.setReceiverId(receiver);
-        msg.setContent(content);
-        msg.setType(type);
-        msg.setStatus(MessageStatus.SENT);
-        msg.setCreatedAt(LocalDateTime.now());
-
-        <span class="kw">if</span> (type == IMAGE || type == VIDEO || type == AUDIO) {
-            <span class="cm">// Validate media URL is present</span>
-            <span class="kw">if</span> (content == <span class="kw">null</span>) <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"Media URL required"</span>);
-        }
-        <span class="kw">return</span> msg;
-    }
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Strategy Pattern &mdash; Notification</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">NotificationService</span> <span class="kw">implements</span> <span class="iface">INotificationService</span> {
-    <span class="tp">Map&lt;String, NotificationStrategy&gt;</span> strategies;
-
-    <span class="kw">void</span> <span class="fn">sendNotification</span>(Long userId, String title, String body) {
-        User user = userRepo.findById(userId);
-        <span class="kw">if</span> (user.isOnline()) {
-            strategies.get(<span class="st">"PUSH"</span>).send(userId, title, body);    <span class="cm">// FCM</span>
-        } <span class="kw">else</span> {
-            strategies.get(<span class="st">"SMS"</span>).send(userId, title, body);     <span class="cm">// Twilio fallback</span>
-        }
-    }
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Observer Pattern &mdash; WebSocket Events</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="kw">interface</span> <span class="iface">WebSocketEventListener</span> {
-    <span class="kw">void</span> <span class="fn">onEvent</span>(WebSocketEvent event);
-}
-
-<span class="kw">class</span> <span class="cn">MessageDeliveryListener</span> <span class="kw">implements</span> <span class="iface">WebSocketEventListener</span> {
-    <span class="kw">void</span> <span class="fn">onEvent</span>(WebSocketEvent event) {
-        <span class="kw">if</span> (event.getType() == MESSAGE) { <span class="cm">// deliver message to receiver</span> }
-    }
-}
-
-<span class="kw">class</span> <span class="cn">PresenceUpdateListener</span> <span class="kw">implements</span> <span class="iface">WebSocketEventListener</span> {
-    <span class="kw">void</span> <span class="fn">onEvent</span>(WebSocketEvent event) {
-        <span class="kw">if</span> (event.getType() == STATUS_UPDATE) { <span class="cm">// broadcast online/offline</span> }
-    }
-}
-
-<span class="kw">class</span> <span class="cn">TypingIndicatorListener</span> <span class="kw">implements</span> <span class="iface">WebSocketEventListener</span> {
-    <span class="kw">void</span> <span class="fn">onEvent</span>(WebSocketEvent event) {
-        <span class="kw">if</span> (event.getType() == TYPING_START) { <span class="cm">// forward to other user</span> }
-    }
-}
-
-<span class="cm">// WebSocketServer registers all listeners and dispatches events</span>
-    </pre></div>
-</div>
-
-<!-- ============ 10. SEQUENCE FLOW ============ -->
-<div id="sequence" class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>LLD Sequence Flow</div>
-    <div class="flow-container">
-        <div class="flow-box flow-green">User A &rarr; MessageController.sendMessage()</div>
-        <div class="flow-arrow arrow-green"></div>
-        <div class="flow-box flow-blue">MessageService.sendMessage()</div>
-        <div class="flow-arrow arrow-blue"></div>
-        <div class="flow-box flow-orange">MessageFactory.createMessage()</div>
-        <div class="flow-arrow arrow-orange"></div>
-        <div class="flow-box flow-purple">MessageRepository.save(message)</div>
-        <div class="flow-arrow arrow-purple"></div>
-        <div class="flow-box flow-teal">WebSocketSessionManager.isConnected(receiverId)?</div>
-        <div class="flow-arrow arrow-green"></div>
-        <div class="flow-box flow-green">If YES: Push via WebSocket &rarr; User B</div>
-        <div class="flow-arrow arrow-green"></div>
-        <div class="flow-box flow-pink">If NO: Queue + Push Notification</div>
-    </div>
-</div>
-
-<!-- ============ 11. CAPACITY ESTIMATION ============ -->
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
 <div id="capacity" class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation <span class="new-badge">NEW</span></div>
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation <span class="new-badge">NEW</span></div>
 
     <div class="assumption-box">
         <h4>Assumptions (WhatsApp Scale)</h4>
@@ -778,8 +598,221 @@ export default {
 </div>
 
 <!-- ============ 12. BOTTLENECKS ============ -->
+
+<!-- ============ 8. WEBSOCKET DESIGN ============ -->
+<div id="websocket" class="section theme-blue">
+    <div class="section-title"><span class="section-num">8</span>WebSocket Design (Enhanced)</div>
+
+    <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Connection Management</div>
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="cm">// In-memory session map &mdash; tracks who is connected</span>
+<span class="kw">class</span> <span class="cn">WebSocketSessionManager</span> {
+    <span class="cm">// ConcurrentHashMap for thread safety</span>
+    Map&lt;Long, WebSocketSession&gt; <span class="fn">activeSessions</span> = <span class="kw">new</span> ConcurrentHashMap&lt;&gt;();
+
+    <span class="kw">void</span> <span class="fn">addSession</span>(Long userId, WebSocketSession session);
+    <span class="kw">void</span> <span class="fn">removeSession</span>(Long userId);
+    <span class="kw">boolean</span> <span class="fn">isConnected</span>(Long userId);
+    WebSocketSession <span class="fn">getSession</span>(Long userId);
+}
+    </pre></div>
+
+    <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Message Delivery Flow</div>
+    <div class="flow-container">
+        <div class="flow-box flow-green">User A sends message</div>
+        <div class="flow-arrow arrow-green"></div>
+        <div class="flow-box flow-blue">WebSocket Server receives</div>
+        <div class="flow-arrow arrow-blue"></div>
+        <div class="flow-box flow-purple">MessageService saves to DB</div>
+        <div class="flow-arrow arrow-purple"></div>
+        <div class="flow-box flow-orange">Check: Is User B online?</div>
+    </div>
+    <div class="two-col">
+        <div style="text-align:center">
+            <div style="color:#25d366;font-weight:700;margin-bottom:10px">User B is ONLINE</div>
+            <div class="flow-container" style="padding:10px">
+                <div class="flow-box flow-green" style="font-size:.85em">Push via WebSocket instantly</div>
+                <div class="flow-arrow arrow-green"></div>
+                <div class="flow-box flow-green" style="font-size:.85em">Status &rarr; DELIVERED</div>
+                <div class="flow-arrow arrow-green"></div>
+                <div class="flow-box flow-green" style="font-size:.85em">Send delivery ACK to User A</div>
+            </div>
+        </div>
+        <div style="text-align:center">
+            <div style="color:#ff5252;font-weight:700;margin-bottom:10px">User B is OFFLINE</div>
+            <div class="flow-container" style="padding:10px">
+                <div class="flow-box flow-red" style="font-size:.85em">Queue in Kafka / Redis</div>
+                <div class="flow-arrow" style="background:#ff5252"><div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff5252"></div></div>
+                <div class="flow-box flow-red" style="font-size:.85em">Send Push Notification (FCM)</div>
+                <div class="flow-arrow" style="background:#ff5252"><div style="position:absolute;bottom:0;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid #ff5252"></div></div>
+                <div class="flow-box flow-red" style="font-size:.85em">Deliver queued msgs on reconnect</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Typing Indicator <span class="new-badge">NEW</span></div>
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="cm">// WebSocket event types</span>
+<span class="kw">enum</span> <span class="cn">WebSocketEventType</span> {
+    MESSAGE, TYPING_START, TYPING_STOP, STATUS_UPDATE, READ_RECEIPT, CALL_SIGNAL
+}
+
+<span class="cm">// Client sends TYPING_START &rarr; Server forwards to receiver &rarr; UI shows "typing..."</span>
+<span class="cm">// Auto-expires after 3 seconds if no new TYPING_START received</span>
+    </pre></div>
+
+    <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Heartbeat &amp; Reconnection</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:10px">
+        <div style="background:rgba(79,195,247,.06);border:1px solid rgba(79,195,247,.15);border-radius:12px;padding:16px">
+            <strong style="color:#4fc3f7">Heartbeat (Ping/Pong)</strong>
+            <p style="color:#b0bec5;font-size:.85em;margin-top:6px">Client sends ping every 30s. If server gets no ping for 60s, mark user OFFLINE and update lastSeen.</p>
+        </div>
+        <div style="background:rgba(79,195,247,.06);border:1px solid rgba(79,195,247,.15);border-radius:12px;padding:16px">
+            <strong style="color:#4fc3f7">Reconnection</strong>
+            <p style="color:#b0bec5;font-size:.85em;margin-top:6px">Client uses exponential backoff (1s, 2s, 4s, 8s...). On reconnect, fetch all queued undelivered messages.</p>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 7. MSG STATUS + READ RECEIPT ============ -->
+
+<!-- ============ 9. MSG STATUS + READ RECEIPT ============ -->
+<div id="msg-status" class="section theme-green">
+    <div class="section-title"><span class="section-num">9</span>Message Status &amp; Read Receipt Flow</div>
+    <div class="flow-container">
+        <div class="flow-box flow-orange">Sender sends message</div>
+        <div class="flow-arrow arrow-green"></div>
+        <div class="flow-box" style="background:rgba(158,158,158,.15);border:1px solid #9e9e9e;color:#9e9e9e">SENT &#10003; &mdash; saved in DB</div>
+        <div class="flow-arrow arrow-green"></div>
+        <div class="flow-box" style="background:rgba(79,195,247,.15);border:1px solid #4fc3f7;color:#4fc3f7">DELIVERED &#10003;&#10003; &mdash; receiver's device got it</div>
+        <div class="flow-arrow arrow-green"></div>
+        <div class="flow-box" style="background:rgba(37,211,102,.15);border:1px solid #25d366;color:#25d366">SEEN &#10003;&#10003; &mdash; receiver opened the chat</div>
+    </div>
+    <div class="tick-grid">
+        <div class="tick-card tick-sent"><div class="tick-icon">&#10003;</div><div class="tick-label">Single Tick</div><div class="tick-desc">SENT</div></div>
+        <div class="tick-card tick-delivered"><div class="tick-icon">&#10003;&#10003;</div><div class="tick-label">Double Tick</div><div class="tick-desc">DELIVERED</div></div>
+        <div class="tick-card tick-seen"><div class="tick-icon" style="color:#25d366">&#10003;&#10003;</div><div class="tick-label">Blue Tick</div><div class="tick-desc">SEEN</div></div>
+    </div>
+
+    <div class="sub-heading" style="color:#25d366;border-color:#25d366">Read Receipt Reverse Flow <span class="new-badge">NEW</span></div>
+    <div class="flow-container">
+        <div class="flow-box flow-teal">User B opens chat</div>
+        <div class="flow-arrow arrow-green"></div>
+        <div class="flow-box flow-blue">Client sends READ_RECEIPT via WebSocket</div>
+        <div class="flow-arrow arrow-blue"></div>
+        <div class="flow-box flow-purple">Server updates message status &rarr; SEEN</div>
+        <div class="flow-arrow arrow-green"></div>
+        <div class="flow-box flow-green">Server pushes SEEN ACK to User A via WebSocket</div>
+        <div class="flow-arrow arrow-green"></div>
+        <div class="flow-box flow-orange">User A's UI updates tick to blue</div>
+    </div>
+</div>
+
+<!-- ============ 9. DESIGN PATTERNS ============ -->
+
+<!-- ============ 10. DESIGN PATTERNS ============ -->
+<div id="patterns" class="section theme-cyan">
+    <div class="section-title"><span class="section-num">10</span>Design Patterns (with Implementation)</div>
+    <div class="pattern-grid">
+        <div class="pattern-card"><div class="pattern-name">Factory Pattern</div><div class="pattern-use">Message Creation</div></div>
+        <div class="pattern-card"><div class="pattern-name">Strategy Pattern</div><div class="pattern-use">Notification Types</div></div>
+        <div class="pattern-card"><div class="pattern-name">Observer Pattern</div><div class="pattern-use">WebSocket Events</div></div>
+        <div class="pattern-card"><div class="pattern-name">Singleton Pattern</div><div class="pattern-use">Config &amp; Session Manager</div></div>
+    </div>
+
+    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Factory Pattern &mdash; MessageFactory</div>
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">MessageFactory</span> {
+    <span class="kw">public static</span> Message <span class="fn">createMessage</span>(Long sender, Long receiver, String content, MessageType type) {
+        Message msg = <span class="kw">new</span> Message();
+        msg.setMessageId(UUID.randomUUID().toString());
+        msg.setSenderId(sender);
+        msg.setReceiverId(receiver);
+        msg.setContent(content);
+        msg.setType(type);
+        msg.setStatus(MessageStatus.SENT);
+        msg.setCreatedAt(LocalDateTime.now());
+
+        <span class="kw">if</span> (type == IMAGE || type == VIDEO || type == AUDIO) {
+            <span class="cm">// Validate media URL is present</span>
+            <span class="kw">if</span> (content == <span class="kw">null</span>) <span class="kw">throw new</span> IllegalArgumentException(<span class="st">"Media URL required"</span>);
+        }
+        <span class="kw">return</span> msg;
+    }
+}
+    </pre></div>
+
+    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Strategy Pattern &mdash; Notification</div>
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">NotificationService</span> <span class="kw">implements</span> <span class="iface">INotificationService</span> {
+    <span class="tp">Map&lt;String, NotificationStrategy&gt;</span> strategies;
+
+    <span class="kw">void</span> <span class="fn">sendNotification</span>(Long userId, String title, String body) {
+        User user = userRepo.findById(userId);
+        <span class="kw">if</span> (user.isOnline()) {
+            strategies.get(<span class="st">"PUSH"</span>).send(userId, title, body);    <span class="cm">// FCM</span>
+        } <span class="kw">else</span> {
+            strategies.get(<span class="st">"SMS"</span>).send(userId, title, body);     <span class="cm">// Twilio fallback</span>
+        }
+    }
+}
+    </pre></div>
+
+    <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Observer Pattern &mdash; WebSocket Events</div>
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">interface</span> <span class="iface">WebSocketEventListener</span> {
+    <span class="kw">void</span> <span class="fn">onEvent</span>(WebSocketEvent event);
+}
+
+<span class="kw">class</span> <span class="cn">MessageDeliveryListener</span> <span class="kw">implements</span> <span class="iface">WebSocketEventListener</span> {
+    <span class="kw">void</span> <span class="fn">onEvent</span>(WebSocketEvent event) {
+        <span class="kw">if</span> (event.getType() == MESSAGE) { <span class="cm">// deliver message to receiver</span> }
+    }
+}
+
+<span class="kw">class</span> <span class="cn">PresenceUpdateListener</span> <span class="kw">implements</span> <span class="iface">WebSocketEventListener</span> {
+    <span class="kw">void</span> <span class="fn">onEvent</span>(WebSocketEvent event) {
+        <span class="kw">if</span> (event.getType() == STATUS_UPDATE) { <span class="cm">// broadcast online/offline</span> }
+    }
+}
+
+<span class="kw">class</span> <span class="cn">TypingIndicatorListener</span> <span class="kw">implements</span> <span class="iface">WebSocketEventListener</span> {
+    <span class="kw">void</span> <span class="fn">onEvent</span>(WebSocketEvent event) {
+        <span class="kw">if</span> (event.getType() == TYPING_START) { <span class="cm">// forward to other user</span> }
+    }
+}
+
+<span class="cm">// WebSocketServer registers all listeners and dispatches events</span>
+    </pre></div>
+</div>
+
+<!-- ============ 10. SEQUENCE FLOW ============ -->
+
+<!-- ============ 11. SEQUENCE FLOW ============ -->
+<div id="sequence" class="section theme-purple">
+    <div class="section-title"><span class="section-num">11</span>LLD Sequence Flow</div>
+    <div class="flow-container">
+        <div class="flow-box flow-green">User A &rarr; MessageController.sendMessage()</div>
+        <div class="flow-arrow arrow-green"></div>
+        <div class="flow-box flow-blue">MessageService.sendMessage()</div>
+        <div class="flow-arrow arrow-blue"></div>
+        <div class="flow-box flow-orange">MessageFactory.createMessage()</div>
+        <div class="flow-arrow arrow-orange"></div>
+        <div class="flow-box flow-purple">MessageRepository.save(message)</div>
+        <div class="flow-arrow arrow-purple"></div>
+        <div class="flow-box flow-teal">WebSocketSessionManager.isConnected(receiverId)?</div>
+        <div class="flow-arrow arrow-green"></div>
+        <div class="flow-box flow-green">If YES: Push via WebSocket &rarr; User B</div>
+        <div class="flow-arrow arrow-green"></div>
+        <div class="flow-box flow-pink">If NO: Queue + Push Notification</div>
+    </div>
+</div>
+
+<!-- ============ 11. CAPACITY ESTIMATION ============ -->
+
+<!-- ============ 12. BOTTLENECKS ============ -->
 <div id="bottlenecks" class="section theme-red">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">12</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Too many messages</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Kafka Queue (async processing)</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Database overload</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Sharding by conversationId</span></div>
@@ -792,8 +825,10 @@ export default {
 </div>
 
 <!-- ============ 13. EDGE CASES ============ -->
+
+<!-- ============ 13. EDGE CASES ============ -->
 <div id="edge-cases" class="section theme-amber">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases &amp; Error Handling <span class="new-badge">NEW</span></div>
+    <div class="section-title"><span class="section-num">13</span>Edge Cases &amp; Error Handling <span class="new-badge">NEW</span></div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>OTP Expired</h4>
@@ -831,8 +866,10 @@ export default {
 </div>
 
 <!-- ============ 14. SECURITY ============ -->
+
+<!-- ============ 14. SECURITY ============ -->
 <div id="security" class="section theme-lime">
-    <div class="section-title"><span class="section-num">13</span>Security (Enhanced)</div>
+    <div class="section-title"><span class="section-num">14</span>Security (Enhanced)</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#9670;</span>
@@ -870,8 +907,10 @@ export default {
 </div>
 
 <!-- ============ 15. SUMMARY ============ -->
+
+<!-- ============ 15. SUMMARY ============ -->
 <div id="summary" class="section theme-green">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Controller &rarr; Service &rarr; Repository &rarr; DB</h4><p>Layered Architecture</p></div>
         <div class="summary-card sc-2"><h4>WebSocket + Session Map</h4><p>Real-Time Messaging</p></div>

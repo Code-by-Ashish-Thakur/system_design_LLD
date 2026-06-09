@@ -64,6 +64,9 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .req-pill{background:linear-gradient(135deg,rgba(37,211,102,.12),rgba(18,140,126,.12));border:1px solid rgba(37,211,102,.25);border-radius:12px;padding:14px 18px;display:flex;align-items:center;gap:10px;transition:all .3s}
 .req-pill:hover{transform:scale(1.03)}
 .req-pill .num{background:#25d366;color:#0a0f1a;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.8em;flex-shrink:0}
+/* NFR pills - pink theme when inside pink section */
+.theme-pink .req-pill{background:linear-gradient(135deg,rgba(255,128,171,.12),rgba(255,80,130,.08));border:1px solid rgba(255,128,171,.25)}
+.theme-pink .req-pill .num{background:#ff80ab;color:#0a0f1a}
 .entity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
 .entity-card{background:linear-gradient(145deg,rgba(79,195,247,.08),rgba(79,195,247,.02));border:1px solid rgba(79,195,247,.2);border-radius:14px;padding:20px;transition:all .3s}
 .entity-card:hover{border-color:rgba(79,195,247,.5)}
@@ -83,7 +86,16 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .code-dot.red{background:#ff5f56}.code-dot.yellow{background:#ffbd2e}.code-dot.green{background:#27c93f}
 .code-titlebar-text{color:#6a6a6a;font-size:.75em;margin-left:8px;font-family:Consolas,monospace}
 .code-block{background:#1e1e1e;padding:16px 20px;font-family:Consolas,'Courier New',monospace;font-size:.84em;overflow-x:auto;line-height:1.75;white-space:pre;color:#d4d4d4;border:none;border-radius:0;margin:0;tab-size:4}
-.kw{color:#c586c0}.tp{color:#4ec9b0}.cn{color:#4ec9b0}.fn{color:#dcdcaa}.cm{color:#6a9955;font-style:italic}.st{color:#ce9178}.iface{color:#4ec9b0}.ann{color:#dcdcaa}
+.kw{color:#c586c0;font-weight:600}.tp{color:#4ec9b0}.cn{color:#4ec9b0}.fn{color:#dcdcaa}.cm{color:#6a9955;font-style:italic}.st{color:#ce9178}.iface{color:#4ec9b0}.ann{color:#dcdcaa}
+
+/* ---- Service card code-block enhanced design ---- */
+.service-card .code-wrapper{border:1px solid rgba(255,215,64,.15);box-shadow:0 4px 24px rgba(0,0,0,.4);border-radius:12px}
+.service-card .code-block{background:linear-gradient(180deg,#1a1a2e 0%,#16213e 100%);padding:20px 24px;line-height:2.1;font-size:.82em}
+.service-card .code-block .cn{font-size:1.15em;font-weight:700;letter-spacing:.3px;background:linear-gradient(135deg,#4ec9b0,#64ffda);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;text-fill-color:transparent}
+.service-card .code-block .fn{background:rgba(220,220,170,.08);padding:2px 8px;border-radius:4px;border-bottom:2px solid rgba(220,220,170,.25);font-weight:600}
+.service-card .code-block .cm{color:#7eb36a;background:rgba(106,153,85,.06);padding:2px 10px 2px 12px;border-left:2px solid rgba(106,153,85,.35);border-radius:0 6px 6px 0;display:inline-block;margin-top:2px}
+.service-card .code-block .tp{font-weight:500}
+.service-card .code-block .kw{text-shadow:0 0 8px rgba(197,134,192,.3)}
 .db-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
 .db-table{background:linear-gradient(145deg,rgba(255,128,171,.08),rgba(255,128,171,.02));border:1px solid rgba(255,128,171,.25);border-radius:14px;overflow:hidden}
 .db-table h3{background:rgba(255,128,171,.15);color:#ff80ab;padding:14px 18px;font-size:1.1em}
@@ -103,9 +115,11 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .api-json .key{color:#80cbc4}.api-json .val{color:#ffcc80}
 .api-note{padding:8px 18px 14px;font-size:.85em;color:#78909c;font-style:italic}
 .service-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(480px,1fr));gap:20px}
-.service-card{background:linear-gradient(145deg,rgba(255,215,64,.08),rgba(255,215,64,.02));border:1px solid rgba(255,215,64,.2);border-radius:14px;padding:20px;overflow:hidden}
-.service-card h3{color:#ffd740;margin-bottom:12px;font-size:1.1em}
-.svc-desc{color:#b0bec5;font-size:.85em;margin-bottom:12px;padding-bottom:8px;border-bottom:1px dashed rgba(255,215,64,.2);line-height:1.5}
+.service-card{background:linear-gradient(145deg,rgba(255,215,64,.08),rgba(255,215,64,.02));border:1px solid rgba(255,215,64,.2);border-radius:14px;padding:22px;overflow:hidden;transition:all .3s}
+.service-card:hover{border-color:rgba(255,215,64,.4);box-shadow:0 8px 32px rgba(255,215,64,.08)}
+.service-card h3{color:#ffd740;margin-bottom:10px;font-size:1.15em;display:flex;align-items:center;gap:8px}
+.service-card h3::before{content:'';width:4px;height:20px;background:linear-gradient(180deg,#ffd740,rgba(255,215,64,.3));border-radius:4px;flex-shrink:0}
+.svc-desc{color:#b0bec5;font-size:.85em;margin-bottom:14px;padding:10px 14px;background:rgba(255,215,64,.04);border-radius:8px;border-left:3px solid rgba(255,215,64,.2);line-height:1.6}
 .svc-fn{padding:8px 0;font-size:.88em;border-bottom:1px solid rgba(255,255,255,.04)}
 .svc-fn:last-child{border-bottom:none}
 .svc-fn .fn-desc{display:flex;align-items:center;gap:8px;color:#fff9c4;font-weight:500}
