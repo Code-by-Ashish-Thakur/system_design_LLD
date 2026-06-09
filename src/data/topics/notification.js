@@ -78,50 +78,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 3. CLASS DESIGN ============ -->
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">3</span>Class Design (JPA Entities)</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">Notification.java — JPA Entity</span></div>
-    <pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"notifications"</span>, indexes = {
-    <span class="ann">@Index</span>(name = <span class="st">"idx_notif_user_status"</span>, columnList = <span class="st">"user_id, status"</span>),
-    <span class="ann">@Index</span>(name = <span class="st">"idx_notif_scheduled"</span>, columnList = <span class="st">"scheduled_at, status"</span>)
-})
-<span class="kw">public class</span> <span class="tp">Notification</span> {
-    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = <span class="tp">GenerationType</span>.IDENTITY)
-    <span class="kw">private</span> <span class="tp">Long</span> id;
-
-    <span class="ann">@Column</span>(name = <span class="st">"user_id"</span>, nullable = <span class="kw">false</span>)
-    <span class="kw">private</span> <span class="tp">Long</span> userId;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">NotificationChannel</span> channel;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">Priority</span> priority;
-
-    <span class="kw">private</span> <span class="tp">String</span> templateId;
-    <span class="kw">private</span> <span class="tp">String</span> title;
-    <span class="ann">@Column</span>(columnDefinition = <span class="st">"TEXT"</span>)
-    <span class="kw">private</span> <span class="tp">String</span> body;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">NotificationStatus</span> status = <span class="tp">NotificationStatus</span>.PENDING;
-
-    <span class="kw">private int</span> retryCount = <span class="cn">0</span>;
-    <span class="kw">private</span> <span class="tp">LocalDateTime</span> scheduledAt;
-    <span class="kw">private</span> <span class="tp">LocalDateTime</span> sentAt;
-    <span class="kw">private</span> <span class="tp">LocalDateTime</span> readAt;
-    <span class="ann">@CreationTimestamp</span>
-    <span class="kw">private</span> <span class="tp">LocalDateTime</span> createdAt;
-}
-    </pre></div>
-</div>
-
-<!-- ============ 4. DATABASE SCHEMA ============ -->
+<!-- ============ 3. DATABASE SCHEMA ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -211,9 +170,9 @@ export default {
 
 </div>
 
-<!-- ============ 5. API ENDPOINTS ============ -->
+<!-- ============ 4. API ENDPOINTS ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
     <div class="api-grid">
         <div class="api-card">
             <div class="api-method post">POST</div>
@@ -268,361 +227,239 @@ export default {
     </div>
 </div>
 
-<!-- ============ 6. SERVICE LLD ============ -->
+<!-- ============ 5. SERVICE LLD ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
     <div class="service-grid">
 
         <!-- ========== NOTIFICATION SERVICE ========== -->
         <div class="service-card">
             <h3>NotificationService</h3>
             <p class="svc-desc">Main service &mdash; user preferences check karta hai, message build karta hai, aur sahi queue me bhejta hai. Ye poori notification pipeline ka entry point hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">NotificationService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> send(NotificationRequest)</div>
-                <div class="method-return">Returns: <code>Notification</code></div>
-                <div class="params-title">Parameters (NotificationRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">channel</span><span class="param-type">NotificationChannel</span></div>
-                <div class="param-row"><span class="param-name">type</span><span class="param-type">NotificationType</span></div>
-                <div class="param-row"><span class="param-name">priority</span><span class="param-type">Priority</span></div>
-                <div class="param-row"><span class="param-name">templateId</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">body</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">metadata</span><span class="param-type">Map&lt;String,String&gt;</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// notification bhejne ka main method — preferences check karke queue me daalta hai</span>
+    <span class="tp">Notification</span> <span class="fn">send</span>(<span class="tp">Long</span> userId, <span class="tp">NotificationChannel</span> channel,
+                      <span class="tp">NotificationType</span> type, <span class="tp">Priority</span> priority,
+                      <span class="tp">String</span> templateId, <span class="tp">String</span> title,
+                      <span class="tp">String</span> body, <span class="tp">Map</span>&lt;<span class="tp">String</span>,<span class="tp">String</span>&gt; metadata)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> sendBulk(BulkNotificationRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;Notification&gt;</code></div>
-                <div class="params-title">Parameters (BulkNotificationRequest):</div>
-                <div class="param-row"><span class="param-name">userIds</span><span class="param-type">List&lt;Long&gt;</span></div>
-                <div class="param-row"><span class="param-name">channel</span><span class="param-type">NotificationChannel</span></div>
-                <div class="param-row"><span class="param-name">type</span><span class="param-type">NotificationType</span></div>
-                <div class="param-row"><span class="param-name">priority</span><span class="param-type">Priority</span></div>
-                <div class="param-row"><span class="param-name">templateId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">metadata</span><span class="param-type">Map&lt;String,String&gt;</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// bulk me sabko ek saath notification bhejta hai</span>
+    <span class="tp">List</span>&lt;<span class="tp">Notification</span>&gt; <span class="fn">sendBulk</span>(<span class="tp">List</span>&lt;<span class="tp">Long</span>&gt; userIds,
+                                   <span class="tp">NotificationChannel</span> channel,
+                                   <span class="tp">NotificationType</span> type, <span class="tp">Priority</span> priority,
+                                   <span class="tp">String</span> templateId,
+                                   <span class="tp">Map</span>&lt;<span class="tp">String</span>,<span class="tp">String</span>&gt; metadata)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> schedule(ScheduleNotificationRequest)</div>
-                <div class="method-return">Returns: <code>Notification</code></div>
-                <div class="params-title">Parameters (ScheduleNotificationRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">channel</span><span class="param-type">NotificationChannel</span></div>
-                <div class="param-row"><span class="param-name">type</span><span class="param-type">NotificationType</span></div>
-                <div class="param-row"><span class="param-name">templateId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">metadata</span><span class="param-type">Map&lt;String,String&gt;</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">scheduledAt</span><span class="param-type">LocalDateTime</span></div>
-            </div>
+    <span class="cm">// future me bhejne ke liye notification schedule karta hai</span>
+    <span class="tp">Notification</span> <span class="fn">schedule</span>(<span class="tp">Long</span> userId, <span class="tp">NotificationChannel</span> channel,
+                          <span class="tp">NotificationType</span> type, <span class="tp">String</span> templateId,
+                          <span class="tp">Map</span>&lt;<span class="tp">String</span>,<span class="tp">String</span>&gt; metadata,
+                          <span class="tp">LocalDateTime</span> scheduledAt)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> cancel(notificationId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">notificationId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// pending notification cancel karta hai</span>
+    <span class="tp">void</span> <span class="fn">cancel</span>(<span class="tp">Long</span> notificationId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">5</span> getUserNotifications(NotificationPageRequest)</div>
-                <div class="method-return">Returns: <code>Page&lt;Notification&gt;</code></div>
-                <div class="params-title">Parameters (NotificationPageRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">statuses</span><span class="param-type">List&lt;NotificationStatus&gt;</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">page</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">size</span><span class="param-type">int</span></div>
-            </div>
+    <span class="cm">// user ki notifications paginated list return karta hai</span>
+    <span class="tp">Page</span>&lt;<span class="tp">Notification</span>&gt; <span class="fn">getUserNotifications</span>(<span class="tp">Long</span> userId,
+                                              <span class="tp">List</span>&lt;<span class="tp">NotificationStatus</span>&gt; statuses,
+                                              <span class="tp">int</span> page, <span class="tp">int</span> size)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">6</span> markAsRead(notificationId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">notificationId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// ek notification ko read mark karta hai</span>
+    <span class="tp">void</span> <span class="fn">markAsRead</span>(<span class="tp">Long</span> notificationId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">7</span> markAllRead(userId)</div>
-                <div class="method-return">Returns: <code>int</code><span class="param-comment">// count of marked</span></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// user ki saari notifications read mark karta hai</span>
+    <span class="tp">int</span> <span class="fn">markAllRead</span>(<span class="tp">Long</span> userId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">8</span> getUnreadCount(userId)</div>
-                <div class="method-return">Returns: <code>long</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// kitni unread notifications hain wo count return karta hai</span>
+    <span class="tp">long</span> <span class="fn">getUnreadCount</span>(<span class="tp">Long</span> userId)
+}
+</pre></div>
         </div>
 
         <!-- ========== PUSH NOTIFICATION SENDER ========== -->
         <div class="service-card">
             <h3>PushNotificationSender</h3>
             <p class="svc-desc">Mobile devices pe push notification bhejta hai &mdash; Firebase (Android) ya APNs (iOS) use karke. Device token manage karta hai aur invalid tokens cleanup karta hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">PushNotificationSender</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> send(SendPushRequest)</div>
-                <div class="method-return">Returns: <code>DeliveryResult</code></div>
-                <div class="params-title">Parameters (SendPushRequest):</div>
-                <div class="param-row"><span class="param-name">notificationId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">body</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">imageUrl</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">data</span><span class="param-type">Map&lt;String,String&gt;</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// FCM/APNs ke through push notification bhejta hai device pe</span>
+    <span class="tp">DeliveryResult</span> <span class="fn">send</span>(<span class="tp">Long</span> notificationId, <span class="tp">Long</span> userId,
+                        <span class="tp">String</span> title, <span class="tp">String</span> body,
+                        <span class="tp">String</span> imageUrl,
+                        <span class="tp">Map</span>&lt;<span class="tp">String</span>,<span class="tp">String</span>&gt; data)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> registerDevice(RegisterDeviceRequest)</div>
-                <div class="method-return">Returns: <code>DeviceToken</code></div>
-                <div class="params-title">Parameters (RegisterDeviceRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">deviceToken</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">platform</span><span class="param-type">Platform</span><span class="param-comment">// ANDROID, IOS, WEB</span></div>
-            </div>
+    <span class="cm">// naya device token register karta hai push ke liye</span>
+    <span class="tp">DeviceToken</span> <span class="fn">registerDevice</span>(<span class="tp">Long</span> userId, <span class="tp">String</span> deviceToken,
+                              <span class="tp">Platform</span> platform)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> cleanupInvalidTokens(userId)</div>
-                <div class="method-return">Returns: <code>int</code><span class="param-comment">// tokens removed</span></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// expired ya invalid tokens hata deta hai</span>
+    <span class="tp">int</span> <span class="fn">cleanupInvalidTokens</span>(<span class="tp">Long</span> userId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> getActiveTokens(userId)</div>
-                <div class="method-return">Returns: <code>List&lt;DeviceToken&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// user ke saare active device tokens return karta hai</span>
+    <span class="tp">List</span>&lt;<span class="tp">DeviceToken</span>&gt; <span class="fn">getActiveTokens</span>(<span class="tp">Long</span> userId)
+}
+</pre></div>
         </div>
 
         <!-- ========== EMAIL NOTIFICATION SENDER ========== -->
         <div class="service-card">
             <h3>EmailNotificationSender</h3>
             <p class="svc-desc">AWS SES ya SMTP se emails bhejta hai. Bounce handle karta hai, suppression list maintain karta hai &mdash; agar email bounce hota hai toh channel disable kar deta hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">EmailNotificationSender</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> send(SendEmailRequest)</div>
-                <div class="method-return">Returns: <code>DeliveryResult</code></div>
-                <div class="params-title">Parameters (SendEmailRequest):</div>
-                <div class="param-row"><span class="param-name">notificationId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">toEmail</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">subject</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">htmlBody</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">textBody</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">replyTo</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">attachments</span><span class="param-type">List&lt;Attachment&gt;</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// SES/SMTP se email bhejta hai with HTML body aur attachments</span>
+    <span class="tp">DeliveryResult</span> <span class="fn">send</span>(<span class="tp">Long</span> notificationId, <span class="tp">String</span> toEmail,
+                        <span class="tp">String</span> subject, <span class="tp">String</span> htmlBody,
+                        <span class="tp">String</span> textBody, <span class="tp">String</span> replyTo,
+                        <span class="tp">List</span>&lt;<span class="tp">Attachment</span>&gt; attachments)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> handleBounce(BounceEvent)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (BounceEvent):</div>
-                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">bounceType</span><span class="param-type">BounceType</span><span class="param-comment">// HARD, SOFT</span></div>
-                <div class="param-row"><span class="param-name">diagnosticCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">timestamp</span><span class="param-type">LocalDateTime</span></div>
-            </div>
+    <span class="cm">// bounce event handle karta hai — hard bounce pe channel disable</span>
+    <span class="tp">void</span> <span class="fn">handleBounce</span>(<span class="tp">String</span> email, <span class="tp">BounceType</span> bounceType,
+                      <span class="tp">String</span> diagnosticCode, <span class="tp">LocalDateTime</span> timestamp)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> isSuppressed(email)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
-            </div>
+    <span class="cm">// check karta hai ki email suppression list me hai ya nahi</span>
+    <span class="tp">boolean</span> <span class="fn">isSuppressed</span>(<span class="tp">String</span> email)
+}
+</pre></div>
         </div>
 
         <!-- ========== SMS NOTIFICATION SENDER ========== -->
         <div class="service-card">
             <h3>SmsNotificationSender</h3>
             <p class="svc-desc">Twilio ya AWS SNS se SMS bhejta hai. Delivery receipt track karta hai aur webhook se status update karta hai &mdash; OTP aur transactional SMS ke liye use hota hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SmsNotificationSender</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> send(SendSmsRequest)</div>
-                <div class="method-return">Returns: <code>DeliveryResult</code></div>
-                <div class="params-title">Parameters (SendSmsRequest):</div>
-                <div class="param-row"><span class="param-name">notificationId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">phoneNumber</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">message</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">senderId</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// Twilio/SNS se SMS bhejta hai user ke phone pe</span>
+    <span class="tp">DeliveryResult</span> <span class="fn">send</span>(<span class="tp">Long</span> notificationId, <span class="tp">String</span> phoneNumber,
+                        <span class="tp">String</span> message, <span class="tp">String</span> senderId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> checkDeliveryStatus(messageId)</div>
-                <div class="method-return">Returns: <code>DeliveryStatus</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
-            </div>
+    <span class="cm">// SMS delivery status check karta hai provider se</span>
+    <span class="tp">DeliveryStatus</span> <span class="fn">checkDeliveryStatus</span>(<span class="tp">String</span> messageId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> handleDeliveryReceipt(DeliveryReceiptRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (DeliveryReceiptRequest):</div>
-                <div class="param-row"><span class="param-name">messageId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">status</span><span class="param-type">String</span><span class="param-comment">// delivered, failed, undelivered</span></div>
-                <div class="param-row"><span class="param-name">errorCode</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">timestamp</span><span class="param-type">LocalDateTime</span></div>
-            </div>
+    <span class="cm">// delivery receipt webhook handle karta hai — status update karta hai</span>
+    <span class="tp">void</span> <span class="fn">handleDeliveryReceipt</span>(<span class="tp">String</span> messageId, <span class="tp">String</span> status,
+                              <span class="tp">String</span> errorCode,
+                              <span class="tp">LocalDateTime</span> timestamp)
+}
+</pre></div>
         </div>
 
         <!-- ========== TEMPLATE SERVICE ========== -->
         <div class="service-card">
             <h3>TemplateService</h3>
             <p class="svc-desc">Notification messages ko templates se build karta hai &mdash; jaise "Hi {{name}}, your order #{{orderId}} shipped!". Placeholders replace karta hai aur templates manage karta hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">TemplateService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> render(RenderTemplateRequest)</div>
-                <div class="method-return">Returns: <code>RenderedContent</code></div>
-                <div class="params-title">Parameters (RenderTemplateRequest):</div>
-                <div class="param-row"><span class="param-name">templateId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">params</span><span class="param-type">Map&lt;String,Object&gt;</span></div>
-                <div class="param-row"><span class="param-name">locale</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// template me placeholders replace karke final message banata hai</span>
+    <span class="tp">RenderedContent</span> <span class="fn">render</span>(<span class="tp">String</span> templateId,
+                           <span class="tp">Map</span>&lt;<span class="tp">String</span>,<span class="tp">Object</span>&gt; params,
+                           <span class="tp">String</span> locale)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> createTemplate(CreateTemplateRequest)</div>
-                <div class="method-return">Returns: <code>NotificationTemplate</code></div>
-                <div class="params-title">Parameters (CreateTemplateRequest):</div>
-                <div class="param-row"><span class="param-name">name</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">channel</span><span class="param-type">NotificationChannel</span></div>
-                <div class="param-row"><span class="param-name">titleTemplate</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">bodyTemplate</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">placeholders</span><span class="param-type">List&lt;String&gt;</span></div>
-            </div>
+    <span class="cm">// naya notification template create karta hai</span>
+    <span class="tp">NotificationTemplate</span> <span class="fn">createTemplate</span>(<span class="tp">String</span> name,
+                                        <span class="tp">NotificationChannel</span> channel,
+                                        <span class="tp">String</span> titleTemplate,
+                                        <span class="tp">String</span> bodyTemplate,
+                                        <span class="tp">List</span>&lt;<span class="tp">String</span>&gt; placeholders)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getTemplate(templateId)</div>
-                <div class="method-return">Returns: <code>NotificationTemplate</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">templateId</span><span class="param-type">String</span></div>
-            </div>
+    <span class="cm">// templateId se template fetch karta hai</span>
+    <span class="tp">NotificationTemplate</span> <span class="fn">getTemplate</span>(<span class="tp">String</span> templateId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> updateTemplate(UpdateTemplateRequest)</div>
-                <div class="method-return">Returns: <code>NotificationTemplate</code></div>
-                <div class="params-title">Parameters (UpdateTemplateRequest):</div>
-                <div class="param-row"><span class="param-name">templateId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">titleTemplate</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">bodyTemplate</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">active</span><span class="param-type">Boolean</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// existing template update karta hai — title, body ya active status</span>
+    <span class="tp">NotificationTemplate</span> <span class="fn">updateTemplate</span>(<span class="tp">String</span> templateId,
+                                        <span class="tp">String</span> titleTemplate,
+                                        <span class="tp">String</span> bodyTemplate,
+                                        <span class="tp">Boolean</span> active)
+}
+</pre></div>
         </div>
 
         <!-- ========== PREFERENCE SERVICE ========== -->
         <div class="service-card">
             <h3>PreferenceService</h3>
             <p class="svc-desc">User ki notification preferences manage karta hai &mdash; kaunsa channel on/off hai, quiet hours kya hai, DND mode check karta hai. CRITICAL priority DND bypass kar sakti hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">PreferenceService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> isChannelEnabled(ChannelCheckRequest)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters (ChannelCheckRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">channel</span><span class="param-type">NotificationChannel</span></div>
-                <div class="param-row"><span class="param-name">type</span><span class="param-type">NotificationType</span></div>
-            </div>
+    <span class="cm">// check karta hai ki user ne ye channel enable rakha hai ya nahi</span>
+    <span class="tp">boolean</span> <span class="fn">isChannelEnabled</span>(<span class="tp">Long</span> userId,
+                             <span class="tp">NotificationChannel</span> channel,
+                             <span class="tp">NotificationType</span> type)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> updatePreferences(UpdatePreferenceRequest)</div>
-                <div class="method-return">Returns: <code>UserPreference</code></div>
-                <div class="params-title">Parameters (UpdatePreferenceRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">channel</span><span class="param-type">NotificationChannel</span></div>
-                <div class="param-row"><span class="param-name">type</span><span class="param-type">NotificationType</span></div>
-                <div class="param-row"><span class="param-name">enabled</span><span class="param-type">Boolean</span></div>
-                <div class="param-row"><span class="param-name">quietHoursStart</span><span class="param-type">LocalTime</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">quietHoursEnd</span><span class="param-type">LocalTime</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// user ki preferences update karta hai — channel, quiet hours etc.</span>
+    <span class="tp">UserPreference</span> <span class="fn">updatePreferences</span>(<span class="tp">Long</span> userId,
+                                     <span class="tp">NotificationChannel</span> channel,
+                                     <span class="tp">NotificationType</span> type,
+                                     <span class="tp">Boolean</span> enabled,
+                                     <span class="tp">LocalTime</span> quietHoursStart,
+                                     <span class="tp">LocalTime</span> quietHoursEnd)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> isInDND(userId)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// user abhi DND mode me hai ya nahi wo check karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">isInDND</span>(<span class="tp">Long</span> userId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> optOut(OptOutRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (OptOutRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">type</span><span class="param-type">NotificationType</span></div>
-                <div class="param-row"><span class="param-name">channel</span><span class="param-type">NotificationChannel</span><span class="param-opt">[Optional]</span><span class="param-comment">// null = all channels</span></div>
-            </div>
+    <span class="cm">// user ko specific type/channel se opt-out karta hai</span>
+    <span class="tp">void</span> <span class="fn">optOut</span>(<span class="tp">Long</span> userId, <span class="tp">NotificationType</span> type,
+               <span class="tp">NotificationChannel</span> channel)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">5</span> getPreferences(userId)</div>
-                <div class="method-return">Returns: <code>List&lt;UserPreference&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// user ki saari preferences list return karta hai</span>
+    <span class="tp">List</span>&lt;<span class="tp">UserPreference</span>&gt; <span class="fn">getPreferences</span>(<span class="tp">Long</span> userId)
+}
+</pre></div>
         </div>
 
         <!-- ========== RETRY SERVICE ========== -->
         <div class="service-card">
             <h3>RetryService</h3>
             <p class="svc-desc">Failed notifications ko retry karta hai exponential backoff ke saath &mdash; 1s, 2s, 4s wait karke dubara try karta hai. 3 baar fail hone pe Dead Letter Queue me daal deta hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RetryService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> retryFailed(RetryConfig)</div>
-                <div class="method-return">Returns: <code>int</code><span class="param-comment">// retried count</span></div>
-                <div class="params-title">Parameters (RetryConfig):</div>
-                <div class="param-row"><span class="param-name">maxRetries</span><span class="param-type">int</span><span class="param-comment">// default 3</span></div>
-                <div class="param-row"><span class="param-name">batchSize</span><span class="param-type">int</span><span class="param-comment">// default 100</span></div>
-            </div>
+    <span class="cm">// failed notifications ko dubara try karta hai batch me</span>
+    <span class="tp">int</span> <span class="fn">retryFailed</span>(<span class="tp">int</span> maxRetries, <span class="tp">int</span> batchSize)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> moveToDLQ(DLQRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (DLQRequest):</div>
-                <div class="param-row"><span class="param-name">notificationId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">lastErrorCode</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// max retries ke baad notification DLQ me daal deta hai</span>
+    <span class="tp">void</span> <span class="fn">moveToDLQ</span>(<span class="tp">Long</span> notificationId, <span class="tp">String</span> reason,
+                   <span class="tp">String</span> lastErrorCode)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getNextRetryDelay(attemptCount)</div>
-                <div class="method-return">Returns: <code>Duration</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">attemptCount</span><span class="param-type">int</span><span class="param-comment">// 2^attempt seconds</span></div>
-            </div>
+    <span class="cm">// exponential backoff se next retry ka delay calculate karta hai</span>
+    <span class="tp">Duration</span> <span class="fn">getNextRetryDelay</span>(<span class="tp">int</span> attemptCount)
+}
+</pre></div>
         </div>
 
         <!-- ========== SCHEDULER SERVICE ========== -->
         <div class="service-card">
             <h3>SchedulerService</h3>
             <p class="svc-desc">Scheduled notifications ko sahi time pe process karta hai &mdash; jaise reminder 9 AM pe. Cron job chalta hai jo pending scheduled notifications pick karke send karta hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SchedulerService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> processScheduled()</div>
-                <div class="method-return">Returns: <code>int</code><span class="param-comment">// processed count</span></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">&mdash;</span><span class="param-type">none</span><span class="param-comment">// picks all due notifications</span></div>
-            </div>
+    <span class="cm">// due scheduled notifications pick karke process karta hai</span>
+    <span class="tp">int</span> <span class="fn">processScheduled</span>()
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> schedule(ScheduleRequest)</div>
-                <div class="method-return">Returns: <code>Notification</code></div>
-                <div class="params-title">Parameters (ScheduleRequest):</div>
-                <div class="param-row"><span class="param-name">notificationId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">deliveryTime</span><span class="param-type">LocalDateTime</span></div>
-                <div class="param-row"><span class="param-name">timezone</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// e.g. Asia/Kolkata</span></div>
-            </div>
+    <span class="cm">// notification ko specific time pe deliver hone ke liye schedule karta hai</span>
+    <span class="tp">Notification</span> <span class="fn">schedule</span>(<span class="tp">Long</span> notificationId,
+                          <span class="tp">LocalDateTime</span> deliveryTime,
+                          <span class="tp">String</span> timezone)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> cancelScheduled(notificationId)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">notificationId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// scheduled notification cancel karta hai agar abhi tak send nahi hua</span>
+    <span class="tp">boolean</span> <span class="fn">cancelScheduled</span>(<span class="tp">Long</span> notificationId)
+}
+</pre></div>
         </div>
 
     </div>
 </div>
 
-<!-- ============ 7. KEY ARCHITECTURE ============ -->
+<!-- ============ 6. KEY ARCHITECTURE ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">NotificationDispatcher.java — Strategy + Kafka Pipeline</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span>
@@ -670,9 +507,9 @@ export default {
     </pre></div>
 </div>
 
-<!-- ============ 8. DESIGN PATTERNS ============ -->
+<!-- ============ 7. DESIGN PATTERNS ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>Channel-specific senders (Push, Email, SMS) implement INotificationSender — swap providers without modifying dispatch</p></div>
         <div class="pattern-card"><h3>Observer</h3><p>Kafka event-driven: services publish NotificationEvent, consumers react asynchronously</p></div>
@@ -714,7 +551,7 @@ export default {
 
 <!-- ============ 9. SEQUENCE FLOW ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">Client calls POST /api/v1/notifications &rarr; 202 Accepted</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">NotificationService checks user preferences &amp; quiet hours</span></div>
@@ -732,7 +569,7 @@ export default {
 
 <!-- ============ 10. CAPACITY ESTIMATION ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
     <div class="cap-grid">
         <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">50M</div></div>
         <div class="cap-card"><div class="cap-label">Notifications / Day</div><div class="cap-value">500M (~10 per user)</div></div>
@@ -757,7 +594,7 @@ export default {
 
 <!-- ============ 11. BOTTLENECKS ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Burst Traffic (flash sales)</h3><p>Kafka priority queues absorb spikes; auto-scale consumers with K8s HPA on consumer lag</p></div>
         <div class="bottleneck-card"><h3>Provider Rate Limits</h3><p>Token bucket per provider + circuit breaker; failover to secondary (SES &rarr; SendGrid)</p></div>
@@ -770,7 +607,7 @@ export default {
 
 <!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Duplicate Notifications</h3><p>Idempotency key (userId + templateId + hash) in Redis with 5-min TTL</p></div>
         <div class="edge-card"><h3>User Uninstalls App</h3><p>FCM returns NotRegistered &rarr; mark token inactive, fall back to email/SMS</p></div>
@@ -785,7 +622,7 @@ export default {
 
 <!-- ============ 13. SECURITY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>Template Injection</h3><p>Sanitize all params; allow-list for placeholder keys; escape HTML in emails</p></div>
         <div class="security-card"><h3>PII Protection</h3><p>Mask sensitive data in logs; encrypt body at rest; GDPR-compliant retention</p></div>
@@ -798,7 +635,7 @@ export default {
 
 <!-- ============ 14. INTERVIEW SUMMARY ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Architecture</strong><br>Event-driven Kafka priority queues + Strategy pattern for multi-channel</div>
         <div class="summary-card"><strong>Multi-Channel</strong><br>Push (FCM/APNs), Email (SES), SMS (Twilio), In-App (WebSocket)</div>

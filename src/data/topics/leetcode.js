@@ -80,116 +80,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 3. CLASS DESIGN ============ -->
-<div class="section theme-orange">
-    <div class="section-title"><span class="section-num">3</span>Class Design</div>
-
-    <div class="sub-heading" style="color:#ffab40;border-color:#ffab40">Problem Entity</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"problems"</span>)
-<span class="kw">public class</span> <span class="tp">Problem</span> {
-    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
-    <span class="kw">private</span> Long <span class="fn">id</span>;
-
-    <span class="ann">@Column</span>(unique = <span class="kw">true</span>, nullable = <span class="kw">false</span>)
-    <span class="kw">private</span> String <span class="fn">title</span>;
-
-    <span class="ann">@Column</span>(unique = <span class="kw">true</span>, nullable = <span class="kw">false</span>)
-    <span class="kw">private</span> String <span class="fn">slug</span>;
-
-    <span class="ann">@Column</span>(columnDefinition = <span class="st">"TEXT"</span>)
-    <span class="kw">private</span> String <span class="fn">description</span>;
-
-    <span class="ann">@Enumerated</span>(EnumType.STRING)
-    <span class="kw">private</span> Difficulty <span class="fn">difficulty</span>;
-
-    <span class="ann">@ElementCollection</span>
-    <span class="kw">private</span> List&lt;String&gt; <span class="fn">categoryTags</span>;
-
-    <span class="kw">private</span> Double <span class="fn">acceptanceRate</span>;
-    <span class="kw">private</span> Long <span class="fn">totalSubmissions</span>;
-    <span class="kw">private</span> Long <span class="fn">totalAccepted</span>;
-    <span class="kw">private</span> Boolean <span class="fn">isPremium</span>;
-
-    <span class="ann">@OneToMany</span>(mappedBy = <span class="st">"problem"</span>, cascade = CascadeType.ALL)
-    <span class="kw">private</span> List&lt;TestCase&gt; <span class="fn">testCases</span>;
-
-    <span class="ann">@CreationTimestamp</span>
-    <span class="kw">private</span> LocalDateTime <span class="fn">createdAt</span>;
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#ffab40;border-color:#ffab40">Submission Entity</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"submissions"</span>, indexes = {
-    <span class="ann">@Index</span>(name = <span class="st">"idx_user_problem"</span>, columnList = <span class="st">"userId, problemId"</span>),
-    <span class="ann">@Index</span>(name = <span class="st">"idx_contest"</span>, columnList = <span class="st">"contestId, userId"</span>)
-})
-<span class="kw">public class</span> <span class="tp">Submission</span> {
-    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
-    <span class="kw">private</span> Long <span class="fn">id</span>;
-
-    <span class="kw">private</span> Long <span class="fn">userId</span>;
-    <span class="kw">private</span> Long <span class="fn">problemId</span>;
-
-    <span class="ann">@Enumerated</span>(EnumType.STRING)
-    <span class="kw">private</span> Language <span class="fn">language</span>;
-
-    <span class="ann">@Column</span>(columnDefinition = <span class="st">"TEXT"</span>)
-    <span class="kw">private</span> String <span class="fn">code</span>;
-
-    <span class="ann">@Enumerated</span>(EnumType.STRING)
-    <span class="kw">private</span> Verdict <span class="fn">verdict</span>;
-
-    <span class="kw">private</span> Integer <span class="fn">runtime</span>;       <span class="cm">// in ms</span>
-    <span class="kw">private</span> Integer <span class="fn">memory</span>;        <span class="cm">// in KB</span>
-    <span class="kw">private</span> Integer <span class="fn">passedTestCases</span>;
-    <span class="kw">private</span> Integer <span class="fn">totalTestCases</span>;
-
-    <span class="ann">@Column</span>(columnDefinition = <span class="st">"TEXT"</span>)
-    <span class="kw">private</span> String <span class="fn">errorOutput</span>;
-
-    <span class="kw">private</span> Long <span class="fn">contestId</span>;        <span class="cm">// nullable for non-contest</span>
-
-    <span class="ann">@CreationTimestamp</span>
-    <span class="kw">private</span> LocalDateTime <span class="fn">submittedAt</span>;
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#ffab40;border-color:#ffab40">Contest Entity</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"contests"</span>)
-<span class="kw">public class</span> <span class="tp">Contest</span> {
-    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = GenerationType.IDENTITY)
-    <span class="kw">private</span> Long <span class="fn">id</span>;
-
-    <span class="kw">private</span> String <span class="fn">title</span>;
-
-    <span class="ann">@Enumerated</span>(EnumType.STRING)
-    <span class="kw">private</span> ContestType <span class="fn">type</span>;
-
-    <span class="kw">private</span> LocalDateTime <span class="fn">startTime</span>;
-    <span class="kw">private</span> LocalDateTime <span class="fn">endTime</span>;
-    <span class="kw">private</span> Integer <span class="fn">duration</span>;     <span class="cm">// minutes</span>
-
-    <span class="ann">@ElementCollection</span>
-    <span class="kw">private</span> List&lt;Long&gt; <span class="fn">problemIds</span>;
-
-    <span class="ann">@Enumerated</span>(EnumType.STRING)
-    <span class="kw">private</span> ContestStatus <span class="fn">status</span>;
-
-    <span class="ann">@CreationTimestamp</span>
-    <span class="kw">private</span> LocalDateTime <span class="fn">createdAt</span>;
-}
-    </pre></div>
-</div>
-
-<!-- ============ 4. DATABASE SCHEMA ============ -->
+<!-- ============ 3. DATABASE SCHEMA ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -412,292 +305,203 @@ export default {
     </div>
 </div>
 
-<!-- ============ 5. SERVICE LLD ============ -->
+<!-- ============ 4. SERVICE LLD ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>ProblemService</h3>
             <p class="svc-desc">Coding problems ko manage karta hai &mdash; create, fetch, filter aur acceptance rate update karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> createProblem(CreateProblemRequest)</div>
-                <div class="method-return">Returns: <code>Problem</code></div>
-                <div class="params-title">Parameters (CreateProblemRequest):</div>
-                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">slug</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">difficulty</span><span class="param-type">Difficulty</span></div>
-                <div class="param-row"><span class="param-name">categoryTags</span><span class="param-type">List&lt;String&gt;</span></div>
-                <div class="param-row"><span class="param-name">constraints</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">starterCode</span><span class="param-type">Map&lt;Language, String&gt;</span></div>
-                <div class="param-row"><span class="param-name">isPremium</span><span class="param-type">Boolean</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getProblemBySlug(String)</div>
-                <div class="method-return">Returns: <code>Problem</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">slug</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> listProblems(ProblemFilter, Pageable)</div>
-                <div class="method-return">Returns: <code>Page&lt;Problem&gt;</code></div>
-                <div class="params-title">Parameters (ProblemFilter):</div>
-                <div class="param-row"><span class="param-name">difficulty</span><span class="param-type">Difficulty</span></div>
-                <div class="param-row"><span class="param-name">tag</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">searchQuery</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">isPremium</span><span class="param-type">Boolean</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> updateAcceptanceRate(Long)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ProblemService</span> {
+
+    <span class="cm">// Naya problem create karo with all details</span>
+    <span class="tp">Problem</span> <span class="fn">createProblem</span>(<span class="tp">String</span> title, <span class="tp">String</span> slug,
+        <span class="tp">String</span> description, <span class="tp">Difficulty</span> difficulty,
+        <span class="tp">List&lt;String&gt;</span> categoryTags, <span class="tp">String</span> constraints,
+        <span class="tp">Map&lt;Language, String&gt;</span> starterCode, <span class="tp">Boolean</span> isPremium)
+
+    <span class="cm">// Slug se ek problem fetch karo</span>
+    <span class="tp">Problem</span> <span class="fn">getProblemBySlug</span>(<span class="tp">String</span> slug)
+
+    <span class="cm">// Filter lagake problems ki list nikalo with pagination</span>
+    <span class="tp">Page&lt;Problem&gt;</span> <span class="fn">listProblems</span>(<span class="tp">Difficulty</span> difficulty,
+        <span class="tp">String</span> tag, <span class="tp">String</span> searchQuery,
+        <span class="tp">Boolean</span> isPremium, <span class="tp">Pageable</span> pageable)
+
+    <span class="cm">// Problem ka acceptance rate recalculate karo</span>
+    <span class="kw">void</span> <span class="fn">updateAcceptanceRate</span>(<span class="tp">Long</span> problemId)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>SubmissionService</h3>
             <p class="svc-desc">Code submissions handle karta hai &mdash; solution submit karo, test cases run karo, result check karo</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> submit(SubmitRequest)</div>
-                <div class="method-return">Returns: <code>Submission</code></div>
-                <div class="params-title">Parameters (SubmitRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">code</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">language</span><span class="param-type">Language</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> runCode(RunCodeRequest)</div>
-                <div class="method-return">Returns: <code>RunResult</code></div>
-                <div class="params-title">Parameters (RunCodeRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">code</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">language</span><span class="param-type">Language</span></div>
-                <div class="param-row"><span class="param-name">customInput</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getSubmissionStatus(Long)</div>
-                <div class="method-return">Returns: <code>SubmissionStatus</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">submissionId</span><span class="param-type">Long</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> getUserSubmissions(Long, Long)</div>
-                <div class="method-return">Returns: <code>List&lt;Submission&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SubmissionService</span> {
+
+    <span class="cm">// User ka code submit karo judging ke liye</span>
+    <span class="tp">Submission</span> <span class="fn">submit</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> problemId,
+        <span class="tp">String</span> code, <span class="tp">Language</span> language)
+
+    <span class="cm">// Custom input pe code run karo bina submit kiye</span>
+    <span class="tp">RunResult</span> <span class="fn">runCode</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> problemId,
+        <span class="tp">String</span> code, <span class="tp">Language</span> language,
+        <span class="tp">String</span> customInput)
+
+    <span class="cm">// Submission ka current status check karo</span>
+    <span class="tp">SubmissionStatus</span> <span class="fn">getSubmissionStatus</span>(<span class="tp">Long</span> submissionId)
+
+    <span class="cm">// User ki saari submissions nikalo ek problem ke liye</span>
+    <span class="tp">List&lt;Submission&gt;</span> <span class="fn">getUserSubmissions</span>(<span class="tp">Long</span> userId,
+        <span class="tp">Long</span> problemId)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>JudgeService</h3>
             <p class="svc-desc">Submitted code ko compile, run aur check karta hai &mdash; har test case ke against expected output match karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> evaluate(EvaluateRequest)</div>
-                <div class="method-return">Returns: <code>JudgeResult</code></div>
-                <div class="params-title">Parameters (EvaluateRequest):</div>
-                <div class="param-row"><span class="param-name">submission</span><span class="param-type">Submission</span></div>
-                <div class="param-row"><span class="param-name">testCases</span><span class="param-type">List&lt;TestCase&gt;</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> compile(CompileRequest)</div>
-                <div class="method-return">Returns: <code>CompileResult</code></div>
-                <div class="params-title">Parameters (CompileRequest):</div>
-                <div class="param-row"><span class="param-name">code</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">language</span><span class="param-type">Language</span></div>
-                <div class="param-row"><span class="param-name">workDir</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> execute(ExecuteRequest)</div>
-                <div class="method-return">Returns: <code>ExecutionResult</code></div>
-                <div class="params-title">Parameters (ExecuteRequest):</div>
-                <div class="param-row"><span class="param-name">binaryPath</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">input</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">timeLimitMs</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">memoryLimitKb</span><span class="param-type">int</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> compareOutput(String, String)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">actualOutput</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">expectedOutput</span><span class="param-type">String</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">JudgeService</span> {
+
+    <span class="cm">// Submission ko saare test cases pe evaluate karo</span>
+    <span class="tp">JudgeResult</span> <span class="fn">evaluate</span>(<span class="tp">Submission</span> submission,
+        <span class="tp">List&lt;TestCase&gt;</span> testCases)
+
+    <span class="cm">// Code ko compile karo sandbox mein</span>
+    <span class="tp">CompileResult</span> <span class="fn">compile</span>(<span class="tp">String</span> code,
+        <span class="tp">Language</span> language, <span class="tp">String</span> workDir)
+
+    <span class="cm">// Compiled binary ko ek test case pe run karo</span>
+    <span class="tp">ExecutionResult</span> <span class="fn">execute</span>(<span class="tp">String</span> binaryPath,
+        <span class="tp">String</span> input, <span class="tp">int</span> timeLimitMs,
+        <span class="tp">int</span> memoryLimitKb)
+
+    <span class="cm">// Actual output ko expected output se compare karo</span>
+    <span class="tp">boolean</span> <span class="fn">compareOutput</span>(<span class="tp">String</span> actualOutput,
+        <span class="tp">String</span> expectedOutput)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>ContestService</h3>
             <p class="svc-desc">Coding contests manage karta hai &mdash; contest create karo, users register karo, scores track karo aur rating update karo</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> createContest(CreateContestRequest)</div>
-                <div class="method-return">Returns: <code>Contest</code></div>
-                <div class="params-title">Parameters (CreateContestRequest):</div>
-                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">type</span><span class="param-type">ContestType</span></div>
-                <div class="param-row"><span class="param-name">startTime</span><span class="param-type">LocalDateTime</span></div>
-                <div class="param-row"><span class="param-name">duration</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">problemIds</span><span class="param-type">List&lt;Long&gt;</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> registerUser(Long, Long)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">contestId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getLeaderboard(Long, Pageable)</div>
-                <div class="method-return">Returns: <code>Page&lt;LeaderboardEntry&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">contestId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">pageable</span><span class="param-type">Pageable</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> calculateRatings(Long)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">contestId</span><span class="param-type">Long</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ContestService</span> {
+
+    <span class="cm">// Naya coding contest create karo</span>
+    <span class="tp">Contest</span> <span class="fn">createContest</span>(<span class="tp">String</span> title,
+        <span class="tp">ContestType</span> type, <span class="tp">LocalDateTime</span> startTime,
+        <span class="tp">Integer</span> duration, <span class="tp">List&lt;Long&gt;</span> problemIds)
+
+    <span class="cm">// User ko contest mein register karo</span>
+    <span class="kw">void</span> <span class="fn">registerUser</span>(<span class="tp">Long</span> contestId, <span class="tp">Long</span> userId)
+
+    <span class="cm">// Contest ka leaderboard fetch karo with pagination</span>
+    <span class="tp">Page&lt;LeaderboardEntry&gt;</span> <span class="fn">getLeaderboard</span>(<span class="tp">Long</span> contestId,
+        <span class="tp">Pageable</span> pageable)
+
+    <span class="cm">// Contest khatam hone pe ratings calculate karo</span>
+    <span class="kw">void</span> <span class="fn">calculateRatings</span>(<span class="tp">Long</span> contestId)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>LeaderboardService</h3>
             <p class="svc-desc">Global rankings aur user ratings track karta hai &mdash; Redis Sorted Set se fast rank query hota hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> getGlobalRanking(Pageable)</div>
-                <div class="method-return">Returns: <code>Page&lt;RankEntry&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">pageable</span><span class="param-type">Pageable</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getUserRank(Long)</div>
-                <div class="method-return">Returns: <code>RankEntry</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> updateRating(Long, int)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">delta</span><span class="param-type">int</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> refreshCache()</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">none</span><span class="param-type">&mdash;</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">LeaderboardService</span> {
+
+    <span class="cm">// Global ranking list nikalo with pagination</span>
+    <span class="tp">Page&lt;RankEntry&gt;</span> <span class="fn">getGlobalRanking</span>(<span class="tp">Pageable</span> pageable)
+
+    <span class="cm">// Ek user ka rank aur rating fetch karo</span>
+    <span class="tp">RankEntry</span> <span class="fn">getUserRank</span>(<span class="tp">Long</span> userId)
+
+    <span class="cm">// User ki rating update karo delta se</span>
+    <span class="kw">void</span> <span class="fn">updateRating</span>(<span class="tp">Long</span> userId, <span class="tp">int</span> delta)
+
+    <span class="cm">// Redis cache ko refresh karo DB se</span>
+    <span class="kw">void</span> <span class="fn">refreshCache</span>()
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>DiscussionService</h3>
             <p class="svc-desc">Discussion posts, comments aur upvotes manage karta hai &mdash; har problem ke liye community solutions</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> createPost(CreatePostRequest)</div>
-                <div class="method-return">Returns: <code>Discussion</code></div>
-                <div class="params-title">Parameters (CreatePostRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">content</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">tags</span><span class="param-type">List&lt;String&gt;</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getDiscussions(Long, Pageable)</div>
-                <div class="method-return">Returns: <code>Page&lt;Discussion&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">problemId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">pageable</span><span class="param-type">Pageable</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> upvote(Long, Long)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">discussionId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> addComment(CommentRequest)</div>
-                <div class="method-return">Returns: <code>Comment</code></div>
-                <div class="params-title">Parameters (CommentRequest):</div>
-                <div class="param-row"><span class="param-name">discussionId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">content</span><span class="param-type">String</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">DiscussionService</span> {
+
+    <span class="cm">// Naya discussion post create karo problem ke liye</span>
+    <span class="tp">Discussion</span> <span class="fn">createPost</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> problemId,
+        <span class="tp">String</span> title, <span class="tp">String</span> content,
+        <span class="tp">List&lt;String&gt;</span> tags)
+
+    <span class="cm">// Problem ki saari discussions fetch karo</span>
+    <span class="tp">Page&lt;Discussion&gt;</span> <span class="fn">getDiscussions</span>(<span class="tp">Long</span> problemId,
+        <span class="tp">Pageable</span> pageable)
+
+    <span class="cm">// Discussion ko upvote karo</span>
+    <span class="kw">void</span> <span class="fn">upvote</span>(<span class="tp">Long</span> discussionId, <span class="tp">Long</span> userId)
+
+    <span class="cm">// Discussion pe comment add karo</span>
+    <span class="tp">Comment</span> <span class="fn">addComment</span>(<span class="tp">Long</span> discussionId,
+        <span class="tp">Long</span> userId, <span class="tp">String</span> content)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>AuthService</h3>
             <p class="svc-desc">User signup, login (email + Google/GitHub OAuth) aur JWT token refresh handle karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> register(RegisterRequest)</div>
-                <div class="method-return">Returns: <code>User</code></div>
-                <div class="params-title">Parameters (RegisterRequest):</div>
-                <div class="param-row"><span class="param-name">username</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">password</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> login(LoginRequest)</div>
-                <div class="method-return">Returns: <code>String (JWT)</code></div>
-                <div class="params-title">Parameters (LoginRequest):</div>
-                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">password</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> oauthLogin(OAuthRequest)</div>
-                <div class="method-return">Returns: <code>String (JWT)</code></div>
-                <div class="params-title">Parameters (OAuthRequest):</div>
-                <div class="param-row"><span class="param-name">provider</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">oauthToken</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> refreshToken(String)</div>
-                <div class="method-return">Returns: <code>String (JWT)</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">refreshToken</span><span class="param-type">String</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">AuthService</span> {
+
+    <span class="cm">// Naya user register karo email/password se</span>
+    <span class="tp">User</span> <span class="fn">register</span>(<span class="tp">String</span> username, <span class="tp">String</span> email,
+        <span class="tp">String</span> password)
+
+    <span class="cm">// Email aur password se login karo, JWT milega</span>
+    <span class="tp">String</span> <span class="fn">login</span>(<span class="tp">String</span> email, <span class="tp">String</span> password)
+
+    <span class="cm">// Google/GitHub OAuth se login karo</span>
+    <span class="tp">String</span> <span class="fn">oauthLogin</span>(<span class="tp">String</span> provider,
+        <span class="tp">String</span> oauthToken)
+
+    <span class="cm">// Expired JWT ko refresh karo naya token leke</span>
+    <span class="tp">String</span> <span class="fn">refreshToken</span>(<span class="tp">String</span> refreshToken)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>SandboxService</h3>
             <p class="svc-desc">Safe Docker containers create karta hai user code run karne ke liye &mdash; network band, memory limit, time limit sab lagta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> createContainer(Language)</div>
-                <div class="method-return">Returns: <code>String (containerId)</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">language</span><span class="param-type">Language</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> executeInSandbox(SandboxExecRequest)</div>
-                <div class="method-return">Returns: <code>ExecutionResult</code></div>
-                <div class="params-title">Parameters (SandboxExecRequest):</div>
-                <div class="param-row"><span class="param-name">containerId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">code</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">input</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">timeLimitMs</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">memoryLimitKb</span><span class="param-type">int</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> destroyContainer(String)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">containerId</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> enforceResourceLimits(ResourceLimitRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (ResourceLimitRequest):</div>
-                <div class="param-row"><span class="param-name">containerId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">cpuCores</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">memoryLimitKb</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">timeLimitMs</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">pidsLimit</span><span class="param-type">int</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SandboxService</span> {
+
+    <span class="cm">// Language ke hisaab se Docker container banao</span>
+    <span class="tp">String</span> <span class="fn">createContainer</span>(<span class="tp">Language</span> language)
+
+    <span class="cm">// Sandbox mein code execute karo with limits</span>
+    <span class="tp">ExecutionResult</span> <span class="fn">executeInSandbox</span>(<span class="tp">String</span> containerId,
+        <span class="tp">String</span> code, <span class="tp">String</span> input,
+        <span class="tp">int</span> timeLimitMs, <span class="tp">int</span> memoryLimitKb)
+
+    <span class="cm">// Container destroy karo execution ke baad</span>
+    <span class="kw">void</span> <span class="fn">destroyContainer</span>(<span class="tp">String</span> containerId)
+
+    <span class="cm">// CPU, memory, PID limits enforce karo container pe</span>
+    <span class="kw">void</span> <span class="fn">enforceResourceLimits</span>(<span class="tp">String</span> containerId,
+        <span class="tp">int</span> cpuCores, <span class="tp">int</span> memoryLimitKb,
+        <span class="tp">int</span> timeLimitMs, <span class="tp">int</span> pidsLimit)
+}
+</pre></div>
         </div>
     </div>
 </div>
 
-<!-- ============ 6. APIs ============ -->
+<!-- ============ 5. APIs ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">6</span>API Endpoints</div>
+    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
     <div class="api-grid">
         <div class="api-card">
             <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/problems?difficulty=MEDIUM&amp;tag=array&amp;page=0&amp;size=20</span></div>
@@ -767,9 +571,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 7. KEY ARCHITECTURE ============ -->
+<!-- ============ 6. KEY ARCHITECTURE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture &mdash; Code Execution &amp; Judge System</div>
+    <div class="section-title"><span class="section-num">6</span>Key Architecture &mdash; Code Execution &amp; Judge System</div>
 
     <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Code Execution Sandbox (Docker-based)</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -912,9 +716,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 8. DESIGN PATTERNS ============ -->
+<!-- ============ 7. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns</div>
+    <div class="section-title"><span class="section-num">7</span>Design Patterns</div>
     <div class="pattern-grid">
         <div class="pattern-card">
             <div class="pattern-name">Strategy Pattern</div>
@@ -951,9 +755,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 9. SEQUENCE FLOW ============ -->
+<!-- ============ 8. SEQUENCE FLOW ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow &mdash; Code Submission</div>
+    <div class="section-title"><span class="section-num">8</span>Sequence Flow &mdash; Code Submission</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User clicks "Submit" in code editor</div>
         <div class="flow-arrow arrow-green"></div>
@@ -989,9 +793,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 10. CAPACITY ESTIMATION ============ -->
+<!-- ============ 9. CAPACITY ESTIMATION ============ -->
 <div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
     <div class="assumption-box">
         <h4>Assumptions</h4>
         <div class="assumption-row"><span class="calc-label">Daily Active Users (DAU)</span><span class="calc-value">500K</span></div>
@@ -1045,9 +849,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 11. BOTTLENECKS ============ -->
+<!-- ============ 10. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item">
             <span class="bottleneck-problem">Contest spike (10K+ simultaneous submissions)</span>
@@ -1089,7 +893,7 @@ export default {
 
 <!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-amber">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>Infinite Loop / Fork Bomb</h4>
@@ -1128,7 +932,7 @@ export default {
 
 <!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">13</span>Security &amp; Sandboxing</div>
+    <div class="section-title"><span class="section-num">12</span>Security &amp; Sandboxing</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#128737;</span>
@@ -1167,7 +971,7 @@ export default {
 
 <!-- ============ 14. INTERVIEW SUMMARY ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">13</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Async Judge Pipeline</h4><p>Queue-based code execution with RabbitMQ</p></div>
         <div class="summary-card sc-2"><h4>Docker Sandboxing</h4><p>Isolated execution with resource limits</p></div>

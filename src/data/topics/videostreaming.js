@@ -34,55 +34,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">3</span>Class Design (JPA Entities)</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">Video.java — JPA Entity</span></div>
-    <pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"videos"</span>, indexes = {
-    <span class="ann">@Index</span>(name = <span class="st">"idx_video_channel"</span>, columnList = <span class="st">"channel_id, created_at DESC"</span>),
-    <span class="ann">@Index</span>(name = <span class="st">"idx_video_status"</span>, columnList = <span class="st">"status"</span>)
-})
-<span class="kw">public class</span> <span class="tp">Video</span> {
-    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = <span class="tp">GenerationType</span>.IDENTITY)
-    <span class="kw">private</span> <span class="tp">Long</span> id;
-
-    <span class="ann">@Column</span>(nullable = <span class="kw">false</span>)
-    <span class="kw">private</span> <span class="tp">String</span> title;
-    <span class="ann">@Column</span>(columnDefinition = <span class="st">"TEXT"</span>)
-    <span class="kw">private</span> <span class="tp">String</span> description;
-
-    <span class="ann">@ManyToOne</span>(fetch = <span class="tp">FetchType</span>.LAZY)
-    <span class="ann">@JoinColumn</span>(name = <span class="st">"channel_id"</span>)
-    <span class="kw">private</span> <span class="tp">Channel</span> channel;
-
-    <span class="kw">private</span> <span class="tp">String</span> originalUrl;
-    <span class="kw">private</span> <span class="tp">String</span> thumbnailUrl;
-    <span class="kw">private int</span> duration;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">VideoStatus</span> status;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">Visibility</span> visibility;
-
-    <span class="ann">@ElementCollection</span>
-    <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="tp">String</span>&gt; tags;
-
-    <span class="kw">private</span> <span class="tp">Long</span> viewCount = <span class="cn">0L</span>;
-    <span class="kw">private</span> <span class="tp">Long</span> likeCount = <span class="cn">0L</span>;
-
-    <span class="ann">@OneToMany</span>(mappedBy = <span class="st">"video"</span>, cascade = <span class="tp">CascadeType</span>.ALL)
-    <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="tp">VideoVariant</span>&gt; variants;
-
-    <span class="ann">@CreationTimestamp</span>
-    <span class="kw">private</span> <span class="tp">LocalDateTime</span> createdAt;
-}
-    </pre></div>
-</div>
-
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -177,7 +130,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
     <div class="api-grid">
         <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/videos/upload</div><div class="api-desc">Upload video (multipart, returns uploadId)</div></div>
         <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/videos/upload/{uploadId}/chunk</div><div class="api-desc">Upload chunk for resumable upload</div></div>
@@ -193,251 +146,152 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>VideoUploadService</h3>
             <p class="svc-desc">Video file ko S3 pe chunked upload karta hai &mdash; resumable upload support ke saath</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> upload(VideoUploadRequest)</div>
-                <div class="method-return">Returns: <code>Video</code></div>
-                <div class="params-title">Parameters (VideoUploadRequest):</div>
-                <div class="param-row"><span class="param-name">file</span><span class="param-type">MultipartFile</span><span class="param-comment">// actual video file jo user upload kar raha hai</span></div>
-                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">channelId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">visibility</span><span class="param-type">Visibility</span><span class="param-comment">// PUBLIC, UNLISTED, PRIVATE, SCHEDULED</span></div>
-                <div class="param-row"><span class="param-name">tags</span><span class="param-type">List&lt;String&gt;</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">category</span><span class="param-type">Category</span><span class="param-opt">[Optional]</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> resumeUpload(ResumeUploadRequest)</div>
-                <div class="method-return">Returns: <code>UploadSession</code></div>
-                <div class="params-title">Parameters (ResumeUploadRequest):</div>
-                <div class="param-row"><span class="param-name">uploadId</span><span class="param-type">String</span><span class="param-comment">// pehle se started upload ka unique ID</span></div>
-                <div class="param-row"><span class="param-name">chunkNumber</span><span class="param-type">int</span><span class="param-comment">// kaunsa chunk resume karna hai</span></div>
-                <div class="param-row"><span class="param-name">chunkData</span><span class="param-type">byte[]</span><span class="param-comment">// chunk ka actual data</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> validateVideo(ValidationRequest)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters (ValidationRequest):</div>
-                <div class="param-row"><span class="param-name">file</span><span class="param-type">MultipartFile</span><span class="param-comment">// file format aur size check karne ke liye</span></div>
-                <div class="param-row"><span class="param-name">maxSizeBytes</span><span class="param-type">Long</span><span class="param-comment">// max allowed file size (default 10GB)</span></div>
-                <div class="param-row"><span class="param-name">allowedFormats</span><span class="param-type">List&lt;String&gt;</span><span class="param-comment">// mp4, mkv, avi etc.</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> getProgress(ProgressRequest)</div>
-                <div class="method-return">Returns: <code>UploadProgress</code></div>
-                <div class="params-title">Parameters (ProgressRequest):</div>
-                <div class="param-row"><span class="param-name">uploadId</span><span class="param-type">String</span><span class="param-comment">// jis upload ka progress dekhna hai</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">VideoUploadService</span> {
+
+    <span class="cm">// video file S3 pe upload karta hai with metadata</span>
+    <span class="tp">Video</span> <span class="fn">upload</span>(<span class="tp">MultipartFile</span> file, <span class="tp">String</span> title, <span class="tp">String</span> description, <span class="tp">Long</span> channelId, <span class="tp">Visibility</span> visibility, <span class="tp">List&lt;String&gt;</span> tags, <span class="tp">Category</span> category)
+
+    <span class="cm">// pehle se started upload ko resume karta hai chunk-wise</span>
+    <span class="tp">UploadSession</span> <span class="fn">resumeUpload</span>(<span class="tp">String</span> uploadId, <span class="tp">int</span> chunkNumber, <span class="tp">byte[]</span> chunkData)
+
+    <span class="cm">// file format aur size validate karta hai upload se pehle</span>
+    <span class="tp">boolean</span> <span class="fn">validateVideo</span>(<span class="tp">MultipartFile</span> file, <span class="tp">Long</span> maxSizeBytes, <span class="tp">List&lt;String&gt;</span> allowedFormats)
+
+    <span class="cm">// upload ka progress percentage dekhne ke liye</span>
+    <span class="tp">UploadProgress</span> <span class="fn">getProgress</span>(<span class="tp">String</span> uploadId)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>TranscodingService</h3>
             <p class="svc-desc">Video ko multiple quality levels (360p, 720p, 1080p) mein convert karta hai &mdash; Kafka se fan-out hota hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> transcode(TranscodeRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (TranscodeRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// kis video ko transcode karna hai</span></div>
-                <div class="param-row"><span class="param-name">targetResolutions</span><span class="param-type">List&lt;Resolution&gt;</span><span class="param-comment">// 360P, 480P, 720P, 1080P targets</span></div>
-                <div class="param-row"><span class="param-name">codec</span><span class="param-type">Codec</span><span class="param-comment">// H264, H265, VP9, AV1</span></div>
-                <div class="param-row"><span class="param-name">priority</span><span class="param-type">int</span><span class="param-opt">[Optional]</span><span class="param-comment">// popular creators ko high priority</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getStatus(TranscodeStatusRequest)</div>
-                <div class="method-return">Returns: <code>TranscodeStatus</code></div>
-                <div class="params-title">Parameters (TranscodeStatusRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// video ID jiska status dekhna hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> retryTranscode(RetryTranscodeRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (RetryTranscodeRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// fail hui video ka ID</span></div>
-                <div class="param-row"><span class="param-name">resolution</span><span class="param-type">Resolution</span><span class="param-comment">// konsi resolution fail hui thi, woh retry karo</span></div>
-                <div class="param-row"><span class="param-name">maxRetries</span><span class="param-type">int</span><span class="param-opt">[Optional]</span><span class="param-comment">// kitni baar retry karna hai (default 3)</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">TranscodingService</span> {
+
+    <span class="cm">// video ko multiple resolutions mein transcode karta hai</span>
+    <span class="tp">void</span> <span class="fn">transcode</span>(<span class="tp">Long</span> videoId, <span class="tp">List&lt;Resolution&gt;</span> targetResolutions, <span class="tp">Codec</span> codec, <span class="tp">int</span> priority)
+
+    <span class="cm">// transcoding ka current status check karo</span>
+    <span class="tp">TranscodeStatus</span> <span class="fn">getStatus</span>(<span class="tp">Long</span> videoId)
+
+    <span class="cm">// fail hui resolution ko dubara retry karo</span>
+    <span class="tp">void</span> <span class="fn">retryTranscode</span>(<span class="tp">Long</span> videoId, <span class="tp">Resolution</span> resolution, <span class="tp">int</span> maxRetries)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>ThumbnailService</h3>
             <p class="svc-desc">Video ke key frames se preview images banata hai &mdash; auto-generate ya custom upload dono support karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> generate(ThumbnailGenerateRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;String&gt;</code></div>
-                <div class="params-title">Parameters (ThumbnailGenerateRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// kis video ke thumbnails generate karne hain</span></div>
-                <div class="param-row"><span class="param-name">count</span><span class="param-type">int</span><span class="param-opt">[Optional]</span><span class="param-comment">// kitne thumbnails chahiye (default 3)</span></div>
-                <div class="param-row"><span class="param-name">timestamps</span><span class="param-type">List&lt;Integer&gt;</span><span class="param-opt">[Optional]</span><span class="param-comment">// specific seconds pe capture karo</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> uploadCustomThumbnail(CustomThumbnailRequest)</div>
-                <div class="method-return">Returns: <code>String</code></div>
-                <div class="params-title">Parameters (CustomThumbnailRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// kis video ka custom thumbnail hai</span></div>
-                <div class="param-row"><span class="param-name">image</span><span class="param-type">MultipartFile</span><span class="param-comment">// thumbnail image file (JPG/PNG)</span></div>
-                <div class="param-row"><span class="param-name">cropParams</span><span class="param-type">CropParams</span><span class="param-opt">[Optional]</span><span class="param-comment">// 16:9 aspect ratio mein crop karne ke params</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> setPrimaryThumbnail(SetPrimaryRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (SetPrimaryRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// kis video ka primary thumbnail set karna hai</span></div>
-                <div class="param-row"><span class="param-name">thumbnailUrl</span><span class="param-type">String</span><span class="param-comment">// selected thumbnail ka S3 URL</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ThumbnailService</span> {
+
+    <span class="cm">// video ke key frames se thumbnails auto-generate karta hai</span>
+    <span class="tp">List&lt;String&gt;</span> <span class="fn">generate</span>(<span class="tp">Long</span> videoId, <span class="tp">int</span> count, <span class="tp">List&lt;Integer&gt;</span> timestamps)
+
+    <span class="cm">// creator apna custom thumbnail upload kar sakta hai</span>
+    <span class="tp">String</span> <span class="fn">uploadCustomThumbnail</span>(<span class="tp">Long</span> videoId, <span class="tp">MultipartFile</span> image, <span class="tp">CropParams</span> cropParams)
+
+    <span class="cm">// generated thumbnails mein se ek ko primary set karo</span>
+    <span class="tp">void</span> <span class="fn">setPrimaryThumbnail</span>(<span class="tp">Long</span> videoId, <span class="tp">String</span> thumbnailUrl)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>StreamingService</h3>
             <p class="svc-desc">Viewer ko nearest CDN server se video deliver karta hai &mdash; HLS/DASH adaptive bitrate streaming ke saath</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> getManifest(ManifestRequest)</div>
-                <div class="method-return">Returns: <code>String</code></div>
-                <div class="params-title">Parameters (ManifestRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// konsa video stream karna hai</span></div>
-                <div class="param-row"><span class="param-name">resolution</span><span class="param-type">Resolution</span><span class="param-comment">// preferred quality (720P, 1080P etc.)</span></div>
-                <div class="param-row"><span class="param-name">format</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// HLS ya DASH (default HLS)</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> generateSignedUrl(SignedUrlRequest)</div>
-                <div class="method-return">Returns: <code>String</code></div>
-                <div class="params-title">Parameters (SignedUrlRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// video ID jiska signed URL chahiye</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// user ID for access validation</span></div>
-                <div class="param-row"><span class="param-name">expiryMinutes</span><span class="param-type">int</span><span class="param-comment">// kitne minutes mein URL expire hoga</span></div>
-                <div class="param-row"><span class="param-name">ipRestriction</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// specific IP pe lock karo (hotlink protection)</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> selectAdaptiveQuality(AdaptiveQualityRequest)</div>
-                <div class="method-return">Returns: <code>Resolution</code></div>
-                <div class="params-title">Parameters (AdaptiveQualityRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// user ki bandwidth history ke liye</span></div>
-                <div class="param-row"><span class="param-name">bandwidthMbps</span><span class="param-type">double</span><span class="param-comment">// current measured bandwidth in Mbps</span></div>
-                <div class="param-row"><span class="param-name">bufferHealth</span><span class="param-type">double</span><span class="param-opt">[Optional]</span><span class="param-comment">// buffer mein kitne seconds ka data hai</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">StreamingService</span> {
+
+    <span class="cm">// HLS/DASH manifest return karta hai video stream ke liye</span>
+    <span class="tp">String</span> <span class="fn">getManifest</span>(<span class="tp">Long</span> videoId, <span class="tp">Resolution</span> resolution, <span class="tp">String</span> format)
+
+    <span class="cm">// time-limited signed URL generate karta hai hotlink protection ke saath</span>
+    <span class="tp">String</span> <span class="fn">generateSignedUrl</span>(<span class="tp">Long</span> videoId, <span class="tp">Long</span> userId, <span class="tp">int</span> expiryMinutes, <span class="tp">String</span> ipRestriction)
+
+    <span class="cm">// bandwidth ke hisaab se best quality select karta hai</span>
+    <span class="tp">Resolution</span> <span class="fn">selectAdaptiveQuality</span>(<span class="tp">Long</span> userId, <span class="tp">double</span> bandwidthMbps, <span class="tp">double</span> bufferHealth)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>SearchService</h3>
             <p class="svc-desc">Elasticsearch pe full-text search karta hai &mdash; title, description, tags mein fuzzy matching ke saath</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> search(VideoSearchRequest)</div>
-                <div class="method-return">Returns: <code>Page&lt;Video&gt;</code></div>
-                <div class="params-title">Parameters (VideoSearchRequest):</div>
-                <div class="param-row"><span class="param-name">query</span><span class="param-type">String</span><span class="param-comment">// search keyword ya phrase</span></div>
-                <div class="param-row"><span class="param-name">filters</span><span class="param-type">SearchFilters</span><span class="param-opt">[Optional]</span><span class="param-comment">// category, duration range, upload date</span></div>
-                <div class="param-row"><span class="param-name">page</span><span class="param-type">int</span><span class="param-comment">// page number (0-indexed)</span></div>
-                <div class="param-row"><span class="param-name">size</span><span class="param-type">int</span><span class="param-comment">// results per page (default 20)</span></div>
-                <div class="param-row"><span class="param-name">sortBy</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// relevance, date, viewCount</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> autoSuggest(AutoSuggestRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;String&gt;</code></div>
-                <div class="params-title">Parameters (AutoSuggestRequest):</div>
-                <div class="param-row"><span class="param-name">prefix</span><span class="param-type">String</span><span class="param-comment">// user ne abhi tak kya type kiya hai</span></div>
-                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span><span class="param-opt">[Optional]</span><span class="param-comment">// max suggestions (default 10)</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// personalized suggestions user history se</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> indexVideo(IndexVideoRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (IndexVideoRequest):</div>
-                <div class="param-row"><span class="param-name">video</span><span class="param-type">Video</span><span class="param-comment">// video entity jo Elasticsearch index mein add/update karna hai</span></div>
-                <div class="param-row"><span class="param-name">operation</span><span class="param-type">String</span><span class="param-comment">// INDEX ya DELETE</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SearchService</span> {
+
+    <span class="cm">// fulltext search with filters aur pagination</span>
+    <span class="tp">Page&lt;Video&gt;</span> <span class="fn">search</span>(<span class="tp">String</span> query, <span class="tp">SearchFilters</span> filters, <span class="tp">int</span> page, <span class="tp">int</span> size, <span class="tp">String</span> sortBy)
+
+    <span class="cm">// type karte waqt autocomplete suggestions deta hai</span>
+    <span class="tp">List&lt;String&gt;</span> <span class="fn">autoSuggest</span>(<span class="tp">String</span> prefix, <span class="tp">int</span> limit, <span class="tp">Long</span> userId)
+
+    <span class="cm">// video ko Elasticsearch index mein add ya delete karta hai</span>
+    <span class="tp">void</span> <span class="fn">indexVideo</span>(<span class="tp">Video</span> video, <span class="tp">String</span> operation)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>ViewCountService</h3>
             <p class="svc-desc">Redis mein fast atomic counter se views count karta hai &mdash; har 30 second mein DB mein flush karta hai (eventually consistent)</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> recordView(RecordViewRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (RecordViewRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// kis video ka view count badhaana hai</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// duplicate view detection ke liye</span></div>
-                <div class="param-row"><span class="param-name">ipAddress</span><span class="param-type">String</span><span class="param-comment">// bot detection &amp; deduplication ke liye</span></div>
-                <div class="param-row"><span class="param-name">watchDuration</span><span class="param-type">int</span><span class="param-comment">// kitne seconds dekha (30s minimum for valid view)</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getViewCount(ViewCountRequest)</div>
-                <div class="method-return">Returns: <code>long</code></div>
-                <div class="params-title">Parameters (ViewCountRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// video ID jiska view count chahiye</span></div>
-                <div class="param-row"><span class="param-name">useCache</span><span class="param-type">boolean</span><span class="param-opt">[Optional]</span><span class="param-comment">// Redis se fast read ya DB se accurate (default true = Redis)</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> flushToDatabase(FlushRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (FlushRequest):</div>
-                <div class="param-row"><span class="param-name">batchSize</span><span class="param-type">int</span><span class="param-opt">[Optional]</span><span class="param-comment">// ek batch mein kitne videos flush karne hain (default 1000)</span></div>
-                <div class="param-row"><span class="param-name">forceFlush</span><span class="param-type">boolean</span><span class="param-opt">[Optional]</span><span class="param-comment">// immediate flush chahiye ya scheduled (30s interval)</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ViewCountService</span> {
+
+    <span class="cm">// view count badhata hai with deduplication check</span>
+    <span class="tp">void</span> <span class="fn">recordView</span>(<span class="tp">Long</span> videoId, <span class="tp">Long</span> userId, <span class="tp">String</span> ipAddress, <span class="tp">int</span> watchDuration)
+
+    <span class="cm">// Redis ya DB se view count fetch karta hai</span>
+    <span class="tp">long</span> <span class="fn">getViewCount</span>(<span class="tp">Long</span> videoId, <span class="tp">boolean</span> useCache)
+
+    <span class="cm">// Redis ke buffered counts ko batch mein DB mein flush karta hai</span>
+    <span class="tp">void</span> <span class="fn">flushToDatabase</span>(<span class="tp">int</span> batchSize, <span class="tp">boolean</span> forceFlush)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>ModerationService</h3>
             <p class="svc-desc">AI se NSFW &amp; copyright check karta hai &mdash; user reports handle karta hai aur manual review support karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> moderate(ModerationRequest)</div>
-                <div class="method-return">Returns: <code>ModerationResult</code></div>
-                <div class="params-title">Parameters (ModerationRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// video ID jisko moderate karna hai</span></div>
-                <div class="param-row"><span class="param-name">checkTypes</span><span class="param-type">List&lt;String&gt;</span><span class="param-opt">[Optional]</span><span class="param-comment">// NSFW, COPYRIGHT, VIOLENCE, SPAM</span></div>
-                <div class="param-row"><span class="param-name">strictMode</span><span class="param-type">boolean</span><span class="param-opt">[Optional]</span><span class="param-comment">// strict mode mein low confidence bhi block hota hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> flagVideo(FlagVideoRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (FlagVideoRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// kaunsa video report ho raha hai</span></div>
-                <div class="param-row"><span class="param-name">reportedBy</span><span class="param-type">Long</span><span class="param-comment">// report karne wale user ka ID</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-comment">// kyun report kiya &mdash; NSFW, spam, copyright etc.</span></div>
-                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// detail mein batao kya issue hai</span></div>
-                <div class="param-row"><span class="param-name">timestamp</span><span class="param-type">int</span><span class="param-opt">[Optional]</span><span class="param-comment">// video mein kaunse second pe violation hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> reviewFlaggedVideo(ReviewRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (ReviewRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// flagged video ka ID</span></div>
-                <div class="param-row"><span class="param-name">decision</span><span class="param-type">ModerationDecision</span><span class="param-comment">// APPROVE, REJECT, AGE_RESTRICT</span></div>
-                <div class="param-row"><span class="param-name">reviewerId</span><span class="param-type">Long</span><span class="param-comment">// admin/moderator ka ID jo review kar raha hai</span></div>
-                <div class="param-row"><span class="param-name">notes</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// moderator ke internal notes</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ModerationService</span> {
+
+    <span class="cm">// AI se NSFW, copyright, violence check karta hai</span>
+    <span class="tp">ModerationResult</span> <span class="fn">moderate</span>(<span class="tp">Long</span> videoId, <span class="tp">List&lt;String&gt;</span> checkTypes, <span class="tp">boolean</span> strictMode)
+
+    <span class="cm">// user video report karta hai with reason aur timestamp</span>
+    <span class="tp">void</span> <span class="fn">flagVideo</span>(<span class="tp">Long</span> videoId, <span class="tp">Long</span> reportedBy, <span class="tp">String</span> reason, <span class="tp">String</span> description, <span class="tp">int</span> timestamp)
+
+    <span class="cm">// moderator flagged video ka decision deta hai</span>
+    <span class="tp">void</span> <span class="fn">reviewFlaggedVideo</span>(<span class="tp">Long</span> videoId, <span class="tp">ModerationDecision</span> decision, <span class="tp">Long</span> reviewerId, <span class="tp">String</span> notes)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>RecommendationService</h3>
             <p class="svc-desc">User ki watch history aur preferences se personalized video suggestions deta hai &mdash; trending aur similar videos bhi</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> getRecommendations(RecommendationRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;Video&gt;</code></div>
-                <div class="params-title">Parameters (RecommendationRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// kis user ke liye recommendations generate karni hain</span></div>
-                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span><span class="param-opt">[Optional]</span><span class="param-comment">// kitne videos recommend karne hain (default 20)</span></div>
-                <div class="param-row"><span class="param-name">excludeWatched</span><span class="param-type">boolean</span><span class="param-opt">[Optional]</span><span class="param-comment">// already dekhe hue videos hatao (default true)</span></div>
-                <div class="param-row"><span class="param-name">category</span><span class="param-type">Category</span><span class="param-opt">[Optional]</span><span class="param-comment">// specific category filter lagao</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getTrending(TrendingRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;Video&gt;</code></div>
-                <div class="params-title">Parameters (TrendingRequest):</div>
-                <div class="param-row"><span class="param-name">region</span><span class="param-type">String</span><span class="param-comment">// konse region ke trending videos (IN, US, UK etc.)</span></div>
-                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span><span class="param-comment">// kitne trending videos chahiye</span></div>
-                <div class="param-row"><span class="param-name">timeWindow</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// 1h, 24h, 7d &mdash; kaunsa time period (default 24h)</span></div>
-                <div class="param-row"><span class="param-name">category</span><span class="param-type">Category</span><span class="param-opt">[Optional]</span><span class="param-comment">// category wise trending</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getSimilar(SimilarVideosRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;Video&gt;</code></div>
-                <div class="params-title">Parameters (SimilarVideosRequest):</div>
-                <div class="param-row"><span class="param-name">videoId</span><span class="param-type">Long</span><span class="param-comment">// current video ke similar videos dhundho</span></div>
-                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span><span class="param-comment">// kitne similar videos chahiye</span></div>
-                <div class="param-row"><span class="param-name">sameChannel</span><span class="param-type">boolean</span><span class="param-opt">[Optional]</span><span class="param-comment">// same channel ke videos bhi include karo ya nahi</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RecommendationService</span> {
+
+    <span class="cm">// user ke liye personalized video recommendations deta hai</span>
+    <span class="tp">List&lt;Video&gt;</span> <span class="fn">getRecommendations</span>(<span class="tp">Long</span> userId, <span class="tp">int</span> limit, <span class="tp">boolean</span> excludeWatched, <span class="tp">Category</span> category)
+
+    <span class="cm">// region wise trending videos fetch karta hai</span>
+    <span class="tp">List&lt;Video&gt;</span> <span class="fn">getTrending</span>(<span class="tp">String</span> region, <span class="tp">int</span> limit, <span class="tp">String</span> timeWindow, <span class="tp">Category</span> category)
+
+    <span class="cm">// current video ke similar videos dhundhta hai</span>
+    <span class="tp">List&lt;Video&gt;</span> <span class="fn">getSimilar</span>(<span class="tp">Long</span> videoId, <span class="tp">int</span> limit, <span class="tp">boolean</span> sameChannel)
+}
+</pre></div>
         </div>
     </div>
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">TranscodingPipeline.java — Processing Pipeline</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span>
@@ -484,7 +338,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>ITranscoder implementations for H264, H265, VP9 — swap codecs without changing pipeline</p></div>
         <div class="pattern-card"><h3>Observer</h3><p>VideoUploadEvent triggers transcoding, thumbnail generation, moderation in parallel</p></div>
@@ -496,7 +350,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">Creator uploads video via chunked multipart to S3</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">Upload service creates Video record (status=UPLOADING)</span></div>
@@ -514,7 +368,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
     <div class="cap-grid">
         <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">100M</div></div>
         <div class="cap-card"><div class="cap-label">Videos Uploaded / Day</div><div class="cap-value">500K</div></div>
@@ -539,7 +393,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Transcoding CPU Bottleneck</h3><p>GPU-accelerated workers (NVENC); auto-scale K8s pods by queue depth; priority queue for popular creators</p></div>
         <div class="bottleneck-card"><h3>Storage Cost Explosion</h3><p>Tiered storage: hot (SSD) for recent, warm (S3 IA) for old, cold (Glacier) for archive. Delete unpopular variants</p></div>
@@ -551,7 +405,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Transcode Failure</h3><p>Retry failed variant 3×; if still fails, mark video as PARTIALLY_READY with available resolutions</p></div>
         <div class="edge-card"><h3>Corrupt Upload</h3><p>Validate video header/codec on upload; checksum verification; reject unsupported formats early</p></div>
@@ -563,7 +417,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>Signed URLs</h3><p>Time-limited signed URLs for stream access; prevent hotlinking; rotate signing keys</p></div>
         <div class="security-card"><h3>DRM Protection</h3><p>Widevine/FairPlay for premium content; encrypted HLS segments; license server</p></div>
@@ -575,7 +429,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Upload</strong><br>Chunked resumable upload to S3; TUS protocol for reliability</div>
         <div class="summary-card"><strong>Transcoding</strong><br>Kafka fan-out to FFmpeg workers; 4 resolutions × H264; GPU acceleration</div>

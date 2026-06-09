@@ -87,351 +87,207 @@ export default {
     <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
 
-        <!-- ========== FOOD SERVICE ========== -->
         <div class="service-card">
             <h3>FoodService</h3>
             <p class="svc-desc">Food items ka CRUD &mdash; restaurant apne menu me items add, update, delete aur search kar sakta hai. Ye sabse core service hai food delivery app ki.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">FoodService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> createFood(FoodRequest)</div>
-                <div class="method-return">Returns: <code>FoodItem</code></div>
-                <div class="params-title">Parameters (FoodRequest):</div>
-                <div class="param-row"><span class="param-name">restaurantId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">foodName</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">categoryId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">price</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">discountPrice</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">quantityAvailable</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">imageUrl</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">isVeg</span><span class="param-type">Boolean</span></div>
-                <div class="param-row"><span class="param-name">isAvailable</span><span class="param-type">Boolean</span></div>
-                <div class="param-row"><span class="param-name">preparationTime</span><span class="param-type">Integer</span><span class="param-comment">// minutes</span></div>
-                <div class="param-row"><span class="param-name">ingredients</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">tags</span><span class="param-type">String</span><span class="param-comment">// spicy, fast food etc</span></div>
-            </div>
+    <span class="cm">// naya food item create karo restaurant ke menu me</span>
+    <span class="tp">FoodItem</span> <span class="fn">createFood</span>(<span class="tp">Long</span> restaurantId, <span class="tp">String</span> name,
+        <span class="tp">String</span> desc, <span class="tp">Long</span> categoryId, <span class="tp">BigDecimal</span> price,
+        <span class="tp">BigDecimal</span> discountPrice, <span class="tp">Integer</span> qty,
+        <span class="tp">String</span> imageUrl, <span class="tp">Boolean</span> isVeg,
+        <span class="tp">Integer</span> prepTime, <span class="tp">String</span> tags)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> updateFood(UpdateFoodRequest)</div>
-                <div class="method-return">Returns: <code>FoodItem</code></div>
-                <div class="params-title">Parameters (UpdateFoodRequest):</div>
-                <div class="param-row"><span class="param-name">foodId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">foodName</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">categoryId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">price</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">discountPrice</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">quantityAvailable</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">imageUrl</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">isVeg</span><span class="param-type">Boolean</span></div>
-                <div class="param-row"><span class="param-name">isAvailable</span><span class="param-type">Boolean</span></div>
-                <div class="param-row"><span class="param-name">preparationTime</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">ingredients</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">tags</span><span class="param-type">String</span></div>
-            </div>
+    <span class="cm">// existing food item update karo (partial update allowed)</span>
+    <span class="tp">FoodItem</span> <span class="fn">updateFood</span>(<span class="tp">Long</span> foodId, <span class="tp">String</span> name,
+        <span class="tp">BigDecimal</span> price, <span class="tp">Boolean</span> isVeg,
+        <span class="tp">Boolean</span> isAvailable, <span class="tp">Integer</span> qty)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> deleteFood(foodId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">foodId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// food item soft delete karo</span>
+    <span class="kw">void</span> <span class="fn">deleteFood</span>(<span class="tp">Long</span> foodId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> searchFood(SearchFoodRequest)</div>
-                <div class="method-return">Returns: <code>Page&lt;FoodItem&gt;</code></div>
-                <div class="params-title">Parameters (SearchFoodRequest):</div>
-                <div class="param-row"><span class="param-name">keyword</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">categoryId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">restaurantId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">minPrice</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">maxPrice</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">isVeg</span><span class="param-type">Boolean</span></div>
-                <div class="param-row"><span class="param-name">sortBy</span><span class="param-type">String</span><span class="param-comment">// price_asc, rating, popularity</span></div>
-                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
-            </div>
+    <span class="cm">// search with filters — name, category, veg, price range</span>
+    <span class="tp">Page&lt;FoodItem&gt;</span> <span class="fn">searchFood</span>(<span class="tp">String</span> keyword,
+        <span class="tp">Long</span> categoryId, <span class="tp">Long</span> restaurantId,
+        <span class="tp">BigDecimal</span> minPrice, <span class="tp">BigDecimal</span> maxPrice,
+        <span class="tp">Boolean</span> isVeg, <span class="tp">String</span> sortBy, <span class="tp">Pageable</span> page)
+}
+</pre></div>
         </div>
 
-        <!-- ========== RESTAURANT SERVICE ========== -->
         <div class="service-card">
             <h3>RestaurantService</h3>
             <p class="svc-desc">Restaurant register, update, nearby search aur open/close toggle. Geospatial query se user ke paas ke restaurants dikhate hain.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RestaurantService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> registerRestaurant(RestaurantRequest)</div>
-                <div class="method-return">Returns: <code>Restaurant</code></div>
-                <div class="params-title">Parameters (RestaurantRequest):</div>
-                <div class="param-row"><span class="param-name">name</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">ownerId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">address</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">latitude</span><span class="param-type">Double</span></div>
-                <div class="param-row"><span class="param-name">longitude</span><span class="param-type">Double</span></div>
-                <div class="param-row"><span class="param-name">cuisineType</span><span class="param-type">String</span><span class="param-comment">// north indian, chinese etc</span></div>
-                <div class="param-row"><span class="param-name">openingTime</span><span class="param-type">LocalTime</span></div>
-                <div class="param-row"><span class="param-name">closingTime</span><span class="param-type">LocalTime</span></div>
-                <div class="param-row"><span class="param-name">minOrderAmount</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">imageUrl</span><span class="param-type">String</span></div>
-            </div>
+    <span class="cm">// naya restaurant register karo with location</span>
+    <span class="tp">Restaurant</span> <span class="fn">registerRestaurant</span>(<span class="tp">String</span> name,
+        <span class="tp">Long</span> ownerId, <span class="tp">String</span> address,
+        <span class="tp">Double</span> lat, <span class="tp">Double</span> lng,
+        <span class="tp">String</span> cuisineType, <span class="tp">LocalTime</span> openTime,
+        <span class="tp">LocalTime</span> closeTime, <span class="tp">BigDecimal</span> minOrder)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> updateRestaurant(UpdateRestaurantRequest)</div>
-                <div class="method-return">Returns: <code>Restaurant</code></div>
-                <div class="params-title">Parameters (UpdateRestaurantRequest):</div>
-                <div class="param-row"><span class="param-name">restaurantId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">name</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">address</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">cuisineType</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">openingTime</span><span class="param-type">LocalTime</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">closingTime</span><span class="param-type">LocalTime</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">minOrderAmount</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// restaurant details update karo (partial allowed)</span>
+    <span class="tp">Restaurant</span> <span class="fn">updateRestaurant</span>(<span class="tp">Long</span> restaurantId,
+        <span class="tp">String</span> name, <span class="tp">String</span> address,
+        <span class="tp">String</span> cuisineType, <span class="tp">BigDecimal</span> minOrder)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> searchNearby(NearbySearchRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;Restaurant&gt;</code></div>
-                <div class="params-title">Parameters (NearbySearchRequest):</div>
-                <div class="param-row"><span class="param-name">latitude</span><span class="param-type">Double</span></div>
-                <div class="param-row"><span class="param-name">longitude</span><span class="param-type">Double</span></div>
-                <div class="param-row"><span class="param-name">radiusKm</span><span class="param-type">Double</span><span class="param-comment">// default 5km</span></div>
-                <div class="param-row"><span class="param-name">cuisineType</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">sortBy</span><span class="param-type">String</span><span class="param-comment">// rating, distance, delivery_time</span></div>
-            </div>
+    <span class="cm">// nearby restaurants find karo — geospatial query</span>
+    <span class="tp">List&lt;Restaurant&gt;</span> <span class="fn">searchNearby</span>(<span class="tp">Double</span> lat,
+        <span class="tp">Double</span> lng, <span class="tp">Double</span> radiusKm,
+        <span class="tp">String</span> cuisineType, <span class="tp">String</span> sortBy)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> toggleOpenClose(restaurantId, isOpen)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">restaurantId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">isOpen</span><span class="param-type">Boolean</span></div>
-            </div>
+    <span class="cm">// restaurant open/close toggle karo</span>
+    <span class="kw">void</span> <span class="fn">toggleOpenClose</span>(<span class="tp">Long</span> restaurantId,
+        <span class="tp">Boolean</span> isOpen)
+}
+</pre></div>
         </div>
 
-        <!-- ========== CART SERVICE ========== -->
         <div class="service-card">
             <h3>CartService</h3>
-            <p class="svc-desc">User ka cart manage karo &mdash; Redis me store hota hai (fast access). Ek time pe sirf ek restaurant ka cart allowed, dusre restaurant ka item add karne pe purana clear hoga.</p>
+            <p class="svc-desc">User ka cart manage karo &mdash; Redis me store hota hai. Ek time pe sirf ek restaurant ka cart, dusre restaurant ka item add pe purana clear.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">CartService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> addToCart(AddToCartRequest)</div>
-                <div class="method-return">Returns: <code>Cart</code></div>
-                <div class="params-title">Parameters (AddToCartRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">foodItemId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">specialInstructions</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// extra spicy, no onion</span></div>
-            </div>
+    <span class="cm">// cart me item add karo (diff restaurant = clear old)</span>
+    <span class="tp">Cart</span> <span class="fn">addToCart</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> foodItemId,
+        <span class="tp">Integer</span> quantity, <span class="tp">String</span> specialInstructions)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> removeFromCart(userId, foodItemId)</div>
-                <div class="method-return">Returns: <code>Cart</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">foodItemId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// cart se item hatao</span>
+    <span class="tp">Cart</span> <span class="fn">removeFromCart</span>(<span class="tp">Long</span> userId,
+        <span class="tp">Long</span> foodItemId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getCart(userId)</div>
-                <div class="method-return">Returns: <code>Cart</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// user ka current cart return karo</span>
+    <span class="tp">Cart</span> <span class="fn">getCart</span>(<span class="tp">Long</span> userId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> clearCart(userId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// poora cart clear karo</span>
+    <span class="kw">void</span> <span class="fn">clearCart</span>(<span class="tp">Long</span> userId)
+}
+</pre></div>
         </div>
 
-        <!-- ========== ORDER SERVICE ========== -->
         <div class="service-card">
             <h3>OrderService</h3>
-            <p class="svc-desc">Order place, cancel, status update aur history. Saga pattern se payment + inventory + delivery partner sab coordinate hota hai. Cancel sirf PLACED/ACCEPTED me allowed.</p>
+            <p class="svc-desc">Order place, cancel, status update aur history. Saga pattern se payment + inventory + delivery coordinate hota hai. Cancel sirf PLACED/ACCEPTED me allowed.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">OrderService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> placeOrder(PlaceOrderRequest)</div>
-                <div class="method-return">Returns: <code>Order</code></div>
-                <div class="params-title">Parameters (PlaceOrderRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">restaurantId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">items</span><span class="param-type">List&lt;OrderItemRequest&gt;</span><span class="param-comment">// [{foodItemId, qty}]</span></div>
-                <div class="param-row"><span class="param-name">addressId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">paymentMode</span><span class="param-type">PaymentMode</span><span class="param-comment">// UPI, CARD, COD</span></div>
-                <div class="param-row"><span class="param-name">couponCode</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// order place karo — cart items + address + payment</span>
+    <span class="tp">Order</span> <span class="fn">placeOrder</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> restaurantId,
+        <span class="tp">List&lt;OrderItemRequest&gt;</span> items,
+        <span class="tp">Long</span> addressId, <span class="tp">PaymentMode</span> paymentMode,
+        <span class="tp">String</span> couponCode)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getOrder(orderId)</div>
-                <div class="method-return">Returns: <code>Order</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-            </div>
+    <span class="cm">// order details fetch karo by id</span>
+    <span class="tp">Order</span> <span class="fn">getOrder</span>(<span class="tp">String</span> orderId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> cancelOrder(CancelOrderRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (CancelOrderRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// order cancel karo (sirf PLACED/ACCEPTED me)</span>
+    <span class="kw">void</span> <span class="fn">cancelOrder</span>(<span class="tp">String</span> orderId,
+        <span class="tp">Long</span> userId, <span class="tp">String</span> reason)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> updateOrderStatus(StatusUpdateRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (StatusUpdateRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">status</span><span class="param-type">OrderStatus</span><span class="param-comment">// ACCEPTED, PREPARING, READY etc</span></div>
-            </div>
+    <span class="cm">// order status update — ACCEPTED, PREPARING, READY etc</span>
+    <span class="kw">void</span> <span class="fn">updateOrderStatus</span>(<span class="tp">String</span> orderId,
+        <span class="tp">OrderStatus</span> status)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">5</span> getUserOrders(userId, pageable)</div>
-                <div class="method-return">Returns: <code>Page&lt;Order&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
-            </div>
+    <span class="cm">// user ki order history with pagination</span>
+    <span class="tp">Page&lt;Order&gt;</span> <span class="fn">getUserOrders</span>(<span class="tp">Long</span> userId,
+        <span class="tp">Pageable</span> page)
+}
+</pre></div>
         </div>
 
-        <!-- ========== DELIVERY SERVICE ========== -->
         <div class="service-card">
             <h3>DeliveryService</h3>
-            <p class="svc-desc">Delivery partner assign karo (nearest available), live location update karo Redis me, order track karo aur delivered mark karo. Location har 5 sec update hoti hai.</p>
+            <p class="svc-desc">Delivery partner assign (nearest available), live location update Redis me, order track aur delivered mark. Location har 5 sec update hoti hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">DeliveryService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> assignPartner(AssignPartnerRequest)</div>
-                <div class="method-return">Returns: <code>DeliveryPartner</code></div>
-                <div class="params-title">Parameters (AssignPartnerRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">restaurantLat</span><span class="param-type">Double</span></div>
-                <div class="param-row"><span class="param-name">restaurantLng</span><span class="param-type">Double</span></div>
-                <div class="param-row"><span class="param-name">radiusKm</span><span class="param-type">Double</span><span class="param-comment">// default 5km, retry 8km, 12km</span></div>
-            </div>
+    <span class="cm">// nearest available partner assign karo</span>
+    <span class="tp">DeliveryPartner</span> <span class="fn">assignPartner</span>(<span class="tp">String</span> orderId,
+        <span class="tp">Double</span> restaurantLat, <span class="tp">Double</span> restaurantLng,
+        <span class="tp">Double</span> radiusKm)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> updateLocation(LocationUpdateRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (LocationUpdateRequest):</div>
-                <div class="param-row"><span class="param-name">partnerId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">latitude</span><span class="param-type">Double</span></div>
-                <div class="param-row"><span class="param-name">longitude</span><span class="param-type">Double</span></div>
-            </div>
+    <span class="cm">// partner ki live location update karo (Redis)</span>
+    <span class="kw">void</span> <span class="fn">updateLocation</span>(<span class="tp">Long</span> partnerId,
+        <span class="tp">Double</span> lat, <span class="tp">Double</span> lng)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> trackOrder(orderId)</div>
-                <div class="method-return">Returns: <code>DeliveryTracking</code> <span class="param-comment">// partner location + ETA + status</span></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-            </div>
+    <span class="cm">// order track karo — partner location + ETA + status</span>
+    <span class="tp">DeliveryTracking</span> <span class="fn">trackOrder</span>(<span class="tp">String</span> orderId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> markDelivered(DeliveryCompleteRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (DeliveryCompleteRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">partnerId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">deliveryOtp</span><span class="param-type">String</span><span class="param-comment">// customer verify karega</span></div>
-            </div>
+    <span class="cm">// delivery complete mark karo with OTP verify</span>
+    <span class="kw">void</span> <span class="fn">markDelivered</span>(<span class="tp">String</span> orderId,
+        <span class="tp">Long</span> partnerId, <span class="tp">String</span> deliveryOtp)
+}
+</pre></div>
         </div>
 
-        <!-- ========== PAYMENT SERVICE ========== -->
         <div class="service-card">
             <h3>PaymentService</h3>
-            <p class="svc-desc">Payment process karo (UPI/Card/Wallet/COD), verify karo aur cancel pe refund karo. Idempotency key se double payment nahi hoga.</p>
+            <p class="svc-desc">Payment process (UPI/Card/COD), verify aur cancel pe refund. Idempotency key se double payment nahi hoga.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">PaymentService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> processPayment(PaymentRequest)</div>
-                <div class="method-return">Returns: <code>PaymentResponse</code></div>
-                <div class="params-title">Parameters (PaymentRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">paymentMode</span><span class="param-type">PaymentMode</span><span class="param-comment">// UPI, CARD, COD</span></div>
-                <div class="param-row"><span class="param-name">idempotencyKey</span><span class="param-type">String</span><span class="param-comment">// duplicate payment block</span></div>
-            </div>
+    <span class="cm">// payment process karo with idempotency key</span>
+    <span class="tp">PaymentResponse</span> <span class="fn">processPayment</span>(<span class="tp">String</span> orderId,
+        <span class="tp">BigDecimal</span> amount, <span class="tp">PaymentMode</span> mode,
+        <span class="tp">String</span> idempotencyKey)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> verifyPayment(paymentId)</div>
-                <div class="method-return">Returns: <code>PaymentStatus</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">paymentId</span><span class="param-type">String</span></div>
-            </div>
+    <span class="cm">// payment status verify karo</span>
+    <span class="tp">PaymentStatus</span> <span class="fn">verifyPayment</span>(<span class="tp">String</span> paymentId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> processRefund(RefundRequest)</div>
-                <div class="method-return">Returns: <code>RefundResponse</code></div>
-                <div class="params-title">Parameters (RefundRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span></div>
-            </div>
+    <span class="cm">// order cancel pe refund process karo</span>
+    <span class="tp">RefundResponse</span> <span class="fn">processRefund</span>(<span class="tp">String</span> orderId,
+        <span class="tp">BigDecimal</span> amount, <span class="tp">String</span> reason)
+}
+</pre></div>
         </div>
 
-        <!-- ========== COUPON SERVICE ========== -->
         <div class="service-card">
             <h3>CouponService</h3>
-            <p class="svc-desc">Coupon validate karo (active? expired? min order?), discount calculate karo (% ya flat), aur use count track karo. Har coupon ki usage limit hoti hai.</p>
+            <p class="svc-desc">Coupon validate (active? expired? min order?), discount calculate (% ya flat), aur use count track. Har coupon ki usage limit hoti hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">CouponService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> validateCoupon(ValidateCouponRequest)</div>
-                <div class="method-return">Returns: <code>CouponValidationResult</code></div>
-                <div class="params-title">Parameters (ValidateCouponRequest):</div>
-                <div class="param-row"><span class="param-name">couponCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">orderAmount</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// check if already used by this user</span></div>
-            </div>
+    <span class="cm">// coupon valid hai ya nahi check karo</span>
+    <span class="tp">CouponValidationResult</span> <span class="fn">validateCoupon</span>(
+        <span class="tp">String</span> couponCode, <span class="tp">BigDecimal</span> orderAmount,
+        <span class="tp">Long</span> userId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> calculateDiscount(couponCode, orderAmount)</div>
-                <div class="method-return">Returns: <code>BigDecimal</code> <span class="param-comment">// final discount amount</span></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">couponCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">orderAmount</span><span class="param-type">BigDecimal</span></div>
-            </div>
+    <span class="cm">// discount amount calculate karo (% or flat)</span>
+    <span class="tp">BigDecimal</span> <span class="fn">calculateDiscount</span>(
+        <span class="tp">String</span> couponCode, <span class="tp">BigDecimal</span> orderAmount)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> markCouponUsed(couponId, userId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">couponId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// coupon used mark karo — usage count++ </span>
+    <span class="kw">void</span> <span class="fn">markCouponUsed</span>(<span class="tp">Long</span> couponId,
+        <span class="tp">Long</span> userId)
+}
+</pre></div>
         </div>
 
-        <!-- ========== REVIEW SERVICE ========== -->
         <div class="service-card">
             <h3>ReviewService</h3>
-            <p class="svc-desc">Order delivered hone ke baad hi review de sako. Review submit karne pe restaurant ki avg rating auto-update hoti hai (denormalized field).</p>
+            <p class="svc-desc">Order delivered hone ke baad hi review de sako. Review submit pe restaurant ki avg rating auto-update hoti hai (denormalized).</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ReviewService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> addReview(ReviewRequest)</div>
-                <div class="method-return">Returns: <code>Review</code></div>
-                <div class="params-title">Parameters (ReviewRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">restaurantId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">rating</span><span class="param-type">Integer</span><span class="param-comment">// 1 to 5</span></div>
-                <div class="param-row"><span class="param-name">comment</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">deliveryRating</span><span class="param-type">Integer</span><span class="param-comment">// 1 to 5, delivery partner ke liye</span></div>
-            </div>
+    <span class="cm">// review add karo — sirf delivered orders pe</span>
+    <span class="tp">Review</span> <span class="fn">addReview</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> orderId,
+        <span class="tp">Long</span> restaurantId, <span class="tp">Integer</span> rating,
+        <span class="tp">String</span> comment, <span class="tp">Integer</span> deliveryRating)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getReviews(restaurantId, pageable)</div>
-                <div class="method-return">Returns: <code>Page&lt;Review&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">restaurantId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
-            </div>
+    <span class="cm">// restaurant ke reviews fetch karo (paginated)</span>
+    <span class="tp">Page&lt;Review&gt;</span> <span class="fn">getReviews</span>(<span class="tp">Long</span> restaurantId,
+        <span class="tp">Pageable</span> page)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> updateRestaurantRating(restaurantId)</div>
-                <div class="method-return">Returns: <code>void</code> <span class="param-comment">// avg rating recalculate karke restaurant table update</span></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">restaurantId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// avg rating recalculate + restaurant table update</span>
+    <span class="kw">void</span> <span class="fn">updateRestaurantRating</span>(
+        <span class="tp">Long</span> restaurantId)
+}
+</pre></div>
         </div>
 
     </div>

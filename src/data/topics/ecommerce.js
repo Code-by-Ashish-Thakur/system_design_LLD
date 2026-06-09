@@ -33,38 +33,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">3</span>Class Design (JPA Entities)</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">Inventory.java &mdash; Optimistic Locking</span></div>
-    <pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"inventory"</span>, indexes = {
-    <span class="ann">@Index</span>(name = <span class="st">"idx_inv_product"</span>, columnList = <span class="st">"product_id, warehouse_id"</span>, unique = <span class="kw">true</span>)
-})
-<span class="kw">public class</span> <span class="tp">Inventory</span> {
-    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = <span class="tp">GenerationType</span>.IDENTITY)
-    <span class="kw">private</span> <span class="tp">Long</span> id;
-    <span class="kw">private</span> <span class="tp">Long</span> productId;
-    <span class="kw">private</span> <span class="tp">Long</span> warehouseId;
-    <span class="kw">private int</span> totalStock;
-    <span class="kw">private int</span> reserved;
-
-    <span class="ann">@Version</span>
-    <span class="kw">private</span> <span class="tp">Long</span> version; <span class="cm">// Optimistic locking prevents overselling</span>
-
-    <span class="kw">public int</span> <span class="fn">getAvailable</span>() { <span class="kw">return</span> totalStock - reserved; }
-
-    <span class="kw">public void</span> <span class="fn">reserve</span>(<span class="kw">int</span> qty) {
-        <span class="kw">if</span> (<span class="fn">getAvailable</span>() &lt; qty)
-            <span class="kw">throw new</span> <span class="tp">InsufficientStockException</span>(<span class="st">"Only "</span> + <span class="fn">getAvailable</span>() + <span class="st">" left"</span>);
-        <span class="kw">this</span>.reserved += qty;
-    }
-}
-    </pre></div>
-</div>
-
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -152,7 +122,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
     <div class="api-grid">
         <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/cart</div><div class="api-desc">Get current user's cart with price breakdown</div></div>
         <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/cart/items</div><div class="api-desc">Add item to cart (validates stock)</div></div>
@@ -168,263 +138,159 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>CartService</h3>
             <p class="svc-desc">Shopping cart manage karta hai &mdash; items add/remove, quantity update aur total recalculate karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> addItem(AddItemRequest)</div>
-                <div class="method-return">Returns: <code>Cart</code></div>
-                <div class="params-title">Parameters (AddItemRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// null for guest cart</span></div>
-                <div class="param-row"><span class="param-name">sessionId</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// guest user ke liye session</span></div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> updateQuantity(UpdateQuantityRequest)</div>
-                <div class="method-return">Returns: <code>Cart</code></div>
-                <div class="params-title">Parameters (UpdateQuantityRequest):</div>
-                <div class="param-row"><span class="param-name">cartId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">newQuantity</span><span class="param-type">int</span><span class="param-comment">// 0 means remove item</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> removeItem(RemoveItemRequest)</div>
-                <div class="method-return">Returns: <code>Cart</code></div>
-                <div class="params-title">Parameters (RemoveItemRequest):</div>
-                <div class="param-row"><span class="param-name">cartId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> getCart(GetCartRequest)</div>
-                <div class="method-return">Returns: <code>Cart</code></div>
-                <div class="params-title">Parameters (GetCartRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">sessionId</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// guest ke liye</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">5</span> applyCoupon(ApplyCouponRequest)</div>
-                <div class="method-return">Returns: <code>Cart</code></div>
-                <div class="params-title">Parameters (ApplyCouponRequest):</div>
-                <div class="param-row"><span class="param-name">cartId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">couponCode</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">6</span> removeCoupon(cartId)</div>
-                <div class="method-return">Returns: <code>Cart</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">cartId</span><span class="param-type">Long</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">7</span> mergeGuestCart(MergeCartRequest)</div>
-                <div class="method-return">Returns: <code>Cart</code></div>
-                <div class="params-title">Parameters (MergeCartRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// logged-in user</span></div>
-                <div class="param-row"><span class="param-name">sessionId</span><span class="param-type">String</span><span class="param-comment">// guest session to merge from</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">CartService</span> {
+
+    <span class="cm">// cart mein naya item add karta hai, guest ya logged-in dono ke liye</span>
+    <span class="tp">Cart</span> <span class="fn">addItem</span>(<span class="tp">Long</span> userId, <span class="tp">String</span> sessionId, <span class="tp">Long</span> productId, <span class="tp">int</span> quantity)
+
+    <span class="cm">// item ki quantity update karta hai, 0 means remove</span>
+    <span class="tp">Cart</span> <span class="fn">updateQuantity</span>(<span class="tp">Long</span> cartId, <span class="tp">Long</span> productId, <span class="tp">int</span> newQuantity)
+
+    <span class="cm">// cart se specific item remove karta hai</span>
+    <span class="tp">Cart</span> <span class="fn">removeItem</span>(<span class="tp">Long</span> cartId, <span class="tp">Long</span> productId)
+
+    <span class="cm">// user ya guest ka cart fetch karta hai</span>
+    <span class="tp">Cart</span> <span class="fn">getCart</span>(<span class="tp">Long</span> userId, <span class="tp">String</span> sessionId)
+
+    <span class="cm">// cart pe coupon code apply karta hai</span>
+    <span class="tp">Cart</span> <span class="fn">applyCoupon</span>(<span class="tp">Long</span> cartId, <span class="tp">String</span> couponCode)
+
+    <span class="cm">// applied coupon hata deta hai cart se</span>
+    <span class="tp">Cart</span> <span class="fn">removeCoupon</span>(<span class="tp">Long</span> cartId)
+
+    <span class="cm">// login pe guest cart ko user cart mein merge karta hai</span>
+    <span class="tp">Cart</span> <span class="fn">mergeGuestCart</span>(<span class="tp">Long</span> userId, <span class="tp">String</span> sessionId)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>InventoryService</h3>
             <p class="svc-desc">Stock manage karta hai &mdash; reserve on checkout, confirm on payment, release on cancel ya timeout (15 min)</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> reserve(ReserveStockRequest)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters (ReserveStockRequest):</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">warehouseId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// auto-pick nearest if null</span></div>
-                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">reservationId</span><span class="param-type">String</span><span class="param-comment">// unique id for this reservation (cartId/orderId)</span></div>
-                <div class="param-row"><span class="param-name">ttlMinutes</span><span class="param-type">int</span><span class="param-comment">// reservation expiry, default 15 min</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> confirm(reservationId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">reservationId</span><span class="param-type">String</span><span class="param-comment">// payment success ke baad stock permanently deduct</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> release(ReleaseStockRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (ReleaseStockRequest):</div>
-                <div class="param-row"><span class="param-name">reservationId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> getAvailable(productId)</div>
-                <div class="method-return">Returns: <code>int</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">5</span> isAvailable(StockCheckRequest)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters (StockCheckRequest):</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span><span class="param-comment">// check if this much stock available hai</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">InventoryService</span> {
+
+    <span class="cm">// stock reserve karta hai checkout pe, nearest warehouse auto-pick</span>
+    <span class="tp">boolean</span> <span class="fn">reserve</span>(<span class="tp">Long</span> productId, <span class="tp">Long</span> warehouseId, <span class="tp">int</span> quantity, <span class="tp">String</span> reservationId, <span class="tp">int</span> ttlMinutes)
+
+    <span class="cm">// payment success ke baad stock permanently deduct karta hai</span>
+    <span class="tp">void</span> <span class="fn">confirm</span>(<span class="tp">String</span> reservationId)
+
+    <span class="cm">// cancel ya timeout pe reserved stock wapas release karta hai</span>
+    <span class="tp">void</span> <span class="fn">release</span>(<span class="tp">String</span> reservationId, <span class="tp">Long</span> productId, <span class="tp">int</span> quantity)
+
+    <span class="cm">// product ka available stock return karta hai</span>
+    <span class="tp">int</span> <span class="fn">getAvailable</span>(<span class="tp">Long</span> productId)
+
+    <span class="cm">// check karta hai ki itna stock available hai ya nahi</span>
+    <span class="tp">boolean</span> <span class="fn">isAvailable</span>(<span class="tp">Long</span> productId, <span class="tp">int</span> quantity)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>PricingEngine</h3>
             <p class="svc-desc">Final price calculate karta hai &mdash; items ka subtotal, coupon discount apply, aur shipping state ke hisaab se tax lagata hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> calculate(PriceCalculateRequest)</div>
-                <div class="method-return">Returns: <code>PriceBreakdown</code></div>
-                <div class="params-title">Parameters (PriceCalculateRequest):</div>
-                <div class="param-row"><span class="param-name">cartId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">items</span><span class="param-type">List&lt;CartItem&gt;</span></div>
-                <div class="param-row"><span class="param-name">couponCode</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">shippingAddressId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// tax calculation ke liye</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> applyDiscount(ApplyDiscountRequest)</div>
-                <div class="method-return">Returns: <code>PriceBreakdown</code></div>
-                <div class="params-title">Parameters (ApplyDiscountRequest):</div>
-                <div class="param-row"><span class="param-name">priceBreakdown</span><span class="param-type">PriceBreakdown</span><span class="param-comment">// existing subtotal info</span></div>
-                <div class="param-row"><span class="param-name">coupon</span><span class="param-type">CouponResult</span><span class="param-comment">// validated coupon with discount value</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> calculateTax(TaxRequest)</div>
-                <div class="method-return">Returns: <code>BigDecimal</code></div>
-                <div class="params-title">Parameters (TaxRequest):</div>
-                <div class="param-row"><span class="param-name">subtotal</span><span class="param-type">BigDecimal</span><span class="param-comment">// discount ke baad ka amount</span></div>
-                <div class="param-row"><span class="param-name">state</span><span class="param-type">String</span><span class="param-comment">// shipping state for tax slab</span></div>
-                <div class="param-row"><span class="param-name">productCategory</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// GST category based tax</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">PricingEngine</span> {
+
+    <span class="cm">// cart ka full price breakdown calculate karta hai with coupon + tax</span>
+    <span class="tp">PriceBreakdown</span> <span class="fn">calculate</span>(<span class="tp">Long</span> cartId, <span class="tp">List&lt;CartItem&gt;</span> items, <span class="tp">String</span> couponCode, <span class="tp">Long</span> shippingAddressId)
+
+    <span class="cm">// validated coupon ka discount apply karta hai subtotal pe</span>
+    <span class="tp">PriceBreakdown</span> <span class="fn">applyDiscount</span>(<span class="tp">PriceBreakdown</span> priceBreakdown, <span class="tp">CouponResult</span> coupon)
+
+    <span class="cm">// shipping state ke hisaab se tax calculate karta hai</span>
+    <span class="tp">BigDecimal</span> <span class="fn">calculateTax</span>(<span class="tp">BigDecimal</span> subtotal, <span class="tp">String</span> state, <span class="tp">String</span> productCategory)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>CouponService</h3>
             <p class="svc-desc">Coupon code validate karta hai &mdash; expiry check, min order amount, usage limit aur per-user usage track karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> validate(ValidateCouponRequest)</div>
-                <div class="method-return">Returns: <code>CouponResult</code></div>
-                <div class="params-title">Parameters (ValidateCouponRequest):</div>
-                <div class="param-row"><span class="param-name">couponCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">cartId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// per-user usage check</span></div>
-                <div class="param-row"><span class="param-name">cartTotal</span><span class="param-type">BigDecimal</span><span class="param-comment">// min order amount check ke liye</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> isActive(couponCode)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">couponCode</span><span class="param-type">String</span><span class="param-comment">// expired ya limit crossed toh false</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> markUsed(MarkCouponUsedRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (MarkCouponUsedRequest):</div>
-                <div class="param-row"><span class="param-name">couponCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span><span class="param-comment">// tracking ke liye which order used it</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">CouponService</span> {
+
+    <span class="cm">// coupon validate karta hai - expiry, min amount, per-user usage check</span>
+    <span class="tp">CouponResult</span> <span class="fn">validate</span>(<span class="tp">String</span> couponCode, <span class="tp">Long</span> cartId, <span class="tp">Long</span> userId, <span class="tp">BigDecimal</span> cartTotal)
+
+    <span class="cm">// coupon active hai ya expired/limit crossed, check karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">isActive</span>(<span class="tp">String</span> couponCode)
+
+    <span class="cm">// order place hone pe coupon usage mark karta hai</span>
+    <span class="tp">void</span> <span class="fn">markUsed</span>(<span class="tp">String</span> couponCode, <span class="tp">Long</span> userId, <span class="tp">String</span> orderId)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>CheckoutService</h3>
             <p class="svc-desc">Pura checkout flow handle karta hai &mdash; stock reserve, order create, payment initiate, aur failure pe rollback (Saga pattern)</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> checkout(CheckoutRequest)</div>
-                <div class="method-return">Returns: <code>Order</code></div>
-                <div class="params-title">Parameters (CheckoutRequest):</div>
-                <div class="param-row"><span class="param-name">cartId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">shippingAddressId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">billingAddressId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// same as shipping if null</span></div>
-                <div class="param-row"><span class="param-name">paymentMethod</span><span class="param-type">PaymentMethod</span><span class="param-comment">// UPI, CARD, COD, WALLET</span></div>
-                <div class="param-row"><span class="param-name">deliverySlotId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">idempotencyKey</span><span class="param-type">String</span><span class="param-comment">// duplicate order prevent karta hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> validateStock(ValidateStockRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (ValidateStockRequest):</div>
-                <div class="param-row"><span class="param-name">cartId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">items</span><span class="param-type">List&lt;CartItem&gt;</span><span class="param-comment">// har item ka stock check before checkout</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> initiatePayment(PaymentInitRequest)</div>
-                <div class="method-return">Returns: <code>PaymentResult</code></div>
-                <div class="params-title">Parameters (PaymentInitRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">paymentMethod</span><span class="param-type">PaymentMethod</span></div>
-                <div class="param-row"><span class="param-name">idempotencyKey</span><span class="param-type">String</span><span class="param-comment">// duplicate payment prevent karta hai</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">CheckoutService</span> {
+
+    <span class="cm">// pura checkout flow - stock reserve, order create, payment initiate</span>
+    <span class="tp">Order</span> <span class="fn">checkout</span>(<span class="tp">Long</span> cartId, <span class="tp">Long</span> userId, <span class="tp">Long</span> shippingAddressId, <span class="tp">Long</span> billingAddressId, <span class="tp">PaymentMethod</span> paymentMethod, <span class="tp">Long</span> deliverySlotId, <span class="tp">String</span> idempotencyKey)
+
+    <span class="cm">// checkout se pehle har item ka stock validate karta hai</span>
+    <span class="tp">void</span> <span class="fn">validateStock</span>(<span class="tp">Long</span> cartId, <span class="tp">List&lt;CartItem&gt;</span> items)
+
+    <span class="cm">// payment gateway se payment initiate karta hai, duplicate prevent with idempotency</span>
+    <span class="tp">PaymentResult</span> <span class="fn">initiatePayment</span>(<span class="tp">String</span> orderId, <span class="tp">BigDecimal</span> amount, <span class="tp">PaymentMethod</span> paymentMethod, <span class="tp">String</span> idempotencyKey)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>OrderService</h3>
             <p class="svc-desc">Order create karta hai cart se aur lifecycle manage karta hai &mdash; placed, shipped, delivered, cancelled, returned</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> createOrder(CreateOrderRequest)</div>
-                <div class="method-return">Returns: <code>Order</code></div>
-                <div class="params-title">Parameters (CreateOrderRequest):</div>
-                <div class="param-row"><span class="param-name">cartId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">shippingAddressId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">priceBreakdown</span><span class="param-type">PriceBreakdown</span><span class="param-comment">// subtotal, discount, tax, total</span></div>
-                <div class="param-row"><span class="param-name">deliverySlotId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getOrder(orderId)</div>
-                <div class="method-return">Returns: <code>Order</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span><span class="param-comment">// UUID based order identifier</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> cancelOrder(CancelOrderRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (CancelOrderRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// ownership verify karta hai</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> updateStatus(UpdateStatusRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (UpdateStatusRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">newStatus</span><span class="param-type">OrderStatus</span><span class="param-comment">// PROCESSING, SHIPPED, DELIVERED etc</span></div>
-                <div class="param-row"><span class="param-name">updatedBy</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// admin/system identifier</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">OrderService</span> {
+
+    <span class="cm">// cart se naya order create karta hai with price breakdown</span>
+    <span class="tp">Order</span> <span class="fn">createOrder</span>(<span class="tp">Long</span> cartId, <span class="tp">Long</span> userId, <span class="tp">Long</span> shippingAddressId, <span class="tp">PriceBreakdown</span> priceBreakdown, <span class="tp">Long</span> deliverySlotId)
+
+    <span class="cm">// order details fetch karta hai UUID se</span>
+    <span class="tp">Order</span> <span class="fn">getOrder</span>(<span class="tp">String</span> orderId)
+
+    <span class="cm">// order cancel karta hai aur inventory release trigger karta hai</span>
+    <span class="tp">void</span> <span class="fn">cancelOrder</span>(<span class="tp">String</span> orderId, <span class="tp">Long</span> userId, <span class="tp">String</span> reason)
+
+    <span class="cm">// order status update karta hai - PROCESSING, SHIPPED, DELIVERED etc</span>
+    <span class="tp">void</span> <span class="fn">updateStatus</span>(<span class="tp">String</span> orderId, <span class="tp">OrderStatus</span> newStatus, <span class="tp">String</span> updatedBy)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>AbandonedCartService</h3>
             <p class="svc-desc">24+ ghante se inactive carts detect karta hai, reminder email bhejta hai aur expired reservations ka stock release karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> processAbandoned()</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">&mdash;</span><span class="param-type">none</span><span class="param-comment">// scheduled job, no input &mdash; picks carts with updatedAt &lt; 24h</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> sendReminder(SendReminderRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (SendReminderRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">cartId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">cartItems</span><span class="param-type">List&lt;CartItem&gt;</span><span class="param-comment">// email mein items dikhane ke liye</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> releaseExpiredReservations()</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">&mdash;</span><span class="param-type">none</span><span class="param-comment">// scheduled job &mdash; 15 min se zyada purani reservations release karta hai</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">AbandonedCartService</span> {
+
+    <span class="cm">// scheduled job - 24h se inactive carts detect aur process karta hai</span>
+    <span class="tp">void</span> <span class="fn">processAbandoned</span>()
+
+    <span class="cm">// abandoned cart ke user ko reminder email bhejta hai</span>
+    <span class="tp">void</span> <span class="fn">sendReminder</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> cartId, <span class="tp">String</span> email, <span class="tp">List&lt;CartItem&gt;</span> cartItems)
+
+    <span class="cm">// 15 min se zyada purani expired reservations release karta hai</span>
+    <span class="tp">void</span> <span class="fn">releaseExpiredReservations</span>()
+}
+</pre></div>
         </div>
     </div>
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">CheckoutService.java &mdash; Checkout Flow</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span> <span class="ann">@Transactional</span>
@@ -471,7 +337,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IPricingStrategy for discount types (percentage, flat, BOGO) &mdash; add new promotions without code changes</p></div>
         <div class="pattern-card"><h3>Builder</h3><p>Order.builder() constructs complex order from cart items, address, pricing, payment info</p></div>
@@ -483,7 +349,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">User adds items to cart &rarr; CartService validates stock availability</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">User applies coupon &rarr; CouponService validates &amp; calculates discount</span></div>
@@ -499,7 +365,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
     <div class="cap-grid">
         <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">10M</div></div>
         <div class="cap-card"><div class="cap-label">Carts Created / Day</div><div class="cap-value">5M</div></div>
@@ -523,7 +389,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Flash Sale Overselling</h3><p>Optimistic locking with @Version; Redis atomic DECR for hot products; queue-based ordering for extreme cases</p></div>
         <div class="bottleneck-card"><h3>Inventory Hot Row</h3><p>Shard inventory by warehouse; Redis cache for read-heavy stock checks; DB only for writes</p></div>
@@ -535,7 +401,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Price Changed During Checkout</h3><p>Lock price at cart add time; re-validate at checkout; show user if price changed</p></div>
         <div class="edge-card"><h3>Item Out of Stock at Checkout</h3><p>Re-validate all items before reserving; partial checkout option or remove unavailable items</p></div>
@@ -547,7 +413,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>Price Manipulation</h3><p>Server-side price calculation; never trust client-sent prices; validate at every step</p></div>
         <div class="security-card"><h3>Coupon Abuse</h3><p>Per-user usage limits; device fingerprinting; velocity checks on coupon redemption</p></div>
@@ -558,7 +424,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Inventory</strong><br>Optimistic locking (@Version); reserve on checkout, confirm on payment, release on failure/timeout</div>
         <div class="summary-card"><strong>Pricing</strong><br>Strategy pattern for discount types; server-side calculation; tax by shipping state</div>

@@ -72,600 +72,213 @@ export default {
     </div>
 </div>
 
-<!-- ============ 3. CLASS DESIGN ============ -->
-<div class="section theme-orange">
-    <div class="section-title"><span class="section-num">3</span>Class Design (with Methods)</div>
-
-    <div class="sub-heading" style="color:#ffab40;border-color:#ffab40">Product Search with Elasticsearch</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">ElasticsearchSearchService.java</span></div><pre class="code-block">
-<span class="ann">@Service</span>
-<span class="kw">class</span> <span class="cn">ElasticsearchSearchService</span> <span class="kw">implements</span> <span class="iface">ISearchService</span> {
-
-    <span class="kw">private final</span> <span class="tp">RestHighLevelClient</span> esClient;
-    <span class="kw">private final</span> <span class="tp">SearchRankingStrategy</span> rankingStrategy;
-
-    <span class="ann">@Override</span>
-    <span class="kw">public</span> SearchResult <span class="fn">search</span>(String query, SearchFilters filters, Pageable pageable) {
-        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-            .must(QueryBuilders.multiMatchQuery(query, <span class="st">"title"</span>, <span class="st">"description"</span>, <span class="st">"brand"</span>));
-
-        <span class="cm">// Apply filters: category, price range, brand, rating</span>
-        <span class="kw">if</span> (filters.getCategoryId() != <span class="kw">null</span>)
-            boolQuery.filter(QueryBuilders.termQuery(<span class="st">"categoryId"</span>, filters.getCategoryId()));
-        <span class="kw">if</span> (filters.getMinPrice() != <span class="kw">null</span>)
-            boolQuery.filter(QueryBuilders.rangeQuery(<span class="st">"price"</span>).gte(filters.getMinPrice()));
-        <span class="kw">if</span> (filters.getMaxPrice() != <span class="kw">null</span>)
-            boolQuery.filter(QueryBuilders.rangeQuery(<span class="st">"price"</span>).lte(filters.getMaxPrice()));
-
-        <span class="cm">// Apply ranking strategy (relevance, popularity, price)</span>
-        SortBuilder sort = rankingStrategy.buildSort(filters.getSortBy());
-
-        SearchRequest request = <span class="kw">new</span> SearchRequest(<span class="st">"products"</span>)
-            .source(<span class="kw">new</span> SearchSourceBuilder().query(boolQuery)
-                .sort(sort).from(pageable.getOffset()).size(pageable.getPageSize()));
-
-        SearchResponse response = esClient.search(request, RequestOptions.DEFAULT);
-        <span class="kw">return</span> mapToSearchResult(response, pageable);
-    }
-
-    <span class="ann">@Override</span>
-    <span class="kw">public</span> <span class="tp">void</span> <span class="fn">indexProduct</span>(Product product) {
-        IndexRequest req = <span class="kw">new</span> IndexRequest(<span class="st">"products"</span>)
-            .id(product.getId().toString())
-            .source(objectMapper.writeValueAsString(product), XContentType.JSON);
-        esClient.index(req, RequestOptions.DEFAULT);
-    }
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#ffab40;border-color:#ffab40">Inventory Reservation (Optimistic Locking)</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">InventoryServiceImpl.java</span></div><pre class="code-block">
-<span class="ann">@Service</span>
-<span class="kw">class</span> <span class="cn">InventoryServiceImpl</span> <span class="kw">implements</span> <span class="iface">IInventoryService</span> {
-
-    <span class="kw">private final</span> <span class="tp">InventoryRepository</span> inventoryRepo;
-
-    <span class="ann">@Override</span>
-    <span class="ann">@Transactional</span>
-    <span class="kw">public void</span> <span class="fn">reserveStock</span>(Long productId, <span class="tp">int</span> qty, String orderId) {
-        Inventory inv = inventoryRepo.findByProductIdWithLock(productId)
-            .orElseThrow(() -&gt; <span class="kw">new</span> ProductNotFoundException(productId));
-
-        <span class="kw">if</span> (inv.getAvailableStock() &lt; qty) {
-            <span class="kw">throw new</span> InsufficientStockException(productId, qty, inv.getAvailableStock());
-        }
-
-        inv.setReservedStock(inv.getReservedStock() + qty);
-        inv.setAvailableStock(inv.getTotalStock() - inv.getReservedStock());
-        inventoryRepo.save(inv);   <span class="cm">// @Version triggers optimistic lock check</span>
-
-        <span class="cm">// Schedule reservation expiry (15 min TTL)</span>
-        reservationScheduler.scheduleRelease(productId, qty, orderId, Duration.ofMinutes(15));
-    }
-
-    <span class="ann">@Override</span>
-    <span class="ann">@Transactional</span>
-    <span class="kw">public void</span> <span class="fn">releaseStock</span>(Long productId, <span class="tp">int</span> qty, String orderId) {
-        Inventory inv = inventoryRepo.findByProductIdWithLock(productId).orElseThrow();
-        inv.setReservedStock(Math.max(0, inv.getReservedStock() - qty));
-        inv.setAvailableStock(inv.getTotalStock() - inv.getReservedStock());
-        inventoryRepo.save(inv);
-    }
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#ffab40;border-color:#ffab40">Order Placement (Distributed Transaction &mdash; Saga Pattern)</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">OrderServiceImpl.java</span></div><pre class="code-block">
-<span class="ann">@Service</span>
-<span class="kw">class</span> <span class="cn">OrderServiceImpl</span> <span class="kw">implements</span> <span class="iface">IOrderService</span> {
-
-    <span class="kw">private final</span> <span class="tp">OrderRepository</span> orderRepo;
-    <span class="kw">private final</span> <span class="tp">IInventoryService</span> inventoryService;
-    <span class="kw">private final</span> <span class="tp">PaymentService</span> paymentService;
-    <span class="kw">private final</span> <span class="tp">ApplicationEventPublisher</span> eventPublisher;
-
-    <span class="ann">@Override</span>
-    <span class="ann">@Transactional</span>
-    <span class="kw">public</span> Order <span class="fn">placeOrder</span>(OrderRequest req, Long userId) {
-        <span class="cm">// 1. Validate cart items &amp; prices</span>
-        List&lt;CartItem&gt; cartItems = validateAndLockPrices(req.getItems());
-
-        <span class="cm">// 2. Reserve inventory for each item (Saga step 1)</span>
-        String orderId = UUID.randomUUID().toString();
-        <span class="kw">for</span> (CartItem item : cartItems) {
-            inventoryService.reserveStock(item.getProductId(), item.getQty(), orderId);
-        }
-
-        <span class="cm">// 3. Create order</span>
-        Order order = OrderFactory.create(orderId, userId, cartItems, req.getAddressId());
-        orderRepo.save(order);
-
-        <span class="cm">// 4. Process payment (Saga step 2)</span>
-        <span class="kw">try</span> {
-            paymentService.processPayment(order.getTotalAmount(), req.getPaymentMethod());
-        } <span class="kw">catch</span> (PaymentFailedException e) {
-            <span class="cm">// Compensate: release all reserved inventory</span>
-            cartItems.forEach(i -&gt; inventoryService.releaseStock(i.getProductId(), i.getQty(), orderId));
-            order.setStatus(OrderStatus.CANCELLED);
-            orderRepo.save(order);
-            <span class="kw">throw</span> e;
-        }
-
-        <span class="cm">// 5. Publish order event (Observer pattern)</span>
-        order.setStatus(OrderStatus.CONFIRMED);
-        orderRepo.save(order);
-        eventPublisher.publishEvent(<span class="kw">new</span> OrderPlacedEvent(order));
-
-        <span class="kw">return</span> order;
-    }
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#ffab40;border-color:#ffab40">Delivery Assignment</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">DeliveryServiceImpl.java</span></div><pre class="code-block">
-<span class="ann">@Service</span>
-<span class="kw">class</span> <span class="cn">DeliveryServiceImpl</span> <span class="kw">implements</span> <span class="iface">IDeliveryService</span> {
-
-    <span class="kw">private final</span> <span class="tp">DeliveryTrackingRepository</span> trackingRepo;
-    <span class="kw">private final</span> <span class="tp">DeliveryStateMachine</span> stateMachine;
-
-    <span class="ann">@Override</span>
-    <span class="kw">public</span> DeliveryTracking <span class="fn">assignDelivery</span>(Long orderId, Long warehouseId) {
-        String trackingNum = TrackingNumberGenerator.generate();
-
-        DeliveryTracking tracking = DeliveryTracking.builder()
-            .orderId(orderId)
-            .trackingNumber(trackingNum)
-            .status(DeliveryStatus.PICKED_UP)
-            .estimatedDelivery(LocalDate.now().plusDays(3))
-            .build();
-
-        tracking.addEvent(<span class="kw">new</span> TrackingEvent(<span class="st">"Order picked from warehouse"</span>, warehouseId));
-        <span class="kw">return</span> trackingRepo.save(tracking);
-    }
-
-    <span class="ann">@Override</span>
-    <span class="kw">public void</span> <span class="fn">updateDeliveryStatus</span>(String trackingNum, DeliveryStatus newStatus, String location) {
-        DeliveryTracking tracking = trackingRepo.findByTrackingNumber(trackingNum).orElseThrow();
-        <span class="cm">// State machine validates transitions (e.g., can't go from DELIVERED to IN_TRANSIT)</span>
-        stateMachine.transition(tracking, newStatus);
-        tracking.setCurrentLocation(location);
-        tracking.addEvent(<span class="kw">new</span> TrackingEvent(newStatus.name(), location));
-        trackingRepo.save(tracking);
-    }
-}
-    </pre></div>
-
-    <div class="sub-heading" style="color:#ffab40;border-color:#ffab40">Review Aggregation</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">ReviewServiceImpl.java</span></div><pre class="code-block">
-<span class="ann">@Service</span>
-<span class="kw">class</span> <span class="cn">ReviewServiceImpl</span> <span class="kw">implements</span> <span class="iface">IReviewService</span> {
-
-    <span class="kw">private final</span> <span class="tp">ReviewRepository</span> reviewRepo;
-    <span class="kw">private final</span> <span class="tp">ProductRepository</span> productRepo;
-    <span class="kw">private final</span> <span class="tp">OrderRepository</span> orderRepo;
-
-    <span class="ann">@Override</span>
-    <span class="ann">@Transactional</span>
-    <span class="kw">public</span> Review <span class="fn">addReview</span>(Long productId, Long userId, ReviewRequest req) {
-        <span class="cm">// Verify user actually purchased this product</span>
-        <span class="kw">boolean</span> purchased = orderRepo.existsByUserIdAndProductIdAndStatus(
-            userId, productId, OrderStatus.DELIVERED);
-        <span class="kw">if</span> (!purchased) <span class="kw">throw new</span> UnverifiedPurchaseException();
-
-        Review review = Review.builder()
-            .productId(productId).userId(userId)
-            .rating(req.getRating()).title(req.getTitle())
-            .body(req.getBody()).verified(<span class="kw">true</span>).build();
-        reviewRepo.save(review);
-
-        <span class="cm">// Update aggregated rating on product (denormalized)</span>
-        updateProductRating(productId);
-        <span class="kw">return</span> review;
-    }
-
-    <span class="kw">private void</span> <span class="fn">updateProductRating</span>(Long productId) {
-        Double avg = reviewRepo.calculateAverageRating(productId);
-        Integer count = reviewRepo.countByProductId(productId);
-        productRepo.updateRating(productId, avg, count);
-    }
-}
-    </pre></div>
-</div>
-
-<!-- ============ 4. SERVICE LLD ============ -->
+<!-- ============ 3. SERVICE LLD ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">4</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">3</span>Service LLD</div>
     <div class="service-grid">
 
         <!-- ========== PRODUCT SERVICE ========== -->
         <div class="service-card">
             <h3>ProductService</h3>
             <p class="svc-desc">Product catalog ka full CRUD &mdash; seller apna product add karta hai, update karta hai, category wise fetch hota hai aur delist bhi kar sakta hai. Ye sabse core service hai Amazon/Flipkart ki.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ProductService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> createProduct(CreateProductRequest)</div>
-                <div class="method-return">Returns: <code>Product</code></div>
-                <div class="params-title">Parameters (CreateProductRequest):</div>
-                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">price</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">mrp</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">categoryId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">brand</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">images</span><span class="param-type">List&lt;String&gt;</span></div>
-                <div class="param-row"><span class="param-name">attributes</span><span class="param-type">Map&lt;String,String&gt;</span><span class="param-comment">// color, size, material etc</span></div>
-                <div class="param-row"><span class="param-name">status</span><span class="param-type">ProductStatus</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// seller naya product create karta hai with all details</span>
+    <span class="tp">Product</span> <span class="fn">createProduct</span>(<span class="tp">Long</span> sellerId, <span class="tp">String</span> title, <span class="tp">String</span> description, <span class="tp">BigDecimal</span> price, <span class="tp">BigDecimal</span> mrp, <span class="tp">Long</span> categoryId, <span class="tp">String</span> brand, <span class="tp">List&lt;String&gt;</span> images, <span class="tp">Map&lt;String,String&gt;</span> attributes, <span class="tp">ProductStatus</span> status)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getProductById(productId)</div>
-                <div class="method-return">Returns: <code>Product</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// product ID se ek product fetch karo</span>
+    <span class="tp">Product</span> <span class="fn">getProductById</span>(<span class="tp">Long</span> productId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getByCategory(CategoryPageRequest)</div>
-                <div class="method-return">Returns: <code>Page&lt;Product&gt;</code></div>
-                <div class="params-title">Parameters (CategoryPageRequest):</div>
-                <div class="param-row"><span class="param-name">categoryId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
-            </div>
+    <span class="cm">// category wise paginated products laao</span>
+    <span class="tp">Page&lt;Product&gt;</span> <span class="fn">getByCategory</span>(<span class="tp">Long</span> categoryId, <span class="tp">Integer</span> pageNo, <span class="tp">Integer</span> pageSize)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> updateProduct(UpdateProductRequest)</div>
-                <div class="method-return">Returns: <code>Product</code></div>
-                <div class="params-title">Parameters (UpdateProductRequest):</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span><span class="param-comment">// ownership check</span></div>
-                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">price</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">mrp</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">brand</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">images</span><span class="param-type">List&lt;String&gt;</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">attributes</span><span class="param-type">Map&lt;String,String&gt;</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// existing product update karo - ownership check hota hai</span>
+    <span class="tp">Product</span> <span class="fn">updateProduct</span>(<span class="tp">Long</span> productId, <span class="tp">Long</span> sellerId, <span class="tp">String</span> title, <span class="tp">String</span> description, <span class="tp">BigDecimal</span> price, <span class="tp">BigDecimal</span> mrp, <span class="tp">String</span> brand, <span class="tp">List&lt;String&gt;</span> images, <span class="tp">Map&lt;String,String&gt;</span> attributes)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">5</span> delistProduct(productId, sellerId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span><span class="param-comment">// seller apna hi product delist kar sakta</span></div>
-            </div>
+    <span class="cm">// seller apna hi product delist kar sakta hai</span>
+    <span class="tp">void</span> <span class="fn">delistProduct</span>(<span class="tp">Long</span> productId, <span class="tp">Long</span> sellerId)
+}
+</pre></div>
         </div>
 
         <!-- ========== SEARCH SERVICE ========== -->
         <div class="service-card">
             <h3>SearchService</h3>
             <p class="svc-desc">Elasticsearch pe product search hota hai &mdash; user keyword type karta hai, auto-suggest aata hai, filters lagaata hai aur results milte hain. Product index bhi yahi service manage karti hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SearchService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> search(SearchRequest)</div>
-                <div class="method-return">Returns: <code>SearchResult</code></div>
-                <div class="params-title">Parameters (SearchRequest):</div>
-                <div class="param-row"><span class="param-name">query</span><span class="param-type">String</span><span class="param-comment">// "wireless headphones"</span></div>
-                <div class="param-row"><span class="param-name">categoryId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">minPrice</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">maxPrice</span><span class="param-type">BigDecimal</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">brand</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">minRating</span><span class="param-type">Double</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">sortBy</span><span class="param-type">String</span><span class="param-comment">// relevance, price_asc, price_desc, popularity</span></div>
-                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
-            </div>
+    <span class="cm">// keyword + filters + sorting se products search karo</span>
+    <span class="tp">SearchResult</span> <span class="fn">search</span>(<span class="tp">String</span> query, <span class="tp">Long</span> categoryId, <span class="tp">BigDecimal</span> minPrice, <span class="tp">BigDecimal</span> maxPrice, <span class="tp">String</span> brand, <span class="tp">Double</span> minRating, <span class="tp">String</span> sortBy, <span class="tp">Integer</span> pageNo, <span class="tp">Integer</span> pageSize)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> autoSuggest(prefix)</div>
-                <div class="method-return">Returns: <code>List&lt;String&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">prefix</span><span class="param-type">String</span><span class="param-comment">// user ne "wire" type kiya toh "wireless headphones" suggest hoga</span></div>
-            </div>
+    <span class="cm">// user type kare toh auto-suggest milta hai</span>
+    <span class="tp">List&lt;String&gt;</span> <span class="fn">autoSuggest</span>(<span class="tp">String</span> prefix)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> indexProduct(product)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">product</span><span class="param-type">Product</span><span class="param-comment">// DB me save hone ke baad Elasticsearch me sync</span></div>
-            </div>
+    <span class="cm">// DB save ke baad Elasticsearch me product index karo</span>
+    <span class="tp">void</span> <span class="fn">indexProduct</span>(<span class="tp">Product</span> product)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> removeFromIndex(productId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// product delete/delist pe index se remove karo</span>
+    <span class="tp">void</span> <span class="fn">removeFromIndex</span>(<span class="tp">Long</span> productId)
+}
+</pre></div>
         </div>
 
         <!-- ========== ORDER SERVICE ========== -->
         <div class="service-card">
             <h3>OrderService</h3>
             <p class="svc-desc">Order place karna, order details dekhna, cancel karna aur status update karna &mdash; Saga pattern se inventory reserve hota hai, payment hota hai, fail hone pe compensate hota hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">OrderService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> placeOrder(PlaceOrderRequest)</div>
-                <div class="method-return">Returns: <code>Order</code></div>
-                <div class="params-title">Parameters (PlaceOrderRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">items</span><span class="param-type">List&lt;CartItem&gt;</span><span class="param-comment">// productId + qty per item</span></div>
-                <div class="param-row"><span class="param-name">addressId</span><span class="param-type">Long</span><span class="param-comment">// shipping address</span></div>
-                <div class="param-row"><span class="param-name">paymentMethod</span><span class="param-type">String</span><span class="param-comment">// UPI, CARD, COD</span></div>
-                <div class="param-row"><span class="param-name">couponCode</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// naya order place karo - inventory reserve + payment hota hai</span>
+    <span class="tp">Order</span> <span class="fn">placeOrder</span>(<span class="tp">Long</span> userId, <span class="tp">List&lt;CartItem&gt;</span> items, <span class="tp">Long</span> addressId, <span class="tp">String</span> paymentMethod, <span class="tp">String</span> couponCode)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getOrder(orderId)</div>
-                <div class="method-return">Returns: <code>Order</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span><span class="param-comment">// UUID format e.g. ORD-abc123</span></div>
-            </div>
+    <span class="cm">// order ID se order details fetch karo</span>
+    <span class="tp">Order</span> <span class="fn">getOrder</span>(<span class="tp">String</span> orderId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getUserOrders(UserOrdersRequest)</div>
-                <div class="method-return">Returns: <code>Page&lt;Order&gt;</code></div>
-                <div class="params-title">Parameters (UserOrdersRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
-            </div>
+    <span class="cm">// user ke saare orders paginated laao</span>
+    <span class="tp">Page&lt;Order&gt;</span> <span class="fn">getUserOrders</span>(<span class="tp">Long</span> userId, <span class="tp">Integer</span> pageNo, <span class="tp">Integer</span> pageSize)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> cancelOrder(CancelOrderRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (CancelOrderRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// verify ki apna hi order cancel kar raha</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// apna order cancel karo - verify ki owner hai</span>
+    <span class="tp">void</span> <span class="fn">cancelOrder</span>(<span class="tp">String</span> orderId, <span class="tp">Long</span> userId, <span class="tp">String</span> reason)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">5</span> updateOrderStatus(StatusUpdateRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (StatusUpdateRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">status</span><span class="param-type">OrderStatus</span><span class="param-comment">// SHIPPED, DELIVERED etc</span></div>
-            </div>
+    <span class="cm">// order status update karo - SHIPPED, DELIVERED etc</span>
+    <span class="tp">void</span> <span class="fn">updateOrderStatus</span>(<span class="tp">String</span> orderId, <span class="tp">OrderStatus</span> status)
+}
+</pre></div>
         </div>
 
         <!-- ========== INVENTORY SERVICE ========== -->
         <div class="service-card">
             <h3>InventoryService</h3>
             <p class="svc-desc">Product stock track karna &mdash; availability check, checkout pe stock reserve, cancel pe release, aur confirm pe deduct. Optimistic locking se overselling nahi hota.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">InventoryService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> checkAvailability(AvailabilityRequest)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters (AvailabilityRequest):</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">warehouseId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// product ka stock available hai ya nahi check karo</span>
+    <span class="tp">boolean</span> <span class="fn">checkAvailability</span>(<span class="tp">Long</span> productId, <span class="tp">int</span> quantity, <span class="tp">Long</span> warehouseId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> reserveStock(ReserveStockRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (ReserveStockRequest):</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span><span class="param-comment">// 15 min TTL ke baad auto-release</span></div>
-            </div>
+    <span class="cm">// checkout pe stock reserve karo - 15 min TTL ke baad auto-release</span>
+    <span class="tp">void</span> <span class="fn">reserveStock</span>(<span class="tp">Long</span> productId, <span class="tp">int</span> quantity, <span class="tp">String</span> orderId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> releaseStock(ReleaseStockRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (ReleaseStockRequest):</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span><span class="param-comment">// cancel ya timeout pe release</span></div>
-            </div>
+    <span class="cm">// cancel ya timeout pe reserved stock release karo</span>
+    <span class="tp">void</span> <span class="fn">releaseStock</span>(<span class="tp">Long</span> productId, <span class="tp">int</span> quantity, <span class="tp">String</span> orderId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> deductStock(DeductStockRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (DeductStockRequest):</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">quantity</span><span class="param-type">int</span><span class="param-comment">// payment confirm hone ke baad final deduct</span></div>
-            </div>
+    <span class="cm">// payment confirm hone ke baad final stock deduct karo</span>
+    <span class="tp">void</span> <span class="fn">deductStock</span>(<span class="tp">Long</span> productId, <span class="tp">int</span> quantity)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">5</span> getAvailableStock(productId, warehouseId)</div>
-                <div class="method-return">Returns: <code>int</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">warehouseId</span><span class="param-type">Long</span><span class="param-comment">// specific warehouse ka stock check</span></div>
-            </div>
+    <span class="cm">// specific warehouse ka available stock check karo</span>
+    <span class="tp">int</span> <span class="fn">getAvailableStock</span>(<span class="tp">Long</span> productId, <span class="tp">Long</span> warehouseId)
+}
+</pre></div>
         </div>
 
         <!-- ========== SELLER SERVICE ========== -->
         <div class="service-card">
             <h3>SellerService</h3>
             <p class="svc-desc">Seller registration, GSTIN verify, suspend/block karna aur seller dashboard &mdash; naya seller register hota hai, admin verify karta hai, policy violation pe suspend hota hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SellerService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> registerSeller(SellerRegistrationRequest)</div>
-                <div class="method-return">Returns: <code>Seller</code></div>
-                <div class="params-title">Parameters (SellerRegistrationRequest):</div>
-                <div class="param-row"><span class="param-name">businessName</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">gstin</span><span class="param-type">String</span><span class="param-comment">// 15-digit GST number</span></div>
-                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">phone</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">warehouseIds</span><span class="param-type">List&lt;Long&gt;</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// naya seller register karo with business details</span>
+    <span class="tp">Seller</span> <span class="fn">registerSeller</span>(<span class="tp">String</span> businessName, <span class="tp">String</span> gstin, <span class="tp">String</span> email, <span class="tp">String</span> phone, <span class="tp">List&lt;Long&gt;</span> warehouseIds)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getSellerById(sellerId)</div>
-                <div class="method-return">Returns: <code>Seller</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// seller ID se seller details fetch karo</span>
+    <span class="tp">Seller</span> <span class="fn">getSellerById</span>(<span class="tp">Long</span> sellerId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> verifySeller(sellerId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span><span class="param-comment">// admin GSTIN aur docs verify karke approve karta</span></div>
-            </div>
+    <span class="cm">// admin GSTIN aur docs verify karke seller approve karta hai</span>
+    <span class="tp">void</span> <span class="fn">verifySeller</span>(<span class="tp">Long</span> sellerId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> suspendSeller(SuspendSellerRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (SuspendSellerRequest):</div>
-                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-comment">// "fake products", "policy violation" etc</span></div>
-            </div>
+    <span class="cm">// policy violation pe seller ko suspend karo</span>
+    <span class="tp">void</span> <span class="fn">suspendSeller</span>(<span class="tp">Long</span> sellerId, <span class="tp">String</span> reason)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">5</span> getDashboard(sellerId)</div>
-                <div class="method-return">Returns: <code>SellerDashboard</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">sellerId</span><span class="param-type">Long</span><span class="param-comment">// total sales, orders, ratings, revenue dikhata hai</span></div>
-            </div>
+    <span class="cm">// seller ka dashboard - sales, orders, ratings, revenue</span>
+    <span class="tp">SellerDashboard</span> <span class="fn">getDashboard</span>(<span class="tp">Long</span> sellerId)
+}
+</pre></div>
         </div>
 
         <!-- ========== DELIVERY SERVICE ========== -->
         <div class="service-card">
             <h3>DeliveryService</h3>
             <p class="svc-desc">Delivery assign karna, live tracking, status update aur delivered mark karna &mdash; State Machine se valid transitions enforce hote hain (e.g. DELIVERED ke baad IN_TRANSIT nahi ho sakta).</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">DeliveryService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> assignDelivery(AssignDeliveryRequest)</div>
-                <div class="method-return">Returns: <code>DeliveryTracking</code></div>
-                <div class="params-title">Parameters (AssignDeliveryRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">warehouseId</span><span class="param-type">Long</span><span class="param-comment">// nearest warehouse se pickup</span></div>
-            </div>
+    <span class="cm">// order ko nearest warehouse se delivery assign karo</span>
+    <span class="tp">DeliveryTracking</span> <span class="fn">assignDelivery</span>(<span class="tp">Long</span> orderId, <span class="tp">Long</span> warehouseId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> trackDelivery(trackingNumber)</div>
-                <div class="method-return">Returns: <code>DeliveryTracking</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">trackingNumber</span><span class="param-type">String</span><span class="param-comment">// e.g. TRK-xyz789</span></div>
-            </div>
+    <span class="cm">// tracking number se delivery status track karo</span>
+    <span class="tp">DeliveryTracking</span> <span class="fn">trackDelivery</span>(<span class="tp">String</span> trackingNumber)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> updateDeliveryStatus(DeliveryStatusUpdateRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (DeliveryStatusUpdateRequest):</div>
-                <div class="param-row"><span class="param-name">trackingNumber</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">status</span><span class="param-type">DeliveryStatus</span><span class="param-comment">// IN_TRANSIT, AT_HUB, OUT_FOR_DELIVERY</span></div>
-                <div class="param-row"><span class="param-name">location</span><span class="param-type">String</span><span class="param-comment">// "Mumbai Hub", "Delhi Warehouse" etc</span></div>
-            </div>
+    <span class="cm">// delivery status update karo - state machine validate karta hai</span>
+    <span class="tp">void</span> <span class="fn">updateDeliveryStatus</span>(<span class="tp">String</span> trackingNumber, <span class="tp">DeliveryStatus</span> status, <span class="tp">String</span> location)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> markDelivered(trackingNumber)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">trackingNumber</span><span class="param-type">String</span><span class="param-comment">// delivery boy OTP verify karke mark delivered</span></div>
-            </div>
+    <span class="cm">// delivery boy OTP verify karke delivered mark karo</span>
+    <span class="tp">void</span> <span class="fn">markDelivered</span>(<span class="tp">String</span> trackingNumber)
+}
+</pre></div>
         </div>
 
         <!-- ========== REVIEW SERVICE ========== -->
         <div class="service-card">
             <h3>ReviewService</h3>
             <p class="svc-desc">Product reviews aur ratings manage karna &mdash; sirf verified purchase wale hi review de sakte hain. Average rating auto-update hota hai product pe. Helpful mark bhi kar sakte ho.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ReviewService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> addReview(AddReviewRequest)</div>
-                <div class="method-return">Returns: <code>Review</code></div>
-                <div class="params-title">Parameters (AddReviewRequest):</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// verified purchase check hota hai</span></div>
-                <div class="param-row"><span class="param-name">rating</span><span class="param-type">Integer</span><span class="param-comment">// 1 to 5</span></div>
-                <div class="param-row"><span class="param-name">title</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">body</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">images</span><span class="param-type">List&lt;String&gt;</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// verified purchase check ke baad review add karo</span>
+    <span class="tp">Review</span> <span class="fn">addReview</span>(<span class="tp">Long</span> productId, <span class="tp">Long</span> userId, <span class="tp">Integer</span> rating, <span class="tp">String</span> title, <span class="tp">String</span> body, <span class="tp">List&lt;String&gt;</span> images)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getReviews(ProductReviewsRequest)</div>
-                <div class="method-return">Returns: <code>Page&lt;Review&gt;</code></div>
-                <div class="params-title">Parameters (ProductReviewsRequest):</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">pageNo</span><span class="param-type">Integer</span></div>
-                <div class="param-row"><span class="param-name">pageSize</span><span class="param-type">Integer</span></div>
-            </div>
+    <span class="cm">// product ke saare reviews paginated laao</span>
+    <span class="tp">Page&lt;Review&gt;</span> <span class="fn">getReviews</span>(<span class="tp">Long</span> productId, <span class="tp">Integer</span> pageNo, <span class="tp">Integer</span> pageSize)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getRatingAggregation(productId)</div>
-                <div class="method-return">Returns: <code>RatingAggregation</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span><span class="param-comment">// average rating + star-wise breakdown</span></div>
-            </div>
+    <span class="cm">// average rating + star-wise breakdown fetch karo</span>
+    <span class="tp">RatingAggregation</span> <span class="fn">getRatingAggregation</span>(<span class="tp">Long</span> productId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> markHelpful(reviewId, userId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">reviewId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// ek user ek review pe sirf ek baar helpful mark kar sakta</span></div>
-            </div>
+    <span class="cm">// ek user ek review pe sirf ek baar helpful mark kar sakta</span>
+    <span class="tp">void</span> <span class="fn">markHelpful</span>(<span class="tp">Long</span> reviewId, <span class="tp">Long</span> userId)
+}
+</pre></div>
         </div>
 
         <!-- ========== WISHLIST SERVICE ========== -->
         <div class="service-card">
             <h3>WishlistService</h3>
             <p class="svc-desc">User apne pasand ke products save kar sakta hai baad me khareedne ke liye &mdash; add, remove aur full wishlist fetch karna.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">WishlistService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> addToWishlist(WishlistRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (WishlistRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// product ko wishlist me add karo</span>
+    <span class="tp">void</span> <span class="fn">addToWishlist</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> productId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> removeFromWishlist(userId, productId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">productId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// wishlist se product remove karo</span>
+    <span class="tp">void</span> <span class="fn">removeFromWishlist</span>(<span class="tp">Long</span> userId, <span class="tp">Long</span> productId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getWishlist(userId)</div>
-                <div class="method-return">Returns: <code>List&lt;Product&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// user ke saved products list</span></div>
-            </div>
+    <span class="cm">// user ke saare saved products ki list laao</span>
+    <span class="tp">List&lt;Product&gt;</span> <span class="fn">getWishlist</span>(<span class="tp">Long</span> userId)
+}
+</pre></div>
         </div>
 
         <!-- ========== RETURN SERVICE ========== -->
         <div class="service-card">
             <h3>ReturnService</h3>
             <p class="svc-desc">Return aur refund handle karna &mdash; customer return request raise karta hai, admin approve karta hai, refund process hota hai. Wrong item ya defective pe auto-approve bhi hota hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ReturnService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> initiateReturn(InitiateReturnRequest)</div>
-                <div class="method-return">Returns: <code>Return</code></div>
-                <div class="params-title">Parameters (InitiateReturnRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">orderItemId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">ReturnReason</span><span class="param-comment">// DEFECTIVE, WRONG_ITEM etc</span></div>
-                <div class="param-row"><span class="param-name">description</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">images</span><span class="param-type">List&lt;String&gt;</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// customer return request raise karta hai with reason</span>
+    <span class="tp">Return</span> <span class="fn">initiateReturn</span>(<span class="tp">Long</span> orderId, <span class="tp">Long</span> orderItemId, <span class="tp">Long</span> userId, <span class="tp">ReturnReason</span> reason, <span class="tp">String</span> description, <span class="tp">List&lt;String&gt;</span> images)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> approveReturn(returnId)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">returnId</span><span class="param-type">Long</span><span class="param-comment">// admin approve karega, refund trigger hoga</span></div>
-            </div>
+    <span class="cm">// admin approve karega, refund trigger hoga</span>
+    <span class="tp">void</span> <span class="fn">approveReturn</span>(<span class="tp">Long</span> returnId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> processRefund(ProcessRefundRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (ProcessRefundRequest):</div>
-                <div class="param-row"><span class="param-name">returnId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">refundAmount</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">refundMode</span><span class="param-type">String</span><span class="param-comment">// ORIGINAL_PAYMENT, WALLET</span></div>
-            </div>
+    <span class="cm">// refund process karo - original payment ya wallet me</span>
+    <span class="tp">void</span> <span class="fn">processRefund</span>(<span class="tp">Long</span> returnId, <span class="tp">BigDecimal</span> refundAmount, <span class="tp">String</span> refundMode)
+}
+</pre></div>
         </div>
 
     </div>
@@ -673,7 +286,7 @@ export default {
 
 <!-- ============ 5. DB SCHEMA ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">5</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -809,7 +422,7 @@ export default {
 
 <!-- ============ 6. APIs ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">6</span>REST API Endpoints</div>
+    <div class="section-title"><span class="section-num">5</span>REST API Endpoints</div>
     <div class="api-grid">
         <div class="api-card">
             <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/products/search?q={query}&amp;category={id}&amp;minPrice={}&amp;maxPrice={}&amp;sort={}&amp;page={}&amp;size={}</span></div>
@@ -865,7 +478,7 @@ export default {
 
 <!-- ============ 7. KEY ARCHITECTURE ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture Components</div>
+    <div class="section-title"><span class="section-num">6</span>Key Architecture Components</div>
 
     <div class="sub-heading" style="color:#ff5252;border-color:#ff5252">Search Engine &mdash; Elasticsearch</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Elasticsearch Integration</span></div><pre class="code-block">
@@ -957,7 +570,7 @@ export default {
 
 <!-- ============ 8. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns (with Code)</div>
+    <div class="section-title"><span class="section-num">7</span>Design Patterns (with Code)</div>
 
     <div class="sub-heading" style="color:#18ffff;border-color:#18ffff">Strategy Pattern &mdash; Search Ranking</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">SearchRankingStrategy.java</span></div><pre class="code-block">
@@ -1176,7 +789,7 @@ export default {
 
 <!-- ============ 9. SEQUENCE FLOW ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow &mdash; Search to Delivery</div>
+    <div class="section-title"><span class="section-num">8</span>Sequence Flow &mdash; Search to Delivery</div>
     <div class="flow-container">
         <div class="flow-box flow-green">User Searches for Product</div>
         <div class="flow-arrow arrow-green"></div>
@@ -1202,7 +815,7 @@ export default {
 
 <!-- ============ 10. CAPACITY ESTIMATION ============ -->
 <div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
     <div class="assumption-box">
         <h4>Base Assumptions</h4>
         <div class="assumption-row"><span class="calc-label">Total products in catalog</span><span class="calc-value">50 Million</span></div>
@@ -1258,7 +871,7 @@ export default {
 
 <!-- ============ 11. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item">
             <span class="bottleneck-problem">Search Latency at Scale</span>
@@ -1285,7 +898,7 @@ export default {
 
 <!-- ============ 12. EDGE CASES ============ -->
 <div class="section theme-amber">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>Flash Sale Overselling</h4>
@@ -1312,7 +925,7 @@ export default {
 
 <!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#9670;</span>
@@ -1335,7 +948,7 @@ export default {
 
 <!-- ============ 14. SUMMARY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">13</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Elasticsearch + CQRS</h4><p>Read-Heavy Product Catalog</p></div>
         <div class="summary-card sc-2"><h4>Saga Pattern + Kafka</h4><p>Distributed Order Processing</p></div>

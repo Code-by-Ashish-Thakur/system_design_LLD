@@ -35,55 +35,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">3</span>Class Design (JPA Entities)</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">Payment.java &mdash; JPA Entity with State Machine</span></div>
-    <pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"payments"</span>, indexes = {
-    <span class="ann">@Index</span>(name = <span class="st">"idx_payment_order"</span>, columnList = <span class="st">"order_id"</span>),
-    <span class="ann">@Index</span>(name = <span class="st">"idx_payment_user"</span>, columnList = <span class="st">"user_id, created_at DESC"</span>),
-    <span class="ann">@Index</span>(name = <span class="st">"idx_payment_idempotency"</span>, columnList = <span class="st">"idempotency_key"</span>, unique = <span class="kw">true</span>)
-})
-<span class="kw">public class</span> <span class="tp">Payment</span> {
-    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = <span class="tp">GenerationType</span>.IDENTITY)
-    <span class="kw">private</span> <span class="tp">Long</span> id;
-
-    <span class="ann">@Column</span>(unique = <span class="kw">true</span>)
-    <span class="kw">private</span> <span class="tp">String</span> paymentId; <span class="cm">// UUID</span>
-
-    <span class="kw">private</span> <span class="tp">String</span> orderId;
-    <span class="kw">private</span> <span class="tp">Long</span> userId;
-
-    <span class="ann">@Column</span>(precision = <span class="cn">12</span>, scale = <span class="cn">2</span>)
-    <span class="kw">private</span> <span class="tp">BigDecimal</span> amount;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">PaymentMethod</span> method;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">GatewayProvider</span> gateway;
-
-    <span class="kw">private</span> <span class="tp">String</span> gatewayTxnId;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">PaymentStatus</span> status = <span class="tp">PaymentStatus</span>.INITIATED;
-
-    <span class="ann">@Column</span>(unique = <span class="kw">true</span>)
-    <span class="kw">private</span> <span class="tp">String</span> idempotencyKey;
-
-    <span class="ann">@Version</span>
-    <span class="kw">private</span> <span class="tp">Long</span> version; <span class="cm">// Optimistic locking</span>
-
-    <span class="cm">// State Machine: INITIATED &rarr; PENDING &rarr; AUTHORIZED &rarr; CAPTURED</span>
-    <span class="cm">//                                                   &rarr; FAILED</span>
-    <span class="cm">//                                    CAPTURED &rarr; REFUNDED</span>
-}
-    </pre></div>
-</div>
-
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -164,7 +117,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
     <div class="api-grid">
         <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/payments</div><div class="api-desc">Initiate payment (requires Idempotency-Key header)</div></div>
         <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/payments/{paymentId}</div><div class="api-desc">Get payment status &amp; details</div></div>
@@ -179,256 +132,156 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>PaymentService</h3>
             <p class="svc-desc">Naya payment start karta hai &mdash; duplicate check, fraud check, phir gateway ko call karta hai. Payment ka pura lifecycle yahi handle karta hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">PaymentService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> initiatePayment(PaymentRequest)</div>
-                <div class="method-return">Returns: <code>Payment</code></div>
-                <div class="params-title">Parameters (PaymentRequest):</div>
-                <div class="param-row"><span class="param-name">orderId</span><span class="param-type">String</span><span class="param-comment">// order jisse payment linked hai</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">currency</span><span class="param-type">Currency</span><span class="param-opt">[Optional]</span><span class="param-comment">// default INR</span></div>
-                <div class="param-row"><span class="param-name">method</span><span class="param-type">PaymentMethod</span><span class="param-comment">// UPI, CREDIT_CARD, etc.</span></div>
-                <div class="param-row"><span class="param-name">gateway</span><span class="param-type">GatewayProvider</span><span class="param-comment">// RAZORPAY, STRIPE</span></div>
-                <div class="param-row"><span class="param-name">idempotencyKey</span><span class="param-type">String</span><span class="param-comment">// UUID &mdash; prevents double charge</span></div>
-                <div class="param-row"><span class="param-name">returnUrl</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// redirect after gateway</span></div>
-            </div>
+    <span class="cm">// naya payment start karo &mdash; duplicate check, fraud check, gateway call</span>
+    <span class="tp">Payment</span> <span class="fn">initiatePayment</span>(<span class="tp">PaymentRequest</span> req)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getPaymentById(paymentId)</div>
-                <div class="method-return">Returns: <code>Payment</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">paymentId</span><span class="param-type">String</span><span class="param-comment">// UUID format payment identifier</span></div>
-            </div>
+    <span class="cm">// paymentId se payment details nikalo</span>
+    <span class="tp">Payment</span> <span class="fn">getPaymentById</span>(<span class="tp">String</span> paymentId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getUserPayments(userId, pageable)</div>
-                <div class="method-return">Returns: <code>Page&lt;Payment&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">pageable</span><span class="param-type">Pageable</span><span class="param-comment">// page, size, sort</span></div>
-            </div>
+    <span class="cm">// user ki saari payments paginated list karo</span>
+    <span class="tp">Page&lt;Payment&gt;</span> <span class="fn">getUserPayments</span>(<span class="tp">Long</span> userId, <span class="tp">Pageable</span> pageable)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> capturePayment(paymentId)</div>
-                <div class="method-return">Returns: <code>Payment</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">paymentId</span><span class="param-type">String</span><span class="param-comment">// AUTHORIZED state hona chahiye</span></div>
-            </div>
+    <span class="cm">// authorized payment ko capture karo</span>
+    <span class="tp">Payment</span> <span class="fn">capturePayment</span>(<span class="tp">String</span> paymentId)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>GatewayRoutingService</h3>
             <p class="svc-desc">Best payment gateway choose karta hai &mdash; method aur success rate ke basis pe Razorpay ya Stripe select karta hai. Ek fail ho toh dusre pe fallback.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">GatewayRoutingService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> selectGateway(method, amount)</div>
-                <div class="method-return">Returns: <code>GatewayProvider</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">method</span><span class="param-type">PaymentMethod</span><span class="param-comment">// UPI, CARD, NET_BANKING</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span><span class="param-comment">// bade amount pe alag gateway prefer</span></div>
-            </div>
+    <span class="cm">// method aur amount ke basis pe best gateway select karo</span>
+    <span class="tp">GatewayProvider</span> <span class="fn">selectGateway</span>(<span class="tp">PaymentMethod</span> method, <span class="tp">BigDecimal</span> amount)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getSuccessRate(provider)</div>
-                <div class="method-return">Returns: <code>double</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">provider</span><span class="param-type">GatewayProvider</span><span class="param-comment">// real-time success rate (0.0 - 1.0)</span></div>
-            </div>
+    <span class="cm">// gateway ka real-time success rate nikalo (0.0 - 1.0)</span>
+    <span class="tp">double</span> <span class="fn">getSuccessRate</span>(<span class="tp">GatewayProvider</span> provider)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getFallbackGateway(failed, method)</div>
-                <div class="method-return">Returns: <code>GatewayProvider</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">failed</span><span class="param-type">GatewayProvider</span><span class="param-comment">// jo gateway fail hua</span></div>
-                <div class="param-row"><span class="param-name">method</span><span class="param-type">PaymentMethod</span><span class="param-comment">// next best gateway select karna</span></div>
-            </div>
+    <span class="cm">// ek gateway fail ho toh next best gateway do</span>
+    <span class="tp">GatewayProvider</span> <span class="fn">getFallbackGateway</span>(<span class="tp">GatewayProvider</span> failed, <span class="tp">PaymentMethod</span> method)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>RefundService</h3>
             <p class="svc-desc">Refund process karta hai &mdash; check karta hai ki refund allowed hai ya nahi, gateway ko call karta hai, records update karta hai. Full aur partial dono handle karta hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RefundService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> refund(paymentId, amount)</div>
-                <div class="method-return">Returns: <code>Refund</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">paymentId</span><span class="param-type">String</span><span class="param-comment">// jis payment ka refund karna hai</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span><span class="param-comment">// full ya partial amount</span></div>
-            </div>
+    <span class="cm">// payment ka full ya partial refund initiate karo</span>
+    <span class="tp">Refund</span> <span class="fn">refund</span>(<span class="tp">String</span> paymentId, <span class="tp">BigDecimal</span> amount)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> isRefundable(paymentId)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">paymentId</span><span class="param-type">String</span><span class="param-comment">// CAPTURED status + refund window check</span></div>
-            </div>
+    <span class="cm">// check karo ki payment refundable hai ya nahi (CAPTURED + window)</span>
+    <span class="tp">boolean</span> <span class="fn">isRefundable</span>(<span class="tp">String</span> paymentId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> partialRefund(paymentId, amount, reason)</div>
-                <div class="method-return">Returns: <code>Refund</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">paymentId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span><span class="param-comment">// totalRefunded + amount &le; originalAmount</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-comment">// customer complaint, wrong item etc.</span></div>
-            </div>
+    <span class="cm">// partial refund karo with reason &mdash; totalRefunded + amount &le; original check</span>
+    <span class="tp">Refund</span> <span class="fn">partialRefund</span>(<span class="tp">String</span> paymentId, <span class="tp">BigDecimal</span> amount, <span class="tp">String</span> reason)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>WalletService</h3>
             <p class="svc-desc">User ka wallet manage karta hai &mdash; balance check, debit, credit sab safely karta hai database lock ke saath. Race condition se bachne ke liye pessimistic lock use hota hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">WalletService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> debit(userId, amount)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span><span class="param-comment">// balance &ge; amount check with row lock</span></div>
-            </div>
+    <span class="cm">// wallet se paisa debit karo &mdash; balance check with row lock</span>
+    <span class="tp">void</span> <span class="fn">debit</span>(<span class="tp">Long</span> userId, <span class="tp">BigDecimal</span> amount)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getBalance(userId)</div>
-                <div class="method-return">Returns: <code>BigDecimal</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+    <span class="cm">// user ka current wallet balance nikalo</span>
+    <span class="tp">BigDecimal</span> <span class="fn">getBalance</span>(<span class="tp">Long</span> userId)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> credit(userId, amount, reason)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span><span class="param-comment">// top-up ya refund amount</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-comment">// TOPUP, REFUND, CASHBACK etc.</span></div>
-            </div>
+    <span class="cm">// wallet me paisa credit karo &mdash; top-up, refund, cashback etc.</span>
+    <span class="tp">void</span> <span class="fn">credit</span>(<span class="tp">Long</span> userId, <span class="tp">BigDecimal</span> amount, <span class="tp">String</span> reason)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>LedgerService</h3>
             <p class="svc-desc">Har paisa movement ka record rakhta hai &mdash; double-entry bookkeeping matlab har payment me ek debit aur ek credit entry banti hai. Reconciliation isi pe depend karti hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">LedgerService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> recordEntry(LedgerEntry)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (LedgerEntry):</div>
-                <div class="param-row"><span class="param-name">paymentId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">debitAccount</span><span class="param-type">String</span><span class="param-comment">// e.g. "user:101"</span></div>
-                <div class="param-row"><span class="param-name">creditAccount</span><span class="param-type">String</span><span class="param-comment">// e.g. "merchant:escrow"</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">type</span><span class="param-type">LedgerEntryType</span><span class="param-comment">// PAYMENT_DEBIT, REFUND_CREDIT etc.</span></div>
-            </div>
+    <span class="cm">// ledger me ek entry record karo (debit ya credit)</span>
+    <span class="tp">void</span> <span class="fn">recordEntry</span>(<span class="tp">LedgerEntry</span> entry)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> createDoubleEntry(paymentId, debitAcc, creditAcc, amount)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">paymentId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">debitAcc</span><span class="param-type">String</span><span class="param-comment">// debit wala account</span></div>
-                <div class="param-row"><span class="param-name">creditAcc</span><span class="param-type">String</span><span class="param-comment">// credit wala account</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span></div>
-            </div>
+    <span class="cm">// double-entry banao &mdash; ek debit + ek credit simultaneously</span>
+    <span class="tp">void</span> <span class="fn">createDoubleEntry</span>(<span class="tp">String</span> paymentId, <span class="tp">String</span> debitAcc, <span class="tp">String</span> creditAcc, <span class="tp">BigDecimal</span> amount)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getEntriesByPayment(paymentId)</div>
-                <div class="method-return">Returns: <code>List&lt;LedgerEntry&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">paymentId</span><span class="param-type">String</span></div>
-            </div>
+    <span class="cm">// payment ki saari ledger entries nikalo</span>
+    <span class="tp">List&lt;LedgerEntry&gt;</span> <span class="fn">getEntriesByPayment</span>(<span class="tp">String</span> paymentId)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>WebhookService</h3>
             <p class="svc-desc">Payment gateway se status updates receive karta hai &mdash; pehle verify karta hai ki genuine hai, phir payment status update karta hai. Duplicate webhook bhi handle karta hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">WebhookService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> processWebhook(payload, signature)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">payload</span><span class="param-type">String</span><span class="param-comment">// raw JSON body from gateway</span></div>
-                <div class="param-row"><span class="param-name">signature</span><span class="param-type">String</span><span class="param-comment">// HMAC-SHA256 header se aata hai</span></div>
-            </div>
+    <span class="cm">// gateway se aaya webhook process karo &mdash; verify + status update</span>
+    <span class="tp">void</span> <span class="fn">processWebhook</span>(<span class="tp">String</span> payload, <span class="tp">String</span> signature)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> verifySignature(payload, signature, provider)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">payload</span><span class="param-type">String</span><span class="param-comment">// raw request body</span></div>
-                <div class="param-row"><span class="param-name">signature</span><span class="param-type">String</span><span class="param-comment">// X-Razorpay-Signature header</span></div>
-                <div class="param-row"><span class="param-name">provider</span><span class="param-type">GatewayProvider</span><span class="param-comment">// each gateway ka secret key alag</span></div>
-            </div>
+    <span class="cm">// HMAC-SHA256 signature verify karo &mdash; har gateway ka secret alag</span>
+    <span class="tp">boolean</span> <span class="fn">verifySignature</span>(<span class="tp">String</span> payload, <span class="tp">String</span> signature, <span class="tp">GatewayProvider</span> provider)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> isDuplicate(eventId)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">eventId</span><span class="param-type">String</span><span class="param-comment">// gateway-provided unique event ID</span></div>
-            </div>
+    <span class="cm">// check karo ki yeh webhook pehle process ho chuka hai ya nahi</span>
+    <span class="tp">boolean</span> <span class="fn">isDuplicate</span>(<span class="tp">String</span> eventId)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>ReconciliationService</h3>
             <p class="svc-desc">Daily check karta hai &mdash; humare records ko gateway ke records se match karta hai. Mismatch mila toh flag karta hai manual review ke liye.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ReconciliationService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> reconcile(date)</div>
-                <div class="method-return">Returns: <code>ReconciliationReport</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">date</span><span class="param-type">LocalDate</span><span class="param-comment">// jis din ka reconciliation karna hai</span></div>
-            </div>
+    <span class="cm">// ek din ka pura reconciliation report banao</span>
+    <span class="tp">ReconciliationReport</span> <span class="fn">reconcile</span>(<span class="tp">LocalDate</span> date)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> findMismatches(date, provider)</div>
-                <div class="method-return">Returns: <code>List&lt;MismatchRecord&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">date</span><span class="param-type">LocalDate</span></div>
-                <div class="param-row"><span class="param-name">provider</span><span class="param-type">GatewayProvider</span><span class="param-comment">// gateway-wise mismatch find karna</span></div>
-            </div>
+    <span class="cm">// gateway-wise mismatch records dhundho</span>
+    <span class="tp">List&lt;MismatchRecord&gt;</span> <span class="fn">findMismatches</span>(<span class="tp">LocalDate</span> date, <span class="tp">GatewayProvider</span> provider)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>FraudDetectionService</h3>
             <p class="svc-desc">Suspicious payments check karta hai &mdash; unusual amount, zyada attempts, unknown location. Risk score calculate karke decide karta hai allow ya block.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">FraudDetectionService</span> {
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> checkFraud(PaymentRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (PaymentRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span><span class="param-comment">// unusually bada amount flag hota hai</span></div>
-                <div class="param-row"><span class="param-name">method</span><span class="param-type">PaymentMethod</span></div>
-                <div class="param-row"><span class="param-name">ipAddress</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// location mismatch detect</span></div>
-                <div class="param-row"><span class="param-name">deviceFingerprint</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// naya device flag hota hai</span></div>
-            </div>
+    <span class="cm">// payment request pe fraud check karo &mdash; suspicious toh throw karo</span>
+    <span class="tp">void</span> <span class="fn">checkFraud</span>(<span class="tp">PaymentRequest</span> req)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> calculateRiskScore(PaymentRequest)</div>
-                <div class="method-return">Returns: <code>int</code></div>
-                <div class="params-title">Parameters (PaymentRequest):</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">amount</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">method</span><span class="param-type">PaymentMethod</span></div>
-                <div class="param-row"><span class="param-name">ipAddress</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">deviceFingerprint</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-            </div>
+    <span class="cm">// risk score calculate karo (amount, velocity, device check)</span>
+    <span class="tp">int</span> <span class="fn">calculateRiskScore</span>(<span class="tp">PaymentRequest</span> req)
 
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> blockUser(userId, reason)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-comment">// fraud reason &mdash; velocity, amount, location</span></div>
-            </div>
+    <span class="cm">// fraud user ko block karo &mdash; velocity, amount, location reason</span>
+    <span class="tp">void</span> <span class="fn">blockUser</span>(<span class="tp">Long</span> userId, <span class="tp">String</span> reason)
+}
+</pre></div>
         </div>
     </div>
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">PaymentService.java &mdash; Idempotency + State Machine</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span> <span class="ann">@Transactional</span>
@@ -480,7 +333,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IPaymentGateway implementations (Razorpay, Stripe) &mdash; swap gateways without modifying service</p></div>
         <div class="pattern-card"><h3>State Machine</h3><p>Payment status transitions: INITIATED&rarr;PENDING&rarr;AUTHORIZED&rarr;CAPTURED; invalid transitions throw</p></div>
@@ -492,7 +345,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">Client sends POST /api/v1/payments with Idempotency-Key header</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">PaymentService checks idempotency &mdash; returns existing if duplicate</span></div>
@@ -508,7 +361,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
     <div class="cap-grid">
         <div class="cap-card"><div class="cap-label">Daily Transactions</div><div class="cap-value">10M payments/day</div></div>
         <div class="cap-card"><div class="cap-label">Peak TPS</div><div class="cap-value">~500 txn/sec</div></div>
@@ -532,7 +385,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Double Payment (double click)</h3><p>Idempotency key (UUID) in UNIQUE index; return existing payment on duplicate</p></div>
         <div class="bottleneck-card"><h3>Gateway Timeout</h3><p>30s timeout with async webhook fallback; stale payment cleanup job marks PENDING&rarr;FAILED after 15min</p></div>
@@ -544,7 +397,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Partial Refund Exceeds Total</h3><p>Track totalRefunded per payment; validate: totalRefunded + newRefund &le; originalAmount</p></div>
         <div class="edge-card"><h3>Webhook Before API Response</h3><p>Payment created first (INITIATED); webhook can arrive before API returns &mdash; both paths update atomically</p></div>
@@ -556,7 +409,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>PCI-DSS Compliance</h3><p>Never store raw card numbers; use gateway tokenization; SAQ-A for redirect flow</p></div>
         <div class="security-card"><h3>Webhook Verification</h3><p>HMAC-SHA256 signature verification; reject if signature mismatch; IP whitelist</p></div>
@@ -568,7 +421,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Idempotency</strong><br>UUID key in UNIQUE index; return existing on duplicate; prevents double charge</div>
         <div class="summary-card"><strong>State Machine</strong><br>INITIATED&rarr;PENDING&rarr;AUTHORIZED&rarr;CAPTURED&rarr;REFUNDED; reject invalid transitions</div>

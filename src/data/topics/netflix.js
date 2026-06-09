@@ -34,52 +34,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">3</span>Class Design (JPA Entities)</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">Content.java — JPA Entity</span></div>
-    <pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"content"</span>, indexes = {
-    <span class="ann">@Index</span>(name = <span class="st">"idx_content_type"</span>, columnList = <span class="st">"type"</span>),
-    <span class="ann">@Index</span>(name = <span class="st">"idx_content_year"</span>, columnList = <span class="st">"release_year DESC"</span>)
-})
-<span class="kw">public class</span> <span class="tp">Content</span> {
-    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = <span class="tp">GenerationType</span>.IDENTITY)
-    <span class="kw">private</span> <span class="tp">Long</span> id;
-
-    <span class="ann">@Column</span>(nullable = <span class="kw">false</span>)
-    <span class="kw">private</span> <span class="tp">String</span> title;
-    <span class="ann">@Column</span>(columnDefinition = <span class="st">"TEXT"</span>)
-    <span class="kw">private</span> <span class="tp">String</span> description;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">ContentType</span> type;
-
-    <span class="ann">@ElementCollection</span>
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="tp">Genre</span>&gt; genres;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">AgeRating</span> ageRating;
-
-    <span class="kw">private int</span> releaseYear;
-    <span class="kw">private int</span> duration;
-    <span class="kw">private double</span> avgRating;
-
-    <span class="ann">@ElementCollection</span>
-    <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="tp">String</span>&gt; languages;
-
-    <span class="ann">@ElementCollection</span>
-    <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="tp">String</span>&gt; regions; <span class="cm">// Available in these countries</span>
-
-    <span class="ann">@OneToMany</span>(mappedBy = <span class="st">"content"</span>, cascade = <span class="tp">CascadeType</span>.ALL)
-    <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="tp">Episode</span>&gt; episodes;
-}
-    </pre></div>
-</div>
-
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -168,7 +124,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
     <div class="api-grid">
         <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/browse?genre=ACTION&amp;page=0</div><div class="api-desc">Browse content catalog by genre/type</div></div>
         <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/search?q=stranger&amp;year=2024</div><div class="api-desc">Search content with filters</div></div>
@@ -185,258 +141,156 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>ContentService</h3>
             <p class="svc-desc">Movies aur shows dikhata hai user ke region aur age group ke hisaab se &mdash; browse, details, trending sab handle karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> getById(ContentDetailRequest)</div>
-                <div class="method-return">Returns: <code>Content</code></div>
-                <div class="params-title">Parameters (ContentDetailRequest):</div>
-                <div class="param-row"><span class="param-name">contentId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">region</span><span class="param-type">String</span><span class="param-comment">// user ka region for licensing check</span></div>
-                <div class="param-row"><span class="param-name">profileId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// maturity filter ke liye</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getByGenre(GenreBrowseRequest)</div>
-                <div class="method-return">Returns: <code>Page&lt;Content&gt;</code></div>
-                <div class="params-title">Parameters (GenreBrowseRequest):</div>
-                <div class="param-row"><span class="param-name">genre</span><span class="param-type">String</span><span class="param-comment">// ACTION, COMEDY, DRAMA etc</span></div>
-                <div class="param-row"><span class="param-name">region</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">maturityLevel</span><span class="param-type">AgeRating</span><span class="param-opt">[Optional]</span><span class="param-comment">// kids profile ke liye filter</span></div>
-                <div class="param-row"><span class="param-name">page</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">size</span><span class="param-type">int</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getTrending(TrendingRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;Content&gt;</code></div>
-                <div class="params-title">Parameters (TrendingRequest):</div>
-                <div class="param-row"><span class="param-name">region</span><span class="param-type">String</span><span class="param-comment">// India, US etc &mdash; region-wise trending</span></div>
-                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span><span class="param-comment">// top 10 ya 20</span></div>
-                <div class="param-row"><span class="param-name">contentType</span><span class="param-type">ContentType</span><span class="param-opt">[Optional]</span><span class="param-comment">// MOVIE ya SERIES filter</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ContentService</span> {
+
+    <span class="cm">// content ki details laao — region aur maturity check ke saath</span>
+    <span class="tp">Content</span> <span class="fn">getById</span>(<span class="tp">Long</span> contentId, <span class="tp">String</span> region, <span class="tp">Long</span> profileId)
+
+    <span class="cm">// genre wise browse karo — pagination ke saath</span>
+    <span class="tp">Page&lt;Content&gt;</span> <span class="fn">getByGenre</span>(<span class="tp">String</span> genre, <span class="tp">String</span> region, <span class="tp">AgeRating</span> maturityLevel, <span class="tp">int</span> page, <span class="tp">int</span> size)
+
+    <span class="cm">// region wise trending content laao — top 10 ya 20</span>
+    <span class="tp">List&lt;Content&gt;</span> <span class="fn">getTrending</span>(<span class="tp">String</span> region, <span class="tp">int</span> limit, <span class="tp">ContentType</span> contentType)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>StreamingService</h3>
             <p class="svc-desc">Video stream deliver karta hai &mdash; subscription check, screen limit enforce, aur HLS manifest URL return karta hai DRM ke saath</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> getStream(StreamRequest)</div>
-                <div class="method-return">Returns: <code>StreamResponse</code></div>
-                <div class="params-title">Parameters (StreamRequest):</div>
-                <div class="param-row"><span class="param-name">contentId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">profileId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span><span class="param-comment">// subscription &amp; screen limit check</span></div>
-                <div class="param-row"><span class="param-name">deviceId</span><span class="param-type">String</span><span class="param-comment">// concurrent stream tracking ke liye</span></div>
-                <div class="param-row"><span class="param-name">episodeId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// agar series hai toh specific episode</span></div>
-                <div class="param-row"><span class="param-name">preferredResolution</span><span class="param-type">Resolution</span><span class="param-opt">[Optional]</span><span class="param-comment">// plan ke hisaab se cap hoga</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> hasAvailableScreen(ScreenCheckRequest)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters (ScreenCheckRequest):</div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">maxScreens</span><span class="param-type">int</span><span class="param-comment">// plan se aata hai &mdash; Mobile=1, Premium=4</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> endStream(EndStreamRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (EndStreamRequest):</div>
-                <div class="param-row"><span class="param-name">profileId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">contentId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">deviceId</span><span class="param-type">String</span><span class="param-comment">// Redis se device remove karna hai</span></div>
-                <div class="param-row"><span class="param-name">lastWatchedSeconds</span><span class="param-type">int</span><span class="param-comment">// final progress save</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">StreamingService</span> {
+
+    <span class="cm">// stream shuru karo — subscription, screen limit, region sab check hota hai</span>
+    <span class="tp">StreamResponse</span> <span class="fn">getStream</span>(<span class="tp">Long</span> contentId, <span class="tp">Long</span> profileId, <span class="tp">Long</span> accountId, <span class="tp">String</span> deviceId, <span class="tp">Long</span> episodeId, <span class="tp">Resolution</span> preferredResolution)
+
+    <span class="cm">// check karo screen available hai ya nahi — plan se max screens aata hai</span>
+    <span class="tp">boolean</span> <span class="fn">hasAvailableScreen</span>(<span class="tp">Long</span> accountId, <span class="tp">int</span> maxScreens)
+
+    <span class="cm">// stream khatam karo — device hata do aur final progress save karo</span>
+    <span class="tp">void</span> <span class="fn">endStream</span>(<span class="tp">Long</span> profileId, <span class="tp">Long</span> contentId, <span class="tp">String</span> deviceId, <span class="tp">int</span> lastWatchedSeconds)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>RecommendationEngine</h3>
             <p class="svc-desc">User ki watch history ke basis pe movies/shows suggest karta hai &mdash; Spark batch job precompute karta hai, Redis mein cache hota hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> getPersonalized(PersonalizedRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;Content&gt;</code></div>
-                <div class="params-title">Parameters (PersonalizedRequest):</div>
-                <div class="param-row"><span class="param-name">profileId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span><span class="param-comment">// kitne recommendations chahiye</span></div>
-                <div class="param-row"><span class="param-name">region</span><span class="param-type">String</span><span class="param-comment">// sirf licensed content dikhana hai</span></div>
-                <div class="param-row"><span class="param-name">maturityLevel</span><span class="param-type">AgeRating</span><span class="param-opt">[Optional]</span><span class="param-comment">// kids profile ke liye</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getSimilar(SimilarContentRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;Content&gt;</code></div>
-                <div class="params-title">Parameters (SimilarContentRequest):</div>
-                <div class="param-row"><span class="param-name">contentId</span><span class="param-type">Long</span><span class="param-comment">// &ldquo;Because you watched X&rdquo; ke liye</span></div>
-                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">region</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">excludeWatched</span><span class="param-type">boolean</span><span class="param-comment">// already watched content hata do</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> refreshRecommendations(RefreshRecoRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (RefreshRecoRequest):</div>
-                <div class="param-row"><span class="param-name">profileId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">algorithm</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// COLLABORATIVE, CONTENT_BASED, HYBRID</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RecommendationEngine</span> {
+
+    <span class="cm">// personalized recommendations laao — Redis cache se pehle check hota hai</span>
+    <span class="tp">List&lt;Content&gt;</span> <span class="fn">getPersonalized</span>(<span class="tp">Long</span> profileId, <span class="tp">int</span> limit, <span class="tp">String</span> region, <span class="tp">AgeRating</span> maturityLevel)
+
+    <span class="cm">// "Because you watched X" jaisa similar content dikhao</span>
+    <span class="tp">List&lt;Content&gt;</span> <span class="fn">getSimilar</span>(<span class="tp">Long</span> contentId, <span class="tp">int</span> limit, <span class="tp">String</span> region, <span class="tp">boolean</span> excludeWatched)
+
+    <span class="cm">// recommendations refresh karo — Spark batch job trigger hota hai</span>
+    <span class="tp">void</span> <span class="fn">refreshRecommendations</span>(<span class="tp">Long</span> profileId, <span class="tp">String</span> algorithm)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>SearchService</h3>
             <p class="svc-desc">Content dhundne mein help karta hai &mdash; title, genre, actor se search karo with autocomplete aur fuzzy matching (Elasticsearch use hota hai)</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> search(SearchRequest)</div>
-                <div class="method-return">Returns: <code>Page&lt;Content&gt;</code></div>
-                <div class="params-title">Parameters (SearchRequest):</div>
-                <div class="param-row"><span class="param-name">query</span><span class="param-type">String</span><span class="param-comment">// &ldquo;stranger things&rdquo;, &ldquo;shah rukh&rdquo; etc</span></div>
-                <div class="param-row"><span class="param-name">genre</span><span class="param-type">Genre</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">contentType</span><span class="param-type">ContentType</span><span class="param-opt">[Optional]</span><span class="param-comment">// MOVIE ya SERIES</span></div>
-                <div class="param-row"><span class="param-name">releaseYear</span><span class="param-type">Integer</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">language</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// Hindi, English, Korean</span></div>
-                <div class="param-row"><span class="param-name">region</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">maturityLevel</span><span class="param-type">AgeRating</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">page</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">size</span><span class="param-type">int</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> autoSuggest(AutoSuggestRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;String&gt;</code></div>
-                <div class="params-title">Parameters (AutoSuggestRequest):</div>
-                <div class="param-row"><span class="param-name">prefix</span><span class="param-type">String</span><span class="param-comment">// &ldquo;stra&rdquo; &rarr; &ldquo;Stranger Things&rdquo;</span></div>
-                <div class="param-row"><span class="param-name">region</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">maxResults</span><span class="param-type">int</span><span class="param-comment">// typically 5-10 suggestions</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> indexContent(IndexContentRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (IndexContentRequest):</div>
-                <div class="param-row"><span class="param-name">content</span><span class="param-type">Content</span><span class="param-comment">// pura content object Elasticsearch mein index karna</span></div>
-                <div class="param-row"><span class="param-name">updateMode</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// FULL ya PARTIAL re-index</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SearchService</span> {
+
+    <span class="cm">// content search karo — filters aur pagination ke saath</span>
+    <span class="tp">Page&lt;Content&gt;</span> <span class="fn">search</span>(<span class="tp">String</span> query, <span class="tp">Genre</span> genre, <span class="tp">ContentType</span> contentType, <span class="tp">Integer</span> releaseYear, <span class="tp">String</span> language, <span class="tp">String</span> region, <span class="tp">AgeRating</span> maturityLevel, <span class="tp">int</span> page, <span class="tp">int</span> size)
+
+    <span class="cm">// type karte waqt suggestions dikhao — fuzzy matching se</span>
+    <span class="tp">List&lt;String&gt;</span> <span class="fn">autoSuggest</span>(<span class="tp">String</span> prefix, <span class="tp">String</span> region, <span class="tp">int</span> maxResults)
+
+    <span class="cm">// naya content Elasticsearch mein index karo</span>
+    <span class="tp">void</span> <span class="fn">indexContent</span>(<span class="tp">Content</span> content, <span class="tp">String</span> updateMode)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>ProfileService</h3>
             <p class="svc-desc">Ek account ke under profiles manage karta hai &mdash; max 5 profiles, kids profile mein content filter lagta hai server-side</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> create(CreateProfileRequest)</div>
-                <div class="method-return">Returns: <code>Profile</code></div>
-                <div class="params-title">Parameters (CreateProfileRequest):</div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">name</span><span class="param-type">String</span><span class="param-comment">// profile display name</span></div>
-                <div class="param-row"><span class="param-name">avatarUrl</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">isKids</span><span class="param-type">boolean</span><span class="param-comment">// kids mode ON karne pe maturity auto-set hota hai</span></div>
-                <div class="param-row"><span class="param-name">maturityLevel</span><span class="param-type">AgeRating</span><span class="param-opt">[Optional]</span><span class="param-comment">// default U agar kids=true</span></div>
-                <div class="param-row"><span class="param-name">language</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// preferred language</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> deleteProfile(DeleteProfileRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (DeleteProfileRequest):</div>
-                <div class="param-row"><span class="param-name">profileId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span><span class="param-comment">// verify profile belongs to this account</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getProfiles(accountId)</div>
-                <div class="method-return">Returns: <code>List&lt;Profile&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span><span class="param-comment">// account ke saare profiles (max 5)</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ProfileService</span> {
+
+    <span class="cm">// naya profile banao — max 5 allowed hain per account</span>
+    <span class="tp">Profile</span> <span class="fn">create</span>(<span class="tp">Long</span> accountId, <span class="tp">String</span> name, <span class="tp">String</span> avatarUrl, <span class="tp">boolean</span> isKids, <span class="tp">AgeRating</span> maturityLevel, <span class="tp">String</span> language)
+
+    <span class="cm">// profile delete karo — verify karo ki account ka hi hai</span>
+    <span class="tp">void</span> <span class="fn">deleteProfile</span>(<span class="tp">Long</span> profileId, <span class="tp">Long</span> accountId)
+
+    <span class="cm">// account ke saare profiles laao (max 5)</span>
+    <span class="tp">List&lt;Profile&gt;</span> <span class="fn">getProfiles</span>(<span class="tp">Long</span> accountId)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>SubscriptionService</h3>
             <p class="svc-desc">User ka plan check karta hai &mdash; kya stream kar sakta hai? kitni screens allowed? kaunsi quality? plan upgrade/downgrade bhi handle karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> canStream(StreamEligibilityRequest)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters (StreamEligibilityRequest):</div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">deviceId</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// screen count check ke liye</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> changePlan(ChangePlanRequest)</div>
-                <div class="method-return">Returns: <code>Subscription</code></div>
-                <div class="params-title">Parameters (ChangePlanRequest):</div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">newPlan</span><span class="param-type">PlanType</span><span class="param-comment">// MOBILE, BASIC, STANDARD, PREMIUM</span></div>
-                <div class="param-row"><span class="param-name">effectiveDate</span><span class="param-type">LocalDate</span><span class="param-opt">[Optional]</span><span class="param-comment">// default = next billing cycle</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> cancelSubscription(CancelRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (CancelRequest):</div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// feedback ke liye</span></div>
-                <div class="param-row"><span class="param-name">immediate</span><span class="param-type">boolean</span><span class="param-comment">// true = turant cancel, false = billing cycle end pe</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SubscriptionService</span> {
+
+    <span class="cm">// check karo user stream kar sakta hai ya nahi</span>
+    <span class="tp">boolean</span> <span class="fn">canStream</span>(<span class="tp">Long</span> accountId, <span class="tp">String</span> deviceId)
+
+    <span class="cm">// plan change karo — upgrade ya downgrade</span>
+    <span class="tp">Subscription</span> <span class="fn">changePlan</span>(<span class="tp">Long</span> accountId, <span class="tp">PlanType</span> newPlan, <span class="tp">LocalDate</span> effectiveDate)
+
+    <span class="cm">// subscription cancel karo — turant ya billing cycle end pe</span>
+    <span class="tp">void</span> <span class="fn">cancelSubscription</span>(<span class="tp">Long</span> accountId, <span class="tp">String</span> reason, <span class="tp">boolean</span> immediate)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>WatchHistoryService</h3>
             <p class="svc-desc">User ne kya dekha aur kahan ruka &mdash; ye track karta hai. &ldquo;Continue Watching&rdquo; row isi se banta hai. Redis mein buffer karta hai, batch mein DB mein flush hota hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> updateProgress(WatchProgressRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (WatchProgressRequest):</div>
-                <div class="param-row"><span class="param-name">profileId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">contentId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">episodeId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// series ke liye specific episode</span></div>
-                <div class="param-row"><span class="param-name">watchedSeconds</span><span class="param-type">int</span><span class="param-comment">// kitna dekha seconds mein</span></div>
-                <div class="param-row"><span class="param-name">totalSeconds</span><span class="param-type">int</span><span class="param-comment">// total duration &mdash; 95% pe completed mark hota hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getContinueWatching(ContinueWatchingRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;WatchProgress&gt;</code></div>
-                <div class="params-title">Parameters (ContinueWatchingRequest):</div>
-                <div class="param-row"><span class="param-name">profileId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span><span class="param-comment">// kitne items dikhane hain row mein</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getHistory(HistoryRequest)</div>
-                <div class="method-return">Returns: <code>Page&lt;WatchHistory&gt;</code></div>
-                <div class="params-title">Parameters (HistoryRequest):</div>
-                <div class="param-row"><span class="param-name">profileId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">contentType</span><span class="param-type">ContentType</span><span class="param-opt">[Optional]</span><span class="param-comment">// sirf movies ya sirf series filter</span></div>
-                <div class="param-row"><span class="param-name">page</span><span class="param-type">int</span></div>
-                <div class="param-row"><span class="param-name">size</span><span class="param-type">int</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">WatchHistoryService</span> {
+
+    <span class="cm">// watch progress update karo — har 30 sec pe call hota hai</span>
+    <span class="tp">void</span> <span class="fn">updateProgress</span>(<span class="tp">Long</span> profileId, <span class="tp">Long</span> contentId, <span class="tp">Long</span> episodeId, <span class="tp">int</span> watchedSeconds, <span class="tp">int</span> totalSeconds)
+
+    <span class="cm">// "Continue Watching" row ke liye incomplete items laao</span>
+    <span class="tp">List&lt;WatchProgress&gt;</span> <span class="fn">getContinueWatching</span>(<span class="tp">Long</span> profileId, <span class="tp">int</span> limit)
+
+    <span class="cm">// poori watch history laao — pagination ke saath</span>
+    <span class="tp">Page&lt;WatchHistory&gt;</span> <span class="fn">getHistory</span>(<span class="tp">Long</span> profileId, <span class="tp">ContentType</span> contentType, <span class="tp">int</span> page, <span class="tp">int</span> size)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>DownloadService</h3>
             <p class="svc-desc">Offline viewing ke liye download karne deta hai &mdash; plan ke hisaab se download slots limited hote hain, 48h mein expire ho jaate hain</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> requestDownload(DownloadRequest)</div>
-                <div class="method-return">Returns: <code>DownloadPackage</code></div>
-                <div class="params-title">Parameters (DownloadRequest):</div>
-                <div class="param-row"><span class="param-name">contentId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">profileId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span><span class="param-comment">// plan ke hisaab se download limit check</span></div>
-                <div class="param-row"><span class="param-name">episodeId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// series ka specific episode</span></div>
-                <div class="param-row"><span class="param-name">quality</span><span class="param-type">Resolution</span><span class="param-opt">[Optional]</span><span class="param-comment">// download quality &mdash; plan se cap hota hai</span></div>
-                <div class="param-row"><span class="param-name">deviceId</span><span class="param-type">String</span><span class="param-comment">// device-specific DRM license</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getRemainingDownloads(DownloadQuotaRequest)</div>
-                <div class="method-return">Returns: <code>int</code></div>
-                <div class="params-title">Parameters (DownloadQuotaRequest):</div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">deviceId</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// device-specific limit bhi check ho sakta hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> cleanupExpiredDownloads(CleanupRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (CleanupRequest):</div>
-                <div class="param-row"><span class="param-name">accountId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">deviceId</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// specific device pe cleanup, warna sabpe</span></div>
-                <div class="param-row"><span class="param-name">expiryHours</span><span class="param-type">int</span><span class="param-comment">// 48h after first play, 7 days from download</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">DownloadService</span> {
+
+    <span class="cm">// download request karo — plan ke hisaab se limit check hota hai</span>
+    <span class="tp">DownloadPackage</span> <span class="fn">requestDownload</span>(<span class="tp">Long</span> contentId, <span class="tp">Long</span> profileId, <span class="tp">Long</span> accountId, <span class="tp">Long</span> episodeId, <span class="tp">Resolution</span> quality, <span class="tp">String</span> deviceId)
+
+    <span class="cm">// kitne downloads baaki hain check karo</span>
+    <span class="tp">int</span> <span class="fn">getRemainingDownloads</span>(<span class="tp">Long</span> accountId, <span class="tp">String</span> deviceId)
+
+    <span class="cm">// expired downloads saaf karo — 48h play ke baad, 7 din download ke baad</span>
+    <span class="tp">void</span> <span class="fn">cleanupExpiredDownloads</span>(<span class="tp">Long</span> accountId, <span class="tp">String</span> deviceId, <span class="tp">int</span> expiryHours)
+}
+</pre></div>
         </div>
     </div>
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">RecommendationEngine.java — Collaborative + Content-Based</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span>
@@ -484,7 +338,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IRecommendationAlgorithm — swap between collaborative filtering, content-based, or hybrid</p></div>
         <div class="pattern-card"><h3>Observer</h3><p>Watch events &rarr; Kafka &rarr; update recommendations, trending lists, analytics pipeline</p></div>
@@ -496,7 +350,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">User opens app &rarr; selects profile &rarr; loads personalized homepage</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">Homepage: Continue Watching + Trending + Recommended rows from Redis cache</span></div>
@@ -512,7 +366,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
     <div class="cap-grid">
         <div class="cap-card"><div class="cap-label">Total Subscribers</div><div class="cap-value">250M</div></div>
         <div class="cap-card"><div class="cap-label">Daily Active Users</div><div class="cap-value">100M</div></div>
@@ -537,7 +391,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Homepage Cold Start</h3><p>Pre-compute personalized homepage per profile (Spark); cache in Redis; fallback to trending</p></div>
         <div class="bottleneck-card"><h3>New User Recommendations</h3><p>Cold start: show popular by region/genre; ask genre preferences on signup; content-based until enough data</p></div>
@@ -549,7 +403,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Max Screens Exceeded</h3><p>Show "too many screens" error; allow user to sign out remote device; admin override</p></div>
         <div class="edge-card"><h3>Content Removed Mid-Watch</h3><p>License expiry: allow finish if started within license period; remove from browse + recommendations</p></div>
@@ -561,7 +415,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>DRM Protection</h3><p>Widevine (Android/Chrome), FairPlay (iOS/Safari), PlayReady (Edge); encrypted HLS segments</p></div>
         <div class="security-card"><h3>Stream URL Security</h3><p>Signed URLs with expiry (1 hour); IP-locked tokens; prevent hotlinking/sharing</p></div>
@@ -572,7 +426,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Recommendations</strong><br>Collaborative filtering (Spark batch) + content-based (real-time fallback); cached in Redis per profile</div>
         <div class="summary-card"><strong>Streaming</strong><br>HLS adaptive bitrate; CDN edge delivery (100 Tbps); signed URLs with DRM</div>

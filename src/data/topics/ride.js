@@ -34,51 +34,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">3</span>Class Design (JPA Entities)</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">Ride.java &mdash; JPA Entity</span></div>
-    <pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"rides"</span>, indexes = {
-    <span class="ann">@Index</span>(name = <span class="st">"idx_ride_rider"</span>, columnList = <span class="st">"rider_id, created_at DESC"</span>),
-    <span class="ann">@Index</span>(name = <span class="st">"idx_ride_driver"</span>, columnList = <span class="st">"driver_id, status"</span>),
-    <span class="ann">@Index</span>(name = <span class="st">"idx_ride_status"</span>, columnList = <span class="st">"status"</span>)
-})
-<span class="kw">public class</span> <span class="tp">Ride</span> {
-    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = <span class="tp">GenerationType</span>.IDENTITY)
-    <span class="kw">private</span> <span class="tp">Long</span> id;
-
-    <span class="ann">@Column</span>(unique = <span class="kw">true</span>)
-    <span class="kw">private</span> <span class="tp">String</span> rideId;
-
-    <span class="kw">private</span> <span class="tp">Long</span> riderId;
-    <span class="kw">private</span> <span class="tp">Long</span> driverId;
-    <span class="kw">private double</span> pickupLat, pickupLng;
-    <span class="kw">private double</span> dropLat, dropLng;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">RideStatus</span> status;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">RideType</span> rideType;
-
-    <span class="ann">@Column</span>(precision = <span class="cn">10</span>, scale = <span class="cn">2</span>)
-    <span class="kw">private</span> <span class="tp">BigDecimal</span> estimatedFare;
-    <span class="kw">private</span> <span class="tp">BigDecimal</span> actualFare;
-    <span class="kw">private double</span> surgeMultiplier = <span class="cn">1.0</span>;
-    <span class="kw">private double</span> distanceKm;
-    <span class="kw">private int</span> durationMin;
-
-    <span class="kw">private</span> <span class="tp">LocalDateTime</span> startedAt;
-    <span class="kw">private</span> <span class="tp">LocalDateTime</span> completedAt;
-    <span class="ann">@CreationTimestamp</span>
-    <span class="kw">private</span> <span class="tp">LocalDateTime</span> createdAt;
-}
-    </pre></div>
-</div>
-
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -219,7 +176,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
     <div class="api-grid">
         <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/rides/request</div><div class="api-desc">Request a ride (pickup, drop, rideType)</div></div>
         <div class="api-card"><div class="api-method post">POST</div><div class="api-path">/api/v1/rides/estimate</div><div class="api-desc">Get fare estimate &amp; ETA without booking</div></div>
@@ -235,253 +192,155 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
     <div class="service-grid">
 
         <div class="service-card">
             <h3>RideService</h3>
             <p class="svc-desc">Pura ride lifecycle handle karta hai &mdash; ride create karo, driver assign karo, start/complete/cancel sab iske through hota hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> requestRide(RideRequestDTO)</div>
-                <div class="method-return">Returns: <code>Ride</code></div>
-                <div class="params-title">Parameters (RideRequestDTO):</div>
-                <div class="param-row"><span class="param-name">riderId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">pickupLat</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">pickupLng</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">dropLat</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">dropLng</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">rideType</span><span class="param-type">RideType</span><span class="param-comment">// MINI, SEDAN, SUV, POOL etc.</span></div>
-                <div class="param-row"><span class="param-name">promoCode</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">paymentMode</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// CASH, UPI, CARD</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getRideById(String)</div>
-                <div class="method-return">Returns: <code>Ride</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">rideId</span><span class="param-type">String</span><span class="param-comment">// UUID format ride identifier</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> cancelRide(CancelRideDTO)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (CancelRideDTO):</div>
-                <div class="param-row"><span class="param-name">rideId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span><span class="param-comment">// rider ya driver jo cancel kar raha hai</span></div>
-                <div class="param-row"><span class="param-name">reason</span><span class="param-type">CancellationReason</span><span class="param-comment">// CHANGED_PLANS, ETA_TOO_LONG etc.</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> completeRide(CompleteRideDTO)</div>
-                <div class="method-return">Returns: <code>Ride</code></div>
-                <div class="params-title">Parameters (CompleteRideDTO):</div>
-                <div class="param-row"><span class="param-name">rideId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">actualDistanceKm</span><span class="param-type">double</span><span class="param-comment">// GPS trail se calculated actual distance</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RideService</span> {
+
+    <span class="cm">// Nayi ride request create karo - pickup, drop, rideType sab yahan aata hai</span>
+    <span class="tp">Ride</span> <span class="fn">requestRide</span>(<span class="tp">Long</span> riderId, <span class="tp">double</span> pickupLat, <span class="tp">double</span> pickupLng, <span class="tp">double</span> dropLat, <span class="tp">double</span> dropLng, <span class="tp">RideType</span> rideType, <span class="tp">String</span> promoCode, <span class="tp">String</span> paymentMode)
+
+    <span class="cm">// Ride ID se ride details nikalo</span>
+    <span class="tp">Ride</span> <span class="fn">getRideById</span>(<span class="tp">String</span> rideId)
+
+    <span class="cm">// Ride cancel karo - rider ya driver dono kar sakte hain reason ke saath</span>
+    <span class="tp">void</span> <span class="fn">cancelRide</span>(<span class="tp">String</span> rideId, <span class="tp">Long</span> userId, <span class="tp">CancellationReason</span> reason)
+
+    <span class="cm">// Ride complete karo - GPS trail se actual distance calculate hota hai</span>
+    <span class="tp">Ride</span> <span class="fn">completeRide</span>(<span class="tp">String</span> rideId, <span class="tp">double</span> actualDistanceKm)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>MatchingEngine</h3>
             <p class="svc-desc">Rider ke liye best driver dhundhta hai &mdash; Redis GEORADIUS se nearby drivers nikalo, phir distance + rating + acceptance rate se rank karo</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> findBestMatch(MatchRequestDTO)</div>
-                <div class="method-return">Returns: <code>Optional&lt;Driver&gt;</code></div>
-                <div class="params-title">Parameters (MatchRequestDTO):</div>
-                <div class="param-row"><span class="param-name">pickupLat</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">pickupLng</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">rideType</span><span class="param-type">RideType</span><span class="param-comment">// vehicle type filter ke liye</span></div>
-                <div class="param-row"><span class="param-name">radiusKm</span><span class="param-type">double</span><span class="param-opt">[Optional]</span><span class="param-comment">// default 5km, retry mein expand hota hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> findNearbyDrivers(NearbySearchDTO)</div>
-                <div class="method-return">Returns: <code>List&lt;Driver&gt;</code></div>
-                <div class="params-title">Parameters (NearbySearchDTO):</div>
-                <div class="param-row"><span class="param-name">lat</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">lng</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">radiusKm</span><span class="param-type">double</span><span class="param-comment">// search radius in kilometers</span></div>
-                <div class="param-row"><span class="param-name">vehicleType</span><span class="param-type">VehicleType</span><span class="param-opt">[Optional]</span><span class="param-comment">// null = all types</span></div>
-                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span><span class="param-opt">[Optional]</span><span class="param-comment">// default 20, max candidates return</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> rankDrivers(RankRequestDTO)</div>
-                <div class="method-return">Returns: <code>List&lt;ScoredDriver&gt;</code></div>
-                <div class="params-title">Parameters (RankRequestDTO):</div>
-                <div class="param-row"><span class="param-name">candidates</span><span class="param-type">List&lt;Driver&gt;</span><span class="param-comment">// nearby drivers ka list</span></div>
-                <div class="param-row"><span class="param-name">pickupLat</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">pickupLng</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">rideType</span><span class="param-type">RideType</span><span class="param-comment">// 60% distance + 25% rating + 15% acceptance</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">MatchingEngine</span> {
+
+    <span class="cm">// Pickup ke paas best driver dhundho - radius mein search + scoring</span>
+    <span class="tp">Optional&lt;Driver&gt;</span> <span class="fn">findBestMatch</span>(<span class="tp">double</span> pickupLat, <span class="tp">double</span> pickupLng, <span class="tp">RideType</span> rideType, <span class="tp">double</span> radiusKm)
+
+    <span class="cm">// Nearby available drivers ka list nikalo - GEORADIUS se</span>
+    <span class="tp">List&lt;Driver&gt;</span> <span class="fn">findNearbyDrivers</span>(<span class="tp">double</span> lat, <span class="tp">double</span> lng, <span class="tp">double</span> radiusKm, <span class="tp">VehicleType</span> vehicleType, <span class="tp">int</span> limit)
+
+    <span class="cm">// Candidates ko rank karo - 60% distance + 25% rating + 15% acceptance</span>
+    <span class="tp">List&lt;ScoredDriver&gt;</span> <span class="fn">rankDrivers</span>(<span class="tp">List&lt;Driver&gt;</span> candidates, <span class="tp">double</span> pickupLat, <span class="tp">double</span> pickupLng, <span class="tp">RideType</span> rideType)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>PricingService</h3>
             <p class="svc-desc">Ride ka fare calculate karta hai &mdash; base fare + per km + per minute + surge multiplier, aur promo code bhi apply karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> calculateFare(FareCalcDTO)</div>
-                <div class="method-return">Returns: <code>BigDecimal</code></div>
-                <div class="params-title">Parameters (FareCalcDTO):</div>
-                <div class="param-row"><span class="param-name">distanceKm</span><span class="param-type">double</span><span class="param-comment">// total ride distance</span></div>
-                <div class="param-row"><span class="param-name">durationMin</span><span class="param-type">int</span><span class="param-comment">// estimated ya actual ride time</span></div>
-                <div class="param-row"><span class="param-name">rideType</span><span class="param-type">RideType</span><span class="param-comment">// MINI/SEDAN/SUV ke rates alag hain</span></div>
-                <div class="param-row"><span class="param-name">surgeMultiplier</span><span class="param-type">double</span><span class="param-comment">// 1.0x to 3.0x, SurgePricingService se aata hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> estimate(FareEstimateDTO)</div>
-                <div class="method-return">Returns: <code>FareEstimate</code></div>
-                <div class="params-title">Parameters (FareEstimateDTO):</div>
-                <div class="param-row"><span class="param-name">pickupLat</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">pickupLng</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">dropLat</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">dropLng</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">rideType</span><span class="param-type">RideType</span><span class="param-comment">// booking se pehle estimate dikhata hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> applyPromo(PromoApplyDTO)</div>
-                <div class="method-return">Returns: <code>BigDecimal</code></div>
-                <div class="params-title">Parameters (PromoApplyDTO):</div>
-                <div class="param-row"><span class="param-name">fare</span><span class="param-type">BigDecimal</span><span class="param-comment">// original calculated fare</span></div>
-                <div class="param-row"><span class="param-name">promoCode</span><span class="param-type">String</span><span class="param-comment">// e.g. "FIRST50", "RIDE20"</span></div>
-                <div class="param-row"><span class="param-name">riderId</span><span class="param-type">Long</span><span class="param-comment">// promo code per-user validity check ke liye</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">PricingService</span> {
+
+    <span class="cm">// Final fare calculate karo - distance, time, rideType aur surge se</span>
+    <span class="tp">BigDecimal</span> <span class="fn">calculateFare</span>(<span class="tp">double</span> distanceKm, <span class="tp">int</span> durationMin, <span class="tp">RideType</span> rideType, <span class="tp">double</span> surgeMultiplier)
+
+    <span class="cm">// Booking se pehle fare estimate dikhao - pickup/drop se calculate</span>
+    <span class="tp">FareEstimate</span> <span class="fn">estimate</span>(<span class="tp">double</span> pickupLat, <span class="tp">double</span> pickupLng, <span class="tp">double</span> dropLat, <span class="tp">double</span> dropLng, <span class="tp">RideType</span> rideType)
+
+    <span class="cm">// Promo code apply karo - FIRST50, RIDE20 jaise codes pe discount</span>
+    <span class="tp">BigDecimal</span> <span class="fn">applyPromo</span>(<span class="tp">BigDecimal</span> fare, <span class="tp">String</span> promoCode, <span class="tp">Long</span> riderId)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>SurgePricingService</h3>
             <p class="svc-desc">Jab ek area mein demand zyada ho aur drivers kam &mdash; toh surge multiplier badhata hai (1x se 3x tak), har 30s recalculate hota hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> getSurgeMultiplier(SurgeQueryDTO)</div>
-                <div class="method-return">Returns: <code>double</code></div>
-                <div class="params-title">Parameters (SurgeQueryDTO):</div>
-                <div class="param-row"><span class="param-name">lat</span><span class="param-type">double</span><span class="param-comment">// pickup location latitude</span></div>
-                <div class="param-row"><span class="param-name">lng</span><span class="param-type">double</span><span class="param-comment">// pickup location longitude</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> recalculateSurge(SurgeRecalcDTO)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (SurgeRecalcDTO):</div>
-                <div class="param-row"><span class="param-name">zoneId</span><span class="param-type">String</span><span class="param-comment">// GeoHash-based zone identifier (e.g. "zone_delhi_cp")</span></div>
-                <div class="param-row"><span class="param-name">activeRequests</span><span class="param-type">int</span><span class="param-comment">// zone mein kitne ride requests hain (demand)</span></div>
-                <div class="param-row"><span class="param-name">availableDrivers</span><span class="param-type">int</span><span class="param-comment">// zone mein kitne drivers available hain (supply)</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SurgePricingService</span> {
+
+    <span class="cm">// Pickup location ka current surge multiplier nikalo</span>
+    <span class="tp">double</span> <span class="fn">getSurgeMultiplier</span>(<span class="tp">double</span> lat, <span class="tp">double</span> lng)
+
+    <span class="cm">// Zone ka surge recalculate karo - demand/supply ratio se</span>
+    <span class="tp">void</span> <span class="fn">recalculateSurge</span>(<span class="tp">String</span> zoneId, <span class="tp">int</span> activeRequests, <span class="tp">int</span> availableDrivers)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>LocationService</h3>
             <p class="svc-desc">Driver ki real-time location track karta hai Redis GEO mein, rider ko live position dikhata hai aur route history bhi rakhta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> updateLocation(LocationUpdateDTO)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (LocationUpdateDTO):</div>
-                <div class="param-row"><span class="param-name">driverId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">lat</span><span class="param-type">double</span><span class="param-comment">// current latitude</span></div>
-                <div class="param-row"><span class="param-name">lng</span><span class="param-type">double</span><span class="param-comment">// current longitude</span></div>
-                <div class="param-row"><span class="param-name">speed</span><span class="param-type">double</span><span class="param-opt">[Optional]</span><span class="param-comment">// km/h mein current speed</span></div>
-                <div class="param-row"><span class="param-name">rideId</span><span class="param-type">Long</span><span class="param-opt">[Optional]</span><span class="param-comment">// active ride ho toh route history save hoti hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getDriverLocation(Long)</div>
-                <div class="method-return">Returns: <code>GeoPoint</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">driverId</span><span class="param-type">Long</span><span class="param-comment">// Redis GEOPOS se current lat/lng milta hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getRideRoute(String)</div>
-                <div class="method-return">Returns: <code>List&lt;GeoPoint&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">rideId</span><span class="param-type">String</span><span class="param-comment">// TimescaleDB se puri ride ka GPS trail milta hai</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">LocationService</span> {
+
+    <span class="cm">// Driver ki location update karo Redis GEO mein - har 3 sec aata hai</span>
+    <span class="tp">void</span> <span class="fn">updateLocation</span>(<span class="tp">Long</span> driverId, <span class="tp">double</span> lat, <span class="tp">double</span> lng, <span class="tp">double</span> speed, <span class="tp">Long</span> rideId)
+
+    <span class="cm">// Driver ki current location nikalo - Redis GEOPOS se</span>
+    <span class="tp">GeoPoint</span> <span class="fn">getDriverLocation</span>(<span class="tp">Long</span> driverId)
+
+    <span class="cm">// Puri ride ka GPS trail nikalo - TimescaleDB se route history</span>
+    <span class="tp">List&lt;GeoPoint&gt;</span> <span class="fn">getRideRoute</span>(<span class="tp">String</span> rideId)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>ETAService</h3>
             <p class="svc-desc">Driver kitne time mein pickup ya drop pe pahunchega woh estimate karta hai &mdash; distance + traffic + historical data se</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> calculateETA(ETARequestDTO)</div>
-                <div class="method-return">Returns: <code>Duration</code></div>
-                <div class="params-title">Parameters (ETARequestDTO):</div>
-                <div class="param-row"><span class="param-name">fromLat</span><span class="param-type">double</span><span class="param-comment">// driver ki current location</span></div>
-                <div class="param-row"><span class="param-name">fromLng</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">toLat</span><span class="param-type">double</span><span class="param-comment">// pickup ya drop point</span></div>
-                <div class="param-row"><span class="param-name">toLng</span><span class="param-type">double</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> estimateDistance(DistanceRequestDTO)</div>
-                <div class="method-return">Returns: <code>double</code></div>
-                <div class="params-title">Parameters (DistanceRequestDTO):</div>
-                <div class="param-row"><span class="param-name">fromLat</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">fromLng</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">toLat</span><span class="param-type">double</span></div>
-                <div class="param-row"><span class="param-name">toLng</span><span class="param-type">double</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ETAService</span> {
+
+    <span class="cm">// Driver se pickup/drop tak ka estimated time nikalo</span>
+    <span class="tp">Duration</span> <span class="fn">calculateETA</span>(<span class="tp">double</span> fromLat, <span class="tp">double</span> fromLng, <span class="tp">double</span> toLat, <span class="tp">double</span> toLng)
+
+    <span class="cm">// Do points ke beech ki distance estimate karo in km</span>
+    <span class="tp">double</span> <span class="fn">estimateDistance</span>(<span class="tp">double</span> fromLat, <span class="tp">double</span> fromLng, <span class="tp">double</span> toLat, <span class="tp">double</span> toLng)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>RatingService</h3>
             <p class="svc-desc">Trip ke baad rider/driver rating handle karta hai (1-5 stars), low-rated drivers ko flag bhi karta hai review ke liye</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> rate(RateRequestDTO)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (RateRequestDTO):</div>
-                <div class="param-row"><span class="param-name">rideId</span><span class="param-type">String</span><span class="param-comment">// kis ride ke liye rating deni hai</span></div>
-                <div class="param-row"><span class="param-name">fromUserId</span><span class="param-type">Long</span><span class="param-comment">// rating dene wala (rider ya driver)</span></div>
-                <div class="param-row"><span class="param-name">toUserId</span><span class="param-type">Long</span><span class="param-comment">// jisko rating mil rahi hai</span></div>
-                <div class="param-row"><span class="param-name">score</span><span class="param-type">int</span><span class="param-comment">// 1 to 5 stars</span></div>
-                <div class="param-row"><span class="param-name">feedback</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// text comment</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getDriverRating(Long)</div>
-                <div class="method-return">Returns: <code>double</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">driverId</span><span class="param-type">Long</span><span class="param-comment">// AVG(score) from ratings table</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> flagLowRatedDrivers(FlagRequestDTO)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (FlagRequestDTO):</div>
-                <div class="param-row"><span class="param-name">threshold</span><span class="param-type">double</span><span class="param-comment">// e.g. 3.0 &mdash; isse neeche wale drivers flag hote hain</span></div>
-                <div class="param-row"><span class="param-name">minRides</span><span class="param-type">int</span><span class="param-opt">[Optional]</span><span class="param-comment">// minimum rides before flagging (default 10)</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RatingService</span> {
+
+    <span class="cm">// Ride ke baad rating do - rider ya driver dono de sakte hain</span>
+    <span class="tp">void</span> <span class="fn">rate</span>(<span class="tp">String</span> rideId, <span class="tp">Long</span> fromUserId, <span class="tp">Long</span> toUserId, <span class="tp">int</span> score, <span class="tp">String</span> feedback)
+
+    <span class="cm">// Driver ki average rating nikalo - AVG(score) from ratings table</span>
+    <span class="tp">double</span> <span class="fn">getDriverRating</span>(<span class="tp">Long</span> driverId)
+
+    <span class="cm">// Low-rated drivers ko flag karo review ke liye - threshold se neeche wale</span>
+    <span class="tp">void</span> <span class="fn">flagLowRatedDrivers</span>(<span class="tp">double</span> threshold, <span class="tp">int</span> minRides)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>NotificationService</h3>
             <p class="svc-desc">Drivers ko naye ride requests ki push notification bhejta hai (30 sec accept timeout), riders ko ride status aur ETA updates deta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> notifyDriver(DriverNotifyDTO)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (DriverNotifyDTO):</div>
-                <div class="param-row"><span class="param-name">driverId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">rideId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">pickupAddress</span><span class="param-type">String</span><span class="param-comment">// driver ko dikhane ke liye pickup location</span></div>
-                <div class="param-row"><span class="param-name">estimatedFare</span><span class="param-type">BigDecimal</span></div>
-                <div class="param-row"><span class="param-name">rideType</span><span class="param-type">RideType</span></div>
-                <div class="param-row"><span class="param-name">timeoutSec</span><span class="param-type">int</span><span class="param-opt">[Optional]</span><span class="param-comment">// default 30 sec accept timeout</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> notifyRider(RiderNotifyDTO)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (RiderNotifyDTO):</div>
-                <div class="param-row"><span class="param-name">riderId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">rideId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">status</span><span class="param-type">RideStatus</span><span class="param-comment">// DRIVER_ASSIGNED, ARRIVED, IN_PROGRESS etc.</span></div>
-                <div class="param-row"><span class="param-name">driverName</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// assignment pe driver details bhejna</span></div>
-                <div class="param-row"><span class="param-name">vehicleNumber</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">otp</span><span class="param-type">String</span><span class="param-opt">[Optional]</span><span class="param-comment">// DRIVER_ARRIVED pe 4-digit OTP bhejte hain</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> sendETAUpdate(ETAUpdateDTO)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (ETAUpdateDTO):</div>
-                <div class="param-row"><span class="param-name">riderId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">rideId</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">eta</span><span class="param-type">Duration</span><span class="param-comment">// kitne minutes mein driver aayega</span></div>
-                <div class="param-row"><span class="param-name">driverLat</span><span class="param-type">double</span><span class="param-opt">[Optional]</span><span class="param-comment">// live location bhi bhej sakte hain</span></div>
-                <div class="param-row"><span class="param-name">driverLng</span><span class="param-type">double</span><span class="param-opt">[Optional]</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">NotificationService</span> {
+
+    <span class="cm">// Driver ko nayi ride request ki notification bhejo - 30s accept timeout</span>
+    <span class="tp">void</span> <span class="fn">notifyDriver</span>(<span class="tp">Long</span> driverId, <span class="tp">String</span> rideId, <span class="tp">String</span> pickupAddress, <span class="tp">BigDecimal</span> estimatedFare, <span class="tp">RideType</span> rideType, <span class="tp">int</span> timeoutSec)
+
+    <span class="cm">// Rider ko ride status update bhejo - driver details aur OTP ke saath</span>
+    <span class="tp">void</span> <span class="fn">notifyRider</span>(<span class="tp">Long</span> riderId, <span class="tp">String</span> rideId, <span class="tp">RideStatus</span> status, <span class="tp">String</span> driverName, <span class="tp">String</span> vehicleNumber, <span class="tp">String</span> otp)
+
+    <span class="cm">// Rider ko ETA update bhejo - kitne min mein driver aayega with live location</span>
+    <span class="tp">void</span> <span class="fn">sendETAUpdate</span>(<span class="tp">Long</span> riderId, <span class="tp">String</span> rideId, <span class="tp">Duration</span> eta, <span class="tp">double</span> driverLat, <span class="tp">double</span> driverLng)
+}
+</pre></div>
         </div>
 
     </div>
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">MatchingEngine.java &mdash; GeoSpatial + Scoring</span></div>
     <pre class="code-block">
 <span class="ann">@Service</span>
@@ -516,7 +375,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IPricingStrategy for ride types (Mini, Sedan, SUV) &mdash; different base fare, per-km, per-min rates</p></div>
         <div class="pattern-card"><h3>Observer</h3><p>Location updates trigger WebSocket push to rider; ride status changes trigger notifications</p></div>
@@ -528,7 +387,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">Rider opens app &rarr; enters pickup &amp; drop &rarr; gets fare estimate</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">Rider confirms &rarr; POST /rides/request (status = REQUESTED)</span></div>
@@ -544,7 +403,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
     <div class="cap-grid">
         <div class="cap-card"><div class="cap-label">Daily Rides</div><div class="cap-value">15M rides/day</div></div>
         <div class="cap-card"><div class="cap-label">Active Drivers</div><div class="cap-value">5M online at peak</div></div>
@@ -570,7 +429,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Location Update Storm</h3><p>Redis GEO for writes; batch WebSocket pushes; Kafka for location history persistence</p></div>
         <div class="bottleneck-card"><h3>Matching at Scale</h3><p>GeoHash-based partitioning; pre-computed supply-demand index; locality-based sharding</p></div>
@@ -582,7 +441,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>No Drivers Available</h3><p>Retry with expanding radius (5&rarr;10&rarr;15km); queue request for 60s; notify when driver found</p></div>
         <div class="edge-card"><h3>Driver GPS Lost</h3><p>Detect no location update &gt; 30s; show "last known" to rider; auto-cancel if &gt; 5min</p></div>
@@ -594,7 +453,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>OTP for Ride Start</h3><p>4-digit OTP sent to rider; driver must verify before starting &mdash; prevents wrong passenger</p></div>
         <div class="security-card"><h3>SOS / Emergency</h3><p>Panic button shares live location with emergency contacts + support; auto-call 911</p></div>
@@ -605,7 +464,7 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Matching</strong><br>Redis GEORADIUS for nearby drivers; score by distance + rating; 30s accept timeout</div>
         <div class="summary-card"><strong>Location</strong><br>Redis GEO for real-time; WebSocket push to rider; Kafka &rarr; TimescaleDB for history</div>

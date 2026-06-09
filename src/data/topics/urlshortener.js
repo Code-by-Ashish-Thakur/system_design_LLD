@@ -65,162 +65,9 @@ export default {
     </div>
 </div>
 
-<!-- ============ 3. CLASS DESIGN ============ -->
-<div class="section theme-orange">
-    <div class="section-title"><span class="section-num">3</span>Class Design (with Methods)</div>
-
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Url.java</span></div><pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"urls"</span>)
-<span class="kw">class</span> <span class="cn">Url</span> {
-    <span class="ann">@Id @GeneratedValue</span>(strategy = GenerationType.IDENTITY)
-    <span class="tp">Long</span> <span class="fn">id</span>;
-
-    <span class="ann">@Column</span>(unique = <span class="kw">true</span>, nullable = <span class="kw">false</span>, length = 15)
-    <span class="tp">String</span> <span class="fn">shortCode</span>;
-
-    <span class="ann">@Column</span>(nullable = <span class="kw">false</span>, length = 2048)
-    <span class="tp">String</span> <span class="fn">originalUrl</span>;
-
-    <span class="ann">@ManyToOne</span>(fetch = FetchType.LAZY)
-    <span class="ann">@JoinColumn</span>(name = <span class="st">"user_id"</span>)
-    <span class="tp">User</span> <span class="fn">user</span>;
-
-    <span class="tp">String</span> <span class="fn">customAlias</span>;
-
-    <span class="ann">@Enumerated</span>(EnumType.STRING)
-    <span class="tp">UrlStatus</span> <span class="fn">status</span> = UrlStatus.ACTIVE;
-
-    <span class="tp">LocalDateTime</span> <span class="fn">expiresAt</span>;
-    <span class="tp">Long</span> <span class="fn">clickCount</span> = 0L;
-    <span class="tp">LocalDateTime</span> <span class="fn">createdAt</span>;
-    <span class="tp">LocalDateTime</span> <span class="fn">updatedAt</span>;
-
-    <span class="ann">@PrePersist</span>
-    <span class="kw">void</span> <span class="fn">onCreate</span>() {
-        <span class="kw">this</span>.createdAt = LocalDateTime.now();
-        <span class="kw">this</span>.updatedAt = LocalDateTime.now();
-    }
-
-    <span class="kw">public boolean</span> <span class="fn">isExpired</span>() {
-        <span class="kw">return</span> expiresAt != <span class="kw">null</span> &amp;&amp; LocalDateTime.now().isAfter(expiresAt);
-    }
-
-    <span class="kw">public boolean</span> <span class="fn">isAccessible</span>() {
-        <span class="kw">return</span> status == UrlStatus.ACTIVE &amp;&amp; !isExpired();
-    }
-
-    <span class="kw">public void</span> <span class="fn">incrementClick</span>() {
-        <span class="kw">this</span>.clickCount++;
-    }
-
-    <span class="kw">public void</span> <span class="fn">deactivate</span>() {
-        <span class="kw">this</span>.status = UrlStatus.DISABLED;
-        <span class="kw">this</span>.updatedAt = LocalDateTime.now();
-    }
-
-    <span class="kw">public void</span> <span class="fn">markExpired</span>() {
-        <span class="kw">this</span>.status = UrlStatus.EXPIRED;
-        <span class="kw">this</span>.updatedAt = LocalDateTime.now();
-    }
-}
-    </pre></div>
-
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">User.java</span></div><pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"users"</span>)
-<span class="kw">class</span> <span class="cn">User</span> {
-    <span class="ann">@Id @GeneratedValue</span>
-    <span class="tp">Long</span> <span class="fn">id</span>;
-    <span class="tp">String</span> <span class="fn">email</span>;
-    <span class="tp">String</span> <span class="fn">passwordHash</span>;
-    <span class="tp">String</span> <span class="fn">apiKey</span> = UUID.randomUUID().toString();
-
-    <span class="ann">@Enumerated</span>(EnumType.STRING)
-    <span class="tp">UserTier</span> <span class="fn">tier</span> = UserTier.FREE;
-
-    <span class="kw">public int</span> <span class="fn">getDailyQuota</span>() {
-        <span class="kw">return switch</span> (tier) {
-            <span class="kw">case</span> FREE       <span class="kw">-&gt;</span> 100;
-            <span class="kw">case</span> PRO        <span class="kw">-&gt;</span> 10_000;
-            <span class="kw">case</span> ENTERPRISE <span class="kw">-&gt;</span> 1_000_000;
-        };
-    }
-
-    <span class="kw">public boolean</span> <span class="fn">canCreateUrl</span>(<span class="tp">long</span> todayCount) {
-        <span class="kw">return</span> todayCount &lt; getDailyQuota();
-    }
-}
-    </pre></div>
-
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">ClickAnalytics.java</span></div><pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"click_analytics"</span>)
-<span class="kw">class</span> <span class="cn">ClickAnalytics</span> {
-    <span class="ann">@Id @GeneratedValue</span>
-    <span class="tp">Long</span> <span class="fn">id</span>;
-
-    <span class="ann">@ManyToOne</span>(fetch = FetchType.LAZY)
-    <span class="ann">@JoinColumn</span>(name = <span class="st">"url_id"</span>)
-    <span class="tp">Url</span> <span class="fn">url</span>;
-
-    <span class="tp">String</span> <span class="fn">shortCode</span>;
-    <span class="tp">String</span> <span class="fn">ipAddress</span>;
-    <span class="tp">String</span> <span class="fn">userAgent</span>;
-    <span class="tp">String</span> <span class="fn">referer</span>;
-    <span class="tp">String</span> <span class="fn">country</span>;
-
-    <span class="ann">@Enumerated</span>(EnumType.STRING)
-    <span class="tp">DeviceType</span> <span class="fn">deviceType</span>;
-
-    <span class="tp">String</span> <span class="fn">browser</span>;
-    <span class="tp">LocalDateTime</span> <span class="fn">clickedAt</span> = LocalDateTime.now();
-
-    <span class="kw">public static</span> ClickAnalytics <span class="fn">fromRequest</span>(Url url, HttpServletRequest req) {
-        ClickAnalytics click = <span class="kw">new</span> ClickAnalytics();
-        click.url = url;
-        click.shortCode = url.getShortCode();
-        click.ipAddress = extractIp(req);
-        click.userAgent = req.getHeader(<span class="st">"User-Agent"</span>);
-        click.referer = req.getHeader(<span class="st">"Referer"</span>);
-        click.deviceType = DeviceTypeParser.parse(click.userAgent);
-        click.browser = BrowserParser.parse(click.userAgent);
-        click.country = GeoIpService.resolve(click.ipAddress);
-        <span class="kw">return</span> click;
-    }
-}
-    </pre></div>
-
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Base62.java</span></div><pre class="code-block">
-<span class="kw">class</span> <span class="cn">Base62</span> {
-    <span class="kw">private static final</span> String <span class="fn">ALPHABET</span> =
-        <span class="st">"0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz"</span>;
-
-    <span class="kw">public static</span> String <span class="fn">encode</span>(<span class="tp">long</span> num) {
-        StringBuilder sb = <span class="kw">new</span> StringBuilder();
-        <span class="kw">while</span> (num &gt; 0) {
-            sb.append(ALPHABET.charAt((<span class="tp">int</span>) (num % 62)));
-            num /= 62;
-        }
-        <span class="kw">while</span> (sb.length() &lt; 7) sb.append(<span class="st">'0'</span>);  <span class="cm">// pad to 7 chars</span>
-        <span class="kw">return</span> sb.reverse().toString();
-    }
-
-    <span class="kw">public static long</span> <span class="fn">decode</span>(String code) {
-        <span class="tp">long</span> num = 0;
-        <span class="kw">for</span> (<span class="tp">char</span> c : code.toCharArray()) {
-            num = num * 62 + ALPHABET.indexOf(c);
-        }
-        <span class="kw">return</span> num;
-    }
-}
-<span class="cm">// 62^7 = 3.5 trillion unique codes &mdash; enough for decades</span>
-    </pre></div>
-</div>
-
-<!-- ============ 4. DATABASE SCHEMA ============ -->
+<!-- ============ 3. DATABASE SCHEMA ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">4</span>Database Schema (with FK &amp; Indexes)</div>
+    <div class="section-title"><span class="section-num">3</span>Database Schema (with FK &amp; Indexes)</div>
 
     <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -421,9 +268,9 @@ INCR url:counter
     </pre></div>
 </div>
 
-<!-- ============ 5. APIs ============ -->
+<!-- ============ 4. APIs ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">5</span>APIs (with Request/Response)</div>
+    <div class="section-title"><span class="section-num">4</span>APIs (with Request/Response)</div>
     <div class="api-grid">
         <div class="api-card">
             <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/urls/shorten</span></div>
@@ -474,254 +321,191 @@ INCR url:counter
     </div>
 </div>
 
-<!-- ============ 6. SERVICE LLD ============ -->
+<!-- ============ 5. SERVICE LLD ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>UrlService</h3>
             <p class="svc-desc">Short URL banana ke liye main service hai &mdash; create, resolve, deactivate aur user ke URLs list karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> createShortUrl(CreateUrlRequest, Long)</div>
-                <div class="method-return">Returns: <code>ShortUrl</code></div>
-                <div class="params-title">Parameters (CreateUrlRequest):</div>
-                <div class="param-row"><span class="param-name">originalUrl</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">customAlias</span><span class="param-type">String</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">expiresIn</span><span class="param-type">ExpirationPolicy</span><span class="param-opt">[Optional]</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> resolveUrl(String)</div>
-                <div class="method-return">Returns: <code>String</code> (original URL or null)</div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> deactivateUrl(String, Long)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> getUserUrls(Long, Pageable)</div>
-                <div class="method-return">Returns: <code>Page&lt;ShortUrl&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-                <div class="param-row"><span class="param-name">pageable</span><span class="param-type">Pageable</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">5</span> handleDuplicateUrl(String, Long)</div>
-                <div class="method-return">Returns: <code>Optional&lt;ShortUrl&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">originalUrl</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">UrlService</span> {
+
+    <span class="cm">// nayi short URL create karta hai request aur userId se</span>
+    <span class="tp">ShortUrl</span> <span class="fn">createShortUrl</span>(<span class="tp">CreateUrlRequest</span> request,
+        <span class="tp">Long</span> userId)
+
+    <span class="cm">// shortCode se original URL resolve karta hai</span>
+    <span class="tp">String</span> <span class="fn">resolveUrl</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// URL ko deactivate karta hai user ke liye</span>
+    <span class="tp">void</span> <span class="fn">deactivateUrl</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">Long</span> userId)
+
+    <span class="cm">// user ki saari URLs paginated list mein deta hai</span>
+    <span class="tp">Page&lt;ShortUrl&gt;</span> <span class="fn">getUserUrls</span>(<span class="tp">Long</span> userId,
+        <span class="tp">Pageable</span> pageable)
+
+    <span class="cm">// duplicate URL check karta hai same user ke liye</span>
+    <span class="tp">Optional&lt;ShortUrl&gt;</span> <span class="fn">handleDuplicateUrl</span>(<span class="tp">String</span> originalUrl,
+        <span class="tp">Long</span> userId)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>RedirectService</h3>
             <p class="svc-desc">Short URL se original URL pe redirect karta hai &mdash; pehle cache check karta hai, phir DB, speed ke liye</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> redirect(String, HttpServletRequest)</div>
-                <div class="method-return">Returns: <code>String</code> (original URL)</div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">request</span><span class="param-type">HttpServletRequest</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> checkCacheFirst(String)</div>
-                <div class="method-return">Returns: <code>Optional&lt;String&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> fallbackToDb(String)</div>
-                <div class="method-return">Returns: <code>String</code> (original URL)</div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> validateAccessible(String)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">url</span><span class="param-type">String</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RedirectService</span> {
+
+    <span class="cm">// shortCode se redirect karta hai, request se analytics track karta hai</span>
+    <span class="tp">String</span> <span class="fn">redirect</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">HttpServletRequest</span> request)
+
+    <span class="cm">// pehle cache mein dekhta hai shortCode ke liye</span>
+    <span class="tp">Optional&lt;String&gt;</span> <span class="fn">checkCacheFirst</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// cache miss hone pe DB se fetch karta hai</span>
+    <span class="tp">String</span> <span class="fn">fallbackToDb</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// URL accessible hai ya nahi validate karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">validateAccessible</span>(<span class="tp">String</span> url)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>AnalyticsService</h3>
             <p class="svc-desc">Har click track karta hai aur stats report karta hai &mdash; kitne clicks aaye, kahan se aaye, daily breakdown</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> recordClick(String, HttpServletRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">request</span><span class="param-type">HttpServletRequest</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getClickStats(String, DateRange)</div>
-                <div class="method-return">Returns: <code>ClickStats</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">range</span><span class="param-type">DateRange</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getDailyBreakdown(String, int)</div>
-                <div class="method-return">Returns: <code>List&lt;DailyStats&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">days</span><span class="param-type">int</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> aggregateDailyStats()</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">&mdash;</span><span class="param-type">No params (Scheduled cron job)</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">AnalyticsService</span> {
+
+    <span class="cm">// har click event record karta hai request details ke saath</span>
+    <span class="tp">void</span> <span class="fn">recordClick</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">HttpServletRequest</span> request)
+
+    <span class="cm">// date range ke hisaab se click stats deta hai</span>
+    <span class="tp">ClickStats</span> <span class="fn">getClickStats</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">DateRange</span> range)
+
+    <span class="cm">// daily breakdown deta hai given days ke liye</span>
+    <span class="tp">List&lt;DailyStats&gt;</span> <span class="fn">getDailyBreakdown</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">int</span> days)
+
+    <span class="cm">// scheduled cron job &mdash; daily stats aggregate karta hai</span>
+    <span class="tp">void</span> <span class="fn">aggregateDailyStats</span>()
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>IdGeneratorService</h3>
             <p class="svc-desc">Unique short codes generate karta hai URLs ke liye &mdash; collision handle karta hai aur batch mein IDs pre-generate karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> generateId()</div>
-                <div class="method-return">Returns: <code>String</code> (7-char short code)</div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">&mdash;</span><span class="param-type">No params (uses configured strategy)</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> handleCollision(String)</div>
-                <div class="method-return">Returns: <code>String</code> (new unique code)</div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> preGenerateIds(int)</div>
-                <div class="method-return">Returns: <code>List&lt;String&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">batchSize</span><span class="param-type">int</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">IdGeneratorService</span> {
+
+    <span class="cm">// configured strategy se unique 7-char short code generate karta hai</span>
+    <span class="tp">String</span> <span class="fn">generateId</span>()
+
+    <span class="cm">// collision hone pe naya unique code generate karta hai</span>
+    <span class="tp">String</span> <span class="fn">handleCollision</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// batch mein IDs pre-generate karta hai performance ke liye</span>
+    <span class="tp">List&lt;String&gt;</span> <span class="fn">preGenerateIds</span>(<span class="tp">int</span> batchSize)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>CacheService</h3>
             <p class="svc-desc">Popular URLs ko Redis mein cache karta hai taaki redirect fast ho &mdash; put, get, evict aur startup pe warm-up</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> put(String, String)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">originalUrl</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> get(String)</div>
-                <div class="method-return">Returns: <code>Optional&lt;String&gt;</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> evict(String)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">shortCode</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> warmUpCache(List&lt;ShortUrl&gt;)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">hotUrls</span><span class="param-type">List&lt;ShortUrl&gt;</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">CacheService</span> {
+
+    <span class="cm">// shortCode aur originalUrl ko cache mein store karta hai</span>
+    <span class="tp">void</span> <span class="fn">put</span>(<span class="tp">String</span> shortCode,
+        <span class="tp">String</span> originalUrl)
+
+    <span class="cm">// cache se originalUrl fetch karta hai shortCode ke liye</span>
+    <span class="tp">Optional&lt;String&gt;</span> <span class="fn">get</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// cache se shortCode ki entry hata deta hai</span>
+    <span class="tp">void</span> <span class="fn">evict</span>(<span class="tp">String</span> shortCode)
+
+    <span class="cm">// startup pe hot URLs ko cache mein load karta hai</span>
+    <span class="tp">void</span> <span class="fn">warmUpCache</span>(<span class="tp">List&lt;ShortUrl&gt;</span> hotUrls)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>UrlValidationService</h3>
             <p class="svc-desc">URL valid hai ya nahi check karta hai &mdash; format, malicious site detection, custom alias availability aur sanitization</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> isValidUrl(String)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">url</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> isMalicious(String)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">url</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> isCustomAliasAvailable(String)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">alias</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> sanitizeUrl(String)</div>
-                <div class="method-return">Returns: <code>String</code> (cleaned URL)</div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">url</span><span class="param-type">String</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">UrlValidationService</span> {
+
+    <span class="cm">// URL ka format valid hai ya nahi check karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">isValidUrl</span>(<span class="tp">String</span> url)
+
+    <span class="cm">// URL malicious hai ya nahi detect karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">isMalicious</span>(<span class="tp">String</span> url)
+
+    <span class="cm">// custom alias available hai ya already taken check karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">isCustomAliasAvailable</span>(<span class="tp">String</span> alias)
+
+    <span class="cm">// URL ko sanitize karke clean URL return karta hai</span>
+    <span class="tp">String</span> <span class="fn">sanitizeUrl</span>(<span class="tp">String</span> url)
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>ExpirationService</h3>
             <p class="svc-desc">Expired URLs ko clean up karta hai &mdash; expiry schedule karta hai aur users ko notification bhejta hai before expiry</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> scheduleExpiration(ShortUrl)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">url</span><span class="param-type">ShortUrl</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> cleanupExpiredUrls()</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">&mdash;</span><span class="param-type">No params (@Scheduled cron job)</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> notifyExpiringUrls()</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">&mdash;</span><span class="param-type">No params (@Scheduled cron job)</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ExpirationService</span> {
+
+    <span class="cm">// URL ke liye expiration schedule karta hai</span>
+    <span class="tp">void</span> <span class="fn">scheduleExpiration</span>(<span class="tp">ShortUrl</span> url)
+
+    <span class="cm">// cron job &mdash; expired URLs ko cleanup karta hai</span>
+    <span class="tp">void</span> <span class="fn">cleanupExpiredUrls</span>()
+
+    <span class="cm">// cron job &mdash; jaldi expire hone wale URLs ke users ko notify karta hai</span>
+    <span class="tp">void</span> <span class="fn">notifyExpiringUrls</span>()
+}
+</pre></div>
         </div>
 
         <div class="service-card">
             <h3>AuthService</h3>
             <p class="svc-desc">User signup, login aur API key management handle karta hai &mdash; JWT token generate karta hai auth ke liye</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> register(String, String)</div>
-                <div class="method-return">Returns: <code>User</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">password</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> login(String, String)</div>
-                <div class="method-return">Returns: <code>String</code> (JWT token)</div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">email</span><span class="param-type">String</span></div>
-                <div class="param-row"><span class="param-name">password</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> validateApiKey(String)</div>
-                <div class="method-return">Returns: <code>boolean</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">apiKey</span><span class="param-type">String</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">4</span> generateJwt(Long)</div>
-                <div class="method-return">Returns: <code>String</code> (JWT token)</div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">userId</span><span class="param-type">Long</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">AuthService</span> {
+
+    <span class="cm">// naya user register karta hai email aur password se</span>
+    <span class="tp">User</span> <span class="fn">register</span>(<span class="tp">String</span> email,
+        <span class="tp">String</span> password)
+
+    <span class="cm">// user login karke JWT token return karta hai</span>
+    <span class="tp">String</span> <span class="fn">login</span>(<span class="tp">String</span> email,
+        <span class="tp">String</span> password)
+
+    <span class="cm">// API key valid hai ya nahi check karta hai</span>
+    <span class="tp">boolean</span> <span class="fn">validateApiKey</span>(<span class="tp">String</span> apiKey)
+
+    <span class="cm">// userId se JWT token generate karta hai</span>
+    <span class="tp">String</span> <span class="fn">generateJwt</span>(<span class="tp">Long</span> userId)
+}
+</pre></div>
         </div>
     </div>
 </div>
 
-<!-- ============ 7. KEY ARCHITECTURE FLOW ============ -->
+<!-- ============ 6. KEY ARCHITECTURE FLOW ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture Flow</div>
+    <div class="section-title"><span class="section-num">6</span>Key Architecture Flow</div>
 
     <div class="sub-heading" style="color:#4fc3f7;border-color:#4fc3f7">Base62 Encoding &mdash; How Short Codes Are Generated</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -831,9 +615,9 @@ INCR url:counter
     </pre></div>
 </div>
 
-<!-- ============ 8. DESIGN PATTERNS ============ -->
+<!-- ============ 7. DESIGN PATTERNS ============ -->
 <div class="section theme-cyan">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns (with Implementation)</div>
+    <div class="section-title"><span class="section-num">7</span>Design Patterns (with Implementation)</div>
     <div class="pattern-grid">
         <div class="pattern-card"><div class="pattern-name">Builder Pattern</div><div class="pattern-use">URL Creation with optional fields</div></div>
         <div class="pattern-card"><div class="pattern-name">Strategy Pattern</div><div class="pattern-use">ID Generation (Base62 / MD5 / Snowflake)</div></div>
@@ -921,9 +705,9 @@ Url url = <span class="kw">new</span> UrlBuilder()
     </pre></div>
 </div>
 
-<!-- ============ 9. SEQUENCE FLOW ============ -->
+<!-- ============ 8. SEQUENCE FLOW ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
 
     <div class="sub-heading" style="color:#b388ff;border-color:#b388ff">Create Short URL Flow</div>
     <div class="flow-container">
@@ -962,9 +746,9 @@ Url url = <span class="kw">new</span> UrlBuilder()
     </div>
 </div>
 
-<!-- ============ 10. CAPACITY ESTIMATION ============ -->
+<!-- ============ 9. CAPACITY ESTIMATION ============ -->
 <div class="section theme-deepblue">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
 
     <div class="assumption-box">
         <h4>Assumptions (Bitly-Scale URL Shortener)</h4>
@@ -1057,9 +841,9 @@ Url url = <span class="kw">new</span> UrlBuilder()
     </div>
 </div>
 
-<!-- ============ 11. BOTTLENECKS & SOLUTIONS ============ -->
+<!-- ============ 10. BOTTLENECKS & SOLUTIONS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Hot URL (millions of clicks)</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Redis cache with LRU + local in-memory cache (Caffeine)</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">DB read overload at 20K QPS</span><span class="bottleneck-arrow">&#10132;</span><span class="bottleneck-solution">Cache-aside pattern: 99% cache hit ratio eliminates DB reads</span></div>
@@ -1071,9 +855,9 @@ Url url = <span class="kw">new</span> UrlBuilder()
     </div>
 </div>
 
-<!-- ============ 12. EDGE CASES ============ -->
+<!-- ============ 11. EDGE CASES ============ -->
 <div class="section theme-amber">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases &amp; Error Handling</div>
+    <div class="section-title"><span class="section-num">11</span>Edge Cases &amp; Error Handling</div>
     <div class="edge-grid">
         <div class="edge-card">
             <h4>URL Expiration</h4>
@@ -1112,7 +896,7 @@ Url url = <span class="kw">new</span> UrlBuilder()
 
 <!-- ============ 13. SECURITY ============ -->
 <div class="section theme-lime">
-    <div class="section-title"><span class="section-num">13</span>Security</div>
+    <div class="section-title"><span class="section-num">12</span>Security</div>
     <div class="security-grid">
         <div class="security-item">
             <span class="shield">&#9670;</span>
@@ -1151,7 +935,7 @@ Url url = <span class="kw">new</span> UrlBuilder()
 
 <!-- ============ 14. INTERVIEW SUMMARY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">13</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Base62 Counter</h4><p>7-char codes, 3.5T capacity, zero collisions</p></div>
         <div class="summary-card sc-2"><h4>HTTP 302 Redirect</h4><p>Not 301 &mdash; enables click analytics tracking</p></div>

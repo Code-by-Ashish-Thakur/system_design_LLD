@@ -31,41 +31,8 @@ export default {
     </div>
 </div>
 
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">3</span>Class Design (JPA Entities)</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">RateLimitRule.java — JPA Entity</span></div>
-    <pre class="code-block">
-<span class="ann">@Entity</span>
-<span class="ann">@Table</span>(name = <span class="st">"rate_limit_rules"</span>, indexes = {
-    <span class="ann">@Index</span>(name = <span class="st">"idx_rule_endpoint_tier"</span>, columnList = <span class="st">"endpoint, tier"</span>)
-})
-<span class="kw">public class</span> <span class="tp">RateLimitRule</span> {
-    <span class="ann">@Id</span> <span class="ann">@GeneratedValue</span>(strategy = <span class="tp">GenerationType</span>.IDENTITY)
-    <span class="kw">private</span> <span class="tp">Long</span> id;
-
-    <span class="kw">private</span> <span class="tp">String</span> name;
-    <span class="kw">private</span> <span class="tp">String</span> endpoint; <span class="cm">// "/api/v1/messages/**"</span>
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">KeyType</span> keyType;
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">Algorithm</span> algorithm;
-
-    <span class="kw">private int</span> maxRequests;     <span class="cm">// bucket capacity or window limit</span>
-    <span class="kw">private int</span> windowSeconds;   <span class="cm">// time window duration</span>
-    <span class="kw">private int</span> refillRate;      <span class="cm">// tokens per second (token bucket)</span>
-
-    <span class="ann">@Enumerated</span>(<span class="tp">EnumType</span>.STRING)
-    <span class="kw">private</span> <span class="tp">UserTier</span> tier;
-
-    <span class="kw">private boolean</span> active = <span class="kw">true</span>;
-}
-    </pre></div>
-</div>
-
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">4</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">3</span>Database Schema</div>
 
     <div class="sub-heading" style="color:#25d366;border-color:#25d366">Database Technology Stack</div>
     <div class="dbtech-grid">
@@ -121,7 +88,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">5</span>API Endpoints</div>
+    <div class="section-title"><span class="section-num">4</span>API Endpoints</div>
     <div class="api-grid">
         <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/rate-limits/status</div><div class="api-desc">Get current rate limit status for caller</div></div>
         <div class="api-card"><div class="api-method get">GET</div><div class="api-path">/api/v1/admin/rate-limits/rules</div><div class="api-desc">List all rate limit rules (admin)</div></div>
@@ -135,182 +102,132 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">6</span>Service LLD</div>
+    <div class="section-title"><span class="section-num">5</span>Service LLD</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>RateLimiterFilter</h3>
             <p class="svc-desc">Har incoming API request ko check karta hai aur decide karta hai allow karein ya block karein &mdash; Spring ka OncePerRequestFilter use karta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> doFilter(FilterRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (FilterRequest):</div>
-                <div class="param-row"><span class="param-name">request</span><span class="param-type">HttpServletRequest</span><span class="param-comment">// incoming HTTP request object</span></div>
-                <div class="param-row"><span class="param-name">response</span><span class="param-type">HttpServletResponse</span><span class="param-comment">// response mein headers set karenge</span></div>
-                <div class="param-row"><span class="param-name">chain</span><span class="param-type">FilterChain</span><span class="param-comment">// allowed ho toh next filter ko forward</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> addRateLimitHeaders(HeaderRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (HeaderRequest):</div>
-                <div class="param-row"><span class="param-name">response</span><span class="param-type">HttpServletResponse</span><span class="param-comment">// jismein headers add karenge</span></div>
-                <div class="param-row"><span class="param-name">result</span><span class="param-type">RateLimitResult</span><span class="param-comment">// remaining, resetAt, retryAfter info</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> sendRateLimitExceeded(ExceededRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (ExceededRequest):</div>
-                <div class="param-row"><span class="param-name">response</span><span class="param-type">HttpServletResponse</span><span class="param-comment">// 429 status code set karega</span></div>
-                <div class="param-row"><span class="param-name">retryAfterSeconds</span><span class="param-type">long</span><span class="param-comment">// kitne seconds baad retry karein</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RateLimiterFilter</span> {
+
+    <span class="cm">// incoming request check karke allow ya block decide karta hai</span>
+    <span class="tp">void</span> <span class="fn">doFilter</span>(<span class="tp">HttpServletRequest</span> request, <span class="tp">HttpServletResponse</span> response, <span class="tp">FilterChain</span> chain)
+
+    <span class="cm">// response mein X-RateLimit headers add karta hai</span>
+    <span class="tp">void</span> <span class="fn">addRateLimitHeaders</span>(<span class="tp">HttpServletResponse</span> response, <span class="tp">RateLimitResult</span> result)
+
+    <span class="cm">// 429 status code bhejta hai aur Retry-After set karta hai</span>
+    <span class="tp">void</span> <span class="fn">sendRateLimitExceeded</span>(<span class="tp">HttpServletResponse</span> response, <span class="tp">long</span> retryAfterSeconds)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>TokenBucketLimiter</h3>
             <p class="svc-desc">Token bucket algorithm se rate limit karta hai &mdash; user ke paas tokens hote hain jo time ke saath refill hote hain, har request ek token consume karti hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> tryAcquire(AcquireRequest)</div>
-                <div class="method-return">Returns: <code>RateLimitResult</code></div>
-                <div class="params-title">Parameters (AcquireRequest):</div>
-                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// unique identifier jaise "user:42:/api/messages"</span></div>
-                <div class="param-row"><span class="param-name">rule</span><span class="param-type">RateLimitRule</span><span class="param-comment">// maxRequests, refillRate, windowSeconds etc.</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getRemainingTokens(TokenQueryRequest)</div>
-                <div class="method-return">Returns: <code>long</code></div>
-                <div class="params-title">Parameters (TokenQueryRequest):</div>
-                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// bucket key jiska remaining token count chahiye</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> resetBucket(ResetRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (ResetRequest):</div>
-                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// admin override &mdash; bucket reset karke full capacity pe laana</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">TokenBucketLimiter</span> {
+
+    <span class="cm">// ek token consume karke allow ya block decide karta hai</span>
+    <span class="tp">RateLimitResult</span> <span class="fn">tryAcquire</span>(<span class="tp">String</span> key, <span class="tp">RateLimitRule</span> rule)
+
+    <span class="cm">// bucket mein kitne tokens baaki hain check karta hai</span>
+    <span class="tp">long</span> <span class="fn">getRemainingTokens</span>(<span class="tp">String</span> key)
+
+    <span class="cm">// admin override — bucket reset karke full capacity pe laata hai</span>
+    <span class="tp">void</span> <span class="fn">resetBucket</span>(<span class="tp">String</span> key)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>SlidingWindowLimiter</h3>
             <p class="svc-desc">Sliding time window mein requests count karta hai &mdash; fixed window se zyada accurate hai, Redis sorted set use karta hai timestamps store karne ke liye</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> tryAcquire(AcquireRequest)</div>
-                <div class="method-return">Returns: <code>RateLimitResult</code></div>
-                <div class="params-title">Parameters (AcquireRequest):</div>
-                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// client identity + endpoint ka composite key</span></div>
-                <div class="param-row"><span class="param-name">rule</span><span class="param-type">RateLimitRule</span><span class="param-comment">// maxRequests aur windowSeconds define karta hai</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getCurrentCount(CountRequest)</div>
-                <div class="method-return">Returns: <code>long</code></div>
-                <div class="params-title">Parameters (CountRequest):</div>
-                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// jis key ka current window count chahiye</span></div>
-                <div class="param-row"><span class="param-name">window</span><span class="param-type">Duration</span><span class="param-comment">// sliding window ki duration (e.g. 60s)</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> cleanupExpiredEntries(CleanupRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (CleanupRequest):</div>
-                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// sorted set se purane timestamps hataane ke liye</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">SlidingWindowLimiter</span> {
+
+    <span class="cm">// sliding window mein request allow ya block karta hai</span>
+    <span class="tp">RateLimitResult</span> <span class="fn">tryAcquire</span>(<span class="tp">String</span> key, <span class="tp">RateLimitRule</span> rule)
+
+    <span class="cm">// current window mein kitni requests hui hain count karta hai</span>
+    <span class="tp">long</span> <span class="fn">getCurrentCount</span>(<span class="tp">String</span> key, <span class="tp">Duration</span> window)
+
+    <span class="cm">// sorted set se purane expired timestamps hatata hai</span>
+    <span class="tp">void</span> <span class="fn">cleanupExpiredEntries</span>(<span class="tp">String</span> key)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>FixedWindowLimiter</h3>
             <p class="svc-desc">Fixed time blocks mein requests limit karta hai (jaise 100 req/min) &mdash; simple implementation hai but window boundary pe burst ho sakta hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> tryAcquire(AcquireRequest)</div>
-                <div class="method-return">Returns: <code>RateLimitResult</code></div>
-                <div class="params-title">Parameters (AcquireRequest):</div>
-                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// rate limit key for this client+endpoint</span></div>
-                <div class="param-row"><span class="param-name">rule</span><span class="param-type">RateLimitRule</span><span class="param-comment">// maxRequests aur windowSeconds milega</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getRemainingQuota(QuotaRequest)</div>
-                <div class="method-return">Returns: <code>long</code></div>
-                <div class="params-title">Parameters (QuotaRequest):</div>
-                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// current window mein kitne requests baaki hain</span></div>
-                <div class="param-row"><span class="param-name">rule</span><span class="param-type">RateLimitRule</span><span class="param-comment">// maxRequests se compare karega</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getTimeUntilReset(ResetTimeRequest)</div>
-                <div class="method-return">Returns: <code>Duration</code></div>
-                <div class="params-title">Parameters (ResetTimeRequest):</div>
-                <div class="param-row"><span class="param-name">key</span><span class="param-type">String</span><span class="param-comment">// current window kab reset hoga, Retry-After header ke liye</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">FixedWindowLimiter</span> {
+
+    <span class="cm">// fixed window mein request allow ya block karta hai</span>
+    <span class="tp">RateLimitResult</span> <span class="fn">tryAcquire</span>(<span class="tp">String</span> key, <span class="tp">RateLimitRule</span> rule)
+
+    <span class="cm">// current window mein kitne requests baaki hain check karta hai</span>
+    <span class="tp">long</span> <span class="fn">getRemainingQuota</span>(<span class="tp">String</span> key, <span class="tp">RateLimitRule</span> rule)
+
+    <span class="cm">// current window kab reset hoga — Retry-After header ke liye</span>
+    <span class="tp">Duration</span> <span class="fn">getTimeUntilReset</span>(<span class="tp">String</span> key)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>KeyResolverService</h3>
             <p class="svc-desc">Pata lagata hai ki request kaun bhej raha hai &mdash; userId, API key, ya IP address se identify karta hai aur composite key banata hai</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> resolve(ResolveRequest)</div>
-                <div class="method-return">Returns: <code>String</code></div>
-                <div class="params-title">Parameters (ResolveRequest):</div>
-                <div class="param-row"><span class="param-name">request</span><span class="param-type">HttpServletRequest</span><span class="param-comment">// HTTP request se identity extract karega</span></div>
-                <div class="param-row"><span class="param-name">keyType</span><span class="param-type">KeyType</span><span class="param-comment">// USER_ID, API_KEY, IP_ADDRESS, ya COMPOSITE</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> extractIpAddress(IpRequest)</div>
-                <div class="method-return">Returns: <code>String</code></div>
-                <div class="params-title">Parameters (IpRequest):</div>
-                <div class="param-row"><span class="param-name">request</span><span class="param-type">HttpServletRequest</span><span class="param-comment">// X-Forwarded-For handle karta hai proxies ke liye</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getTierByApiKey(TierLookupRequest)</div>
-                <div class="method-return">Returns: <code>UserTier</code></div>
-                <div class="params-title">Parameters (TierLookupRequest):</div>
-                <div class="param-row"><span class="param-name">apiKey</span><span class="param-type">String</span><span class="param-comment">// API key se user ka tier (FREE/PRO/ENTERPRISE) return karega</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">KeyResolverService</span> {
+
+    <span class="cm">// request se client ki identity resolve karta hai</span>
+    <span class="tp">String</span> <span class="fn">resolve</span>(<span class="tp">HttpServletRequest</span> request, <span class="tp">KeyType</span> keyType)
+
+    <span class="cm">// X-Forwarded-For handle karke real IP nikalata hai</span>
+    <span class="tp">String</span> <span class="fn">extractIpAddress</span>(<span class="tp">HttpServletRequest</span> request)
+
+    <span class="cm">// API key se user ka tier (FREE/PRO/ENTERPRISE) return karta hai</span>
+    <span class="tp">UserTier</span> <span class="fn">getTierByApiKey</span>(<span class="tp">String</span> apiKey)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>RuleProviderService</h3>
             <p class="svc-desc">Database se rate limit rules load karta hai aur memory mein cache rakhta hai &mdash; speed ke liye local cache, freshness ke liye periodic refresh</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> getRule(RuleLookupRequest)</div>
-                <div class="method-return">Returns: <code>Optional&lt;RateLimitRule&gt;</code></div>
-                <div class="params-title">Parameters (RuleLookupRequest):</div>
-                <div class="param-row"><span class="param-name">endpoint</span><span class="param-type">String</span><span class="param-comment">// API path jaise "/api/v1/messages/**"</span></div>
-                <div class="param-row"><span class="param-name">tier</span><span class="param-type">UserTier</span><span class="param-comment">// user ka tier, matching rule dhundhega</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> refreshRulesCache()</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters:</div>
-                <div class="param-row"><span class="param-name">&mdash;</span><span class="param-type">none</span><span class="param-comment">// DB se saari active rules reload karke cache update karega</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> upsertRule(UpsertRuleRequest)</div>
-                <div class="method-return">Returns: <code>RateLimitRule</code></div>
-                <div class="params-title">Parameters (UpsertRuleRequest):</div>
-                <div class="param-row"><span class="param-name">endpoint</span><span class="param-type">String</span><span class="param-comment">// kis endpoint ke liye rule set karna hai</span></div>
-                <div class="param-row"><span class="param-name">tier</span><span class="param-type">UserTier</span><span class="param-comment">// kis tier ke liye applicable hai</span></div>
-                <div class="param-row"><span class="param-name">maxRequests</span><span class="param-type">int</span><span class="param-comment">// maximum allowed requests in window</span></div>
-                <div class="param-row"><span class="param-name">window</span><span class="param-type">Duration</span><span class="param-comment">// time window duration (e.g. 60 seconds)</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">RuleProviderService</span> {
+
+    <span class="cm">// endpoint aur tier ke hisaab se matching rule dhundhta hai</span>
+    <span class="tp">Optional&lt;RateLimitRule&gt;</span> <span class="fn">getRule</span>(<span class="tp">String</span> endpoint, <span class="tp">UserTier</span> tier)
+
+    <span class="cm">// DB se saari active rules reload karke cache update karta hai</span>
+    <span class="tp">void</span> <span class="fn">refreshRulesCache</span>()
+
+    <span class="cm">// naya rule create ya existing update karta hai</span>
+    <span class="tp">RateLimitRule</span> <span class="fn">upsertRule</span>(<span class="tp">String</span> endpoint, <span class="tp">UserTier</span> tier, <span class="tp">int</span> maxRequests, <span class="tp">Duration</span> window)
+}
+</pre></div>
         </div>
         <div class="service-card">
             <h3>MetricsService</h3>
             <p class="svc-desc">Kitni requests allow ya block hui, yeh track karta hai &mdash; Prometheus counters update karta hai monitoring dashboards ke liye</p>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">1</span> recordDecision(DecisionRequest)</div>
-                <div class="method-return">Returns: <code>void</code></div>
-                <div class="params-title">Parameters (DecisionRequest):</div>
-                <div class="param-row"><span class="param-name">result</span><span class="param-type">RateLimitResult</span><span class="param-comment">// allowed/blocked + remaining info record karega</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">2</span> getMetrics(MetricsQueryRequest)</div>
-                <div class="method-return">Returns: <code>RateLimitMetrics</code></div>
-                <div class="params-title">Parameters (MetricsQueryRequest):</div>
-                <div class="param-row"><span class="param-name">endpoint</span><span class="param-type">String</span><span class="param-comment">// kis endpoint ki metrics chahiye</span></div>
-                <div class="param-row"><span class="param-name">timeRange</span><span class="param-type">Duration</span><span class="param-comment">// last kitne time ki metrics (e.g. last 1 hour)</span></div>
-            </div>
-            <div class="method-block">
-                <div class="method-sig"><span class="method-num">3</span> getTopBlockedUsers(TopBlockedRequest)</div>
-                <div class="method-return">Returns: <code>List&lt;UserMetric&gt;</code></div>
-                <div class="params-title">Parameters (TopBlockedRequest):</div>
-                <div class="param-row"><span class="param-name">limit</span><span class="param-type">int</span><span class="param-comment">// top kitne blocked users chahiye (abuse detection ke liye)</span></div>
-            </div>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">MetricsService</span> {
+
+    <span class="cm">// har request ka allowed/blocked decision record karta hai</span>
+    <span class="tp">void</span> <span class="fn">recordDecision</span>(<span class="tp">RateLimitResult</span> result)
+
+    <span class="cm">// endpoint ki metrics (allowed/blocked count) return karta hai</span>
+    <span class="tp">RateLimitMetrics</span> <span class="fn">getMetrics</span>(<span class="tp">String</span> endpoint, <span class="tp">Duration</span> timeRange)
+
+    <span class="cm">// sabse zyada blocked hone wale users ki list — abuse detection ke liye</span>
+    <span class="tp">List&lt;UserMetric&gt;</span> <span class="fn">getTopBlockedUsers</span>(<span class="tp">int</span> limit)
+}
+</pre></div>
         </div>
     </div>
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">7</span>Key Architecture</div>
+    <div class="section-title"><span class="section-num">6</span>Key Architecture</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">TokenBucketLimiter.java — Redis Lua Script</span></div>
     <pre class="code-block">
 <span class="ann">@Component</span>
@@ -368,7 +285,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">7</span>Design Patterns Used</div>
     <div class="pattern-grid">
         <div class="pattern-card"><h3>Strategy</h3><p>IRateLimiter implementations (TokenBucket, SlidingWindow, FixedWindow) — select algorithm per rule</p></div>
         <div class="pattern-card"><h3>Factory</h3><p>RateLimiterFactory.create(algorithm) returns the correct IRateLimiter implementation</p></div>
@@ -407,7 +324,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Sequence Flow</div>
+    <div class="section-title"><span class="section-num">8</span>Sequence Flow</div>
     <div class="flow-container">
         <div class="flow-step"><span class="step-num">1</span><span class="step-text">HTTP request hits RateLimiterFilter (OncePerRequestFilter)</span></div>
         <div class="flow-step"><span class="step-num">2</span><span class="step-text">KeyResolver extracts client identity (userId / API key / IP)</span></div>
@@ -422,7 +339,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">10</span>Capacity Estimation</div>
+    <div class="section-title"><span class="section-num">9</span>Capacity Estimation</div>
     <div class="cap-grid">
         <div class="cap-card"><div class="cap-label">API Requests / sec</div><div class="cap-value">100,000 QPS</div></div>
         <div class="cap-card"><div class="cap-label">Redis Operations / sec</div><div class="cap-value">~100K (1 Lua call per request)</div></div>
@@ -445,7 +362,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">11</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">10</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-card"><h3>Redis Single Point of Failure</h3><p>Redis Cluster with 3+ masters; Sentinel for automatic failover; read replicas</p></div>
         <div class="bottleneck-card"><h3>Hot Key Problem</h3><p>Hash-based key distribution; local in-memory cache with Redis sync; key sharding</p></div>
@@ -457,7 +374,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">12</span>Edge Cases</div>
+    <div class="section-title"><span class="section-num">11</span>Edge Cases</div>
     <div class="edge-grid">
         <div class="edge-card"><h3>Redis Down</h3><p>Fail-open with local in-memory fallback limiter; log degradation; alert ops</p></div>
         <div class="edge-card"><h3>Distributed Race Condition</h3><p>Lua scripts are atomic on single Redis node; for cluster, use hash tags {userId}</p></div>
@@ -469,7 +386,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">13</span>Security Considerations</div>
+    <div class="section-title"><span class="section-num">12</span>Security Considerations</div>
     <div class="security-grid">
         <div class="security-card"><h3>DDoS Protection</h3><p>Rate limiting is first line; combine with WAF, IP reputation, CAPTCHA challenges</p></div>
         <div class="security-card"><h3>API Key Rotation</h3><p>Support multiple active keys per client; grace period during rotation</p></div>
@@ -480,7 +397,7 @@ export default {
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">13</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Algorithms</strong><br>Token Bucket (smooth), Sliding Window Log (precise), Fixed Window (simple), Leaky Bucket (constant outflow)</div>
         <div class="summary-card"><strong>Redis Lua</strong><br>Atomic operations prevent race conditions; EVALSHA caches compiled scripts; &lt; 1ms latency</div>
