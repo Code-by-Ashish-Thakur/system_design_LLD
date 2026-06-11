@@ -27,12 +27,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; video start &lt; 2 sec me hona chahiye</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, stream kabhi buffer nahi ho</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; millions concurrent viewers handle karo</div>
-        <div class="req-pill"><span class="num">4</span> CDN &mdash; edge caching se global delivery fast ho</div>
-        <div class="req-pill"><span class="num">5</span> Adaptive Bitrate &mdash; network ke hisaab se quality auto-adjust</div>
-        <div class="req-pill"><span class="num">6</span> Fault Tolerance &mdash; chunk failure pe seamless retry</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Video playback must start within 2 seconds</div><div class="nfr-hi">Video start &lt; 2 sec me hona chahiye &mdash; user buffering dekhke chala jaayega</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.99% uptime, streams must never buffer</div><div class="nfr-hi">99.99% uptime hona chahiye &mdash; stream kabhi buffer nahi hona chahiye</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Handle millions of concurrent viewers</div><div class="nfr-hi">Millions concurrent viewers handle karne padenge &mdash; CDN + horizontal scaling</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">CDN &mdash; Edge caching for fast global delivery</div><div class="nfr-hi">Edge caching se global delivery fast honi chahiye &mdash; nearest server se stream ho</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Adaptive Bitrate &mdash; Quality auto-adjusts based on network speed</div><div class="nfr-hi">Network ke hisaab se quality auto-adjust honi chahiye &mdash; slow net pe low quality dikhe</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Seamless retry on chunk failure</div><div class="nfr-hi">Chunk failure hone pe seamless retry ho &mdash; user ko pata bhi na chale</div></div></div>
     </div>
 </div>
 

@@ -28,12 +28,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; code compile &amp; run &lt; 5 sec me ho</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.9% uptime especially contest time</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; contest ke time 100K+ concurrent submissions</div>
-        <div class="req-pill"><span class="num">4</span> Isolation &mdash; har submission sandboxed environment me run ho</div>
-        <div class="req-pill"><span class="num">5</span> Consistency &mdash; submission result atomic update hona chahiye</div>
-        <div class="req-pill"><span class="num">6</span> Security &mdash; malicious code execution se system safe rahe</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Code compile &amp; run must complete within 5 seconds</div><div class="nfr-hi">Code compile aur run &lt; 5 sec me hona chahiye &mdash; user ko fast feedback mile</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.9% uptime, especially during contests</div><div class="nfr-hi">Contest time pe 99.9% uptime hona chahiye &mdash; downtime pe participants ka time waste ho</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Handle 100K+ concurrent submissions during contests</div><div class="nfr-hi">Contest ke time 100K+ concurrent submissions handle karne padenge &mdash; queue-based processing</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Isolation &mdash; Every submission runs in a sandboxed environment</div><div class="nfr-hi">Har submission sandboxed environment me run hona chahiye &mdash; ek ka dusre pe effect nahi ho</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Consistency &mdash; Submission results must update atomically</div><div class="nfr-hi">Submission result atomic update hona chahiye &mdash; partial result nahi dikhna chahiye</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Security &mdash; System must be safe from malicious code execution</div><div class="nfr-hi">Malicious code execution se system safe rehna chahiye &mdash; resource limits + sandbox mandatory</div></div></div>
     </div>
 </div>
 

@@ -30,12 +30,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; notification &lt; 1 sec me deliver ho</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, koi notification miss nahi ho</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; millions notifications per minute handle</div>
-        <div class="req-pill"><span class="num">4</span> Priority Based &mdash; urgent notifications pehle jaaye</div>
-        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; retry with exponential backoff on failure</div>
-        <div class="req-pill"><span class="num">6</span> Multi-channel &mdash; push, SMS, email, in-app sab support karo</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Notifications must be delivered within 1 second</div><div class="nfr-hi">Notification &lt; 1 sec me deliver hona chahiye &mdash; delay hone pe impact hota hai</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.99% uptime, no notification should be missed</div><div class="nfr-hi">99.99% uptime hona chahiye &mdash; koi bhi notification miss nahi honi chahiye</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Handle millions of notifications per minute</div><div class="nfr-hi">Millions notifications per minute handle karne padenge &mdash; queue-based processing karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Priority Based &mdash; Urgent notifications must be delivered first</div><div class="nfr-hi">Urgent notifications pehle deliver honi chahiye &mdash; priority queue use karo</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Retry with exponential backoff on failure</div><div class="nfr-hi">Failure hone pe retry with exponential backoff karo &mdash; DLQ me bhi jaaye</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Multi-channel &mdash; Support push, SMS, email &amp; in-app channels</div><div class="nfr-hi">Push, SMS, email, in-app sab channels support karo &mdash; user preference ke basis pe</div></div></div>
     </div>
 </div>
 

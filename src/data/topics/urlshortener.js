@@ -28,12 +28,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; redirect &lt; 10ms me hona chahiye</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, link kabhi fail nahi hona chahiye</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; billions of URLs store &amp; serve karo</div>
-        <div class="req-pill"><span class="num">4</span> Uniqueness &mdash; short URL globally unique hona chahiye</div>
-        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; cache miss pe DB fallback seamless ho</div>
-        <div class="req-pill"><span class="num">6</span> Analytics &mdash; real-time click tracking bina latency badhaye</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; URL redirect must happen under 10ms</div><div class="nfr-hi">Redirect &lt; 10ms me hona chahiye &mdash; cache se instant resolve ho</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.99% uptime, links must never fail</div><div class="nfr-hi">99.99% uptime hona chahiye &mdash; link kabhi fail nahi hona chahiye</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Store &amp; serve billions of URLs</div><div class="nfr-hi">Billions of URLs store aur serve karne padenge &mdash; sharding se scale karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Uniqueness &mdash; Short URLs must be globally unique</div><div class="nfr-hi">Short URL globally unique hona chahiye &mdash; collision nahi hona chahiye</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Seamless DB fallback on cache miss</div><div class="nfr-hi">Cache miss hone pe DB fallback seamless ho &mdash; user ko pata bhi na chale</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Analytics &mdash; Real-time click tracking without adding latency</div><div class="nfr-hi">Real-time click tracking honi chahiye bina latency badhaye &mdash; async write karo</div></div></div>
     </div>
 </div>
 

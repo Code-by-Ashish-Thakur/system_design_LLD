@@ -27,12 +27,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; search &amp; checkout &lt; 500ms me ho</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, especially sale time</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; flash sale pe 10x traffic handle karo</div>
-        <div class="req-pill"><span class="num">4</span> Consistency &mdash; inventory &amp; payment ACID guarantee</div>
-        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; payment fail pe graceful retry ho</div>
-        <div class="req-pill"><span class="num">6</span> Security &mdash; user data &amp; payment info encrypted rahe</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Search &amp; checkout response under 500ms</div><div class="nfr-hi">Search aur checkout &lt; 500ms me hona chahiye taki user drop-off na ho</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.99% uptime, especially during sales</div><div class="nfr-hi">Sale time pe bhi 99.99% uptime hona chahiye &mdash; downtime = revenue loss</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Handle 10x traffic spike during flash sales</div><div class="nfr-hi">Flash sale pe 10x traffic spike aata hai &mdash; horizontally scale karke handle karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Consistency &mdash; Inventory &amp; payment must have ACID guarantee</div><div class="nfr-hi">Inventory aur payment ka data ACID compliant hona chahiye &mdash; double booking nahi ho</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Graceful retry on payment failure</div><div class="nfr-hi">Payment fail hone pe graceful retry ho &mdash; user ko baar baar try nahi karna pade</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Security &mdash; User data &amp; payment info must be encrypted</div><div class="nfr-hi">User data aur payment info encrypted rehni chahiye &mdash; at rest + in transit</div></div></div>
     </div>
 </div>
 

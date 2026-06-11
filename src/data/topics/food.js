@@ -28,12 +28,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; search &amp; order &lt; 200ms</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; handle 1M+ concurrent users</div>
-        <div class="req-pill"><span class="num">4</span> Consistency &mdash; payment &amp; inventory ACID</div>
-        <div class="req-pill"><span class="num">5</span> Real-time &mdash; live location tracking via WebSocket</div>
-        <div class="req-pill"><span class="num">6</span> Fault Tolerance &mdash; retry + circuit breaker</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Search &amp; order response under 200ms</div><div class="nfr-hi">Search aur order &lt; 200ms me respond hona chahiye taki user ko delay feel na ho</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.99% uptime so users can order anytime</div><div class="nfr-hi">System 99.99% available hona chahiye taki users kabhi bhi order kar saken</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Handle 1M+ concurrent users during peak hours</div><div class="nfr-hi">Lunch/dinner peak hours me 1M+ users ko horizontally scale karke handle karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Consistency &mdash; Payment &amp; inventory must be ACID compliant</div><div class="nfr-hi">Order, payment aur inventory ka data consistent rehna chahiye &mdash; ACID guarantee</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Real-time &mdash; Live location tracking via WebSocket</div><div class="nfr-hi">Delivery partner ki live location WebSocket se real-time update honi chahiye</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Retry + circuit breaker on service failure</div><div class="nfr-hi">Ek service down hone par pura system down nahi hona chahiye &mdash; retry + circuit breaker se handle karo</div></div></div>
     </div>
 </div>
 

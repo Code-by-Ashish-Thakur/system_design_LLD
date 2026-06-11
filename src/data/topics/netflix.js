@@ -27,12 +27,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; content load &lt; 200ms me ho</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime globally</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; 200M+ subscribers handle karo</div>
-        <div class="req-pill"><span class="num">4</span> CDN &mdash; global edge caching se buffering zero ho</div>
-        <div class="req-pill"><span class="num">5</span> Personalization &mdash; real-time recommendation update ho</div>
-        <div class="req-pill"><span class="num">6</span> Fault Tolerance &mdash; graceful degradation under peak load</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Content must load within 200ms</div><div class="nfr-hi">Content &lt; 200ms me load hona chahiye taki user ko buffering na dikhe</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.99% uptime across all regions</div><div class="nfr-hi">Globally 99.99% uptime hona chahiye &mdash; kisi bhi country me down nahi ho</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Support 200M+ concurrent subscribers</div><div class="nfr-hi">200M+ subscribers ko ek saath handle karna padega &mdash; horizontally scale karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">CDN &mdash; Global edge caching for zero buffering</div><div class="nfr-hi">CDN se global edge caching karo taki buffering zero ho &mdash; nearest server se serve ho</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Personalization &mdash; Real-time recommendation updates</div><div class="nfr-hi">Real-time me recommendation update honi chahiye user ke watch history ke basis pe</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Graceful degradation under peak load</div><div class="nfr-hi">Peak load pe system crash nahi hona chahiye &mdash; graceful degradation se handle karo</div></div></div>
     </div>
 </div>
 

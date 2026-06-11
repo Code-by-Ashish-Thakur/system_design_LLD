@@ -28,12 +28,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; search &amp; browse &lt; 200ms feel ho</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, especially sale events</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; sale pe 100x traffic spike handle karo</div>
-        <div class="req-pill"><span class="num">4</span> Consistency &mdash; inventory &amp; payment strongly consistent rahe</div>
-        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; graceful degradation under heavy load</div>
-        <div class="req-pill"><span class="num">6</span> CDN &mdash; static assets &amp; images globally cached ho</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Search &amp; browse response under 200ms</div><div class="nfr-hi">Search aur browse &lt; 200ms me feel hona chahiye &mdash; slow = user chala jaayega</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.99% uptime, especially during sale events</div><div class="nfr-hi">Sale events pe bhi 99.99% uptime hona chahiye &mdash; 1 min downtime = crores ka loss</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Handle 100x traffic spike during sales</div><div class="nfr-hi">Sale pe 100x traffic spike aata hai &mdash; auto-scaling se handle karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Consistency &mdash; Inventory &amp; payment must be strongly consistent</div><div class="nfr-hi">Inventory aur payment strongly consistent rehna chahiye &mdash; overselling nahi ho</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Graceful degradation under heavy load</div><div class="nfr-hi">Heavy load pe graceful degradation hona chahiye &mdash; pura system down nahi ho</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">CDN &mdash; Static assets &amp; images cached globally at edge</div><div class="nfr-hi">Static assets aur images CDN se globally cached ho &mdash; nearest edge se serve ho</div></div></div>
     </div>
 </div>
 

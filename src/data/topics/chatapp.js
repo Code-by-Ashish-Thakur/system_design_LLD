@@ -32,12 +32,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; message delivery &lt; 100ms real-time feel</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime hamesha online</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; millions concurrent WebSocket connections</div>
-        <div class="req-pill"><span class="num">4</span> Message Ordering &mdash; chat me messages sahi order me aaye</div>
-        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; offline pe message queue &amp; retry ho</div>
-        <div class="req-pill"><span class="num">6</span> Real-time &mdash; WebSocket se instant delivery guarantee</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Message delivery under 100ms for real-time feel</div><div class="nfr-hi">Message delivery &lt; 100ms me hona chahiye taki real-time feel aaye</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.99% uptime, always online</div><div class="nfr-hi">System 99.99% uptime hona chahiye &mdash; hamesha online rehna chahiye</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Support millions of concurrent WebSocket connections</div><div class="nfr-hi">Millions concurrent WebSocket connections handle karne padenge &mdash; horizontally scale karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Message Ordering &mdash; Messages must arrive in correct order in chat</div><div class="nfr-hi">Chat me messages sahi order me aane chahiye &mdash; timestamp-based ordering use karo</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Message queue &amp; retry when user is offline</div><div class="nfr-hi">Offline hone pe message queue me save ho &mdash; online aane pe retry se deliver ho</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Real-time &mdash; WebSocket guarantees instant message delivery</div><div class="nfr-hi">WebSocket se instant delivery guarantee honi chahiye &mdash; polling nahi, push-based ho</div></div></div>
     </div>
 </div>
 

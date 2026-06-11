@@ -27,12 +27,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; payment process &lt; 2 sec me complete ho</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.999% uptime, paisa kabhi fail nahi ho</div>
-        <div class="req-pill"><span class="num">3</span> Strong Consistency &mdash; ACID guarantee har transaction me</div>
-        <div class="req-pill"><span class="num">4</span> Idempotency &mdash; duplicate payment kabhi nahi hona chahiye</div>
-        <div class="req-pill"><span class="num">5</span> Scalability &mdash; peak sale time pe bhi handle karo</div>
-        <div class="req-pill"><span class="num">6</span> Security &mdash; PCI DSS compliance + encryption at rest &amp; transit</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Payment processing must complete within 2 seconds</div><div class="nfr-hi">Payment process &lt; 2 sec me complete hona chahiye &mdash; user wait nahi karega</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.999% uptime for financial transactions</div><div class="nfr-hi">99.999% uptime hona chahiye &mdash; paisa ka system kabhi fail nahi hona chahiye</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Strong Consistency &mdash; ACID guarantee for every transaction</div><div class="nfr-hi">Har transaction me ACID guarantee hona chahiye &mdash; partial update nahi ho</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Idempotency &mdash; Duplicate payments must never occur</div><div class="nfr-hi">Duplicate payment kabhi nahi hona chahiye &mdash; idempotency key se ensure karo</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Handle peak sale traffic without degradation</div><div class="nfr-hi">Peak sale time pe bhi system degrade nahi hona chahiye &mdash; horizontally scale karo</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Security &mdash; PCI DSS compliance + encryption at rest &amp; in transit</div><div class="nfr-hi">PCI DSS compliance mandatory hai &mdash; data encrypted rehna chahiye at rest + transit</div></div></div>
     </div>
 </div>
 

@@ -34,12 +34,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; message delivery &lt; 100ms hona chahiye</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, kabhi down nahi</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; 2B+ users handle karna padega</div>
-        <div class="req-pill"><span class="num">4</span> Message Ordering &mdash; messages same order me milne chahiye</div>
-        <div class="req-pill"><span class="num">5</span> E2E Encryption &mdash; end-to-end encryption mandatory hai</div>
-        <div class="req-pill"><span class="num">6</span> Fault Tolerance &mdash; offline hone pe bhi message queue me save ho</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Message delivery under 100ms for real-time feel</div><div class="nfr-hi">Message delivery &lt; 100ms me hona chahiye taki real-time feel aaye</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.99% uptime, never goes down</div><div class="nfr-hi">System 99.99% uptime hona chahiye, kabhi down nahi hona chahiye</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Must handle 2B+ users globally</div><div class="nfr-hi">2B+ users ko handle karna padega &mdash; horizontally scale karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Message Ordering &mdash; Messages must arrive in correct sequence</div><div class="nfr-hi">Messages same order me milne chahiye jis order me bheje gaye the</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">E2E Encryption &mdash; End-to-end encryption is mandatory</div><div class="nfr-hi">End-to-end encryption mandatory hai &mdash; server bhi message read nahi kar sake</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Messages saved in queue even when offline</div><div class="nfr-hi">Offline hone pe bhi message queue me save ho &mdash; online aane pe deliver ho jaaye</div></div></div>
     </div>
 </div>
 

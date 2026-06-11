@@ -25,12 +25,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; rate check &lt; 1ms me hona chahiye</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; limiter down hone pe system crash nahi ho</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; millions requests/sec handle karo</div>
-        <div class="req-pill"><span class="num">4</span> Consistency &mdash; distributed counter sab nodes pe sync rahe</div>
-        <div class="req-pill"><span class="num">5</span> Fault Tolerance &mdash; Redis down pe local fallback kaam kare</div>
-        <div class="req-pill"><span class="num">6</span> Accuracy &mdash; counting me drift nahi hona chahiye</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Rate check must complete under 1ms</div><div class="nfr-hi">Rate check &lt; 1ms me hona chahiye &mdash; API call pe extra latency nahi aani chahiye</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; System must not crash if limiter goes down</div><div class="nfr-hi">Limiter down hone pe system crash nahi hona chahiye &mdash; fail-open ya fail-close decide karo</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Handle millions of requests per second</div><div class="nfr-hi">Millions requests/sec handle karna padega &mdash; Redis cluster se scale karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Consistency &mdash; Distributed counters must stay in sync across nodes</div><div class="nfr-hi">Distributed counter sab nodes pe sync rehna chahiye &mdash; race condition nahi honi chahiye</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Local fallback when Redis is down</div><div class="nfr-hi">Redis down hone pe local in-memory fallback kaam kare &mdash; requests block nahi ho</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Accuracy &mdash; No counting drift in rate calculations</div><div class="nfr-hi">Counting me drift nahi hona chahiye &mdash; exact limit enforce ho</div></div></div>
     </div>
 </div>
 

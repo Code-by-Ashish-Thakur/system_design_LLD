@@ -27,12 +27,12 @@ export default {
 <div class="section theme-pink">
     <div class="section-title"><span class="section-num">2</span>Non-Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Low Latency &mdash; driver match &lt; 30 sec me ho jaaye</div>
-        <div class="req-pill"><span class="num">2</span> High Availability &mdash; 99.99% uptime, ride kabhi drop nahi ho</div>
-        <div class="req-pill"><span class="num">3</span> Scalability &mdash; millions concurrent rides handle karo</div>
-        <div class="req-pill"><span class="num">4</span> Real-time &mdash; live GPS tracking har 2-3 sec update</div>
-        <div class="req-pill"><span class="num">5</span> Consistency &mdash; ride state machine ACID hona chahiye</div>
-        <div class="req-pill"><span class="num">6</span> Fault Tolerance &mdash; server crash pe bhi ride lost nahi ho</div>
+        <div class="req-pill"><span class="num">1</span><div class="nfr-content"><div class="nfr-en">Low Latency &mdash; Driver match must happen within 30 seconds</div><div class="nfr-hi">Driver match &lt; 30 sec me ho jaana chahiye &mdash; user zyada wait nahi karega</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="nfr-content"><div class="nfr-en">High Availability &mdash; 99.99% uptime, rides never drop mid-trip</div><div class="nfr-hi">99.99% uptime hona chahiye &mdash; ride kabhi beech me drop nahi honi chahiye</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="nfr-content"><div class="nfr-en">Scalability &mdash; Handle millions of concurrent rides</div><div class="nfr-hi">Millions concurrent rides handle karne padenge &mdash; peak hours me bhi smooth ho</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="nfr-content"><div class="nfr-en">Real-time &mdash; Live GPS tracking updated every 2-3 seconds</div><div class="nfr-hi">Live GPS tracking har 2-3 sec me update honi chahiye &mdash; real-time location dikhe</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="nfr-content"><div class="nfr-en">Consistency &mdash; Ride state machine must be ACID compliant</div><div class="nfr-hi">Ride state machine ACID hona chahiye &mdash; invalid state transition nahi ho</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="nfr-content"><div class="nfr-en">Fault Tolerance &mdash; Rides must not be lost on server crash</div><div class="nfr-hi">Server crash hone pe bhi ride data lost nahi hona chahiye &mdash; persistent storage me save ho</div></div></div>
     </div>
 </div>
 
