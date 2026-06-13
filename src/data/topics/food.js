@@ -9,16 +9,16 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Restaurant Management</div><div class="fr-hi">Restaurant register, update, open/close status manage karo</div></div></div>
-        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Food Menu / Catalog</div><div class="fr-hi">Food items ka menu create, update, delete aur categories manage karo</div></div></div>
-        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Search Food &amp; Restaurants</div><div class="fr-hi">Name, cuisine, veg/non-veg, price range se food aur restaurant search karo</div></div></div>
-        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Cart Management</div><div class="fr-hi">Cart me items add, remove, update karo &mdash; ek time pe sirf ek restaurant</div></div></div>
-        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Order Placement</div><div class="fr-hi">Cart se order place karo with address, payment mode aur coupon</div></div></div>
-        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Payment Processing</div><div class="fr-hi">UPI, Card, COD, Wallet se payment process karo with idempotency</div></div></div>
-        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Delivery Partner Assignment</div><div class="fr-hi">Nearest available delivery partner ko order assign karo</div></div></div>
-        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Real-time Order Tracking</div><div class="fr-hi">Live map pe delivery partner ki location track karo via WebSocket</div></div></div>
-        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Ratings &amp; Reviews</div><div class="fr-hi">Order delivered hone ke baad restaurant aur food ko rate aur review karo</div></div></div>
-        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Coupon / Offer System</div><div class="fr-hi">Coupon apply karo &mdash; percentage, flat, BOGO, free delivery discounts</div></div></div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Restaurant Management</div><div class="fr-hi">Ye requirement isliye hai taki restaurant owner apna restaurant register kar sake, details update kar sake aur open/close status manage kar sake — bina iske platform pe koi restaurant list nahi hoga aur users ko kuch dikhega hi nahi</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Food Menu / Catalog</div><div class="fr-hi">Ye requirement isliye hai taki restaurant apne food items ka menu create, update aur delete kar sake — bina menu ke user ko pata hi nahi chalega ki kya order karna hai, Zomato/Swiggy me menu hi core content hai</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Search Food &amp; Restaurants</div><div class="fr-hi">Ye requirement isliye hai taki user apni pasand ka food ya restaurant dhundh sake — name, cuisine, veg/non-veg, price range se filter karke, kyunki bina search ke hazaron restaurants me se sahi cheez dhundhna mushkil hai</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Cart Management</div><div class="fr-hi">Ye requirement isliye hai taki user apne pasand ke food items cart me add/remove kar sake — Zomato/Swiggy me ek time pe sirf ek restaurant ka cart hota hai kyunki delivery logistics ek hi restaurant se hoti hai</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Order Placement</div><div class="fr-hi">Ye requirement isliye hai taki user apna cart finalize karke order place kar sake — address, payment mode aur coupon select karke, kyunki ye food delivery app ka core transaction hai jiske bina business nahi chalega</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Payment Processing</div><div class="fr-hi">Ye requirement isliye hai taki user UPI, Card, COD ya Wallet se securely payment kar sake — idempotency zaroori hai taki duplicate payment na ho, bina payment ke order confirm nahi hoga</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Delivery Partner Assignment</div><div class="fr-hi">Ye requirement isliye hai taki order place hone ke baad nearest available delivery partner ko automatically assign ho sake — bina delivery partner ke food customer tak pahunchega hi nahi, ye Zomato/Swiggy ka backbone hai</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Real-time Order Tracking</div><div class="fr-hi">Ye feature isliye hai taki user real-time me delivery partner ki live location map pe dekh sake via WebSocket — isse user ko pata rehta hai ki khana kab aayega aur delivery experience transparent hota hai</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Ratings &amp; Reviews</div><div class="fr-hi">Ye feature isliye hai taki order delivered hone ke baad user restaurant aur food ko rate aur review kar sake — isse doosre users ko decision lene me help milti hai aur restaurants ko quality improve karne ka feedback milta hai</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Coupon / Offer System</div><div class="fr-hi">Ye feature isliye hai taki user coupon code lagake discount le sake — percentage, flat, BOGO ya free delivery offers se user ko savings milti hai aur platform pe repeat orders badhte hain</div></div></div>
     </div>
 </div>
 
@@ -296,6 +296,31 @@ export default {
 </pre></div>
         </div>
 
+        <div class="service-card">
+            <h3>NotificationService</h3>
+            <p class="svc-desc">Push notification, SMS aur email bhejo events pe &mdash; order placed, accepted, out for delivery, delivered. Kafka consumer se events listen karta hai.</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">NotificationService</span> {
+
+    <span class="cm">// restaurant ko new order ki notification bhejo</span>
+    <span class="kw">void</span> <span class="fn">notifyRestaurant</span>(<span class="tp">Long</span> restaurantId,
+        <span class="tp">String</span> orderId, <span class="tp">String</span> message)
+
+    <span class="cm">// user ko order status update push karo</span>
+    <span class="kw">void</span> <span class="fn">notifyUser</span>(<span class="tp">Long</span> userId,
+        <span class="tp">String</span> title, <span class="tp">String</span> body,
+        <span class="tp">NotificationType</span> type)
+
+    <span class="cm">// delivery partner ko new assignment notify karo</span>
+    <span class="kw">void</span> <span class="fn">notifyPartner</span>(<span class="tp">Long</span> partnerId,
+        <span class="tp">String</span> orderId, <span class="tp">String</span> pickupAddress)
+
+    <span class="cm">// SMS bhejo — OTP, order confirm, delivery done</span>
+    <span class="kw">void</span> <span class="fn">sendSms</span>(<span class="tp">String</span> phone, <span class="tp">String</span> message)
+}
+</pre></div>
+        </div>
+
     </div>
 </div>
 
@@ -375,7 +400,7 @@ export default {
         <div class="dbtech-card">
             <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
             <div class="dbtech-usage">Restaurants, food items, orders, users &mdash; ACID transactions for structured relational data</div>
-            <div class="dbtech-tables"><span>restaurants</span><span>food_items</span><span>food_category</span><span>orders</span><span>users</span></div>
+            <div class="dbtech-tables"><span>users</span><span>addresses</span><span>restaurants</span><span>food_items</span><span>food_category</span><span>orders</span><span>payments</span></div>
         </div>
         <div class="dbtech-card">
             <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
@@ -524,6 +549,53 @@ export default {
                 <li>is_active BOOLEAN</li>
             </ul>
         </div>
+        <div class="db-table">
+            <h3>users</h3>
+            <ul>
+                <li><span class="pk">id BIGINT PK</span></li>
+                <li>name VARCHAR(100)</li>
+                <li>email VARCHAR(200) <span class="idx">[UNIQUE]</span></li>
+                <li>phone VARCHAR(15) <span class="idx">[UNIQUE]</span></li>
+                <li>password_hash VARCHAR(255)</li>
+                <li>profile_image VARCHAR(500)</li>
+                <li>role ENUM(USER,RESTAURANT,ADMIN) <span class="idx">[INDEX]</span></li>
+                <li>is_verified BOOLEAN</li>
+                <li>created_at TIMESTAMP</li>
+                <li>updated_at TIMESTAMP</li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>addresses</h3>
+            <ul>
+                <li><span class="pk">id BIGINT PK</span></li>
+                <li><span class="fk">user_id BIGINT FK</span> <span class="idx">[INDEX]</span></li>
+                <li>label VARCHAR(50)</li>
+                <li>full_address TEXT</li>
+                <li>latitude DOUBLE</li>
+                <li>longitude DOUBLE</li>
+                <li>city VARCHAR(100)</li>
+                <li>pincode VARCHAR(10)</li>
+                <li>is_default BOOLEAN</li>
+                <li>created_at TIMESTAMP</li>
+            </ul>
+        </div>
+        <div class="db-table">
+            <h3>payments</h3>
+            <ul>
+                <li><span class="pk">id BIGINT PK</span></li>
+                <li>payment_id VARCHAR(100) <span class="idx">[UNIQUE]</span></li>
+                <li><span class="fk">order_id BIGINT FK</span> <span class="idx">[INDEX]</span></li>
+                <li><span class="fk">user_id BIGINT FK</span></li>
+                <li>amount DECIMAL(10,2)</li>
+                <li>payment_mode ENUM</li>
+                <li>status ENUM(PENDING,SUCCESS,FAILED,REFUNDED) <span class="idx">[INDEX]</span></li>
+                <li>idempotency_key VARCHAR(100) <span class="idx">[UNIQUE]</span></li>
+                <li>gateway_txn_id VARCHAR(200)</li>
+                <li>refund_amount DECIMAL(10,2)</li>
+                <li>created_at TIMESTAMP</li>
+                <li>updated_at TIMESTAMP</li>
+            </ul>
+        </div>
     </div>
 
 </div>
@@ -634,6 +706,35 @@ export default {
     <span class="kw">public void</span> <span class="fn">updateLocation</span>(Long partnerId, Double lat, Double lng) {
         <span class="cm">// Redis me live location store (har 5 sec update)</span>
         redisTemplate.opsForGeo().add(<span class="st">"partner-loc"</span>, <span class="kw">new</span> Point(lng, lat), partnerId.toString());
+    }
+}
+    </pre></div>
+
+    <div class="sub-heading" style="color:#ff5252;border-color:#ff5252">ETA Calculation &mdash; Estimated Delivery Time</div>
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">ETAService.java</span></div><pre class="code-block">
+<span class="ann">@Service</span>
+<span class="kw">class</span> <span class="cn">ETAService</span> {
+
+    <span class="kw">public</span> <span class="tp">int</span> <span class="fn">calculateETA</span>(Long restaurantId, Double userLat, Double userLng) {
+        Restaurant restaurant = restaurantRepo.findById(restaurantId).orElseThrow();
+
+        <span class="cm">// 1. Food preparation time (restaurant ka avg prep time)</span>
+        <span class="tp">int</span> prepTime = restaurant.getAvgPreparationTime();  <span class="cm">// ~15-25 min</span>
+
+        <span class="cm">// 2. Distance calculate karo (Haversine formula)</span>
+        <span class="tp">double</span> distanceKm = GeoUtils.haversine(
+            restaurant.getLatitude(), restaurant.getLongitude(),
+            userLat, userLng
+        );
+
+        <span class="cm">// 3. Travel time = distance / avg speed (20 km/h city traffic)</span>
+        <span class="tp">int</span> travelTime = (<span class="tp">int</span>) Math.ceil(distanceKm / 20.0 * 60);  <span class="cm">// minutes</span>
+
+        <span class="cm">// 4. Buffer time (partner assign + pickup = ~5 min)</span>
+        <span class="tp">int</span> bufferTime = 5;
+
+        <span class="cm">// Total ETA = prep + travel + buffer</span>
+        <span class="kw">return</span> prepTime + travelTime + bufferTime;
     }
 }
     </pre></div>
