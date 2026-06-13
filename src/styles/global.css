@@ -75,6 +75,15 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .nfr-content{display:flex;flex-direction:column;gap:6px}
 .nfr-en{color:#e0e0e0;font-weight:600;font-size:.95em;line-height:1.4}
 .nfr-hi{color:#ff80ab;font-size:.82em;font-style:italic;line-height:1.3;opacity:.85}
+/* FR dual-language grid and cards */
+.theme-green .req-grid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.theme-green .req-pill{align-items:flex-start;flex-direction:row;padding:16px 18px}
+.theme-orange .req-grid{grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
+.theme-orange .req-pill{align-items:flex-start;flex-direction:row;padding:16px 18px}
+.fr-content{display:flex;flex-direction:column;gap:6px}
+.fr-en{color:#e0e0e0;font-weight:600;font-size:.95em;line-height:1.4}
+.fr-hi{color:#25d366;font-size:.82em;font-style:italic;line-height:1.3;opacity:.85}
+.theme-orange .fr-hi{color:#ffab40}
 .entity-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px}
 .entity-card{background:linear-gradient(145deg,rgba(79,195,247,.08),rgba(79,195,247,.02));border:1px solid rgba(79,195,247,.2);border-radius:14px;padding:20px;transition:all .3s}
 .entity-card:hover{border-color:rgba(79,195,247,.5)}

@@ -9,20 +9,20 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Create Chat Rooms (Private/Group/Channel)</div>
-        <div class="req-pill"><span class="num">2</span> Send &amp; Receive Messages</div>
-        <div class="req-pill"><span class="num">3</span> Message History with Pagination</div>
-        <div class="req-pill"><span class="num">4</span> Real-time Messaging via WebSocket</div>
-        <div class="req-pill"><span class="num">5</span> File/Attachment Upload</div>
-        <div class="req-pill"><span class="num">6</span> Typing Indicator</div>
-        <div class="req-pill"><span class="num">7</span> Online/Offline Presence</div>
-        <div class="req-pill"><span class="num">8</span> Search Messages</div>
-        <div class="req-pill"><span class="num">9</span> Room-based Broadcasting</div>
-        <div class="req-pill"><span class="num">10</span> Read Receipts</div>
-        <div class="req-pill"><span class="num">11</span> User Mentions &amp; Notifications</div>
-        <div class="req-pill"><span class="num">12</span> Join/Leave Room</div>
-        <div class="req-pill"><span class="num">13</span> Pin/Unpin Messages</div>
-        <div class="req-pill"><span class="num">14</span> Offline Message Sync</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Create Chat Rooms (Private/Group/Channel)</div><div class="fr-hi">Private, Group, ya Channel type ke chat rooms banaao</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Send &amp; Receive Messages</div><div class="fr-hi">Text, emoji, media messages bhejo aur receive karo</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Message History with Pagination</div><div class="fr-hi">Purane messages load karo pagination ke saath — scroll up pe</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Real-time Messaging via WebSocket</div><div class="fr-hi">WebSocket se real-time instant messaging karo — no polling</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">File/Attachment Upload</div><div class="fr-hi">Files, images, documents attach karke bhejo</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Typing Indicator</div><div class="fr-hi">User type kar raha hai to "typing..." indicator dikhaao</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Online/Offline Presence</div><div class="fr-hi">User online hai ya offline — presence status dikhaao</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Search Messages</div><div class="fr-hi">Messages me keyword search karo — purani chat dhundho</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Room-based Broadcasting</div><div class="fr-hi">Room ke sab members ko ek saath message broadcast karo</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Read Receipts</div><div class="fr-hi">Message padha gaya ya nahi — read receipt dikhaao</div></div></div>
+        <div class="req-pill"><span class="num">11</span><div class="fr-content"><div class="fr-en">User Mentions &amp; Notifications</div><div class="fr-hi">@mention se specific user ko tag karo aur notify karo</div></div></div>
+        <div class="req-pill"><span class="num">12</span><div class="fr-content"><div class="fr-en">Join/Leave Room</div><div class="fr-hi">Chat room join ya leave karo — member list update ho</div></div></div>
+        <div class="req-pill"><span class="num">13</span><div class="fr-content"><div class="fr-en">Pin/Unpin Messages</div><div class="fr-hi">Important messages ko pin karo — top pe dikhe</div></div></div>
+        <div class="req-pill"><span class="num">14</span><div class="fr-content"><div class="fr-en">Offline Message Sync</div><div class="fr-hi">Offline tha to wapas aane pe pending messages sync karo</div></div></div>
     </div>
 </div>
 

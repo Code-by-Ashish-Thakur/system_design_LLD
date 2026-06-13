@@ -9,16 +9,16 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Restaurant Management</div>
-        <div class="req-pill"><span class="num">2</span> Food Menu / Catalog</div>
-        <div class="req-pill"><span class="num">3</span> Search Food &amp; Restaurants</div>
-        <div class="req-pill"><span class="num">4</span> Cart Management</div>
-        <div class="req-pill"><span class="num">5</span> Order Placement</div>
-        <div class="req-pill"><span class="num">6</span> Payment Processing</div>
-        <div class="req-pill"><span class="num">7</span> Delivery Partner Assignment</div>
-        <div class="req-pill"><span class="num">8</span> Real-time Order Tracking</div>
-        <div class="req-pill"><span class="num">9</span> Ratings &amp; Reviews</div>
-        <div class="req-pill"><span class="num">10</span> Coupon / Offer System</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Restaurant Management</div><div class="fr-hi">Restaurant register, update, open/close status manage karo</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Food Menu / Catalog</div><div class="fr-hi">Food items ka menu create, update, delete aur categories manage karo</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Search Food &amp; Restaurants</div><div class="fr-hi">Name, cuisine, veg/non-veg, price range se food aur restaurant search karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Cart Management</div><div class="fr-hi">Cart me items add, remove, update karo &mdash; ek time pe sirf ek restaurant</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Order Placement</div><div class="fr-hi">Cart se order place karo with address, payment mode aur coupon</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Payment Processing</div><div class="fr-hi">UPI, Card, COD, Wallet se payment process karo with idempotency</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Delivery Partner Assignment</div><div class="fr-hi">Nearest available delivery partner ko order assign karo</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Real-time Order Tracking</div><div class="fr-hi">Live map pe delivery partner ki location track karo via WebSocket</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Ratings &amp; Reviews</div><div class="fr-hi">Order delivered hone ke baad restaurant aur food ko rate aur review karo</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Coupon / Offer System</div><div class="fr-hi">Coupon apply karo &mdash; percentage, flat, BOGO, free delivery discounts</div></div></div>
     </div>
 </div>
 

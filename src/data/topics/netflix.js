@@ -8,18 +8,18 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Content Catalog (Movies, Series, Episodes)</div>
-        <div class="req-pill"><span class="num">2</span> User Profiles (up to 5 per account)</div>
-        <div class="req-pill"><span class="num">3</span> Subscription Plans (Basic, Standard, Premium)</div>
-        <div class="req-pill"><span class="num">4</span> Watch History &amp; Continue Watching</div>
-        <div class="req-pill"><span class="num">5</span> Content Recommendation Engine</div>
-        <div class="req-pill"><span class="num">6</span> Search with Filters (genre, year, language)</div>
-        <div class="req-pill"><span class="num">7</span> Adaptive Bitrate Streaming (HLS)</div>
-        <div class="req-pill"><span class="num">8</span> Download for Offline Viewing</div>
-        <div class="req-pill"><span class="num">9</span> Parental Controls &amp; Age Rating</div>
-        <div class="req-pill"><span class="num">10</span> Subtitles &amp; Audio Track Selection</div>
-        <div class="req-pill"><span class="num">11</span> My List (Watchlist)</div>
-        <div class="req-pill"><span class="num">12</span> Content Availability by Region (licensing)</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Content Catalog (Movies, Series, Episodes)</div><div class="fr-hi">Movies, series, episodes ka catalog manage karo</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">User Profiles (up to 5 per account)</div><div class="fr-hi">Ek account me 5 profiles banaao — har kisi ka alag experience</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Subscription Plans (Basic, Standard, Premium)</div><div class="fr-hi">Basic, Standard, Premium plans — pricing aur features differ</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Watch History &amp; Continue Watching</div><div class="fr-hi">Kya dekha, kahan choda track karo — continue watching feature</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Content Recommendation Engine</div><div class="fr-hi">User ki watch history se personalized content recommend karo</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Search with Filters (genre, year, language)</div><div class="fr-hi">Genre, year, language se content search aur filter karo</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Adaptive Bitrate Streaming (HLS)</div><div class="fr-hi">Network speed ke hisaab se video quality auto-adjust karo (HLS)</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Download for Offline Viewing</div><div class="fr-hi">Content download karo aur bina internet ke offline dekho</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Parental Controls &amp; Age Rating</div><div class="fr-hi">Bacchon ke liye content restrict karo age rating se</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Subtitles &amp; Audio Track Selection</div><div class="fr-hi">Multiple subtitles aur audio tracks select karo</div></div></div>
+        <div class="req-pill"><span class="num">11</span><div class="fr-content"><div class="fr-en">My List (Watchlist)</div><div class="fr-hi">Baad me dekhne ke liye content save karo (watchlist)</div></div></div>
+        <div class="req-pill"><span class="num">12</span><div class="fr-content"><div class="fr-en">Content Availability by Region (licensing)</div><div class="fr-hi">Region ke basis pe content available ya nahi — licensing rules</div></div></div>
     </div>
 </div>
 

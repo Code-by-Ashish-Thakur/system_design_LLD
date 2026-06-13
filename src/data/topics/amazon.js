@@ -9,16 +9,16 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Product Catalog</div>
-        <div class="req-pill"><span class="num">2</span> Search with Filters</div>
-        <div class="req-pill"><span class="num">3</span> Product Detail Page</div>
-        <div class="req-pill"><span class="num">4</span> Reviews &amp; Ratings</div>
-        <div class="req-pill"><span class="num">5</span> Seller Management</div>
-        <div class="req-pill"><span class="num">6</span> Inventory Management</div>
-        <div class="req-pill"><span class="num">7</span> Order Management</div>
-        <div class="req-pill"><span class="num">8</span> Delivery Tracking</div>
-        <div class="req-pill"><span class="num">9</span> Return / Refund</div>
-        <div class="req-pill"><span class="num">10</span> Wishlist</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Product Catalog</div><div class="fr-hi">Products ka catalog manage karo — categories, brands, variants</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Search with Filters</div><div class="fr-hi">Name, category, price, brand, rating se products search aur filter karo</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Product Detail Page</div><div class="fr-hi">Product ki detail page dikhaao — images, specs, reviews, price</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Reviews &amp; Ratings</div><div class="fr-hi">Users product ko rate aur review kar saken — avg rating calculate</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Seller Management</div><div class="fr-hi">Sellers register karo, products list karo, orders manage karo</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Inventory Management</div><div class="fr-hi">Stock track karo — available, reserved, out-of-stock status</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Order Management</div><div class="fr-hi">Order place, cancel, track, status update manage karo</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Delivery Tracking</div><div class="fr-hi">Shipment track karo — dispatched, in-transit, delivered status</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Return / Refund</div><div class="fr-hi">Return request karo aur refund process karo</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Wishlist</div><div class="fr-hi">Baad me khareedne ke liye products save karo wishlist me</div></div></div>
     </div>
 </div>
 

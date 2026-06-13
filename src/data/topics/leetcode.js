@@ -9,16 +9,16 @@ export default {
 <div class="section theme-orange">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> User Authentication (OAuth + Email)</div>
-        <div class="req-pill"><span class="num">2</span> Problem Listing &amp; Filtering</div>
-        <div class="req-pill"><span class="num">3</span> Code Submission &amp; Execution</div>
-        <div class="req-pill"><span class="num">4</span> Online Judge (Verdict System)</div>
-        <div class="req-pill"><span class="num">5</span> Leaderboard &amp; Rankings</div>
-        <div class="req-pill"><span class="num">6</span> Contest Mode (Timed Events)</div>
-        <div class="req-pill"><span class="num">7</span> Discussion Forum</div>
-        <div class="req-pill"><span class="num">8</span> Solution &amp; Editorial</div>
-        <div class="req-pill"><span class="num">9</span> User Profile &amp; Stats</div>
-        <div class="req-pill"><span class="num">10</span> Multi-Language Support</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">User Authentication (OAuth + Email)</div><div class="fr-hi">OAuth ya Email se user login/register karo</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Problem Listing &amp; Filtering</div><div class="fr-hi">Problems list karo — difficulty, topic, company se filter karo</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Code Submission &amp; Execution</div><div class="fr-hi">Code likho, submit karo aur execute karo — multiple languages me</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Online Judge (Verdict System)</div><div class="fr-hi">Test cases pe code run karo — AC, WA, TLE, MLE verdict do</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Leaderboard &amp; Rankings</div><div class="fr-hi">Users ka leaderboard dikhaao — ranking aur score ke basis pe</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Contest Mode (Timed Events)</div><div class="fr-hi">Timed contest chalao — specific time me problems solve karo</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Discussion Forum</div><div class="fr-hi">Har problem pe discussion forum — approach aur doubt discuss karo</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Solution &amp; Editorial</div><div class="fr-hi">Problem ka official solution aur editorial dikhaao</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">User Profile &amp; Stats</div><div class="fr-hi">User ki profile — solved count, streak, rating, submissions</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Multi-Language Support</div><div class="fr-hi">Java, Python, C++, JavaScript etc. multiple languages support karo</div></div></div>
     </div>
 </div>
 

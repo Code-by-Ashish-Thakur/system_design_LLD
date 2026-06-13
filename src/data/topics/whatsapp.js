@@ -9,22 +9,22 @@ export default {
 <div id="requirements" class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> User Login with OTP</div>
-        <div class="req-pill"><span class="num">2</span> One-to-One Chat</div>
-        <div class="req-pill"><span class="num">3</span> Group Chat <span class="new-badge">NEW</span></div>
-        <div class="req-pill"><span class="num">4</span> Send Message</div>
-        <div class="req-pill"><span class="num">5</span> Receive Message</div>
-        <div class="req-pill"><span class="num">6</span> Online/Offline Status</div>
-        <div class="req-pill"><span class="num">7</span> Typing Indicator <span class="new-badge">NEW</span></div>
-        <div class="req-pill"><span class="num">8</span> Push Notification</div>
-        <div class="req-pill"><span class="num">9</span> Voice/Video Call</div>
-        <div class="req-pill"><span class="num">10</span> Search Chat</div>
-        <div class="req-pill"><span class="num">11</span> Sent/Delivered/Seen</div>
-        <div class="req-pill"><span class="num">12</span> Read Receipt Flow <span class="new-badge">NEW</span></div>
-        <div class="req-pill"><span class="num">13</span> Delete Message</div>
-        <div class="req-pill"><span class="num">14</span> Edit Message</div>
-        <div class="req-pill"><span class="num">15</span> Media Upload <span class="new-badge">NEW</span></div>
-        <div class="req-pill"><span class="num">16</span> Logout</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">User Login with OTP</div><div class="fr-hi">Phone number + OTP se login/register karo</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">One-to-One Chat</div><div class="fr-hi">Do users ke beech private chat karo</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Group Chat <span class="new-badge">NEW</span></div><div class="fr-hi">Multiple users ka group banaake chat karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Send Message</div><div class="fr-hi">Text, emoji, media message bhejo</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Receive Message</div><div class="fr-hi">Real-time me message receive karo</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Online/Offline Status</div><div class="fr-hi">User online hai ya offline dikhaao</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Typing Indicator <span class="new-badge">NEW</span></div><div class="fr-hi">Dusra user type kar raha hai to dikhaao</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Push Notification</div><div class="fr-hi">Naya message aane pe phone pe notification bhejo</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Voice/Video Call</div><div class="fr-hi">Audio aur video call karo real-time</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Search Chat</div><div class="fr-hi">Purane messages me search karo keyword se</div></div></div>
+        <div class="req-pill"><span class="num">11</span><div class="fr-content"><div class="fr-en">Sent/Delivered/Seen</div><div class="fr-hi">Message ka status dikhaao — bheja, mila, padha</div></div></div>
+        <div class="req-pill"><span class="num">12</span><div class="fr-content"><div class="fr-en">Read Receipt Flow <span class="new-badge">NEW</span></div><div class="fr-hi">Blue tick system — kab padha gaya track karo</div></div></div>
+        <div class="req-pill"><span class="num">13</span><div class="fr-content"><div class="fr-en">Delete Message</div><div class="fr-hi">Message delete karo — "Delete for Everyone" bhi support</div></div></div>
+        <div class="req-pill"><span class="num">14</span><div class="fr-content"><div class="fr-en">Edit Message</div><div class="fr-hi">Bheja hua message edit karo (time limit ke andar)</div></div></div>
+        <div class="req-pill"><span class="num">15</span><div class="fr-content"><div class="fr-en">Media Upload <span class="new-badge">NEW</span></div><div class="fr-hi">Photo, video, document, audio upload aur share karo</div></div></div>
+        <div class="req-pill"><span class="num">16</span><div class="fr-content"><div class="fr-en">Logout</div><div class="fr-hi">User ko securely logout karo aur session end karo</div></div></div>
     </div>
 </div>
 

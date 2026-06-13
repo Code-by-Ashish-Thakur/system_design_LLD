@@ -9,16 +9,16 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Shorten a long URL</div>
-        <div class="req-pill"><span class="num">2</span> Redirect short URL to original</div>
-        <div class="req-pill"><span class="num">3</span> Custom alias support</div>
-        <div class="req-pill"><span class="num">4</span> URL expiration (TTL)</div>
-        <div class="req-pill"><span class="num">5</span> Click analytics tracking</div>
-        <div class="req-pill"><span class="num">6</span> User registration &amp; auth</div>
-        <div class="req-pill"><span class="num">7</span> List user's URLs (paginated)</div>
-        <div class="req-pill"><span class="num">8</span> Delete / deactivate a URL</div>
-        <div class="req-pill"><span class="num">9</span> Rate limiting per user</div>
-        <div class="req-pill"><span class="num">10</span> Bulk URL creation via API</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Shorten a long URL</div><div class="fr-hi">Lambi URL ko chhoti short URL me convert karo</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Redirect short URL to original</div><div class="fr-hi">Short URL pe click kare to original URL pe redirect karo</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Custom alias support</div><div class="fr-hi">User apna custom alias choose kar sake — e.g., /my-link</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">URL expiration (TTL)</div><div class="fr-hi">URL ki expiry set karo — TTL ke baad auto-deactivate ho jaaye</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Click analytics tracking</div><div class="fr-hi">Kitne clicks aaye, kahan se aaye — analytics track karo</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">User registration &amp; auth</div><div class="fr-hi">User register aur login kar sake — JWT auth</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">List user's URLs (paginated)</div><div class="fr-hi">User ke saare URLs list karo — pagination ke saath</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Delete / deactivate a URL</div><div class="fr-hi">URL delete ya deactivate karo — ab kaam nahi karega</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Rate limiting per user</div><div class="fr-hi">Ek user kitni URLs bana sakta hai — rate limit lagao</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Bulk URL creation via API</div><div class="fr-hi">API se ek saath bohot saari URLs banaao — bulk create</div></div></div>
     </div>
 </div>
 

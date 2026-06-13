@@ -8,16 +8,16 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Rate limit per User / API Key / IP</div>
-        <div class="req-pill"><span class="num">2</span> Multiple Algorithm Support (Token Bucket, Sliding Window)</div>
-        <div class="req-pill"><span class="num">3</span> Configurable Limits per API Endpoint</div>
-        <div class="req-pill"><span class="num">4</span> Return Rate Limit Headers (X-RateLimit-*)</div>
-        <div class="req-pill"><span class="num">5</span> Distributed Rate Limiting (Redis-backed)</div>
-        <div class="req-pill"><span class="num">6</span> Tiered Limits (Free / Pro / Enterprise)</div>
-        <div class="req-pill"><span class="num">7</span> Graceful Degradation (429 Too Many Requests)</div>
-        <div class="req-pill"><span class="num">8</span> Throttling Dashboard &amp; Metrics</div>
-        <div class="req-pill"><span class="num">9</span> Whitelist / Blacklist Support</div>
-        <div class="req-pill"><span class="num">10</span> Dynamic Rule Updates (no restart)</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Rate limit per User / API Key / IP</div><div class="fr-hi">User, API Key, ya IP ke basis pe rate limit lagao</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Multiple Algorithm Support (Token Bucket, Sliding Window)</div><div class="fr-hi">Token Bucket, Sliding Window jaise algorithms support karo</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Configurable Limits per API Endpoint</div><div class="fr-hi">Har API endpoint ke liye alag limit configure karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Return Rate Limit Headers (X-RateLimit-*)</div><div class="fr-hi">Response me rate limit headers bhejo (X-RateLimit-Remaining etc.)</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Distributed Rate Limiting (Redis-backed)</div><div class="fr-hi">Redis ke saath distributed rate limiting karo — sab nodes pe sync</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Tiered Limits (Free / Pro / Enterprise)</div><div class="fr-hi">Free, Pro, Enterprise users ke liye alag limits rakho</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Graceful Degradation (429 Too Many Requests)</div><div class="fr-hi">Limit exceed pe 429 Too Many Requests return karo gracefully</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Throttling Dashboard &amp; Metrics</div><div class="fr-hi">Throttling ka dashboard dikhao — real-time metrics track karo</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Whitelist / Blacklist Support</div><div class="fr-hi">Specific users/IPs ko whitelist ya blacklist karo</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Dynamic Rule Updates (no restart)</div><div class="fr-hi">Bina server restart ke rules dynamically update karo</div></div></div>
     </div>
 </div>
 

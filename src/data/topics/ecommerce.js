@@ -8,18 +8,18 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Add / Remove / Update Cart Items</div>
-        <div class="req-pill"><span class="num">2</span> Inventory Reservation (soft lock)</div>
-        <div class="req-pill"><span class="num">3</span> Pricing Engine (discounts, coupons, tax)</div>
-        <div class="req-pill"><span class="num">4</span> Address Management (shipping / billing)</div>
-        <div class="req-pill"><span class="num">5</span> Checkout Flow (cart &rarr; address &rarr; payment &rarr; confirm)</div>
-        <div class="req-pill"><span class="num">6</span> Order Placement &amp; Confirmation</div>
-        <div class="req-pill"><span class="num">7</span> Coupon / Promo Code Validation</div>
-        <div class="req-pill"><span class="num">8</span> Stock Validation at Checkout</div>
-        <div class="req-pill"><span class="num">9</span> Abandoned Cart Recovery</div>
-        <div class="req-pill"><span class="num">10</span> Flash Sale / Limited Stock Handling</div>
-        <div class="req-pill"><span class="num">11</span> Guest Checkout Support</div>
-        <div class="req-pill"><span class="num">12</span> Delivery Slot Selection</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Add / Remove / Update Cart Items</div><div class="fr-hi">Cart me items add, remove, quantity update karo</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Inventory Reservation (soft lock)</div><div class="fr-hi">Checkout pe inventory soft lock karo — dusra user na le jaaye</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Pricing Engine (discounts, coupons, tax)</div><div class="fr-hi">Discounts, coupons, tax calculate karo dynamically</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Address Management (shipping / billing)</div><div class="fr-hi">Shipping aur billing address manage karo — multiple addresses support</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Checkout Flow (cart &rarr; address &rarr; payment &rarr; confirm)</div><div class="fr-hi">Cart se address, payment aur confirm tak ka flow</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Order Placement &amp; Confirmation</div><div class="fr-hi">Order place karo aur confirmation email/notification bhejo</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Coupon / Promo Code Validation</div><div class="fr-hi">Coupon code validate karo — active hai? min order met? expired?</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Stock Validation at Checkout</div><div class="fr-hi">Checkout pe verify karo ki item abhi bhi stock me hai</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Abandoned Cart Recovery</div><div class="fr-hi">User ne cart choda to reminder notification bhejo — recover karo</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Flash Sale / Limited Stock Handling</div><div class="fr-hi">Flash sale me limited stock handle karo — race condition avoid</div></div></div>
+        <div class="req-pill"><span class="num">11</span><div class="fr-content"><div class="fr-en">Guest Checkout Support</div><div class="fr-hi">Bina login ke bhi checkout allow karo — guest user support</div></div></div>
+        <div class="req-pill"><span class="num">12</span><div class="fr-content"><div class="fr-en">Delivery Slot Selection</div><div class="fr-hi">Delivery ka preferred time slot choose karo</div></div></div>
     </div>
 </div>
 

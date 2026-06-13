@@ -8,18 +8,18 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Rider Request Ride (pickup &rarr; drop)</div>
-        <div class="req-pill"><span class="num">2</span> Driver-Rider Matching (nearest available)</div>
-        <div class="req-pill"><span class="num">3</span> Real-time Location Tracking (WebSocket)</div>
-        <div class="req-pill"><span class="num">4</span> Fare Estimation &amp; Surge Pricing</div>
-        <div class="req-pill"><span class="num">5</span> Trip Lifecycle (request &rarr; match &rarr; pickup &rarr; ride &rarr; drop)</div>
-        <div class="req-pill"><span class="num">6</span> ETA Calculation</div>
-        <div class="req-pill"><span class="num">7</span> Driver Availability Management</div>
-        <div class="req-pill"><span class="num">8</span> Ride Pooling / Sharing</div>
-        <div class="req-pill"><span class="num">9</span> Cancellation Policy &amp; Fees</div>
-        <div class="req-pill"><span class="num">10</span> Rating &amp; Review System</div>
-        <div class="req-pill"><span class="num">11</span> Payment Integration</div>
-        <div class="req-pill"><span class="num">12</span> SOS / Emergency Support</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Rider Request Ride (pickup &rarr; drop)</div><div class="fr-hi">Rider pickup aur drop location deke ride request kare</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Driver-Rider Matching (nearest available)</div><div class="fr-hi">Nearest available driver ko match karo — geospatial query se</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Real-time Location Tracking (WebSocket)</div><div class="fr-hi">Driver ki live location WebSocket se real-time track karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Fare Estimation &amp; Surge Pricing</div><div class="fr-hi">Ride ka estimated fare calculate karo — surge pricing bhi include</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Trip Lifecycle (request &rarr; match &rarr; pickup &rarr; ride &rarr; drop)</div><div class="fr-hi">Request se drop tak ka pura trip lifecycle manage karo</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">ETA Calculation</div><div class="fr-hi">Driver kitne time me aayega — ETA calculate karo</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Driver Availability Management</div><div class="fr-hi">Driver online/offline, busy/available status manage karo</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Ride Pooling / Sharing</div><div class="fr-hi">Multiple riders ek ride share kar saken — pool option do</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Cancellation Policy &amp; Fees</div><div class="fr-hi">Cancel pe policy apply karo — free window ke baad charge lagao</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Rating &amp; Review System</div><div class="fr-hi">Ride complete hone pe rider aur driver dono ko rate karne do</div></div></div>
+        <div class="req-pill"><span class="num">11</span><div class="fr-content"><div class="fr-en">Payment Integration</div><div class="fr-hi">UPI, Card, Wallet se payment integrate karo</div></div></div>
+        <div class="req-pill"><span class="num">12</span><div class="fr-content"><div class="fr-en">SOS / Emergency Support</div><div class="fr-hi">Emergency me SOS button se nearest police/help ko alert bhejo</div></div></div>
     </div>
 </div>
 

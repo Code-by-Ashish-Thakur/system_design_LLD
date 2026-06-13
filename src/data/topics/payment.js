@@ -8,18 +8,18 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Payment Initiation (UPI / Card / Net Banking)</div>
-        <div class="req-pill"><span class="num">2</span> Payment Gateway Integration (Razorpay / Stripe)</div>
-        <div class="req-pill"><span class="num">3</span> Idempotency (prevent double charge)</div>
-        <div class="req-pill"><span class="num">4</span> Wallet System (top-up, debit, balance)</div>
-        <div class="req-pill"><span class="num">5</span> Full &amp; Partial Refunds</div>
-        <div class="req-pill"><span class="num">6</span> Ledger / Double-Entry Bookkeeping</div>
-        <div class="req-pill"><span class="num">7</span> Webhook Handling (async status updates)</div>
-        <div class="req-pill"><span class="num">8</span> Reconciliation (daily settlement matching)</div>
-        <div class="req-pill"><span class="num">9</span> Fraud Detection (velocity checks, amount limits)</div>
-        <div class="req-pill"><span class="num">10</span> PCI-DSS Compliance (tokenized card storage)</div>
-        <div class="req-pill"><span class="num">11</span> Multi-Currency Support</div>
-        <div class="req-pill"><span class="num">12</span> Payment State Machine (lifecycle tracking)</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Payment Initiation (UPI / Card / Net Banking)</div><div class="fr-hi">UPI, Card, Net Banking se payment start karo</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Payment Gateway Integration (Razorpay / Stripe)</div><div class="fr-hi">Razorpay/Stripe gateway integrate karo — payment process karo</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Idempotency (prevent double charge)</div><div class="fr-hi">Double payment nahi hona chahiye — idempotency key se ensure karo</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">Wallet System (top-up, debit, balance)</div><div class="fr-hi">Wallet me balance add karo, debit karo, balance check karo</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Full &amp; Partial Refunds</div><div class="fr-hi">Full ya partial refund process karo — cancel/return pe</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Ledger / Double-Entry Bookkeeping</div><div class="fr-hi">Har transaction ka debit-credit ledger maintain karo</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Webhook Handling (async status updates)</div><div class="fr-hi">Payment gateway se async status updates webhook pe handle karo</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Reconciliation (daily settlement matching)</div><div class="fr-hi">Daily settlement — gateway aur apne records match karo</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Fraud Detection (velocity checks, amount limits)</div><div class="fr-hi">Fraud detect karo — zyada transactions, unusual amounts, velocity checks</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">PCI-DSS Compliance (tokenized card storage)</div><div class="fr-hi">Card data tokenize karke store karo — PCI-DSS compliance</div></div></div>
+        <div class="req-pill"><span class="num">11</span><div class="fr-content"><div class="fr-en">Multi-Currency Support</div><div class="fr-hi">Multiple currencies support karo — INR, USD, EUR conversion</div></div></div>
+        <div class="req-pill"><span class="num">12</span><div class="fr-content"><div class="fr-en">Payment State Machine (lifecycle tracking)</div><div class="fr-hi">Payment ka lifecycle track karo — INITIATED to CAPTURED/FAILED</div></div></div>
     </div>
 </div>
 

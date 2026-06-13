@@ -9,18 +9,18 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Send Push Notifications (FCM / APNs)</div>
-        <div class="req-pill"><span class="num">2</span> Send Email Notifications (SMTP / SES)</div>
-        <div class="req-pill"><span class="num">3</span> Send SMS Notifications (Twilio / SNS)</div>
-        <div class="req-pill"><span class="num">4</span> In-App Notification Center</div>
-        <div class="req-pill"><span class="num">5</span> Template Engine (dynamic placeholders)</div>
-        <div class="req-pill"><span class="num">6</span> Priority-based Delivery (urgent / normal / low)</div>
-        <div class="req-pill"><span class="num">7</span> Retry with Exponential Backoff</div>
-        <div class="req-pill"><span class="num">8</span> User Preferences (opt-in / opt-out per channel)</div>
-        <div class="req-pill"><span class="num">9</span> Rate Limiting per User</div>
-        <div class="req-pill"><span class="num">10</span> Scheduled &amp; Batch Notifications</div>
-        <div class="req-pill"><span class="num">11</span> Read / Unread Tracking</div>
-        <div class="req-pill"><span class="num">12</span> Dead Letter Queue for Failed Deliveries</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Send Push Notifications (FCM / APNs)</div><div class="fr-hi">FCM/APNs se mobile pe push notification bhejo</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Send Email Notifications (SMTP / SES)</div><div class="fr-hi">SMTP/SES se email notification bhejo — order confirm, OTP etc.</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Send SMS Notifications (Twilio / SNS)</div><div class="fr-hi">Twilio/SNS se SMS notification bhejo — OTP, alerts</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">In-App Notification Center</div><div class="fr-hi">App ke andar notification center dikhaao — bell icon</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Template Engine (dynamic placeholders)</div><div class="fr-hi">Dynamic templates banaao — placeholders se personalize karo</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Priority-based Delivery (urgent / normal / low)</div><div class="fr-hi">Urgent notifications pehle bhejo, normal baad me — priority queue</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Retry with Exponential Backoff</div><div class="fr-hi">Fail hone pe retry karo — exponential backoff se overload avoid</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">User Preferences (opt-in / opt-out per channel)</div><div class="fr-hi">User choose kare kaunse channel pe notification chahiye — opt-in/out</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Rate Limiting per User</div><div class="fr-hi">Ek user ko zyada notifications mat bhejo — rate limit lagao</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Scheduled &amp; Batch Notifications</div><div class="fr-hi">Future me bhejne ke liye schedule karo ya batch me bhejo</div></div></div>
+        <div class="req-pill"><span class="num">11</span><div class="fr-content"><div class="fr-en">Read / Unread Tracking</div><div class="fr-hi">Notification padhi ya nahi track karo — read/unread status</div></div></div>
+        <div class="req-pill"><span class="num">12</span><div class="fr-content"><div class="fr-en">Dead Letter Queue for Failed Deliveries</div><div class="fr-hi">Baar baar fail hone pe Dead Letter Queue me daalo — manually fix karo</div></div></div>
     </div>
 </div>
 

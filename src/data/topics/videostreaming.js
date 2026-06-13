@@ -8,18 +8,18 @@ export default {
 <div class="section theme-green">
     <div class="section-title"><span class="section-num">1</span>Functional Requirements</div>
     <div class="req-grid">
-        <div class="req-pill"><span class="num">1</span> Video Upload (multipart / chunked)</div>
-        <div class="req-pill"><span class="num">2</span> Transcoding Pipeline (multiple resolutions)</div>
-        <div class="req-pill"><span class="num">3</span> Adaptive Bitrate Streaming (HLS / DASH)</div>
-        <div class="req-pill"><span class="num">4</span> CDN Integration for Edge Delivery</div>
-        <div class="req-pill"><span class="num">5</span> Thumbnail &amp; Preview Generation</div>
-        <div class="req-pill"><span class="num">6</span> Video Metadata (title, tags, description)</div>
-        <div class="req-pill"><span class="num">7</span> Comments &amp; Likes System</div>
-        <div class="req-pill"><span class="num">8</span> Watch History &amp; Resume Playback</div>
-        <div class="req-pill"><span class="num">9</span> Channel Subscriptions</div>
-        <div class="req-pill"><span class="num">10</span> Search with Filters (category, duration, date)</div>
-        <div class="req-pill"><span class="num">11</span> Live Streaming Support</div>
-        <div class="req-pill"><span class="num">12</span> Content Moderation (NSFW detection)</div>
+        <div class="req-pill"><span class="num">1</span><div class="fr-content"><div class="fr-en">Video Upload (multipart / chunked)</div><div class="fr-hi">Video upload karo — bade files ke liye multipart/chunked upload</div></div></div>
+        <div class="req-pill"><span class="num">2</span><div class="fr-content"><div class="fr-en">Transcoding Pipeline (multiple resolutions)</div><div class="fr-hi">Video ko multiple resolutions me transcode karo — 360p to 4K</div></div></div>
+        <div class="req-pill"><span class="num">3</span><div class="fr-content"><div class="fr-en">Adaptive Bitrate Streaming (HLS / DASH)</div><div class="fr-hi">Network speed ke hisaab se quality auto-adjust karo — HLS/DASH</div></div></div>
+        <div class="req-pill"><span class="num">4</span><div class="fr-content"><div class="fr-en">CDN Integration for Edge Delivery</div><div class="fr-hi">CDN se edge servers pe cache karo — user ke paas se serve ho</div></div></div>
+        <div class="req-pill"><span class="num">5</span><div class="fr-content"><div class="fr-en">Thumbnail &amp; Preview Generation</div><div class="fr-hi">Video ka thumbnail aur hover preview auto-generate karo</div></div></div>
+        <div class="req-pill"><span class="num">6</span><div class="fr-content"><div class="fr-en">Video Metadata (title, tags, description)</div><div class="fr-hi">Video ka title, description, tags, category manage karo</div></div></div>
+        <div class="req-pill"><span class="num">7</span><div class="fr-content"><div class="fr-en">Comments &amp; Likes System</div><div class="fr-hi">Videos pe comment karo, like karo — engagement features</div></div></div>
+        <div class="req-pill"><span class="num">8</span><div class="fr-content"><div class="fr-en">Watch History &amp; Resume Playback</div><div class="fr-hi">Kya dekha, kahan choda track karo — resume se wahi se start ho</div></div></div>
+        <div class="req-pill"><span class="num">9</span><div class="fr-content"><div class="fr-en">Channel Subscriptions</div><div class="fr-hi">Channels subscribe karo — naye video pe notification aaye</div></div></div>
+        <div class="req-pill"><span class="num">10</span><div class="fr-content"><div class="fr-en">Search with Filters (category, duration, date)</div><div class="fr-hi">Category, duration, date se videos search aur filter karo</div></div></div>
+        <div class="req-pill"><span class="num">11</span><div class="fr-content"><div class="fr-en">Live Streaming Support</div><div class="fr-hi">Live streaming support karo — real-time broadcast</div></div></div>
+        <div class="req-pill"><span class="num">12</span><div class="fr-content"><div class="fr-en">Content Moderation (NSFW detection)</div><div class="fr-hi">Inappropriate content detect karo — NSFW/moderation rules lagao</div></div></div>
     </div>
 </div>
 
