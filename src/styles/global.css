@@ -34,6 +34,8 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .tc-youtube{background:linear-gradient(145deg,rgba(255,0,0,.12),rgba(255,0,0,.04));border:1px solid rgba(255,0,0,.25)}.tc-youtube h3{color:#ff1744}.tc-youtube .topic-tag{background:rgba(255,0,0,.2);color:#ff1744}
 .tc-cloudstorage{background:linear-gradient(145deg,rgba(66,133,244,.12),rgba(66,133,244,.04));border:1px solid rgba(66,133,244,.25)}.tc-cloudstorage h3{color:#4285f4}.tc-cloudstorage .topic-tag{background:rgba(66,133,244,.2);color:#4285f4}
 .tc-gmail{background:linear-gradient(145deg,rgba(234,67,53,.12),rgba(234,67,53,.04));border:1px solid rgba(234,67,53,.25)}.tc-gmail h3{color:#ea4335}.tc-gmail .topic-tag{background:rgba(234,67,53,.2);color:#ea4335}
+.tc-parkinglot{background:linear-gradient(145deg,rgba(0,137,123,.12),rgba(0,137,123,.04));border:1px solid rgba(0,137,123,.25)}.tc-parkinglot h3{color:#00897b}.tc-parkinglot .topic-tag{background:rgba(0,137,123,.2);color:#00897b}
+.tc-searchengine{background:linear-gradient(145deg,rgba(27,94,32,.12),rgba(27,94,32,.04));border:1px solid rgba(27,94,32,.25)}.tc-searchengine h3{color:#2e7d32}.tc-searchengine .topic-tag{background:rgba(27,94,32,.2);color:#2e7d32}
 
 .topic-content{animation:fadeIn .5s}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}

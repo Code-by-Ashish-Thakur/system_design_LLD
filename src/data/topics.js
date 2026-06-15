@@ -20,4 +20,6 @@ export const topics = [
   { id: 'youtube', icon: '\u{1F4FA}', title: 'YouTube', desc: 'Video upload, transcoding, recommendation, subscriptions, monetization', tag: '14 Sections', cardClass: 'tc-youtube' },
   { id: 'cloudstorage', icon: '\u{1F4C1}', title: 'Google Drive / Dropbox', desc: 'File upload, sync, sharing, versioning, chunked transfer', tag: '14 Sections', cardClass: 'tc-cloudstorage' },
   { id: 'gmail', icon: '\u{1F4E7}', title: 'Gmail', desc: 'Email send/receive, SMTP, labels, search, attachments, spam filter', tag: '14 Sections', cardClass: 'tc-gmail' },
+  { id: 'parkinglot', icon: '\u{1F17F}', title: 'Parking Lot', desc: 'Multi-floor, vehicle types, spot allocation, ticketing, payment, concurrency', tag: '14 Sections', cardClass: 'tc-parkinglot' },
+  { id: 'searchengine', icon: '\u{1F50D}', title: 'Search Engine (Google)', desc: 'Web crawling, inverted index, PageRank, TF-IDF, auto-complete, Trie', tag: '14 Sections', cardClass: 'tc-searchengine' },
 ]

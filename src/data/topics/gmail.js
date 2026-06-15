@@ -50,7 +50,9 @@ export default {
         <div class="enum-card"><h3>SpamVerdict</h3><div class="enum-val">CLEAN</div><div class="enum-val">SPAM</div><div class="enum-val">PHISHING</div><div class="enum-val">MALWARE</div><div class="enum-val">SUSPICIOUS</div></div>
         <div class="enum-card"><h3>EmailCategory</h3><div class="enum-val">PRIMARY</div><div class="enum-val">SOCIAL</div><div class="enum-val">PROMOTIONS</div><div class="enum-val">UPDATES</div><div class="enum-val">FORUMS</div></div>
         <div class="enum-card"><h3>EmailPriority</h3><div class="enum-val">HIGH</div><div class="enum-val">NORMAL</div><div class="enum-val">LOW</div></div>
-        <div class="enum-card"><h3>FilterAction</h3><div class="enum-val">LABEL</div><div class="enum-val">ARCHIVE</div><div class="enum-val">DELETE</div><div class="enum-val">STAR</div><div class="enum-val">MARK_READ</div><div class="enum-val">FORWARD</div></div>
+        <div class="enum-card"><h3>FilterAction</h3><div class="enum-val">LABEL</div><div class="enum-val">ARCHIVE</div><div class="enum-val">DELETE</div><div class="enum-val">STAR</div><div class="enum-val">MARK_READ</div><div class="enum-val">FORWARD</div><div class="enum-val">MARK_IMPORTANT</div></div>
+        <div class="enum-card"><h3>AttachmentStatus</h3><div class="enum-val">UPLOADING</div><div class="enum-val">UPLOADED</div><div class="enum-val">SCANNING</div><div class="enum-val">CLEAN</div><div class="enum-val">INFECTED</div></div>
+        <div class="enum-card"><h3>ThreadAction</h3><div class="enum-val">REPLY</div><div class="enum-val">REPLY_ALL</div><div class="enum-val">FORWARD</div></div>
     </div>
 </div>
 
@@ -58,6 +60,31 @@ export default {
 <div class="section theme-yellow">
     <div class="section-title"><span class="section-num">4</span>Service LLD</div>
     <div class="service-grid">
+        <div class="service-card">
+            <h3>AuthService</h3>
+            <p class="svc-desc">User ka registration aur login handle karta hai &mdash; OAuth aur password dono support karta hai, JWT token issue karta hai</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">AuthService</span> {
+
+    <span class="cm">// naya user register karta hai email + password se</span>
+    <span class="tp">User</span> <span class="fn">register</span>(<span class="tp">String</span> email, <span class="tp">String</span> password,
+        <span class="tp">String</span> displayName)
+
+    <span class="cm">// email + password se login karke JWT return karta hai</span>
+    <span class="tp">AuthToken</span> <span class="fn">login</span>(<span class="tp">String</span> email, <span class="tp">String</span> password)
+
+    <span class="cm">// Google OAuth se login karta hai</span>
+    <span class="tp">AuthToken</span> <span class="fn">oauthLogin</span>(<span class="tp">String</span> oauthCode,
+        <span class="tp">String</span> provider)
+
+    <span class="cm">// JWT token refresh karta hai</span>
+    <span class="tp">AuthToken</span> <span class="fn">refreshToken</span>(<span class="tp">String</span> refreshToken)
+
+    <span class="cm">// user ko logout karke session invalidate karta hai</span>
+    <span class="kw">void</span> <span class="fn">logout</span>(<span class="tp">Long</span> userId, <span class="tp">String</span> sessionId)
+}
+</pre></div>
+        </div>
         <div class="service-card">
             <h3>EmailService</h3>
             <p class="svc-desc">Email compose, send, reply, forward ka core logic — SMTP se outbound delivery, queue me schedule karta hai</p>
@@ -258,6 +285,59 @@ export default {
 
     <span class="cm">// filter delete karta hai</span>
     <span class="kw">void</span> <span class="fn">deleteFilter</span>(<span class="tp">String</span> filterId, <span class="tp">Long</span> userId)
+}
+</pre></div>
+        </div>
+        <div class="service-card">
+            <h3>ContactService</h3>
+            <p class="svc-desc">Address book manage karta hai &mdash; contacts add/edit/delete, autocomplete suggestions aur contact groups handle karta hai</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">ContactService</span> {
+
+    <span class="cm">// naya contact add karta hai address book me</span>
+    <span class="tp">Contact</span> <span class="fn">addContact</span>(<span class="tp">Long</span> userId,
+        <span class="tp">String</span> name, <span class="tp">String</span> email)
+
+    <span class="cm">// email compose me autocomplete suggestions deta hai</span>
+    <span class="tp">List&lt;Contact&gt;</span> <span class="fn">suggest</span>(<span class="tp">Long</span> userId,
+        <span class="tp">String</span> prefix)
+
+    <span class="cm">// user ke saare contacts paginated return karta hai</span>
+    <span class="tp">Page&lt;Contact&gt;</span> <span class="fn">getContacts</span>(<span class="tp">Long</span> userId,
+        <span class="tp">int</span> page, <span class="tp">int</span> size)
+
+    <span class="cm">// contact details update karta hai</span>
+    <span class="tp">Contact</span> <span class="fn">updateContact</span>(<span class="tp">Long</span> contactId,
+        <span class="tp">String</span> name, <span class="tp">String</span> email)
+
+    <span class="cm">// contact delete karta hai</span>
+    <span class="kw">void</span> <span class="fn">deleteContact</span>(<span class="tp">Long</span> contactId,
+        <span class="tp">Long</span> userId)
+}
+</pre></div>
+        </div>
+        <div class="service-card">
+            <h3>NotificationService</h3>
+            <p class="svc-desc">New email aane pe push notification bhejta hai &mdash; FCM/APNs se mobile pe aur WebSocket se browser pe real-time notify karta hai</p>
+            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
+<span class="kw">class</span> <span class="cn">NotificationService</span> {
+
+    <span class="cm">// naye email ki push notification bhejta hai</span>
+    <span class="kw">void</span> <span class="fn">notifyNewEmail</span>(<span class="tp">Long</span> userId,
+        <span class="tp">EmailSummary</span> email)
+
+    <span class="cm">// device token register karta hai push ke liye</span>
+    <span class="kw">void</span> <span class="fn">registerDevice</span>(<span class="tp">Long</span> userId,
+        <span class="tp">String</span> deviceToken, <span class="tp">String</span> platform)
+
+    <span class="cm">// notification preferences update karta hai</span>
+    <span class="kw">void</span> <span class="fn">updatePreferences</span>(<span class="tp">Long</span> userId,
+        <span class="kw">boolean</span> pushEnabled,
+        <span class="kw">boolean</span> desktopEnabled)
+
+    <span class="cm">// WebSocket se real-time inbox update push karta hai</span>
+    <span class="kw">void</span> <span class="fn">pushRealtimeUpdate</span>(<span class="tp">Long</span> userId,
+        <span class="tp">InboxEvent</span> event)
 }
 </pre></div>
         </div>
