@@ -15,4 +15,5 @@ export const topics = [
   { id: 'netflix', icon: '\u{1F39E}', title: 'Netflix', desc: 'Content catalog, recommendation, streaming, CDN', tag: '14 Sections', cardClass: 'tc-netflix' },
   { id: 'amazon', icon: '\u{1F4E6}', title: 'Amazon / Flipkart', desc: 'Product catalog, search, cart, order, delivery', tag: '14 Sections', cardClass: 'tc-amazon' },
   { id: 'food', icon: '\u{1F355}', title: 'Food Delivery (Zomato)', desc: 'Restaurant, menu, cart, order, delivery partner, live tracking', tag: '14 Sections', cardClass: 'tc-food' },
+  { id: 'videoconferencing', icon: '\u{1F4F9}', title: 'Video Conferencing (Zoom / Meet / Teams)', desc: 'WebRTC, SFU, signaling, screen share, recording, breakout rooms', tag: '14 Sections', cardClass: 'tc-videoconf' },
 ]

@@ -29,6 +29,7 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .tc-systemdesign{background:linear-gradient(145deg,rgba(124,77,255,.12),rgba(124,77,255,.04));border:1px solid rgba(124,77,255,.25)}.tc-systemdesign h3{color:#b388ff}.tc-systemdesign .topic-tag{background:rgba(124,77,255,.2);color:#b388ff}
 .tc-lldtheory{background:linear-gradient(145deg,rgba(255,112,67,.12),rgba(255,112,67,.04));border:1px solid rgba(255,112,67,.25)}.tc-lldtheory h3{color:#ff7043}.tc-lldtheory .topic-tag{background:rgba(255,112,67,.2);color:#ff7043}
 .tc-oops{background:linear-gradient(145deg,rgba(66,165,245,.12),rgba(66,165,245,.04));border:1px solid rgba(66,165,245,.25)}.tc-oops h3{color:#42a5f5}.tc-oops .topic-tag{background:rgba(66,165,245,.2);color:#42a5f5}
+.tc-videoconf{background:linear-gradient(145deg,rgba(41,121,255,.12),rgba(41,121,255,.04));border:1px solid rgba(41,121,255,.25)}.tc-videoconf h3{color:#2979ff}.tc-videoconf .topic-tag{background:rgba(41,121,255,.2);color:#2979ff}
 
 .topic-content{animation:fadeIn .5s}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
