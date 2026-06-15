@@ -1219,91 +1219,40 @@ export default {
 </div>
 
 <!-- ============ BOTTLENECKS & SOLUTIONS ============ -->
-<div class="section theme-blue">
+<div class="section theme-red">
     <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
-        <div class="bottleneck-card"><h3>Transcoding CPU Bottleneck</h3><p>500 hrs/min upload hota hai &mdash; GPU-accelerated workers (NVENC/CUDA) use karo. K8s auto-scale by queue depth. Priority queue &mdash; popular creators ke videos pehle transcode karo. Spot instances se cost kam karo</p></div>
-        <div class="bottleneck-card"><h3>View Count Hot Key Problem</h3><p>Viral video pe millions of concurrent INCR &mdash; Redis INCR buffer karo, batch flush to DB every 30s. Eventually consistent display. Sharded counters &mdash; 10 shards me distribute karo, sum karo read pe</p></div>
-        <div class="bottleneck-card"><h3>Subscriber Notification Fan-Out</h3><p>T-Series ke 250M+ subscribers ko notify karna hai &mdash; Kafka partitioned fan-out, batch processing. Priority tiers &mdash; bell=ALL pehle, PERSONALIZED baad me. Rate limiting per channel per hour</p></div>
-        <div class="bottleneck-card"><h3>CDN Cache Miss Storm</h3><p>Viral video release hote hi millions of requests &mdash; pre-warm CDN for trending/scheduled videos. Origin shield layer (cascading cache). Request coalescing &mdash; same segment ke concurrent requests merge karo</p></div>
-        <div class="bottleneck-card"><h3>Comment Spam &amp; Moderation</h3><p>Millions of comments per minute &mdash; ML-based spam detection pipeline (async). Profanity filter real-time. Shadowban repeat offenders. Rate limit per user (max 10 comments/min)</p></div>
-        <div class="bottleneck-card"><h3>Search Index Staleness</h3><p>Naya video upload hote hi search me aana chahiye &mdash; Kafka CDC pipeline se near real-time Elasticsearch index update. Async indexing &mdash; upload complete hote hi event fire hota hai</p></div>
-        <div class="bottleneck-card"><h3>Storage Cost Explosion</h3><p>500 hrs/min upload = massive storage &mdash; Tiered storage: hot (SSD) recent popular, warm (S3 IA) old content, cold (Glacier) rarely watched. Delete unpopular low-res variants after 1 year</p></div>
-        <div class="bottleneck-card"><h3>Recommendation Cold Start</h3><p>Naye user ke liye koi history nahi &mdash; region trending se start karo, genre preference signup pe poocho. Naye video ke liye channel past performance se predict karo. Exploration budget 10-20% rakho</p></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Transcoding CPU bottleneck (500 hrs/min)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">GPU workers (NVENC), K8s auto-scale by queue depth, priority queue</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">View count hot key (viral video)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Redis INCR buffer, batch flush to DB every 30s, 10 sharded counters</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Subscriber notification fan-out (250M+)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Kafka partitioned fan-out, priority tiers (bell=ALL first), rate limiting</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">CDN cache miss storm on viral release</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Pre-warm CDN, origin shield layer, request coalescing for same segment</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Comment spam &amp; moderation</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">ML spam pipeline (async), profanity filter real-time, shadowban offenders</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Search index staleness for new uploads</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Kafka CDC pipeline for near real-time Elasticsearch index update</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Storage cost explosion</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Tiered storage: hot (SSD), warm (S3 IA), cold (Glacier). Delete old low-res</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Recommendation cold start (new user)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Region trending, genre preference at signup, 10-20% exploration budget</span></div>
     </div>
 </div>
 
 <!-- ============ INTERVIEW TIPS ============ -->
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">14</span>Interview Tips &mdash; Must-Know Concepts</div>
-    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Key Talking Points</span></div><pre class="code-block">
-<span class="kw">UPLOAD &amp; TRANSCODING:</span>
-  <span class="cm">// Chunked resumable upload (TUS protocol) &mdash; large files reliably upload hote hai</span>
-  <span class="cm">// Kafka fan-out to FFmpeg workers &mdash; 4-8 resolutions parallel transcode</span>
-  <span class="cm">// HLS segments (6 sec .ts files) + master .m3u8 manifest</span>
-  <span class="cm">// GPU acceleration (NVENC) for faster transcoding</span>
-  <span class="cm">// Codec strategy: H.264 (compatibility) + VP9/AV1 (better compression)</span>
-
-<span class="kw">STREAMING &amp; CDN:</span>
-  <span class="cm">// Adaptive Bitrate Streaming (ABR) &mdash; bandwidth ke hisaab se quality auto-adjust</span>
-  <span class="cm">// CDN edge caching &mdash; GeoDNS se nearest PoP, origin shield layer</span>
-  <span class="cm">// Signed URLs with expiry &mdash; hotlink protection</span>
-  <span class="cm">// Pre-warm CDN for trending/scheduled videos</span>
-  <span class="cm">// Cache hierarchy: Edge &rarr; Origin Shield &rarr; S3 Origin</span>
-
-<span class="kw">RECOMMENDATION ENGINE:</span>
-  <span class="cm">// Two-stage: Candidate Generation (1000s) &rarr; Ranking (top 50)</span>
-  <span class="cm">// Watch time optimization, NOT click-through rate</span>
-  <span class="cm">// Collaborative filtering + Content-based + Deep Neural Network</span>
-  <span class="cm">// Cold start: trending + genre preference + exploration budget</span>
-  <span class="cm">// Pre-computed in Spark batch, cached in Redis per user</span>
-
-<span class="kw">MONETIZATION:</span>
-  <span class="cm">// Ad types: pre-roll, mid-roll (8+ min), post-roll, bumper (6s)</span>
-  <span class="cm">// Creator gets 55% ad revenue (YouTube keeps 45%)</span>
-  <span class="cm">// YouTube Premium &mdash; ad-free, revenue by watch time share</span>
-  <span class="cm">// Super Chat, Channel Memberships, YouTube Shopping</span>
-  <span class="cm">// Real-time bidding (RTB) for ad selection</span>
-
-<span class="kw">VIEW COUNT &amp; ENGAGEMENT:</span>
-  <span class="cm">// Redis INCR for atomic counters (eventually consistent)</span>
-  <span class="cm">// Batch flush to DB every 30 seconds</span>
-  <span class="cm">// Deduplication &mdash; same user ki multiple views within 30 min = 1 view</span>
-  <span class="cm">// Sharded counters for viral videos (10 shards, sum on read)</span>
-
-<span class="kw">DATABASE STRATEGY:</span>
-  <span class="cm">// PostgreSQL &mdash; users, channels, videos (structured, ACID)</span>
-  <span class="cm">// Cassandra &mdash; comments, watch history (write-heavy, partitioned)</span>
-  <span class="cm">// Redis &mdash; counters, trending, session, recommendation cache</span>
-  <span class="cm">// Elasticsearch &mdash; search with fuzzy matching + autocomplete</span>
-  <span class="cm">// S3 + CDN &mdash; video segments, thumbnails</span>
-  <span class="cm">// Kafka &mdash; event streaming, async processing</span>
-
-<span class="kw">SCALE NUMBERS (interview me bolo):</span>
-  <span class="cm">// 2B+ monthly active users</span>
-  <span class="cm">// 500 hours of video uploaded every minute</span>
-  <span class="cm">// 1 billion hours watched per day</span>
-  <span class="cm">// 800M+ total videos</span>
-  <span class="cm">// ~100 Tbps CDN bandwidth peak</span>
-  <span class="cm">// 100K+ search queries per second</span>
-
-<span class="kw">DESIGN PATTERNS:</span>
-  <span class="cm">// Strategy &mdash; ITranscoder (H264, VP9, AV1 swap without pipeline change)</span>
-  <span class="cm">// Observer &mdash; Upload event &rarr; transcode + thumbnail + moderate + index</span>
-  <span class="cm">// Producer-Consumer &mdash; Kafka decouples upload from transcoding</span>
-  <span class="cm">// Proxy &mdash; CDN as caching proxy, signed URLs for access control</span>
-  <span class="cm">// Chain of Responsibility &mdash; Upload &rarr; Validate &rarr; Transcode &rarr; Moderate &rarr; Publish</span>
-  <span class="cm">// Builder &mdash; SearchQuery.builder().query().filters().sort().page().build()</span>
-
-<span class="kw">YOUTUBE-SPECIFIC FEATURES:</span>
-  <span class="cm">// Shorts &mdash; vertical 60s videos, separate feed, TikTok competitor</span>
-  <span class="cm">// Community Posts &mdash; text/image/poll without video upload</span>
-  <span class="cm">// Premiere &mdash; scheduled video with live chat during first watch</span>
-  <span class="cm">// Content ID &mdash; audio/video fingerprint for copyright detection</span>
-  <span class="cm">// Creator Dashboard &mdash; analytics, revenue, audience demographics</span>
-  <span class="cm">// Super Chat &mdash; paid highlighted messages in live streams</span>
-  <span class="cm">// Channel Memberships &mdash; exclusive content for paying members</span>
-</pre></div>
+<div class="section theme-orange">
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="summary-grid">
+        <div class="summary-card sc-1"><h4>Chunked Upload (TUS)</h4><p>Resumable, parallel chunks with checksum</p></div>
+        <div class="summary-card sc-2"><h4>FFmpeg Transcoding</h4><p>Kafka fan-out to GPU workers, 4-8 resolutions</p></div>
+        <div class="summary-card sc-3"><h4>HLS Streaming</h4><p>6-sec .ts segments + .m3u8 manifest</p></div>
+        <div class="summary-card sc-4"><h4>Adaptive Bitrate (ABR)</h4><p>Quality auto-adjusts based on bandwidth</p></div>
+        <div class="summary-card sc-1"><h4>CDN Edge Caching</h4><p>GeoDNS + origin shield + pre-warm trending</p></div>
+        <div class="summary-card sc-2"><h4>Recommendation (2-stage)</h4><p>Candidate gen (1000s) &rarr; Ranking (top 50)</p></div>
+        <div class="summary-card sc-3"><h4>View Count (Redis)</h4><p>Atomic INCR, batch DB flush, sharded counters</p></div>
+        <div class="summary-card sc-4"><h4>Monetization</h4><p>Pre/mid/post-roll ads, RTB auction, 55% creator share</p></div>
+        <div class="summary-card sc-1"><h4>Strategy Pattern</h4><p>ITranscoder &mdash; H264/VP9/AV1 plug-and-play</p></div>
+        <div class="summary-card sc-2"><h4>Producer-Consumer</h4><p>Kafka decouples upload from transcoding</p></div>
+        <div class="summary-card sc-3"><h4>Content ID</h4><p>Audio/video fingerprint for copyright detection</p></div>
+        <div class="summary-card sc-4"><h4>Scale Numbers</h4><p>2B MAU, 500 hrs/min upload, 1B hrs/day watch</p></div>
+    </div>
+    <p style="text-align:center;margin-top:24px;color:#78909c;font-size:1em">
+        Complete YouTube LLD for <strong style="color:#ff1744">Java Spring Boot</strong> interviews &mdash; covers Transcoding, CDN, Recommendation, Monetization &amp; Scalability.
+    </p>
 </div>
 
 `

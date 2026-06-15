@@ -802,60 +802,40 @@ Client: Split file into 4MB blocks, compute SHA-256 per block
 </div>
 
 <!-- ============ 13. BOTTLENECKS ============ -->
-<div class="section theme-blue">
+<div class="section theme-red">
     <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
-        <div class="bottleneck-card"><h3>Large File Upload Failure</h3><p>GB-size file beech me fail ho jaaye. Solution: Chunked resumable upload, each chunk checksum verified, retry individual chunks only</p></div>
-        <div class="bottleneck-card"><h3>Sync Storm (Many Devices)</h3><p>User ke 5 devices pe simultaneous sync. Solution: Cursor-based sync, conflict detection, rate limiting per device, batch changes</p></div>
-        <div class="bottleneck-card"><h3>Hot Folder (Shared with 1000s)</h3><p>Shared folder me changes = 1000 users ko sync. Solution: Fan-out via Kafka, batch notifications, lazy sync (pull on access)</p></div>
-        <div class="bottleneck-card"><h3>Storage Cost at Scale</h3><p>Billions of files = petabytes. Solution: Block-level deduplication (60% savings), tiered storage (S3 IA for old files, Glacier for archives)</p></div>
-        <div class="bottleneck-card"><h3>Metadata DB Bottleneck</h3><p>Billions of file records. Solution: Shard by user_id, folder tree materialized path for fast queries, Redis cache for hot folders</p></div>
-        <div class="bottleneck-card"><h3>Conflict Resolution Complexity</h3><p>Offline edits create complex conflicts. Solution: Keep-both as safe default, OT for real-time collab docs, version vectors for detection</p></div>
-        <div class="bottleneck-card"><h3>Search Index Lag</h3><p>New file search me turant nahi aata. Solution: Near real-time indexing via Kafka, content extraction async (PDFs, images via OCR)</p></div>
-        <div class="bottleneck-card"><h3>Trash Cleanup Storage Leak</h3><p>Deleted files still consuming storage. Solution: Scheduled cleanup job (30 days), reference counting for shared blocks, S3 lifecycle policies</p></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Large file upload failure mid-way</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Chunked resumable upload, checksum per chunk, retry individual chunks</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Sync storm (5 devices simultaneously)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Cursor-based sync, conflict detection, rate limiting per device</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Hot folder shared with 1000s of users</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Fan-out via Kafka, batch notifications, lazy sync (pull on access)</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Storage cost at scale (petabytes)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Block-level dedup (60% savings), tiered storage (S3 IA + Glacier)</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Metadata DB bottleneck (billions of files)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Shard by user_id, materialized path for folders, Redis cache</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Conflict resolution complexity</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Keep-both default, OT for collab docs, version vectors for detection</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Search index lag for new files</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Near real-time indexing via Kafka, async content extraction (OCR)</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Trash cleanup storage leak</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">30-day cleanup job, reference counting for shared blocks, S3 lifecycle</span></div>
     </div>
 </div>
 
 <!-- ============ 14. INTERVIEW TIPS ============ -->
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">14</span>Interview Tips &mdash; Key Points</div>
-    <div class="service-grid">
-        <div class="service-card">
-            <h3>Must-Know Concepts</h3>
-            <p class="svc-desc">Cloud storage system design interview me ye concepts zaroor puchte hai</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Key Talking Points</span></div><pre class="code-block">
-<span class="cm">// 1. Chunked upload is MUST for large files</span>
-<span class="cm">// Resumable, parallel, checksum per chunk</span>
-
-<span class="cm">// 2. Delta sync = HUGE bandwidth savings</span>
-<span class="cm">// Block-level diff, only changed blocks transfer</span>
-<span class="cm">// 1GB file, 1KB edit = 4MB transfer (not 1GB!)</span>
-
-<span class="cm">// 3. Content-addressable storage for dedup</span>
-<span class="cm">// SHA-256 hash as key, same content = same key</span>
-<span class="cm">// 60%+ storage savings in production</span>
-
-<span class="cm">// 4. Conflict resolution strategies</span>
-<span class="cm">// Keep both (safest), last writer wins (simplest)</span>
-<span class="cm">// OT/CRDT for real-time collab (complex)</span>
-
-<span class="cm">// 5. Long polling for sync notifications</span>
-<span class="cm">// Better than polling, lighter than WebSocket</span>
-<span class="cm">// Cursor-based: "give me changes after cursor X"</span>
-
-<span class="cm">// 6. Permission inheritance from folders</span>
-<span class="cm">// Explicit overrides inherited</span>
-<span class="cm">// ACL model with viewer/editor/owner</span>
-
-<span class="cm">// 7. 11 nines durability (S3)</span>
-<span class="cm">// Cross-region replication for disaster recovery</span>
-
-<span class="cm">// 8. Metadata vs Content separation</span>
-<span class="cm">// Metadata: PostgreSQL (consistent)</span>
-<span class="cm">// Content: S3 (durable, cheap, scalable)</span>
-</pre></div>
-        </div>
+<div class="section theme-orange">
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="summary-grid">
+        <div class="summary-card sc-1"><h4>Chunked Upload</h4><p>Resumable, parallel, checksum per chunk</p></div>
+        <div class="summary-card sc-2"><h4>Delta Sync</h4><p>Block-level diff &mdash; 1GB file, 1KB edit = 4MB transfer</p></div>
+        <div class="summary-card sc-3"><h4>Content-Addressable Storage</h4><p>SHA-256 hash as key, 60%+ dedup savings</p></div>
+        <div class="summary-card sc-4"><h4>Conflict Resolution</h4><p>Keep-both (safe), last-writer-wins (simple), OT (collab)</p></div>
+        <div class="summary-card sc-1"><h4>Long Polling Sync</h4><p>Cursor-based: "changes after cursor X"</p></div>
+        <div class="summary-card sc-2"><h4>Permission Model</h4><p>ACL with viewer/editor/owner, folder inheritance</p></div>
+        <div class="summary-card sc-3"><h4>11 Nines Durability</h4><p>S3 + cross-region replication for DR</p></div>
+        <div class="summary-card sc-4"><h4>Metadata vs Content</h4><p>PostgreSQL (metadata) + S3 (content blobs)</p></div>
+        <div class="summary-card sc-1"><h4>Versioning</h4><p>Every edit creates new version, rollback support</p></div>
+        <div class="summary-card sc-2"><h4>Observer Pattern</h4><p>File change &rarr; sync + notify + index + audit</p></div>
+        <div class="summary-card sc-3"><h4>Sharding by user_id</h4><p>User's files on same shard for fast listing</p></div>
+        <div class="summary-card sc-4"><h4>Strategy Pattern</h4><p>Conflict strategy plug-and-play per file type</p></div>
     </div>
+    <p style="text-align:center;margin-top:24px;color:#78909c;font-size:1em">
+        Complete Cloud Storage LLD for <strong style="color:#4285f4">Java Spring Boot</strong> interviews &mdash; covers Chunked Upload, Delta Sync, Dedup, Versioning &amp; Scalability.
+    </p>
 </div>
 `
 }

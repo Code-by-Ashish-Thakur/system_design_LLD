@@ -642,85 +642,37 @@ export default {
     </div>
 </div>
 
-<div class="section theme-orange">
+<div class="section theme-red">
     <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
-        <div class="bottleneck-card">
-            <h3>Double Booking of Same Spot</h3>
-            <p><strong>Problem:</strong> Two gates assign same spot simultaneously &mdash; race condition hota hai jab concurrent requests aayein</p>
-            <p><strong>Solution:</strong> Pessimistic locking (SELECT FOR UPDATE) ya Optimistic locking (@Version) use karo. ConcurrentHashMap.replace() bhi kaam karta hai single server pe</p>
-        </div>
-        <div class="bottleneck-card">
-            <h3>Spot Search Slow on Large Lots</h3>
-            <p><strong>Problem:</strong> 10,000+ spots me nearest available dhundhna slow hota hai &mdash; O(N) scan lagta hai</p>
-            <p><strong>Solution:</strong> Per-floor available spot count cache karo. Min-heap use karo floor priority ke liye. Bitmap use karo spot availability track karne ke liye — O(1) lookup milega</p>
-        </div>
-        <div class="bottleneck-card">
-            <h3>Peak Hour Gate Congestion</h3>
-            <p><strong>Problem:</strong> Morning 9 AM pe sab ek saath aate hain &mdash; gate pe lamba queue lag jata hai</p>
-            <p><strong>Solution:</strong> Pre-booking system add karo (app se spot reserve karo). ANPR camera se automatic entry (no manual input). Multiple gates with load balancing</p>
-        </div>
-        <div class="bottleneck-card">
-            <h3>Payment Gateway Timeout</h3>
-            <p><strong>Problem:</strong> UPI ya card payment timeout ho jaye toh vehicle gate pe atak jaata hai</p>
-            <p><strong>Solution:</strong> Fallback to cash payment. Pre-auth on entry (card hold). Offline payment mode with barrier open, reconcile later. Payment retry with idempotency key</p>
-        </div>
-        <div class="bottleneck-card">
-            <h3>Display Board Sync Lag</h3>
-            <p><strong>Problem:</strong> Spot allocate ho gayi but display board pe purana count dikh raha hai &mdash; confusing hota hai</p>
-            <p><strong>Solution:</strong> Observer pattern se real-time update. WebSocket push to digital boards. Eventual consistency acceptable hai (2-3 sec delay OK)</p>
-        </div>
-        <div class="bottleneck-card">
-            <h3>Lost Ticket Scenario</h3>
-            <p><strong>Problem:</strong> Customer ne ticket kho diya &mdash; vehicle identify kaise karein aur kitna charge karein</p>
-            <p><strong>Solution:</strong> ANPR camera se entry time verify karo. Registration number se ticket lookup karo. Lost ticket pe max daily fee charge karo as penalty</p>
-        </div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Double booking of same spot (race condition)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Pessimistic locking (SELECT FOR UPDATE) ya Optimistic locking (@Version)</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Spot search slow on large lots (10K+ spots)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Per-floor count cache, Min-heap for floor priority, Bitmap for O(1) lookup</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Peak hour gate congestion (9 AM rush)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Pre-booking via app, ANPR camera auto-entry, multiple gates with LB</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Payment gateway timeout at exit</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Fallback to cash, pre-auth on entry, offline mode + reconcile later</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Display board sync lag</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Observer pattern real-time update, WebSocket push, 2-3 sec delay OK</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Lost ticket scenario</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">ANPR camera verify, search by registration number, charge max daily fee</span></div>
     </div>
 </div>
 
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Tips</div>
-    <div class="section-body">
-        <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Key Points for Interview</span></div><pre class="code-block">
-<span class="cm">✅ MUST MENTION:</span>
-<span class="cm">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="cm">1. Singleton for ParkingLot — classic interview question</span>
-<span class="cm">2. Strategy Pattern for allocation &amp; fee — shows design maturity</span>
-<span class="cm">3. Observer for DisplayBoard — real-time updates</span>
-<span class="cm">4. Concurrency handling — this is what separates L3 from L4</span>
-<span class="cm">5. Vehicle-Spot compatibility matrix — shows attention to detail</span>
-
-<span class="cm">🎯 COMMON FOLLOW-UP QUESTIONS:</span>
-<span class="cm">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="cm">Q: "How will you handle if lot is full?"</span>
-<span class="cm">A: Return null from allocation, display "FULL" on board,</span>
-<span class="cm">   optionally waitlist with notification when spot frees up</span>
-
-<span class="cm">Q: "Can a Bike park in a Car spot?"</span>
-<span class="cm">A: Yes, using compatibility matrix — BIKE fits in</span>
-<span class="cm">   SMALL, MEDIUM, LARGE. But CAR only in MEDIUM, LARGE</span>
-
-<span class="cm">Q: "How to handle concurrent entry at multiple gates?"</span>
-<span class="cm">A: Pessimistic lock (DB) or CAS operation (in-memory)</span>
-<span class="cm">   Ensure atomic spot allocation to prevent double booking</span>
-
-<span class="cm">Q: "What if payment fails at exit?"</span>
-<span class="cm">A: Retry mechanism, fallback to cash, pre-auth on entry</span>
-
-<span class="cm">Q: "How to scale for airport parking (50,000 spots)?"</span>
-<span class="cm">A: Redis for spot status cache, DB for persistence,</span>
-<span class="cm">   partition by zone/floor, bitmap for fast availability check</span>
-
-<span class="cm">⚠️ COMMON MISTAKES:</span>
-<span class="cm">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="cm">❌ Not handling concurrency — biggest red flag</span>
-<span class="cm">❌ Putting all logic in one class — violates SRP</span>
-<span class="cm">❌ Hardcoding vehicle types — use enums + strategy</span>
-<span class="cm">❌ Forgetting lost ticket scenario</span>
-<span class="cm">❌ Not mentioning design patterns by name</span>
-<span class="cm">❌ Ignoring EV charging / handicapped spots</span>
-</pre></div>
+<div class="section theme-orange">
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="summary-grid">
+        <div class="summary-card sc-1"><h4>Singleton Pattern</h4><p>ParkingLot &mdash; ek hi instance poore system me</p></div>
+        <div class="summary-card sc-2"><h4>Strategy Pattern</h4><p>Spot allocation + Fee calculation plug-and-play</p></div>
+        <div class="summary-card sc-3"><h4>Observer Pattern</h4><p>DisplayBoard auto-update on spot change</p></div>
+        <div class="summary-card sc-4"><h4>Concurrency Handling</h4><p>Pessimistic/Optimistic locking for double booking</p></div>
+        <div class="summary-card sc-1"><h4>Vehicle-Spot Matrix</h4><p>Bike &rarr; S/M/L, Car &rarr; M/L, Truck &rarr; L only</p></div>
+        <div class="summary-card sc-2"><h4>Factory Pattern</h4><p>VehicleFactory creates by type</p></div>
+        <div class="summary-card sc-3"><h4>EV Charging Spots</h4><p>Special spots with charging station support</p></div>
+        <div class="summary-card sc-4"><h4>Lost Ticket Flow</h4><p>ANPR verify + RegNo lookup + max fee penalty</p></div>
+        <div class="summary-card sc-1"><h4>Multiple Gates</h4><p>Concurrent entry/exit with barrier control</p></div>
+        <div class="summary-card sc-2"><h4>Fee Calculator</h4><p>Flat hourly / Tiered / Surge (weekend) pricing</p></div>
+        <div class="summary-card sc-3"><h4>State Pattern</h4><p>AVAILABLE &rarr; OCCUPIED &rarr; RESERVED transitions</p></div>
+        <div class="summary-card sc-4"><h4>Decorator Pattern</h4><p>SurgeDecorator wraps base fee strategy</p></div>
     </div>
+    <p style="text-align:center;margin-top:24px;color:#78909c;font-size:1em">
+        Complete Parking Lot LLD for <strong style="color:#00897b">Java Spring Boot</strong> interviews &mdash; covers Design Patterns, Concurrency, Fee Strategy &amp; Scalability.
+    </p>
 </div>
 `
 }

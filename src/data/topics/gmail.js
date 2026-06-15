@@ -921,64 +921,40 @@ User opens inbox &rarr; GET /inbox (category: PRIMARY)
 </div>
 
 <!-- ============ 13. BOTTLENECKS ============ -->
-<div class="section theme-blue">
+<div class="section theme-red">
     <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
-        <div class="bottleneck-card"><h3>300B Emails/Day Processing</h3><p>Massive inbound volume. Solution: Horizontal SMTP servers, Kafka for async processing, batch spam classification, sharded storage</p></div>
-        <div class="bottleneck-card"><h3>Spam at Scale</h3><p>50%+ of all email is spam. Solution: Multi-layer filtering (IP &rarr; auth &rarr; content &rarr; ML), reject at connection level before processing body</p></div>
-        <div class="bottleneck-card"><h3>Search Index Size</h3><p>Years of emails per user = massive index. Solution: Per-user Elasticsearch index partition, time-based index rotation, search recent first</p></div>
-        <div class="bottleneck-card"><h3>Attachment Storage Cost</h3><p>Same file attached to 1000 emails. Solution: Content-addressable storage (dedup by hash), compress before storing, S3 lifecycle to Glacier</p></div>
-        <div class="bottleneck-card"><h3>Email Delivery Failures</h3><p>Recipient server down. Solution: Exponential backoff retry queue (up to 5 days), bounce notification to sender, fallback MX records</p></div>
-        <div class="bottleneck-card"><h3>Undo Send Race Condition</h3><p>User clicks undo at exactly 30 sec. Solution: Redis TTL-based queue, atomic check-and-cancel, QUEUED status prevents premature delivery</p></div>
-        <div class="bottleneck-card"><h3>Unread Count Accuracy</h3><p>Multiple devices marking read simultaneously. Solution: Redis atomic counter, eventual consistency OK, batch sync across devices</p></div>
-        <div class="bottleneck-card"><h3>Thread Matching Edge Cases</h3><p>Missing In-Reply-To header (old clients). Solution: Fallback to subject matching (strip Re:/Fwd:), same participants + time window heuristic</p></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">300B emails/day processing</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Horizontal SMTP servers, Kafka async processing, sharded storage</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Spam at scale (50%+ of all email)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Multi-layer filter (IP &rarr; auth &rarr; content &rarr; ML), reject at connection level</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Search index size (years of emails)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Per-user Elasticsearch partition, time-based rotation, search recent first</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Attachment storage cost (same file 1000x)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Content-addressable dedup by hash, compress, S3 lifecycle to Glacier</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Email delivery failures (server down)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Exponential backoff retry (up to 5 days), bounce notification, fallback MX</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Undo send race condition</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Redis TTL-based queue, atomic check-and-cancel, QUEUED status</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Unread count accuracy (multi-device)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Redis atomic counter, eventual consistency OK, batch sync</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Thread matching edge cases</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Fallback to subject match (strip Re:/Fwd:), participants + time heuristic</span></div>
     </div>
 </div>
 
 <!-- ============ 14. INTERVIEW TIPS ============ -->
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">14</span>Interview Tips &mdash; Key Points</div>
-    <div class="service-grid">
-        <div class="service-card">
-            <h3>Must-Know Concepts</h3>
-            <p class="svc-desc">Email system design interview me ye concepts zaroor puchte hai</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Key Talking Points</span></div><pre class="code-block">
-<span class="cm">// 1. SMTP for sending, IMAP/POP3 for reading</span>
-<span class="cm">// SMTP = push protocol, IMAP = pull protocol</span>
-<span class="cm">// MX record DNS lookup for routing</span>
-
-<span class="cm">// 2. SPF + DKIM + DMARC = email security trifecta</span>
-<span class="cm">// Without these, anyone can spoof any email address</span>
-
-<span class="cm">// 3. Spam classification is ML, not just rules</span>
-<span class="cm">// Trained on user "Report Spam" actions</span>
-<span class="cm">// Multi-layer: IP &rarr; auth &rarr; content &rarr; ML &rarr; user</span>
-
-<span class="cm">// 4. Threading = In-Reply-To + References headers</span>
-<span class="cm">// Gmail made conversation view mainstream</span>
-
-<span class="cm">// 5. Labels &ne; Folders</span>
-<span class="cm">// Label: one email, many labels (many-to-many)</span>
-<span class="cm">// Folder: one email, one folder (one-to-many)</span>
-
-<span class="cm">// 6. Undo Send = delayed queue, not actual recall</span>
-<span class="cm">// Email sits in queue for 30 sec, then sends</span>
-
-<span class="cm">// 7. Category classification (tabs) is ML-based</span>
-<span class="cm">// Trained on sender patterns + user behavior</span>
-
-<span class="cm">// 8. Email is async by design</span>
-<span class="cm">// Store-and-forward model, not real-time</span>
-<span class="cm">// Retry queue with exponential backoff</span>
-
-<span class="cm">// 9. Attachment dedup saves massive storage</span>
-<span class="cm">// Same PDF shared 1000 times = stored once</span>
-
-<span class="cm">// 10. Push notification via IMAP IDLE or WebSocket</span>
-<span class="cm">// Long-lived connection for real-time new email alerts</span>
-</pre></div>
-        </div>
+<div class="section theme-orange">
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="summary-grid">
+        <div class="summary-card sc-1"><h4>SMTP / IMAP / POP3</h4><p>SMTP = send (push), IMAP = read (pull), MX record routing</p></div>
+        <div class="summary-card sc-2"><h4>SPF + DKIM + DMARC</h4><p>Email security trifecta &mdash; prevents spoofing</p></div>
+        <div class="summary-card sc-3"><h4>Spam Classification (ML)</h4><p>Multi-layer: IP &rarr; auth &rarr; content &rarr; ML &rarr; user feedback</p></div>
+        <div class="summary-card sc-4"><h4>Email Threading</h4><p>In-Reply-To + References headers for conversation view</p></div>
+        <div class="summary-card sc-1"><h4>Labels &ne; Folders</h4><p>Labels = many-to-many, Folders = one-to-many</p></div>
+        <div class="summary-card sc-2"><h4>Undo Send</h4><p>Delayed queue (30s), not actual email recall</p></div>
+        <div class="summary-card sc-3"><h4>Tab Categorization</h4><p>ML-based: Primary, Social, Promotions, Updates</p></div>
+        <div class="summary-card sc-4"><h4>Async by Design</h4><p>Store-and-forward, retry with exponential backoff</p></div>
+        <div class="summary-card sc-1"><h4>Attachment Dedup</h4><p>Same file 1000x = stored once (hash-based)</p></div>
+        <div class="summary-card sc-2"><h4>Push Notifications</h4><p>IMAP IDLE or WebSocket for real-time alerts</p></div>
+        <div class="summary-card sc-3"><h4>Elasticsearch Search</h4><p>Full-text + operators (from: subject: has:attachment)</p></div>
+        <div class="summary-card sc-4"><h4>Observer Pattern</h4><p>Receive &rarr; spam check + categorize + index + notify</p></div>
     </div>
+    <p style="text-align:center;margin-top:24px;color:#78909c;font-size:1em">
+        Complete Gmail LLD for <strong style="color:#ea4335">Java Spring Boot</strong> interviews &mdash; covers SMTP, Spam Detection, Threading, Search &amp; Scalability.
+    </p>
 </div>
 `
 }

@@ -1193,67 +1193,40 @@ Share &rarr; Create new post with original_post_id reference
 </div>
 
 <!-- ============ 13. BOTTLENECKS ============ -->
-<div class="section theme-blue">
+<div class="section theme-red">
     <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
-        <div class="bottleneck-card"><h3>Celebrity Fan-out Problem</h3><p>100M followers ko fan-out-on-write = 100M Redis writes per post. Solution: Hybrid approach &mdash; celebrities ke liye fan-out-on-read, normal users ke liye fan-out-on-write. Threshold: 10K followers</p></div>
-        <div class="bottleneck-card"><h3>Hot Post / Viral Content</h3><p>Ek viral post pe millions of likes simultaneously. Solution: Redis atomic counters (INCR), batch DB writes via Kafka, like count eventual consistency acceptable hai</p></div>
-        <div class="bottleneck-card"><h3>Feed Ranking at Scale</h3><p>2B users ke feed real-time rank karna. Solution: Pre-compute feed hourly, lightweight re-rank at read time, ML model cached per user segment (not per user)</p></div>
-        <div class="bottleneck-card"><h3>Image Storage Explosion</h3><p>Daily 100M+ photos uploaded. Solution: Multiple image sizes generate (3 variants), WebP format (30% smaller), CDN caching, old images to cold storage (S3 Glacier)</p></div>
-        <div class="bottleneck-card"><h3>Thundering Herd on Celebrity Post</h3><p>Celebrity posts karte hi millions of users feed refresh karte hai. Solution: Cache warming, staggered fan-out (jitter), request coalescing for same post fetch</p></div>
-        <div class="bottleneck-card"><h3>Search Index Lag</h3><p>New post search me turant nahi aata. Solution: Near real-time indexing via Kafka, Elasticsearch refresh interval 1 sec, trending topics separate fast path</p></div>
-        <div class="bottleneck-card"><h3>Story Storage Cost</h3><p>Billions of stories daily, 24hr expiry. Solution: Aggressive cleanup job, S3 lifecycle policy auto-delete after 48h, stories CDN cache with short TTL</p></div>
-        <div class="bottleneck-card"><h3>Cross-Shard Queries</h3><p>Feed needs posts from users on different DB shards. Solution: Feed pre-computed in Redis (no cross-shard read needed), Cassandra for timeline storage (partition by userId)</p></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Celebrity fan-out (100M followers)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Hybrid: fan-out-on-read for celebrities, fan-out-on-write for normal users</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Viral post &mdash; millions of likes simultaneously</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Redis atomic INCR + batch DB writes via Kafka (eventual consistency)</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Feed ranking at scale (2B users)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Pre-compute hourly, lightweight re-rank at read time, ML cached per segment</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Image storage explosion (100M+ daily)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">3 size variants + WebP format + CDN + S3 Glacier for old images</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Thundering herd on celebrity post</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Cache warming + staggered fan-out (jitter) + request coalescing</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Search index lag for new posts</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Near real-time indexing via Kafka, Elasticsearch 1-sec refresh</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Story storage cost (24hr expiry)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">S3 lifecycle auto-delete 48h, aggressive cleanup job, short CDN TTL</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Cross-shard queries for feed</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Feed pre-computed in Redis (no cross-shard reads), Cassandra partitioned</span></div>
     </div>
 </div>
 
 <!-- ============ 14. INTERVIEW TIPS ============ -->
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">14</span>Interview Tips &mdash; Key Points to Remember</div>
-    <div class="service-grid">
-        <div class="service-card">
-            <h3>Must-Know Concepts</h3>
-            <p class="svc-desc">Ye concepts interview me zaroor puchte hai &mdash; ache se samajh lo</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Key Talking Points</span></div><pre class="code-block">
-<span class="cm">// 1. Fan-out-on-Write vs Fan-out-on-Read</span>
-<span class="cm">// Most asked question! Explain hybrid approach</span>
-<span class="cm">// Push for normal users, pull for celebrities</span>
-
-<span class="cm">// 2. Feed Ranking is NOT just chronological</span>
-<span class="cm">// ML model considers: engagement probability,</span>
-<span class="cm">// recency, relationship closeness, content type</span>
-
-<span class="cm">// 3. Eventual Consistency for counters</span>
-<span class="cm">// Like count 2-3 sec late is OK</span>
-<span class="cm">// Redis INCR for speed, async DB sync</span>
-
-<span class="cm">// 4. Cursor pagination, NOT offset</span>
-<span class="cm">// OFFSET 1000000 = scan 1M rows (slow!)</span>
-<span class="cm">// Cursor: WHERE id < :lastId LIMIT 20 (fast!)</span>
-
-<span class="cm">// 5. Sharding by user_id</span>
-<span class="cm">// User's posts, likes, comments same shard</span>
-<span class="cm">// Feed pre-computed = no cross-shard reads</span>
-
-<span class="cm">// 6. CDN for media is non-negotiable</span>
-<span class="cm">// Images from origin = 500ms, from CDN = 20ms</span>
-
-<span class="cm">// 7. Stories = TTL-based architecture</span>
-<span class="cm">// Redis TTL + S3 lifecycle + DB cleanup job</span>
-
-<span class="cm">// 8. Social graph = billions of edges</span>
-<span class="cm">// Adjacency list in DB, cached in Redis</span>
-<span class="cm">// Friend suggestions = 2-hop graph traversal</span>
-
-<span class="cm">// 9. Notification aggregation</span>
-<span class="cm">// "Rahul and 99 others liked" not 100 notifications</span>
-
-<span class="cm">// 10. Content moderation is critical</span>
-<span class="cm">// AI pre-filter + human review queue</span>
-<span class="cm">// Legal compliance (GDPR, COPPA)</span>
-</pre></div>
-        </div>
+<div class="section theme-orange">
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="summary-grid">
+        <div class="summary-card sc-1"><h4>Fan-out Hybrid</h4><p>Push for normal users, pull for celebrities (&gt;10K followers)</p></div>
+        <div class="summary-card sc-2"><h4>Feed Ranking (ML)</h4><p>Engagement probability + recency + relationship closeness</p></div>
+        <div class="summary-card sc-3"><h4>Eventual Consistency</h4><p>Like count 2-3 sec late is OK &mdash; Redis INCR + async DB</p></div>
+        <div class="summary-card sc-4"><h4>Cursor Pagination</h4><p>WHERE id &lt; :lastId LIMIT 20 (not OFFSET)</p></div>
+        <div class="summary-card sc-1"><h4>Sharding by user_id</h4><p>Posts, likes, comments on same shard</p></div>
+        <div class="summary-card sc-2"><h4>CDN for Media</h4><p>Origin 500ms vs CDN 20ms &mdash; non-negotiable</p></div>
+        <div class="summary-card sc-3"><h4>Stories = TTL</h4><p>Redis TTL + S3 lifecycle + cleanup job</p></div>
+        <div class="summary-card sc-4"><h4>Social Graph</h4><p>Billions of edges, 2-hop traversal for suggestions</p></div>
+        <div class="summary-card sc-1"><h4>Notification Aggregation</h4><p>"Rahul and 99 others liked" not 100 notifs</p></div>
+        <div class="summary-card sc-2"><h4>Content Moderation</h4><p>AI pre-filter + human review queue</p></div>
+        <div class="summary-card sc-3"><h4>Trending Algorithm</h4><p>Velocity-based: engagement/time window ratio</p></div>
+        <div class="summary-card sc-4"><h4>Observer Pattern</h4><p>Post event &rarr; feed + notify + index + moderate</p></div>
     </div>
+    <p style="text-align:center;margin-top:24px;color:#78909c;font-size:1em">
+        Complete Social Media LLD for <strong style="color:#e91e63">Java Spring Boot</strong> interviews &mdash; covers Feed, Social Graph, Stories, Trending &amp; Scalability.
+    </p>
 </div>
 `
 }

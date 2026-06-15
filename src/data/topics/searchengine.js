@@ -648,97 +648,37 @@ export default {
     </div>
 </div>
 
-<div class="section theme-orange">
+<div class="section theme-red">
     <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
-        <div class="bottleneck-card">
-            <h3>Index Too Large for Single Machine</h3>
-            <p><strong>Problem:</strong> Billions of pages ka inverted index ek machine me nahi aata &mdash; terabytes of data hai</p>
-            <p><strong>Solution:</strong> Index ko shard karo by term range (a-m shard1, n-z shard2) ya by document ID. Har shard pe parallel search karo aur results merge karo. Google 1000s of shards use karta hai</p>
-        </div>
-        <div class="bottleneck-card">
-            <h3>Crawl Speed vs Politeness</h3>
-            <p><strong>Problem:</strong> Fast crawl karna hai but websites ko overload nahi karna &mdash; agar ek domain pe 100 req/sec bhejen toh DDoS lagega</p>
-            <p><strong>Solution:</strong> Per-domain rate limiting — max 1 req/sec per domain. Multiple domains parallel crawl karo. robots.txt ka crawl-delay respect karo. Distributed crawlers across regions</p>
-        </div>
-        <div class="bottleneck-card">
-            <h3>Stale Index / Freshness</h3>
-            <p><strong>Problem:</strong> News article 2 hours pehle publish hua but index me nahi hai &mdash; user ko outdated results milte hain</p>
-            <p><strong>Solution:</strong> Tiered crawl strategy — news sites hourly, popular sites daily, static sites weekly. Real-time indexing pipeline for trending topics. PubSubHubbub/WebSub for push-based updates</p>
-        </div>
-        <div class="bottleneck-card">
-            <h3>Query Latency Spikes</h3>
-            <p><strong>Problem:</strong> Popular queries pe latency spike hota hai &mdash; "election results" jaise trending query pe millions QPS aata hai</p>
-            <p><strong>Solution:</strong> Query result caching — popular queries ke results Redis me cache karo (5 min TTL). Shard replicas for read scaling. CDN pe static result pages cache karo</p>
-        </div>
-        <div class="bottleneck-card">
-            <h3>Spam Pages Polluting Results</h3>
-            <p><strong>Problem:</strong> SEO spam pages rank karne lagte hain &mdash; keyword stuffing, link farms, doorway pages</p>
-            <p><strong>Solution:</strong> Spam classifier (ML model) se spam score calculate karo. Link farm detection — unnatural link patterns detect karo. Manual review for reported spam. Domain authority scoring</p>
-        </div>
-        <div class="bottleneck-card">
-            <h3>Duplicate Content Waste</h3>
-            <p><strong>Problem:</strong> Same article 100 sites pe syndicated hai — sab index karna resources waste hai</p>
-            <p><strong>Solution:</strong> SimHash fingerprinting — near-duplicate detect karo O(1) me. Canonical URL selection — original source rakh ke baaki de-index karo. Hamming distance threshold for similarity</p>
-        </div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Index too large for single machine (TBs)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Shard by term range or doc ID, parallel search + merge across 1000s shards</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Crawl speed vs politeness trade-off</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Per-domain rate limit (1 req/sec), parallel domains, respect robots.txt crawl-delay</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Stale index / freshness problem</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Tiered crawl: news hourly, popular daily, static weekly. Kafka real-time pipeline</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Query latency spikes (trending queries)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Redis query cache (5 min TTL), shard replicas for read scaling, CDN cache</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Spam pages polluting results</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">ML spam classifier, link farm detection, manual review, domain authority scoring</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Duplicate content waste (syndicated articles)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">SimHash fingerprint O(1), canonical URL selection, Hamming distance threshold</span></div>
     </div>
 </div>
 
-<div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Tips</div>
-    <div class="section-body">
-        <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Key Points for Interview</span></div><pre class="code-block">
-<span class="cm">✅ MUST KNOW CONCEPTS:</span>
-<span class="cm">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="cm">1. Inverted Index — search engine ka core, word → doc list</span>
-<span class="cm">2. TF-IDF — term relevance scoring formula</span>
-<span class="cm">3. PageRank — link-based authority scoring</span>
-<span class="cm">4. Web Crawler — BFS traversal of web, URL frontier</span>
-<span class="cm">5. Bloom Filter — memory-efficient URL dedup</span>
-<span class="cm">6. Trie — prefix tree for auto-complete</span>
-<span class="cm">7. robots.txt — crawl politeness rules</span>
-<span class="cm">8. SimHash — near-duplicate content detection</span>
-<span class="cm">9. Sharding — index too big? shard by term or doc</span>
-<span class="cm">10. Edit Distance — spell correction algorithm</span>
-
-<span class="cm">🎯 COMMON FOLLOW-UP QUESTIONS:</span>
-<span class="cm">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="cm">Q: "How does Google return results in &lt;200ms for billions of pages?"</span>
-<span class="cm">A: Index is sharded across 1000s of machines, each shard</span>
-<span class="cm">   is searched in parallel, results merged. Popular queries</span>
-<span class="cm">   are cached. Inverted index makes lookup O(1) per term.</span>
-
-<span class="cm">Q: "How do you handle a new page appearing?"</span>
-<span class="cm">A: Crawler discovers via links or sitemap submission.</span>
-<span class="cm">   Page is crawled, parsed, indexed. For news/trending content,</span>
-<span class="cm">   real-time indexing pipeline (Kafka) for faster freshness.</span>
-
-<span class="cm">Q: "How is auto-complete so fast?"</span>
-<span class="cm">A: Pre-computed top-K suggestions at each Trie node.</span>
-<span class="cm">   Suggestions cached per prefix in Redis. Only top 10 needed,</span>
-<span class="cm">   no need to DFS entire subtree at query time.</span>
-
-<span class="cm">Q: "How to prevent spam from ranking high?"</span>
-<span class="cm">A: ML classifier for spam detection, link farm analysis,</span>
-<span class="cm">   PageRank naturally demotes low-quality pages. Manual</span>
-<span class="cm">   penalties for known spam domains.</span>
-
-<span class="cm">Q: "Difference between TF-IDF and BM25?"</span>
-<span class="cm">A: BM25 is improved TF-IDF — adds document length</span>
-<span class="cm">   normalization and term frequency saturation.</span>
-<span class="cm">   TF-IDF: longer docs get unfair advantage.</span>
-<span class="cm">   BM25: adjusts for doc length, better in practice.</span>
-
-<span class="cm">⚠️ COMMON MISTAKES:</span>
-<span class="cm">━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>
-<span class="cm">❌ Not mentioning inverted index — literally the core</span>
-<span class="cm">❌ Confusing forward index with inverted index</span>
-<span class="cm">❌ Forgetting about crawl politeness (robots.txt)</span>
-<span class="cm">❌ Not discussing how to handle scale (sharding)</span>
-<span class="cm">❌ Ignoring duplicate detection</span>
-<span class="cm">❌ Not knowing PageRank basics</span>
-</pre></div>
+<div class="section theme-orange">
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="summary-grid">
+        <div class="summary-card sc-1"><h4>Inverted Index</h4><p>Core of search &mdash; word &rarr; list of doc IDs</p></div>
+        <div class="summary-card sc-2"><h4>TF-IDF Scoring</h4><p>Term frequency &times; inverse document frequency</p></div>
+        <div class="summary-card sc-3"><h4>PageRank</h4><p>Link-based authority &mdash; more inlinks = higher rank</p></div>
+        <div class="summary-card sc-4"><h4>Web Crawler (BFS)</h4><p>URL frontier, robots.txt, politeness delay</p></div>
+        <div class="summary-card sc-1"><h4>Bloom Filter</h4><p>Memory-efficient URL dedup (1.2 GB for 10B URLs)</p></div>
+        <div class="summary-card sc-2"><h4>Trie (Auto-complete)</h4><p>Pre-computed top-K at each node, O(prefix) lookup</p></div>
+        <div class="summary-card sc-3"><h4>SimHash (Dedup)</h4><p>Near-duplicate content detection in O(1)</p></div>
+        <div class="summary-card sc-4"><h4>Edit Distance</h4><p>Spell correction &mdash; "Did you mean?" suggestions</p></div>
+        <div class="summary-card sc-1"><h4>Index Sharding</h4><p>By term range or doc ID, parallel search + merge</p></div>
+        <div class="summary-card sc-2"><h4>Snippet Generation</h4><p>Highlight query terms in page context</p></div>
+        <div class="summary-card sc-3"><h4>Query Caching</h4><p>Popular query results in Redis (5 min TTL)</p></div>
+        <div class="summary-card sc-4"><h4>robots.txt Compliance</h4><p>Crawl politeness &mdash; respect disallow rules</p></div>
     </div>
+    <p style="text-align:center;margin-top:24px;color:#78909c;font-size:1em">
+        Complete Search Engine LLD for <strong style="color:#2e7d32">Java Spring Boot</strong> interviews &mdash; covers Crawling, Indexing, PageRank, Auto-complete &amp; Scalability.
+    </p>
 </div>
 `
 }

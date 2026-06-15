@@ -1096,60 +1096,40 @@ Host &rarr; POST /meetings/{id}/end
 </div>
 
 <!-- ============ 13. BOTTLENECKS ============ -->
-<div class="section theme-blue">
+<div class="section theme-red">
     <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
-        <div class="bottleneck-card"><h3>SFU Server Overload</h3><p>Cascaded SFU architecture use karo &mdash; ek SFU 200 participants, usse zyada ke liye multiple SFUs chain karo. Geographic routing se nearest SFU assign karo</p></div>
-        <div class="bottleneck-card"><h3>Bandwidth Explosion</h3><p>Simulcast + Active Speaker Detection &mdash; sirf speaker ki high quality stream forward karo, baaki sab ki low quality. Gallery view me visible tiles ki hi streams bhejo</p></div>
-        <div class="bottleneck-card"><h3>Network Jitter &amp; Packet Loss</h3><p>Jitter buffer (50-200ms), FEC (Forward Error Correction) for packet loss recovery, NACK-based retransmission for critical frames, Opus codec for audio (handles 30% loss)</p></div>
-        <div class="bottleneck-card"><h3>Recording Storage Cost</h3><p>Raw recording ko transcode karke compressed MP4 banao (10x size reduction). Cold storage (S3 Glacier) me purane recordings move karo. Auto-delete policy set karo (90 days)</p></div>
-        <div class="bottleneck-card"><h3>Lobby Queue Surge</h3><p>Redis sorted set se lobby manage karo. Batch admit feature for host. Auto-admit for authenticated org users. Lobby timeout (10 min) se stale entries clean karo</p></div>
-        <div class="bottleneck-card"><h3>Signaling Server Bottleneck</h3><p>WebSocket connections horizontally scale karo with sticky sessions. Redis Pub/Sub for cross-server event broadcasting. Separate signaling from media path</p></div>
-        <div class="bottleneck-card"><h3>TURN Server Cost</h3><p>TURN sirf 15% calls me use hota hai &mdash; geographic TURN server placement. TCP fallback over 443 for corporate firewalls. Bandwidth quotas per meeting</p></div>
-        <div class="bottleneck-card"><h3>Large Meeting Latency</h3><p>Dominant speaker algorithm &mdash; sirf top 4 speakers ki video forward karo. Last-N strategy: sirf recent active participants ki streams. Thumbnail mode for 50+ participants</p></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">SFU Server Overload (200+ participants)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Cascaded SFU architecture + geographic routing se nearest SFU assign</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Bandwidth explosion in large meetings</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Simulcast + Active Speaker Detection &mdash; sirf speaker ki HD stream forward</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Network jitter &amp; packet loss</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Jitter buffer (50-200ms), FEC for recovery, Opus codec (handles 30% loss)</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Recording storage cost</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Transcode to MP4 (10x reduction), S3 Glacier for old recordings, auto-delete 90d</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Lobby queue surge</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Redis sorted set, batch admit, auto-admit org users, 10-min timeout</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Signaling server bottleneck</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Horizontal scale with sticky sessions + Redis Pub/Sub cross-server</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">TURN server cost (relay traffic)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Geographic placement, TCP fallback on 443, bandwidth quotas per meeting</span></div>
+        <div class="bottleneck-item"><span class="bottleneck-problem">Large meeting latency (50+ users)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Dominant speaker algo (top 4 video), Last-N strategy, thumbnail mode</span></div>
     </div>
 </div>
 
 <!-- ============ 14. INTERVIEW TIPS ============ -->
-<div class="section theme-green">
-    <div class="section-title"><span class="section-num">14</span>Interview Tips &mdash; Key Points to Remember</div>
-    <div class="service-grid">
-        <div class="service-card">
-            <h3>Must-Know Concepts</h3>
-            <p class="svc-desc">Ye concepts interview me zaroor aayenge &mdash; ache se samajh lo</p>
-            <div class="code-wrapper" style="margin:0"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Key Talking Points</span></div><pre class="code-block">
-<span class="cm">// 1. WHY SFU over Mesh/MCU?</span>
-<span class="cm">// SFU = best balance of quality, scalability, cost</span>
-<span class="cm">// Mesh doesn't scale, MCU is too CPU-heavy</span>
-
-<span class="cm">// 2. WebRTC Signaling is NOT media</span>
-<span class="cm">// Signaling = SDP + ICE exchange (WebSocket)</span>
-<span class="cm">// Media = actual audio/video (UDP/DTLS-SRTP)</span>
-
-<span class="cm">// 3. Simulcast saves bandwidth</span>
-<span class="cm">// Sender sends 3 qualities, SFU picks best for each receiver</span>
-
-<span class="cm">// 4. E2E encryption trade-off</span>
-<span class="cm">// E2E ON = no server recording, no transcription</span>
-<span class="cm">// Most calls use transport encryption (DTLS), not true E2E</span>
-
-<span class="cm">// 5. TURN is expensive but necessary</span>
-<span class="cm">// ~15% of connections need TURN (corporate NATs)</span>
-<span class="cm">// Without TURN, those users can't connect at all</span>
-
-<span class="cm">// 6. Active Speaker Detection</span>
-<span class="cm">// Audio level analysis = who's speaking</span>
-<span class="cm">// Only forward high-quality stream for active speaker</span>
-<span class="cm">// Saves 60-70% bandwidth in large meetings</span>
-
-<span class="cm">// 7. Recording = separate bot participant</span>
-<span class="cm">// Not client-side capture, server-side SFU recording</span>
-
-<span class="cm">// 8. Lobby/Waiting Room is critical for security</span>
-<span class="cm">// Prevents Zoom-bombing, unauthorized access</span>
-</pre></div>
-        </div>
+<div class="section theme-orange">
+    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="summary-grid">
+        <div class="summary-card sc-1"><h4>SFU over Mesh/MCU</h4><p>Best balance of quality, scalability &amp; cost</p></div>
+        <div class="summary-card sc-2"><h4>WebRTC Signaling ≠ Media</h4><p>Signaling = SDP+ICE (WebSocket), Media = UDP/DTLS-SRTP</p></div>
+        <div class="summary-card sc-3"><h4>Simulcast</h4><p>Sender sends 3 qualities, SFU picks best per receiver</p></div>
+        <div class="summary-card sc-4"><h4>E2E Encryption Trade-off</h4><p>E2E ON = no server recording/transcription</p></div>
+        <div class="summary-card sc-1"><h4>TURN Server</h4><p>~15% connections need TURN (corporate NATs)</p></div>
+        <div class="summary-card sc-2"><h4>Active Speaker Detection</h4><p>Audio level analysis, saves 60-70% bandwidth</p></div>
+        <div class="summary-card sc-3"><h4>Recording Architecture</h4><p>Server-side SFU recording, not client capture</p></div>
+        <div class="summary-card sc-4"><h4>Lobby / Waiting Room</h4><p>Prevents Zoom-bombing, unauthorized access</p></div>
+        <div class="summary-card sc-1"><h4>STUN/TURN/ICE</h4><p>NAT traversal for peer connectivity</p></div>
+        <div class="summary-card sc-2"><h4>Breakout Rooms</h4><p>Sub-meetings with separate SFU routing</p></div>
+        <div class="summary-card sc-3"><h4>Screen Sharing</h4><p>getDisplayMedia API + separate video track</p></div>
+        <div class="summary-card sc-4"><h4>Observer Pattern</h4><p>Event-driven participant join/leave/mute</p></div>
     </div>
+    <p style="text-align:center;margin-top:24px;color:#78909c;font-size:1em">
+        Complete Video Conferencing LLD for <strong style="color:#2979ff">Java Spring Boot</strong> interviews &mdash; covers WebRTC, SFU, Signaling, Recording &amp; Scalability.
+    </p>
 </div>
 `
 }
