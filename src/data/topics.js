@@ -16,4 +16,8 @@ export const topics = [
   { id: 'amazon', icon: '\u{1F4E6}', title: 'Amazon / Flipkart', desc: 'Product catalog, search, cart, order, delivery', tag: '14 Sections', cardClass: 'tc-amazon' },
   { id: 'food', icon: '\u{1F355}', title: 'Food Delivery (Zomato)', desc: 'Restaurant, menu, cart, order, delivery partner, live tracking', tag: '14 Sections', cardClass: 'tc-food' },
   { id: 'videoconferencing', icon: '\u{1F4F9}', title: 'Video Conferencing (Zoom / Meet / Teams)', desc: 'WebRTC, SFU, signaling, screen share, recording, breakout rooms', tag: '14 Sections', cardClass: 'tc-videoconf' },
+  { id: 'socialmedia', icon: '\u{1F4F1}', title: 'Social Media (Facebook / Instagram / Twitter)', desc: 'Feed, follow, likes, comments, stories, trending, fan-out', tag: '14 Sections', cardClass: 'tc-social' },
+  { id: 'youtube', icon: '\u{1F4FA}', title: 'YouTube', desc: 'Video upload, transcoding, recommendation, subscriptions, monetization', tag: '14 Sections', cardClass: 'tc-youtube' },
+  { id: 'cloudstorage', icon: '\u{1F4C1}', title: 'Google Drive / Dropbox', desc: 'File upload, sync, sharing, versioning, chunked transfer', tag: '14 Sections', cardClass: 'tc-cloudstorage' },
+  { id: 'gmail', icon: '\u{1F4E7}', title: 'Gmail', desc: 'Email send/receive, SMTP, labels, search, attachments, spam filter', tag: '14 Sections', cardClass: 'tc-gmail' },
 ]

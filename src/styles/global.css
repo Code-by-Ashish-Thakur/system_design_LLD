@@ -30,6 +30,10 @@ body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-g
 .tc-lldtheory{background:linear-gradient(145deg,rgba(255,112,67,.12),rgba(255,112,67,.04));border:1px solid rgba(255,112,67,.25)}.tc-lldtheory h3{color:#ff7043}.tc-lldtheory .topic-tag{background:rgba(255,112,67,.2);color:#ff7043}
 .tc-oops{background:linear-gradient(145deg,rgba(66,165,245,.12),rgba(66,165,245,.04));border:1px solid rgba(66,165,245,.25)}.tc-oops h3{color:#42a5f5}.tc-oops .topic-tag{background:rgba(66,165,245,.2);color:#42a5f5}
 .tc-videoconf{background:linear-gradient(145deg,rgba(41,121,255,.12),rgba(41,121,255,.04));border:1px solid rgba(41,121,255,.25)}.tc-videoconf h3{color:#2979ff}.tc-videoconf .topic-tag{background:rgba(41,121,255,.2);color:#2979ff}
+.tc-social{background:linear-gradient(145deg,rgba(233,30,99,.12),rgba(233,30,99,.04));border:1px solid rgba(233,30,99,.25)}.tc-social h3{color:#e91e63}.tc-social .topic-tag{background:rgba(233,30,99,.2);color:#e91e63}
+.tc-youtube{background:linear-gradient(145deg,rgba(255,0,0,.12),rgba(255,0,0,.04));border:1px solid rgba(255,0,0,.25)}.tc-youtube h3{color:#ff1744}.tc-youtube .topic-tag{background:rgba(255,0,0,.2);color:#ff1744}
+.tc-cloudstorage{background:linear-gradient(145deg,rgba(66,133,244,.12),rgba(66,133,244,.04));border:1px solid rgba(66,133,244,.25)}.tc-cloudstorage h3{color:#4285f4}.tc-cloudstorage .topic-tag{background:rgba(66,133,244,.2);color:#4285f4}
+.tc-gmail{background:linear-gradient(145deg,rgba(234,67,53,.12),rgba(234,67,53,.04));border:1px solid rgba(234,67,53,.25)}.tc-gmail h3{color:#ea4335}.tc-gmail .topic-tag{background:rgba(234,67,53,.2);color:#ea4335}
 
 .topic-content{animation:fadeIn .5s}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
