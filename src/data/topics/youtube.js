@@ -784,9 +784,100 @@ export default {
 </pre></div>
 </div>
 
+<!-- ============ CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+
+    <div class="assumption-box">
+        <h4>Assumptions (YouTube Scale)</h4>
+        <div class="assumption-row"><span class="calc-label">Total Users</span><span class="calc-value">2.5 Billion</span></div>
+        <div class="assumption-row"><span class="calc-label">Daily Active Users (DAU)</span><span class="calc-value">800 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg videos watched/user/day</span><span class="calc-value">10 videos</span></div>
+        <div class="assumption-row"><span class="calc-label">Video uploads/day</span><span class="calc-value">500K</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg video size (original)</span><span class="calc-value">500 MB</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg video duration</span><span class="calc-value">7 minutes</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg transcoded output per video</span><span class="calc-value">5 resolutions = 2 GB total</span></div>
+    </div>
+
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Video Uploads Per Day</h4>
+            <div class="calc-row"><span class="calc-label">Uploads/day</span><span class="calc-value">500K</span></div>
+            <div class="calc-row"><span class="calc-label">500K / 86400s</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Avg Upload QPS</span><span class="calc-value">~6 QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Peak Upload QPS (5x)</span><span class="calc-value">~30 QPS</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Video Views Per Day</h4>
+            <div class="calc-row"><span class="calc-label">DAU</span><span class="calc-value">800M</span></div>
+            <div class="calc-row"><span class="calc-label">&times; 10 videos/user/day</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Total Views / Day</span><span class="calc-value">8 Billion</span></div>
+            <div class="calc-result"><span class="calc-label">Avg View QPS</span><span class="calc-value">~92K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Peak View QPS (3x)</span><span class="calc-value">~300K QPS</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Storage &mdash; Raw Videos (per day)</h4>
+            <div class="calc-row"><span class="calc-label">Uploads/day</span><span class="calc-value">500K</span></div>
+            <div class="calc-row"><span class="calc-label">&times; 500 MB / video</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Raw Storage / Day</span><span class="calc-value">~250 TB / day</span></div>
+            <div class="calc-result"><span class="calc-label">Raw Storage / Year</span><span class="calc-value">~91 PB / year</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Storage &mdash; Transcoded Videos (per day)</h4>
+            <div class="calc-row"><span class="calc-label">Uploads/day</span><span class="calc-value">500K</span></div>
+            <div class="calc-row"><span class="calc-label">&times; 2 GB transcoded output</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Transcoded Storage / Day</span><span class="calc-value">~1 PB / day</span></div>
+            <div class="calc-result"><span class="calc-label">Transcoded Storage / Year</span><span class="calc-value">~365 PB / year</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>CDN Bandwidth</h4>
+            <div class="calc-row"><span class="calc-label">Views/day</span><span class="calc-value">8 Billion</span></div>
+            <div class="calc-row"><span class="calc-label">&times; 100 MB avg streamed</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Total Egress / Day</span><span class="calc-value">~800 PB / day</span></div>
+            <div class="calc-result"><span class="calc-label">Avg Egress Throughput</span><span class="calc-value">~9.25 GB/s per server</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Transcoding Compute</h4>
+            <div class="calc-row"><span class="calc-label">Uploads/day</span><span class="calc-value">500K</span></div>
+            <div class="calc-row"><span class="calc-label">&times; 5 resolutions &times; 7 min</span><span class="calc-value"></span></div>
+            <div class="calc-row"><span class="calc-label">Total transcode time/day</span><span class="calc-value">~17.5M minutes</span></div>
+            <div class="calc-result"><span class="calc-label">Transcoding Workers Needed</span><span class="calc-value">~2,500 workers</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Thumbnail Generation</h4>
+            <div class="calc-row"><span class="calc-label">Uploads/day</span><span class="calc-value">500K</span></div>
+            <div class="calc-row"><span class="calc-label">&times; 3 thumbnails / video</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Thumbnails / Day</span><span class="calc-value">1.5M thumbnails/day</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>Recommendation QPS</h4>
+            <div class="calc-row"><span class="calc-label">DAU</span><span class="calc-value">800M</span></div>
+            <div class="calc-row"><span class="calc-label">&times; 10 feed loads / user / day</span><span class="calc-value"></span></div>
+            <div class="calc-result"><span class="calc-label">Recommendations / Day</span><span class="calc-value">8 Billion</span></div>
+            <div class="calc-result"><span class="calc-label">Recommendation QPS</span><span class="calc-value">~92K QPS</span></div>
+        </div>
+
+        <div class="cap-card">
+            <h4>CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">API Servers</span><span class="calc-value">~500 servers</span></div>
+            <div class="calc-row"><span class="calc-label">Transcoding Workers</span><span class="calc-value">~2,500 workers</span></div>
+            <div class="calc-row"><span class="calc-label">CDN Edge Servers</span><span class="calc-value">~10,000 servers</span></div>
+            <div class="calc-row"><span class="calc-label">DB Shards</span><span class="calc-value">50+ shards</span></div>
+            <div class="calc-row"><span class="calc-label">Redis Cluster Nodes</span><span class="calc-value">100+ nodes</span></div>
+        </div>
+    </div>
+</div>
+
 <!-- ============ TRANSCODING PIPELINE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Architecture &mdash; Transcoding Pipeline</div>
+    <div class="section-title"><span class="section-num">8</span>Architecture &mdash; Transcoding Pipeline</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Upload &rarr; Transcode &rarr; HLS Flow</h3>
@@ -872,7 +963,7 @@ export default {
 
 <!-- ============ RECOMMENDATION SYSTEM ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">8</span>Recommendation System</div>
+    <div class="section-title"><span class="section-num">9</span>Recommendation System</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>YouTube Recommendation Algorithm</h3>
@@ -949,7 +1040,7 @@ export default {
 
 <!-- ============ MONETIZATION & ADS ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Monetization &amp; Ads</div>
+    <div class="section-title"><span class="section-num">10</span>Monetization &amp; Ads</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Ad Insertion Engine</h3>
@@ -1029,7 +1120,7 @@ export default {
 
 <!-- ============ CDN & STREAMING ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">10</span>CDN &amp; Streaming Architecture</div>
+    <div class="section-title"><span class="section-num">11</span>CDN &amp; Streaming Architecture</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Edge Caching &amp; Content Delivery</h3>
@@ -1108,7 +1199,7 @@ export default {
 
 <!-- ============ COMPLETE VIDEO FLOW ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">11</span>Complete Video Flow &mdash; End to End</div>
+    <div class="section-title"><span class="section-num">12</span>Complete Video Flow &mdash; End to End</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">End-to-End Flow</span></div><pre class="code-block">
 <span class="cm">========= UPLOAD PHASE =========</span>
 
@@ -1186,7 +1277,7 @@ export default {
 
 <!-- ============ YOUTUBE vs NETFLIX vs TWITCH ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">12</span>YouTube vs Netflix vs Twitch</div>
+    <div class="section-title"><span class="section-num">13</span>YouTube vs Netflix vs Twitch</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>YouTube</h3>
@@ -1220,7 +1311,7 @@ export default {
 
 <!-- ============ BOTTLENECKS & SOLUTIONS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Transcoding CPU bottleneck (500 hrs/min)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">GPU workers (NVENC), K8s auto-scale by queue depth, priority queue</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">View count hot key (viral video)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Redis INCR buffer, batch flush to DB every 30s, 10 sharded counters</span></div>
@@ -1235,7 +1326,7 @@ export default {
 
 <!-- ============ INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Chunked Upload (TUS)</h4><p>Resumable, parallel chunks with checksum</p></div>
         <div class="summary-card sc-2"><h4>FFmpeg Transcoding</h4><p>Kafka fan-out to GPU workers, 4-8 resolutions</p></div>

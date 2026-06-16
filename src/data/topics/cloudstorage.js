@@ -513,9 +513,64 @@ export default {
 </pre></div>
 </div>
 
-<!-- ============ 7. CHUNKED UPLOAD & SYNC ============ -->
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="assumption-box">
+        <h4>Assumptions</h4>
+        <div class="assumption-row"><span class="calc-label">Total Users</span><span class="calc-value">800 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">DAU (Daily Active Users)</span><span class="calc-value">200 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg file operations/user/day</span><span class="calc-value">5 (upload/download/sync)</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg file size</span><span class="calc-value">2 MB (mix of docs, images, videos)</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg storage per user</span><span class="calc-value">5 GB</span></div>
+        <div class="assumption-row"><span class="calc-label">Block size (chunked upload)</span><span class="calc-value">4 MB</span></div>
+        <div class="assumption-row"><span class="calc-label">Deduplication savings</span><span class="calc-value">60%</span></div>
+    </div>
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>File Operations / Day</h4>
+            <div class="calc-row"><span class="calc-label">200M DAU &times; 5 ops</span><span class="calc-value">1 Billion / day</span></div>
+            <div class="calc-row"><span class="calc-label">QPS (avg)</span><span class="calc-value">1B &divide; 86400 &approx; 11.5K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Peak QPS (3&ndash;4&times;)</span><span class="calc-value">~40K QPS</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Upload Volume / Day</h4>
+            <div class="calc-row"><span class="calc-label">200M users &times; 2 uploads &times; 2 MB</span><span class="calc-value">800 TB / day (raw)</span></div>
+            <div class="calc-result"><span class="calc-label">After 60% dedup</span><span class="calc-value">~320 TB / day</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Storage Total</h4>
+            <div class="calc-row"><span class="calc-label">800M users &times; 5 GB each</span><span class="calc-value">4 EB (Exabytes) raw</span></div>
+            <div class="calc-result"><span class="calc-label">After 60% dedup</span><span class="calc-value">~1.6 EB actual</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Sync Traffic / Day</h4>
+            <div class="calc-row"><span class="calc-label">200M devices &times; 5 syncs &times; 4 MB avg change</span><span class="calc-value">4 PB / day</span></div>
+            <div class="calc-result"><span class="calc-label">Sync bandwidth</span><span class="calc-value">~4 PB / day</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Metadata DB</h4>
+            <div class="calc-row"><span class="calc-label">800M users &times; 500 files avg</span><span class="calc-value">400 Billion file records</span></div>
+            <div class="calc-result"><span class="calc-label">Metadata size (~100 bytes/record)</span><span class="calc-value">~40 TB metadata</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Block Storage (S3)</h4>
+            <div class="calc-row"><span class="calc-label">Actual storage after dedup</span><span class="calc-value">~1.6 EB</span></div>
+            <div class="calc-result"><span class="calc-label">S3 IA / Glacier for old files</span><span class="calc-value">saves ~50% cost</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">API Servers</span><span class="calc-value">~100 servers</span></div>
+            <div class="calc-row"><span class="calc-label">Sync Servers</span><span class="calc-value">~200 servers</span></div>
+            <div class="calc-row"><span class="calc-label">DB Shards</span><span class="calc-value">50+ shards</span></div>
+            <div class="calc-result"><span class="calc-label">Redis Nodes</span><span class="calc-value">30+ nodes</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 8. CHUNKED UPLOAD & SYNC ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Architecture &mdash; Chunked Upload &amp; Delta Sync</div>
+    <div class="section-title"><span class="section-num">8</span>Architecture &mdash; Chunked Upload &amp; Delta Sync</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Chunked Upload Flow</h3>
@@ -576,9 +631,9 @@ file.docx = [Block_A, Block_B', Block_C, Block_D]
     </div>
 </div>
 
-<!-- ============ 8. FILE SYNC PROTOCOL ============ -->
+<!-- ============ 9. FILE SYNC PROTOCOL ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">8</span>File Sync Protocol &amp; Conflict Resolution</div>
+    <div class="section-title"><span class="section-num">9</span>File Sync Protocol &amp; Conflict Resolution</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Sync Protocol (Long Polling + Cursor)</h3>
@@ -637,9 +692,9 @@ report.pdf  &rarr; report.pdf            (B's version, latest)
     </div>
 </div>
 
-<!-- ============ 9. DEDUPLICATION ============ -->
+<!-- ============ 10. DEDUPLICATION ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>File Deduplication &amp; Content-Addressable Storage</div>
+    <div class="section-title"><span class="section-num">10</span>File Deduplication &amp; Content-Addressable Storage</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Block-Level Deduplication</h3>
@@ -671,9 +726,9 @@ File-B = [Block1, Block2, Block4]   <span class="cm">// 12MB total</span>
     </div>
 </div>
 
-<!-- ============ 10. SHARING & PERMISSIONS ============ -->
+<!-- ============ 11. SHARING & PERMISSIONS ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">10</span>Sharing &amp; Permission Model</div>
+    <div class="section-title"><span class="section-num">11</span>Sharing &amp; Permission Model</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>ACL (Access Control List)</h3>
@@ -708,9 +763,9 @@ File-B = [Block1, Block2, Block4]   <span class="cm">// 12MB total</span>
     </div>
 </div>
 
-<!-- ============ 11. COMPLETE FLOW ============ -->
+<!-- ============ 12. COMPLETE FLOW ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">11</span>Complete File Upload Flow &mdash; End to End</div>
+    <div class="section-title"><span class="section-num">12</span>Complete File Upload Flow &mdash; End to End</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">File Lifecycle</span></div><pre class="code-block">
 <span class="cm">// ===== PHASE 1: UPLOAD =====</span>
 Client: Split file into 4MB blocks, compute SHA-256 per block
@@ -755,9 +810,9 @@ Client: Split file into 4MB blocks, compute SHA-256 per block
 </pre></div>
 </div>
 
-<!-- ============ 12. COMPARISONS ============ -->
+<!-- ============ 13. COMPARISONS ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">12</span>Google Drive vs Dropbox vs OneDrive &mdash; Key Differences</div>
+    <div class="section-title"><span class="section-num">13</span>Google Drive vs Dropbox vs OneDrive &mdash; Key Differences</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Google Drive</h3>
@@ -801,9 +856,9 @@ Client: Split file into 4MB blocks, compute SHA-256 per block
     </div>
 </div>
 
-<!-- ============ 13. BOTTLENECKS ============ -->
+<!-- ============ 14. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Large file upload failure mid-way</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Chunked resumable upload, checksum per chunk, retry individual chunks</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Sync storm (5 devices simultaneously)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Cursor-based sync, conflict detection, rate limiting per device</span></div>
@@ -816,9 +871,9 @@ Client: Split file into 4MB blocks, compute SHA-256 per block
     </div>
 </div>
 
-<!-- ============ 14. INTERVIEW TIPS ============ -->
+<!-- ============ 15. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Chunked Upload</h4><p>Resumable, parallel, checksum per chunk</p></div>
         <div class="summary-card sc-2"><h4>Delta Sync</h4><p>Block-level diff &mdash; 1GB file, 1KB edit = 4MB transfer</p></div>

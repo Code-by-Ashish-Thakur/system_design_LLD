@@ -822,9 +822,82 @@ export default {
 </pre></div>
 </div>
 
-<!-- ============ 7. NEWS FEED ARCHITECTURE ============ -->
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="assumption-box">
+        <h4>Assumptions</h4>
+        <div class="assumption-row"><span class="calc-label">Total Users</span><span class="calc-value">2 Billion</span></div>
+        <div class="assumption-row"><span class="calc-label">DAU</span><span class="calc-value">500 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg posts/user/day (active posters, 10% of DAU)</span><span class="calc-value">1 post</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg feed loads/user/day</span><span class="calc-value">20</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg post size (text + metadata)</span><span class="calc-value">1 KB</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg image size</span><span class="calc-value">500 KB (compressed)</span></div>
+        <div class="assumption-row"><span class="calc-label">% posts with media</span><span class="calc-value">80%</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg followers per user</span><span class="calc-value">200</span></div>
+    </div>
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Posts Per Day</h4>
+            <div class="calc-row"><span class="calc-label">Active posters (10% of DAU)</span><span class="calc-value">50M users</span></div>
+            <div class="calc-row"><span class="calc-label">Posts per active user</span><span class="calc-value">1 post/day</span></div>
+            <div class="calc-row"><span class="calc-label">Total posts/day</span><span class="calc-value">50M/day</span></div>
+            <div class="calc-row"><span class="calc-label">QPS (avg)</span><span class="calc-value">50M &divide; 86400 &asymp; ~580 QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Peak QPS (3&ndash;4&times;)</span><span class="calc-value">~2K QPS</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Feed Reads Per Day</h4>
+            <div class="calc-row"><span class="calc-label">DAU</span><span class="calc-value">500M users</span></div>
+            <div class="calc-row"><span class="calc-label">Feed loads/user/day</span><span class="calc-value">20</span></div>
+            <div class="calc-row"><span class="calc-label">Total feed reads/day</span><span class="calc-value">10B/day</span></div>
+            <div class="calc-result"><span class="calc-label">Feed Read QPS</span><span class="calc-value">~115K QPS (read-heavy!)</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Storage &mdash; Posts (text + meta)</h4>
+            <div class="calc-row"><span class="calc-label">Posts/day</span><span class="calc-value">50M</span></div>
+            <div class="calc-row"><span class="calc-label">Avg post size</span><span class="calc-value">1 KB</span></div>
+            <div class="calc-row"><span class="calc-label">Daily storage</span><span class="calc-value">50M &times; 1 KB = 50 GB/day</span></div>
+            <div class="calc-result"><span class="calc-label">Yearly storage</span><span class="calc-value">~18 TB/year</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Storage &mdash; Media</h4>
+            <div class="calc-row"><span class="calc-label">Posts with media (80%)</span><span class="calc-value">40M/day</span></div>
+            <div class="calc-row"><span class="calc-label">Avg image size</span><span class="calc-value">500 KB</span></div>
+            <div class="calc-row"><span class="calc-label">Daily media storage</span><span class="calc-value">40M &times; 500 KB = 20 TB/day</span></div>
+            <div class="calc-result"><span class="calc-label">Yearly media storage</span><span class="calc-value">~7.3 PB/year</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Feed Fan-out</h4>
+            <div class="calc-row"><span class="calc-label">Celebrity post (10M followers)</span><span class="calc-value">10M write ops!</span></div>
+            <div class="calc-result"><span class="calc-label">Trade-off</span><span class="calc-value">Push vs Pull &mdash; hybrid fan-out</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Notification QPS</h4>
+            <div class="calc-row"><span class="calc-label">Posts/day</span><span class="calc-value">50M</span></div>
+            <div class="calc-row"><span class="calc-label">Avg followers per user</span><span class="calc-value">200</span></div>
+            <div class="calc-row"><span class="calc-label">Total notifications/day</span><span class="calc-value">50M &times; 200 = 10B/day</span></div>
+            <div class="calc-result"><span class="calc-label">Notification QPS</span><span class="calc-value">~115K QPS</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Like/Comment QPS</h4>
+            <div class="calc-row"><span class="calc-label">Estimated likes/day</span><span class="calc-value">~1B likes/day</span></div>
+            <div class="calc-row"><span class="calc-label">Like QPS</span><span class="calc-value">~11.5K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Solution</span><span class="calc-value">Redis atomic INCR counters</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">API Servers</span><span class="calc-value">~200</span></div>
+            <div class="calc-row"><span class="calc-label">Feed Generation Workers</span><span class="calc-value">~500</span></div>
+            <div class="calc-row"><span class="calc-label">DB Shards</span><span class="calc-value">50+</span></div>
+            <div class="calc-row"><span class="calc-label">Redis Nodes</span><span class="calc-value">200+</span></div>
+            <div class="calc-result"><span class="calc-label">Kafka Brokers</span><span class="calc-value">30+</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 8. NEWS FEED ARCHITECTURE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>News Feed Architecture &mdash; Fan-out Deep Dive</div>
+    <div class="section-title"><span class="section-num">8</span>News Feed Architecture &mdash; Fan-out Deep Dive</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Fan-out-on-Write (Push Model)</h3>
@@ -916,9 +989,9 @@ SELECT * FROM posts WHERE user_id IN (:celebrityIds)
     </div>
 </div>
 
-<!-- ============ 8. SOCIAL GRAPH ============ -->
+<!-- ============ 9. SOCIAL GRAPH ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">8</span>Social Graph &mdash; Follow System Deep Dive</div>
+    <div class="section-title"><span class="section-num">9</span>Social Graph &mdash; Follow System Deep Dive</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Graph Storage &amp; Queries</h3>
@@ -958,9 +1031,9 @@ DECR followers_count:2001   <span class="cm">// unfollow pe -1</span>
     </div>
 </div>
 
-<!-- ============ 9. TRENDING ALGORITHM ============ -->
+<!-- ============ 10. TRENDING ALGORITHM ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Trending Algorithm &amp; Stories Architecture</div>
+    <div class="section-title"><span class="section-num">10</span>Trending Algorithm &amp; Stories Architecture</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Trending Calculation</h3>
@@ -1029,9 +1102,9 @@ SISMEMBER story_views:story-789 :viewerId
     </div>
 </div>
 
-<!-- ============ 10. SCALABILITY ============ -->
+<!-- ============ 11. SCALABILITY ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">10</span>Scalability &amp; Caching Strategy</div>
+    <div class="section-title"><span class="section-num">11</span>Scalability &amp; Caching Strategy</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Database Sharding</h3>
@@ -1087,9 +1160,9 @@ trending:IN     &rarr; Sorted set of hashtags
     </div>
 </div>
 
-<!-- ============ 11. SYSTEM FLOW ============ -->
+<!-- ============ 12. SYSTEM FLOW ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">11</span>Complete Post Flow &mdash; End to End</div>
+    <div class="section-title"><span class="section-num">12</span>Complete Post Flow &mdash; End to End</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Post Lifecycle</span></div><pre class="code-block">
 <span class="cm">// ===== PHASE 1: POST CREATION =====</span>
 User &rarr; POST /api/v1/posts (with images)
@@ -1139,9 +1212,9 @@ Share &rarr; Create new post with original_post_id reference
 </pre></div>
 </div>
 
-<!-- ============ 12. KEY DIFFERENCES ============ -->
+<!-- ============ 13. KEY DIFFERENCES ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">12</span>Facebook vs Instagram vs Twitter &mdash; Key Differences</div>
+    <div class="section-title"><span class="section-num">13</span>Facebook vs Instagram vs Twitter &mdash; Key Differences</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Facebook</h3>
@@ -1192,9 +1265,9 @@ Share &rarr; Create new post with original_post_id reference
     </div>
 </div>
 
-<!-- ============ 13. BOTTLENECKS ============ -->
+<!-- ============ 14. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Celebrity fan-out (100M followers)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Hybrid: fan-out-on-read for celebrities, fan-out-on-write for normal users</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Viral post &mdash; millions of likes simultaneously</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Redis atomic INCR + batch DB writes via Kafka (eventual consistency)</span></div>
@@ -1207,9 +1280,9 @@ Share &rarr; Create new post with original_post_id reference
     </div>
 </div>
 
-<!-- ============ 14. INTERVIEW TIPS ============ -->
+<!-- ============ 15. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Fan-out Hybrid</h4><p>Push for normal users, pull for celebrities (&gt;10K followers)</p></div>
         <div class="summary-card sc-2"><h4>Feed Ranking (ML)</h4><p>Engagement probability + recency + relationship closeness</p></div>

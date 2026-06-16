@@ -625,9 +625,77 @@ export default {
 </pre></div>
 </div>
 
-<!-- ============ 7. EMAIL PROTOCOLS ============ -->
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="assumption-box">
+        <h4>Assumptions</h4>
+        <div class="assumption-row"><span class="calc-label">Total Users</span><span class="calc-value">1.8 Billion</span></div>
+        <div class="assumption-row"><span class="calc-label">DAU (Daily Active Users)</span><span class="calc-value">800 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Emails sent per user/day</span><span class="calc-value">5</span></div>
+        <div class="assumption-row"><span class="calc-label">Emails received per user/day</span><span class="calc-value">20 (includes spam)</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg email size (text + headers)</span><span class="calc-value">50 KB</span></div>
+        <div class="assumption-row"><span class="calc-label">% emails with attachments</span><span class="calc-value">10%</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg attachment size</span><span class="calc-value">2 MB</span></div>
+        <div class="assumption-row"><span class="calc-label">Spam rate</span><span class="calc-value">50% of received emails</span></div>
+    </div>
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Emails Sent/Day</h4>
+            <div class="calc-row"><span class="calc-label">800M DAU &times; 5 emails</span><span class="calc-value">4 Billion/day</span></div>
+            <div class="calc-row"><span class="calc-label">QPS</span><span class="calc-value">4B / 86400 &asymp; 46K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Peak QPS (3x)</span><span class="calc-value">~150K QPS</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Emails Received/Day</h4>
+            <div class="calc-row"><span class="calc-label">800M DAU &times; 20 emails</span><span class="calc-value">16 Billion/day</span></div>
+            <div class="calc-result"><span class="calc-label">Inbound QPS</span><span class="calc-value">~185K QPS</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Spam Filtered/Day</h4>
+            <div class="calc-row"><span class="calc-label">16B received &times; 50%</span><span class="calc-value">8 Billion/day</span></div>
+            <div class="calc-result"><span class="calc-label">Impact</span><span class="calc-value">Saved from inbox processing</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Storage &mdash; Email Bodies</h4>
+            <div class="calc-row"><span class="calc-label">8B legitimate &times; 50 KB</span><span class="calc-value">400 TB/day</span></div>
+            <div class="calc-result"><span class="calc-label">Yearly</span><span class="calc-value">~146 PB/year</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Storage &mdash; Attachments</h4>
+            <div class="calc-row"><span class="calc-label">800M emails &times; 2 MB</span><span class="calc-value">1.6 PB/day</span></div>
+            <div class="calc-result"><span class="calc-label">Yearly</span><span class="calc-value">~584 PB/year</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Search Index (Elasticsearch)</h4>
+            <div class="calc-row"><span class="calc-label">1.8B users &times; 10K emails avg</span><span class="calc-value">18 Trillion emails indexed</span></div>
+            <div class="calc-result"><span class="calc-label">Index Size</span><span class="calc-value">~1.8 PB index</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>SMTP Server Load</h4>
+            <div class="calc-row"><span class="calc-label">4B outbound + 16B inbound</span><span class="calc-value">20 Billion/day</span></div>
+            <div class="calc-result"><span class="calc-label">Connections/sec</span><span class="calc-value">~230K connections/sec</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Push Notification QPS</h4>
+            <div class="calc-row"><span class="calc-label">8B legitimate &times; 60% mobile</span><span class="calc-value">4.8 Billion push/day</span></div>
+            <div class="calc-result"><span class="calc-label">Push QPS</span><span class="calc-value">~55K QPS</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">SMTP Servers</span><span class="calc-value">~1000</span></div>
+            <div class="calc-row"><span class="calc-label">API Servers</span><span class="calc-value">~500</span></div>
+            <div class="calc-row"><span class="calc-label">DB Shards</span><span class="calc-value">200+</span></div>
+            <div class="calc-row"><span class="calc-label">ES Nodes</span><span class="calc-value">100+</span></div>
+            <div class="calc-row"><span class="calc-label">Redis Nodes</span><span class="calc-value">50+</span></div>
+            <div class="calc-row"><span class="calc-label">Kafka Brokers</span><span class="calc-value">30+</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 8. EMAIL PROTOCOLS ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Architecture &mdash; Email Protocols (SMTP / IMAP)</div>
+    <div class="section-title"><span class="section-num">8</span>Architecture &mdash; Email Protocols (SMTP / IMAP)</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>SMTP (Simple Mail Transfer Protocol)</h3>
@@ -688,9 +756,9 @@ _dmarc.gmail.com TXT "v=DMARC1; p=reject; rua=..."
     </div>
 </div>
 
-<!-- ============ 8. SPAM DETECTION ============ -->
+<!-- ============ 9. SPAM DETECTION ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">8</span>Spam Detection &amp; Filtering</div>
+    <div class="section-title"><span class="section-num">9</span>Spam Detection &amp; Filtering</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Multi-Layer Spam Filter</h3>
@@ -728,9 +796,9 @@ _dmarc.gmail.com TXT "v=DMARC1; p=reject; rua=..."
     </div>
 </div>
 
-<!-- ============ 9. EMAIL THREADING ============ -->
+<!-- ============ 10. EMAIL THREADING ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Email Threading &amp; Categorization</div>
+    <div class="section-title"><span class="section-num">10</span>Email Threading &amp; Categorization</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Threading via Headers</h3>
@@ -789,9 +857,9 @@ Subject: Re: Re: Sprint Planning
     </div>
 </div>
 
-<!-- ============ 10. SEARCH ARCHITECTURE ============ -->
+<!-- ============ 11. SEARCH ARCHITECTURE ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">10</span>Search Architecture</div>
+    <div class="section-title"><span class="section-num">11</span>Search Architecture</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Gmail Search Operators</h3>
@@ -820,9 +888,9 @@ Subject: Re: Re: Sprint Planning
     </div>
 </div>
 
-<!-- ============ 11. COMPLETE FLOW ============ -->
+<!-- ============ 12. COMPLETE FLOW ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">11</span>Complete Email Flow &mdash; End to End</div>
+    <div class="section-title"><span class="section-num">12</span>Complete Email Flow &mdash; End to End</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Email Lifecycle</span></div><pre class="code-block">
 <span class="cm">// ===== SENDING (Outbound) =====</span>
 User clicks Send &rarr; POST /emails/send
@@ -872,9 +940,9 @@ User opens inbox &rarr; GET /inbox (category: PRIMARY)
 </pre></div>
 </div>
 
-<!-- ============ 12. COMPARISONS ============ -->
+<!-- ============ 13. COMPARISONS ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">12</span>Gmail vs Outlook vs Yahoo Mail &mdash; Key Differences</div>
+    <div class="section-title"><span class="section-num">13</span>Gmail vs Outlook vs Yahoo Mail &mdash; Key Differences</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Gmail</h3>
@@ -920,9 +988,9 @@ User opens inbox &rarr; GET /inbox (category: PRIMARY)
     </div>
 </div>
 
-<!-- ============ 13. BOTTLENECKS ============ -->
+<!-- ============ 14. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">300B emails/day processing</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Horizontal SMTP servers, Kafka async processing, sharded storage</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Spam at scale (50%+ of all email)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Multi-layer filter (IP &rarr; auth &rarr; content &rarr; ML), reject at connection level</span></div>
@@ -935,9 +1003,9 @@ User opens inbox &rarr; GET /inbox (category: PRIMARY)
     </div>
 </div>
 
-<!-- ============ 14. INTERVIEW TIPS ============ -->
+<!-- ============ 15. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>SMTP / IMAP / POP3</h4><p>SMTP = send (push), IMAP = read (pull), MX record routing</p></div>
         <div class="summary-card sc-2"><h4>SPF + DKIM + DMARC</h4><p>Email security trifecta &mdash; prevents spoofing</p></div>

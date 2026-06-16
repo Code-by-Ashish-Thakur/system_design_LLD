@@ -189,107 +189,394 @@ export default {
 </div>
 
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">5</span>APIs</div>
+    <div class="section-title"><span class="section-num">5</span>APIs (with Request / Response)</div>
     <div class="api-grid">
-        <div class="api-card"><span class="api-method post">POST</span><span class="api-path">/api/v1/parking/entry</span><span class="api-desc">Vehicle entry &mdash; spot allocate karke ticket generate karta hai</span></div>
-        <div class="api-card"><span class="api-method post">POST</span><span class="api-path">/api/v1/parking/exit</span><span class="api-desc">Vehicle exit &mdash; fee calculate karke payment process karta hai</span></div>
-        <div class="api-card"><span class="api-method get">GET</span><span class="api-path">/api/v1/parking/availability</span><span class="api-desc">Floor-wise aur type-wise available spots return karta hai</span></div>
-        <div class="api-card"><span class="api-method get">GET</span><span class="api-path">/api/v1/parking/ticket/{ticketId}</span><span class="api-desc">Ticket details fetch karta hai with spot aur vehicle info</span></div>
-        <div class="api-card"><span class="api-method get">GET</span><span class="api-path">/api/v1/parking/search?regNo={regNo}</span><span class="api-desc">Registration number se vehicle ka spot location find karta hai</span></div>
-        <div class="api-card"><span class="api-method post">POST</span><span class="api-path">/api/v1/parking/payment</span><span class="api-desc">Payment process karta hai for given ticket</span></div>
-        <div class="api-card"><span class="api-method put">PUT</span><span class="api-path">/api/v1/admin/rates</span><span class="api-desc">Admin parking rates update karta hai vehicle type wise</span></div>
-        <div class="api-card"><span class="api-method get">GET</span><span class="api-path">/api/v1/admin/reports</span><span class="api-desc">Revenue, occupancy aur peak hour reports generate karta hai</span></div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/parking/entry</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{
+  <span class="key">"registrationNo"</span>: <span class="val">"MH-12-AB-1234"</span>,
+  <span class="key">"vehicleType"</span>: <span class="val">"CAR"</span>,
+  <span class="key">"color"</span>: <span class="val">"White"</span>,
+  <span class="key">"ownerName"</span>: <span class="val">"Rahul Sharma"</span>,
+  <span class="key">"isElectric"</span>: <span class="val">false</span>,
+  <span class="key">"gateId"</span>: <span class="val">"gate-01"</span>
+}</div>
+                <div class="api-json"><div class="label">Response 201</div>{
+  <span class="key">"ticketId"</span>: <span class="val">"TKT-20250615-001"</span>,
+  <span class="key">"spotNumber"</span>: <span class="val">"F2-A05"</span>,
+  <span class="key">"floorNumber"</span>: <span class="val">2</span>,
+  <span class="key">"spotType"</span>: <span class="val">"MEDIUM"</span>,
+  <span class="key">"vehicleType"</span>: <span class="val">"CAR"</span>,
+  <span class="key">"entryTime"</span>: <span class="val">"2025-06-15T10:30:00Z"</span>,
+  <span class="key">"entryGate"</span>: <span class="val">"Gate 1 - Ground Floor"</span>,
+  <span class="key">"qrCode"</span>: <span class="val">"base64_encoded_qr..."</span>
+}</div>
+            </div>
+            <div class="api-note">Vehicle entry pe nearest available spot allocate karta hai &mdash; vehicle type ke basis pe compatible spot dhundhta hai, ticket generate karke QR code deta hai</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/parking/exit</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{
+  <span class="key">"ticketId"</span>: <span class="val">"TKT-20250615-001"</span>,
+  <span class="key">"gateId"</span>: <span class="val">"gate-03"</span>,
+  <span class="key">"paymentMode"</span>: <span class="val">"UPI"</span>
+}</div>
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"ticketId"</span>: <span class="val">"TKT-20250615-001"</span>,
+  <span class="key">"vehicleNo"</span>: <span class="val">"MH-12-AB-1234"</span>,
+  <span class="key">"entryTime"</span>: <span class="val">"2025-06-15T10:30:00Z"</span>,
+  <span class="key">"exitTime"</span>: <span class="val">"2025-06-15T14:45:00Z"</span>,
+  <span class="key">"duration"</span>: <span class="val">"4h 15m"</span>,
+  <span class="key">"fee"</span>: <span class="val">100.00</span>,
+  <span class="key">"paymentMode"</span>: <span class="val">"UPI"</span>,
+  <span class="key">"paymentStatus"</span>: <span class="val">"SUCCESS"</span>,
+  <span class="key">"transactionId"</span>: <span class="val">"TXN-98765"</span>,
+  <span class="key">"receiptUrl"</span>: <span class="val">"/receipts/TKT-20250615-001.pdf"</span>
+}</div>
+            </div>
+            <div class="api-note">Vehicle exit pe fee calculate karke payment process karta hai &mdash; ticket scan hota hai, duration calculate hoti hai, FeeStrategy se amount nikalta hai, payment process hoke barrier open hota hai</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/parking/availability?vehicleType=CAR</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"totalAvailable"</span>: <span class="val">42</span>,
+  <span class="key">"floors"</span>: [
+    { <span class="key">"floor"</span>: <span class="val">1</span>, <span class="key">"available"</span>: <span class="val">15</span>, <span class="key">"total"</span>: <span class="val">40</span> },
+    { <span class="key">"floor"</span>: <span class="val">2</span>, <span class="key">"available"</span>: <span class="val">20</span>, <span class="key">"total"</span>: <span class="val">40</span> },
+    { <span class="key">"floor"</span>: <span class="val">3</span>, <span class="key">"available"</span>: <span class="val">7</span>, <span class="key">"total"</span>: <span class="val">30</span> }
+  ],
+  <span class="key">"evChargingAvailable"</span>: <span class="val">3</span>,
+  <span class="key">"handicappedAvailable"</span>: <span class="val">2</span>
+}</div>
+            </div>
+            <div class="api-note">Floor-wise aur type-wise available spots return karta hai &mdash; display board pe dikhane ke liye real-time data, EV aur handicapped spots ka count alag se milta hai</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/parking/ticket/{ticketId}</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"ticketId"</span>: <span class="val">"TKT-20250615-001"</span>,
+  <span class="key">"vehicleNo"</span>: <span class="val">"MH-12-AB-1234"</span>,
+  <span class="key">"vehicleType"</span>: <span class="val">"CAR"</span>,
+  <span class="key">"spotNumber"</span>: <span class="val">"F2-A05"</span>,
+  <span class="key">"floorNumber"</span>: <span class="val">2</span>,
+  <span class="key">"entryTime"</span>: <span class="val">"2025-06-15T10:30:00Z"</span>,
+  <span class="key">"status"</span>: <span class="val">"ACTIVE"</span>,
+  <span class="key">"currentFee"</span>: <span class="val">80.00</span>
+}</div>
+            </div>
+            <div class="api-note">Ticket details fetch karta hai &mdash; vehicle info, spot info, current fee (abhi tak ka estimated) sab milta hai</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/parking/search?regNo=MH-12-AB-1234</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"found"</span>: <span class="val">true</span>,
+  <span class="key">"vehicleNo"</span>: <span class="val">"MH-12-AB-1234"</span>,
+  <span class="key">"spotNumber"</span>: <span class="val">"F2-A05"</span>,
+  <span class="key">"floorNumber"</span>: <span class="val">2</span>,
+  <span class="key">"direction"</span>: <span class="val">"Take elevator to Floor 2, Section A, Spot 05"</span>
+}</div>
+            </div>
+            <div class="api-note">Registration number se vehicle search karta hai &mdash; agar koi bhool gaya ki gaadi kahaan park ki toh number dalke spot location mil jayegi</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/parking/payment</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{
+  <span class="key">"ticketId"</span>: <span class="val">"TKT-20250615-001"</span>,
+  <span class="key">"amount"</span>: <span class="val">100.00</span>,
+  <span class="key">"paymentMode"</span>: <span class="val">"CREDIT_CARD"</span>,
+  <span class="key">"cardLast4"</span>: <span class="val">"4242"</span>
+}</div>
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"paymentId"</span>: <span class="val">"PAY-456"</span>,
+  <span class="key">"status"</span>: <span class="val">"SUCCESS"</span>,
+  <span class="key">"transactionId"</span>: <span class="val">"TXN-98765"</span>,
+  <span class="key">"receiptUrl"</span>: <span class="val">"/receipts/PAY-456.pdf"</span>
+}</div>
+                <div class="api-json"><div class="label">Response 402</div>{
+  <span class="key">"error"</span>: <span class="val">"PAYMENT_FAILED"</span>,
+  <span class="key">"message"</span>: <span class="val">"Card declined, please try another payment method"</span>
+}</div>
+            </div>
+            <div class="api-note">Payment process karta hai &mdash; pre-exit pe bhi payment ho sakta hai (app se pay karo, exit pe sirf ticket scan karo, direct barrier open)</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-put">PUT</span><span class="api-path">/api/v1/admin/rates</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{
+  <span class="key">"rates"</span>: [
+    { <span class="key">"vehicleType"</span>: <span class="val">"BIKE"</span>, <span class="key">"hourlyRate"</span>: <span class="val">10</span>, <span class="key">"dailyMax"</span>: <span class="val">50</span> },
+    { <span class="key">"vehicleType"</span>: <span class="val">"CAR"</span>, <span class="key">"hourlyRate"</span>: <span class="val">20</span>, <span class="key">"dailyMax"</span>: <span class="val">200</span> },
+    { <span class="key">"vehicleType"</span>: <span class="val">"TRUCK"</span>, <span class="key">"hourlyRate"</span>: <span class="val">40</span>, <span class="key">"dailyMax"</span>: <span class="val">400</span> }
+  ],
+  <span class="key">"lostTicketFee"</span>: <span class="val">500</span>,
+  <span class="key">"effectiveFrom"</span>: <span class="val">"2025-07-01T00:00:00Z"</span>
+}</div>
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"updated"</span>: <span class="val">3</span>,
+  <span class="key">"effectiveFrom"</span>: <span class="val">"2025-07-01T00:00:00Z"</span>
+}</div>
+            </div>
+            <div class="api-note">Admin parking rates update karta hai &mdash; vehicle type wise hourly rate, daily max cap, aur lost ticket penalty set hota hai</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/admin/reports?date=2025-06-15</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"date"</span>: <span class="val">"2025-06-15"</span>,
+  <span class="key">"totalVehicles"</span>: <span class="val">1250</span>,
+  <span class="key">"revenue"</span>: <span class="val">45600.00</span>,
+  <span class="key">"avgOccupancy"</span>: <span class="val">"78%"</span>,
+  <span class="key">"peakHour"</span>: <span class="val">"09:00-10:00"</span>,
+  <span class="key">"peakOccupancy"</span>: <span class="val">"95%"</span>,
+  <span class="key">"vehicleBreakdown"</span>: {
+    <span class="key">"BIKE"</span>: <span class="val">450</span>,
+    <span class="key">"CAR"</span>: <span class="val">700</span>,
+    <span class="key">"TRUCK"</span>: <span class="val">100</span>
+  },
+  <span class="key">"avgDuration"</span>: <span class="val">"3h 20m"</span>
+}</div>
+            </div>
+            <div class="api-note">Revenue, occupancy aur peak hour reports generate karta hai &mdash; daily, weekly, monthly reports ke liye date range pass kar sakte hain</div>
+        </div>
     </div>
 </div>
 
+<!-- ============ 6. DATABASE SCHEMA ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema (with FK &amp; Indexes)</div>
+
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Parking lots, floors, spots, tickets, payments &mdash; ACID transactions for concurrent spot allocation</div>
+            <div class="dbtech-tables"><span>parking_lot</span><span>parking_floor</span><span>parking_spot</span><span>parking_ticket</span><span>payment</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory Cache</span></div>
+            <div class="dbtech-usage">Real-time spot availability count, display board data, distributed locks for spot allocation</div>
+            <div class="dbtech-tables"><span>floor:{id}:available</span><span>spot:lock:{spotId}</span><span>display:{lotId}</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Event Queue</span></div>
+            <div class="dbtech-usage">Spot change events, display board updates, revenue calculation &mdash; async processing</div>
+            <div class="dbtech-tables"><span>spot-events</span><span>payment-events</span></div>
+        </div>
+    </div>
+
     <div class="db-grid">
         <div class="db-table">
             <h3>parking_lot</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">UUID PK</span></div>
-            <div class="db-row"><span class="col-name">name</span><span class="col-type">VARCHAR(100)</span></div>
-            <div class="db-row"><span class="col-name">address</span><span class="col-type">TEXT</span></div>
-            <div class="db-row"><span class="col-name">total_floors</span><span class="col-type">INT</span></div>
-            <div class="db-row"><span class="col-name">total_spots</span><span class="col-type">INT</span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM(ACTIVE, INACTIVE)</span></div>
-            <div class="db-row"><span class="col-name">created_at</span><span class="col-type">TIMESTAMP</span></div>
+            <ul>
+                <li><span class="pk">id UUID PK</span></li>
+                <li>name VARCHAR(100) NOT NULL</li>
+                <li>address TEXT NOT NULL</li>
+                <li>total_floors INT NOT NULL</li>
+                <li>total_spots INT NOT NULL</li>
+                <li>status ENUM('ACTIVE','INACTIVE') DEFAULT 'ACTIVE'</li>
+                <li>created_at TIMESTAMP</li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>parking_floor</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">UUID PK</span></div>
-            <div class="db-row"><span class="col-name">lot_id</span><span class="col-type">UUID FK</span></div>
-            <div class="db-row"><span class="col-name">floor_number</span><span class="col-type">INT</span></div>
-            <div class="db-row"><span class="col-name">total_spots</span><span class="col-type">INT</span></div>
-            <div class="db-row"><span class="col-name">available_spots</span><span class="col-type">INT</span></div>
-            <div class="db-row"><span class="col-name">display_board_id</span><span class="col-type">UUID FK</span></div>
+            <ul>
+                <li><span class="pk">id UUID PK</span></li>
+                <li><span class="fk">lot_id UUID FK &rarr; parking_lot.id</span></li>
+                <li>floor_number INT NOT NULL</li>
+                <li>total_spots INT</li>
+                <li>available_spots INT DEFAULT 0</li>
+                <li><span class="fk">display_board_id UUID FK NULL</span></li>
+                <li><span class="idx">INDEX idx_lot_floor (lot_id, floor_number)</span></li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>parking_spot</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">UUID PK</span></div>
-            <div class="db-row"><span class="col-name">floor_id</span><span class="col-type">UUID FK</span></div>
-            <div class="db-row"><span class="col-name">spot_number</span><span class="col-type">VARCHAR(10)</span></div>
-            <div class="db-row"><span class="col-name">spot_type</span><span class="col-type">ENUM</span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span></div>
-            <div class="db-row"><span class="col-name">vehicle_id</span><span class="col-type">UUID FK NULL</span></div>
-            <div class="db-row"><span class="col-name">has_ev_charger</span><span class="col-type">BOOLEAN</span></div>
+            <ul>
+                <li><span class="pk">id UUID PK</span></li>
+                <li><span class="fk">floor_id UUID FK &rarr; parking_floor.id</span></li>
+                <li>spot_number VARCHAR(10) NOT NULL</li>
+                <li>spot_type ENUM('SMALL','MEDIUM','LARGE','HANDICAPPED') <span class="idx">IDX</span></li>
+                <li>status ENUM('AVAILABLE','OCCUPIED','RESERVED','MAINTENANCE') <span class="idx">IDX</span></li>
+                <li><span class="fk">vehicle_id UUID FK &rarr; vehicle.id NULL</span></li>
+                <li>has_ev_charger BOOLEAN DEFAULT false</li>
+                <li>version BIGINT DEFAULT 0</li>
+                <li><span class="idx">INDEX idx_floor_status (floor_id, status, spot_type)</span></li>
+                <li><span class="idx">UNIQUE idx_floor_spot (floor_id, spot_number)</span></li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>vehicle</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">UUID PK</span></div>
-            <div class="db-row"><span class="col-name">registration_no</span><span class="col-type">VARCHAR(20) UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">vehicle_type</span><span class="col-type">ENUM</span></div>
-            <div class="db-row"><span class="col-name">color</span><span class="col-type">VARCHAR(30)</span></div>
-            <div class="db-row"><span class="col-name">owner_name</span><span class="col-type">VARCHAR(100)</span></div>
-            <div class="db-row"><span class="col-name">is_electric</span><span class="col-type">BOOLEAN</span></div>
+            <ul>
+                <li><span class="pk">id UUID PK</span></li>
+                <li>registration_no VARCHAR(20) UNIQUE NOT NULL <span class="idx">IDX</span></li>
+                <li>vehicle_type ENUM('BIKE','CAR','TRUCK','BUS','ELECTRIC')</li>
+                <li>color VARCHAR(30)</li>
+                <li>owner_name VARCHAR(100)</li>
+                <li>is_electric BOOLEAN DEFAULT false</li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>parking_ticket</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">UUID PK</span></div>
-            <div class="db-row"><span class="col-name">ticket_number</span><span class="col-type">VARCHAR(20) UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">vehicle_id</span><span class="col-type">UUID FK</span></div>
-            <div class="db-row"><span class="col-name">spot_id</span><span class="col-type">UUID FK</span></div>
-            <div class="db-row"><span class="col-name">entry_gate_id</span><span class="col-type">UUID FK</span></div>
-            <div class="db-row"><span class="col-name">exit_gate_id</span><span class="col-type">UUID FK NULL</span></div>
-            <div class="db-row"><span class="col-name">entry_time</span><span class="col-type">TIMESTAMP</span></div>
-            <div class="db-row"><span class="col-name">exit_time</span><span class="col-type">TIMESTAMP NULL</span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM</span></div>
-            <div class="db-row"><span class="col-name">fee</span><span class="col-type">DECIMAL(10,2) NULL</span></div>
+            <ul>
+                <li><span class="pk">id UUID PK</span></li>
+                <li>ticket_number VARCHAR(20) UNIQUE NOT NULL <span class="idx">IDX</span></li>
+                <li><span class="fk">vehicle_id UUID FK &rarr; vehicle.id</span></li>
+                <li><span class="fk">spot_id UUID FK &rarr; parking_spot.id</span></li>
+                <li><span class="fk">entry_gate_id UUID FK &rarr; gate.id</span></li>
+                <li><span class="fk">exit_gate_id UUID FK &rarr; gate.id NULL</span></li>
+                <li>entry_time TIMESTAMP NOT NULL</li>
+                <li>exit_time TIMESTAMP NULL</li>
+                <li>status ENUM('ACTIVE','PAID','LOST','CANCELLED') <span class="idx">IDX</span></li>
+                <li>fee DECIMAL(10,2) NULL</li>
+                <li><span class="idx">INDEX idx_vehicle_entry (vehicle_id, entry_time DESC)</span></li>
+                <li><span class="idx">INDEX idx_status_time (status, entry_time)</span></li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>payment</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">UUID PK</span></div>
-            <div class="db-row"><span class="col-name">ticket_id</span><span class="col-type">UUID FK</span></div>
-            <div class="db-row"><span class="col-name">amount</span><span class="col-type">DECIMAL(10,2)</span></div>
-            <div class="db-row"><span class="col-name">payment_mode</span><span class="col-type">ENUM</span></div>
-            <div class="db-row"><span class="col-name">payment_status</span><span class="col-type">ENUM(SUCCESS, FAILED, REFUNDED)</span></div>
-            <div class="db-row"><span class="col-name">transaction_id</span><span class="col-type">VARCHAR(50)</span></div>
-            <div class="db-row"><span class="col-name">paid_at</span><span class="col-type">TIMESTAMP</span></div>
+            <ul>
+                <li><span class="pk">id UUID PK</span></li>
+                <li><span class="fk">ticket_id UUID FK &rarr; parking_ticket.id</span> <span class="idx">IDX</span></li>
+                <li>amount DECIMAL(10,2) NOT NULL</li>
+                <li>payment_mode ENUM('CASH','CREDIT_CARD','DEBIT_CARD','UPI')</li>
+                <li>payment_status ENUM('SUCCESS','FAILED','REFUNDED') <span class="idx">IDX</span></li>
+                <li>transaction_id VARCHAR(50) UNIQUE</li>
+                <li>paid_at TIMESTAMP</li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>gate</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">UUID PK</span></div>
-            <div class="db-row"><span class="col-name">lot_id</span><span class="col-type">UUID FK</span></div>
-            <div class="db-row"><span class="col-name">gate_number</span><span class="col-type">INT</span></div>
-            <div class="db-row"><span class="col-name">gate_type</span><span class="col-type">ENUM</span></div>
-            <div class="db-row"><span class="col-name">floor_number</span><span class="col-type">INT</span></div>
-            <div class="db-row"><span class="col-name">status</span><span class="col-type">ENUM(ACTIVE, INACTIVE)</span></div>
+            <ul>
+                <li><span class="pk">id UUID PK</span></li>
+                <li><span class="fk">lot_id UUID FK &rarr; parking_lot.id</span></li>
+                <li>gate_number INT NOT NULL</li>
+                <li>gate_type ENUM('ENTRY','EXIT','BOTH')</li>
+                <li>floor_number INT</li>
+                <li>status ENUM('ACTIVE','INACTIVE') DEFAULT 'ACTIVE'</li>
+                <li><span class="idx">INDEX idx_lot_gate (lot_id, gate_type)</span></li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>parking_rate</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">UUID PK</span></div>
-            <div class="db-row"><span class="col-name">lot_id</span><span class="col-type">UUID FK</span></div>
-            <div class="db-row"><span class="col-name">vehicle_type</span><span class="col-type">ENUM</span></div>
-            <div class="db-row"><span class="col-name">hourly_rate</span><span class="col-type">DECIMAL(10,2)</span></div>
-            <div class="db-row"><span class="col-name">daily_max</span><span class="col-type">DECIMAL(10,2)</span></div>
-            <div class="db-row"><span class="col-name">lost_ticket_fee</span><span class="col-type">DECIMAL(10,2)</span></div>
-            <div class="db-row"><span class="col-name">effective_from</span><span class="col-type">TIMESTAMP</span></div>
+            <ul>
+                <li><span class="pk">id UUID PK</span></li>
+                <li><span class="fk">lot_id UUID FK &rarr; parking_lot.id</span></li>
+                <li>vehicle_type ENUM('BIKE','CAR','TRUCK','BUS','ELECTRIC')</li>
+                <li>hourly_rate DECIMAL(10,2) NOT NULL</li>
+                <li>daily_max DECIMAL(10,2)</li>
+                <li>lost_ticket_fee DECIMAL(10,2)</li>
+                <li>effective_from TIMESTAMP NOT NULL</li>
+                <li><span class="idx">UNIQUE idx_lot_vehicle_rate (lot_id, vehicle_type, effective_from)</span></li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">SQL &mdash; Core Queries</span></div><pre class="code-block">
+<span class="cm">-- Available spot dhundho vehicle type ke basis pe (Pessimistic Lock)</span>
+<span class="kw">SELECT</span> ps.id, ps.spot_number, ps.floor_id
+<span class="kw">FROM</span> parking_spot ps
+<span class="kw">JOIN</span> parking_floor pf <span class="kw">ON</span> ps.floor_id = pf.id
+<span class="kw">WHERE</span> ps.status = 'AVAILABLE' <span class="kw">AND</span> ps.spot_type >= :requiredSize
+    <span class="kw">AND</span> pf.lot_id = :lotId
+<span class="kw">ORDER BY</span> pf.floor_number, ps.spot_number
+<span class="kw">LIMIT</span> 1
+<span class="kw">FOR UPDATE SKIP LOCKED</span>;
+
+<span class="cm">-- Ticket generate karo entry pe</span>
+<span class="kw">INSERT INTO</span> parking_ticket (id, ticket_number, vehicle_id, spot_id, entry_gate_id, entry_time, status)
+<span class="kw">VALUES</span> (UUID(), :ticketNo, :vehicleId, :spotId, :gateId, NOW(), 'ACTIVE');
+
+<span class="cm">-- Fee calculate karo exit pe</span>
+<span class="kw">SELECT</span> pt.entry_time, pr.hourly_rate, pr.daily_max,
+    EXTRACT(EPOCH FROM NOW() - pt.entry_time) / 3600 AS hours_parked
+<span class="kw">FROM</span> parking_ticket pt
+<span class="kw">JOIN</span> vehicle v <span class="kw">ON</span> pt.vehicle_id = v.id
+<span class="kw">JOIN</span> parking_rate pr <span class="kw">ON</span> pr.vehicle_type = v.vehicle_type
+    <span class="kw">AND</span> pr.effective_from &lt;= NOW()
+<span class="kw">WHERE</span> pt.id = :ticketId
+<span class="kw">ORDER BY</span> pr.effective_from <span class="kw">DESC</span> <span class="kw">LIMIT</span> 1;
+
+<span class="cm">-- Floor-wise availability count (Redis se faster, DB fallback)</span>
+<span class="kw">SELECT</span> pf.floor_number, ps.spot_type, COUNT(*) as available
+<span class="kw">FROM</span> parking_spot ps
+<span class="kw">JOIN</span> parking_floor pf <span class="kw">ON</span> ps.floor_id = pf.id
+<span class="kw">WHERE</span> pf.lot_id = :lotId <span class="kw">AND</span> ps.status = 'AVAILABLE'
+<span class="kw">GROUP BY</span> pf.floor_number, ps.spot_type;
+
+<span class="cm">-- Daily revenue report</span>
+<span class="kw">SELECT</span> DATE(p.paid_at) as date, SUM(p.amount) as revenue, COUNT(*) as transactions
+<span class="kw">FROM</span> payment p
+<span class="kw">WHERE</span> p.paid_at >= :startDate <span class="kw">AND</span> p.paid_at &lt; :endDate
+    <span class="kw">AND</span> p.payment_status = 'SUCCESS'
+<span class="kw">GROUP BY</span> DATE(p.paid_at);
+</pre></div>
+</div>
+
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="assumption-box">
+        <h4>Assumptions (Large Mall Parking Lot)</h4>
+        <div class="assumption-row"><span class="calc-label">Total Parking Spots</span><span class="calc-value">5,000</span></div>
+        <div class="assumption-row"><span class="calc-label">Floors</span><span class="calc-value">5</span></div>
+        <div class="assumption-row"><span class="calc-label">Entry/Exit Gates</span><span class="calc-value">10 (5 entry + 5 exit)</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg occupancy rate</span><span class="calc-value">75%</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg parking duration</span><span class="calc-value">3 hours</span></div>
+        <div class="assumption-row"><span class="calc-label">Operating hours</span><span class="calc-value">16 hours/day (6 AM - 10 PM)</span></div>
+        <div class="assumption-row"><span class="calc-label">Peak hour factor</span><span class="calc-value">2x average</span></div>
+    </div>
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Vehicles Per Day</h4>
+            <div class="calc-row"><span class="calc-label">5000 spots &times; 75% &times; (16h/3h avg)</span><span class="calc-value">~20,000 vehicles/day</span></div>
+            <div class="calc-row"><span class="calc-label">Per hour (avg)</span><span class="calc-value">~1,250 vehicles/hr</span></div>
+            <div class="calc-result"><span class="calc-label">Peak Hour (9 AM)</span><span class="calc-value">~2,500 vehicles/hr</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Entry/Exit QPS</h4>
+            <div class="calc-row"><span class="calc-label">Avg entries/sec</span><span class="calc-value">~0.35 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Peak entries/sec</span><span class="calc-value">~0.7 QPS</span></div>
+            <div class="calc-row"><span class="calc-label">Availability checks/sec (display)</span><span class="calc-value">~5 QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Total API QPS (peak)</span><span class="calc-value">~10 QPS</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Database Size</h4>
+            <div class="calc-row"><span class="calc-label">Tickets/year: 20K/day &times; 365</span><span class="calc-value">~7.3M tickets/year</span></div>
+            <div class="calc-row"><span class="calc-label">Per ticket row: ~500 bytes</span><span class="calc-value">~3.6 GB/year</span></div>
+            <div class="calc-row"><span class="calc-label">Payments: 7.3M &times; 300 bytes</span><span class="calc-value">~2.2 GB/year</span></div>
+            <div class="calc-result"><span class="calc-label">Total DB (5 years)</span><span class="calc-value">~30 GB (single PostgreSQL)</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Redis Memory</h4>
+            <div class="calc-row"><span class="calc-label">Spot status (5000 spots &times; 100B)</span><span class="calc-value">~500 KB</span></div>
+            <div class="calc-row"><span class="calc-label">Floor counters (5 floors)</span><span class="calc-value">~1 KB</span></div>
+            <div class="calc-row"><span class="calc-label">Distributed locks (active)</span><span class="calc-value">~50 KB</span></div>
+            <div class="calc-result"><span class="calc-label">Total Redis</span><span class="calc-value">&lt; 1 MB (single node enough)</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Concurrency Requirement</h4>
+            <div class="calc-row"><span class="calc-label">Peak: 10 gates &times; 1 vehicle/5 sec</span><span class="calc-value">~2 concurrent allocations</span></div>
+            <div class="calc-row"><span class="calc-label">SELECT FOR UPDATE handles</span><span class="calc-value">~100+ concurrent easily</span></div>
+            <div class="calc-result"><span class="calc-label">Bottleneck?</span><span class="calc-value">No &mdash; single DB handles fine</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">API servers</span><span class="calc-value">1-2 (Spring Boot)</span></div>
+            <div class="calc-row"><span class="calc-label">Database</span><span class="calc-value">1 PostgreSQL (+ 1 replica)</span></div>
+            <div class="calc-row"><span class="calc-label">Redis</span><span class="calc-value">1 node (single instance enough)</span></div>
+            <div class="calc-result"><span class="calc-label">Multi-location (100 lots)</span><span class="calc-value">Shard by lot_id, 10 DB shards</span></div>
         </div>
     </div>
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">7</span>Deep Dive &mdash; Spot Allocation Strategy</div>
+    <div class="section-title"><span class="section-num">8</span>Deep Dive &mdash; Spot Allocation Strategy</div>
     <div class="section-body">
         <p>Parking lot me sabse important design decision hai ki vehicle ko kaun sa spot assign karein. Iske liye <strong>Strategy Pattern</strong> use hota hai &mdash; alag-alag algorithms ko plug-and-play kar sakte hain.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -350,7 +637,7 @@ export default {
 </div>
 
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">8</span>Deep Dive &mdash; Concurrency &amp; Locking</div>
+    <div class="section-title"><span class="section-num">9</span>Deep Dive &mdash; Concurrency &amp; Locking</div>
     <div class="section-body">
         <p>Multiple entry gates pe simultaneously vehicles aayein toh same spot double-book nahi honi chahiye. Iske liye <strong>Pessimistic Locking</strong> ya <strong>Optimistic Locking</strong> use hota hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -404,7 +691,7 @@ export default {
 </div>
 
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">9</span>Deep Dive &mdash; Fee Calculation Strategy</div>
+    <div class="section-title"><span class="section-num">10</span>Deep Dive &mdash; Fee Calculation Strategy</div>
     <div class="section-body">
         <p>Parking fee calculate karna simple lagta hai but multiple pricing models support karne ke liye <strong>Strategy Pattern</strong> use karna padta hai &mdash; flat rate, hourly, tiered sab alag strategies hain.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -446,7 +733,7 @@ export default {
 </div>
 
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">10</span>Deep Dive &mdash; Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">11</span>Deep Dive &mdash; Design Patterns Used</div>
     <div class="section-body">
         <p>Parking Lot LLD me kaafi design patterns use hote hain. Ye list interview me confidently bol sakte ho:</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Design Patterns Summary</span></div><pre class="code-block">
@@ -529,7 +816,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">11</span>Deep Dive &mdash; Entry &amp; Exit Flow</div>
+    <div class="section-title"><span class="section-num">12</span>Deep Dive &mdash; Entry &amp; Exit Flow</div>
     <div class="section-body">
         <p>Complete entry aur exit flow step-by-step samjhte hain &mdash; ye interview me diagram draw karke explain karna padta hai:</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Entry Flow</span></div><pre class="code-block">
@@ -613,7 +900,7 @@ export default {
 </div>
 
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">12</span>Comparison &mdash; Design Approaches</div>
+    <div class="section-title"><span class="section-num">13</span>Comparison &mdash; Design Approaches</div>
     <div class="section-body">
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Approach Comparison</span></div><pre class="code-block">
 <span class="cm">┌────────────────────┬──────────────────┬──────────────────┬──────────────────┐</span>
@@ -643,7 +930,7 @@ export default {
 </div>
 
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Double booking of same spot (race condition)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Pessimistic locking (SELECT FOR UPDATE) ya Optimistic locking (@Version)</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Spot search slow on large lots (10K+ spots)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Per-floor count cache, Min-heap for floor priority, Bitmap for O(1) lookup</span></div>
@@ -655,7 +942,7 @@ export default {
 </div>
 
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Singleton Pattern</h4><p>ParkingLot &mdash; ek hi instance poore system me</p></div>
         <div class="summary-card sc-2"><h4>Strategy Pattern</h4><p>Spot allocation + Fee calculation plug-and-play</p></div>

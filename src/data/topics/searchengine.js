@@ -217,16 +217,119 @@ export default {
 </div>
 
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">5</span>APIs</div>
+    <div class="section-title"><span class="section-num">5</span>APIs (with Request / Response)</div>
     <div class="api-grid">
-        <div class="api-card"><span class="api-method get">GET</span><span class="api-path">/api/v1/search?q={query}&amp;type={web|image|video}&amp;page={n}</span><span class="api-desc">Main search API &mdash; query process karke ranked results return karta hai</span></div>
-        <div class="api-card"><span class="api-method get">GET</span><span class="api-path">/api/v1/suggest?q={prefix}</span><span class="api-desc">Auto-complete suggestions &mdash; Trie se top-K prefix matches return karta hai</span></div>
-        <div class="api-card"><span class="api-method get">GET</span><span class="api-path">/api/v1/spellcheck?q={query}</span><span class="api-desc">Spell check API &mdash; "Did you mean?" correction return karta hai</span></div>
-        <div class="api-card"><span class="api-method post">POST</span><span class="api-path">/api/v1/crawl/submit</span><span class="api-desc">Manual URL submit for crawling &mdash; webmasters apni site submit kar sakte hain</span></div>
-        <div class="api-card"><span class="api-method get">GET</span><span class="api-path">/api/v1/index/status?url={url}</span><span class="api-desc">URL ka index status check karta hai &mdash; indexed hai ya nahi</span></div>
-        <div class="api-card"><span class="api-method get">GET</span><span class="api-path">/api/v1/cache?url={url}</span><span class="api-desc">Cached page version return karta hai &mdash; Google Cache jaisa feature</span></div>
-        <div class="api-card"><span class="api-method get">GET</span><span class="api-path">/api/v1/trending</span><span class="api-desc">Trending searches return karta hai &mdash; real-time popular queries</span></div>
-        <div class="api-card"><span class="api-method post">POST</span><span class="api-path">/api/v1/feedback</span><span class="api-desc">Search quality feedback &mdash; user ne click kiya ya nahi (click-through data)</span></div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/search?q=best+java+tutorials&amp;type=web&amp;page=0&amp;size=10</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"query"</span>: <span class="val">"best java tutorials"</span>,
+  <span class="key">"totalResults"</span>: <span class="val">45000000</span>,
+  <span class="key">"timeTaken"</span>: <span class="val">"0.18 seconds"</span>,
+  <span class="key">"spellCorrection"</span>: <span class="val">null</span>,
+  <span class="key">"results"</span>: [{
+    <span class="key">"title"</span>: <span class="val">"Best Java Tutorials 2025 - Complete Guide"</span>,
+    <span class="key">"url"</span>: <span class="val">"https://example.com/java-tutorials"</span>,
+    <span class="key">"snippet"</span>: <span class="val">"This is the **best** resource to learn **Java**..."</span>,
+    <span class="key">"score"</span>: <span class="val">2.17</span>,
+    <span class="key">"cachedUrl"</span>: <span class="val">"/cache?url=..."</span>,
+    <span class="key">"publishedAt"</span>: <span class="val">"2025-05-20"</span>
+  }],
+  <span class="key">"pagination"</span>: { <span class="key">"page"</span>: <span class="val">0</span>, <span class="key">"size"</span>: <span class="val">10</span>, <span class="key">"totalPages"</span>: <span class="val">4500000</span> }
+}</div>
+            </div>
+            <div class="api-note">Main search API &mdash; query parse karke inverted index se matching docs fetch karta hai, TF-IDF + PageRank se rank karke snippets ke saath return karta hai</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/suggest?q=how+to+le</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"prefix"</span>: <span class="val">"how to le"</span>,
+  <span class="key">"suggestions"</span>: [
+    <span class="val">"how to learn java"</span>,
+    <span class="val">"how to learn python"</span>,
+    <span class="val">"how to learn spring boot"</span>,
+    <span class="val">"how to learn react"</span>,
+    <span class="val">"how to learn dsa"</span>
+  ]
+}</div>
+            </div>
+            <div class="api-note">Auto-complete suggestions &mdash; Trie se top-K prefix matches return karta hai, pre-computed suggestions O(prefix_length) me milte hai</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/spellcheck?q=javva+tutoriall</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"original"</span>: <span class="val">"javva tutoriall"</span>,
+  <span class="key">"corrected"</span>: <span class="val">"java tutorial"</span>,
+  <span class="key">"didYouMean"</span>: <span class="val">true</span>,
+  <span class="key">"corrections"</span>: [
+    { <span class="key">"original"</span>: <span class="val">"javva"</span>, <span class="key">"suggestion"</span>: <span class="val">"java"</span>, <span class="key">"editDistance"</span>: <span class="val">1</span> },
+    { <span class="key">"original"</span>: <span class="val">"tutoriall"</span>, <span class="key">"suggestion"</span>: <span class="val">"tutorial"</span>, <span class="key">"editDistance"</span>: <span class="val">1</span> }
+  ]
+}</div>
+            </div>
+            <div class="api-note">Spell check API &mdash; Edit Distance se closest valid word dhundhta hai, "Did you mean?" suggestion deta hai</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/crawl/submit</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{
+  <span class="key">"urls"</span>: [<span class="val">"https://mysite.com"</span>, <span class="val">"https://mysite.com/blog"</span>],
+  <span class="key">"sitemapUrl"</span>: <span class="val">"https://mysite.com/sitemap.xml"</span>,
+  <span class="key">"priority"</span>: <span class="val">"NORMAL"</span>
+}</div>
+                <div class="api-json"><div class="label">Response 202</div>{
+  <span class="key">"submitted"</span>: <span class="val">2</span>,
+  <span class="key">"status"</span>: <span class="val">"QUEUED"</span>,
+  <span class="key">"estimatedCrawlTime"</span>: <span class="val">"2-5 days"</span>
+}</div>
+            </div>
+            <div class="api-note">Manual URL submit for crawling &mdash; webmasters apni site submit kar sakte hain, sitemap se sari pages discover hoti hain</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/index/status?url=https://mysite.com</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"url"</span>: <span class="val">"https://mysite.com"</span>,
+  <span class="key">"indexed"</span>: <span class="val">true</span>,
+  <span class="key">"lastCrawledAt"</span>: <span class="val">"2025-06-14T08:00:00Z"</span>,
+  <span class="key">"pageRank"</span>: <span class="val">0.45</span>,
+  <span class="key">"indexedPages"</span>: <span class="val">150</span>
+}</div>
+            </div>
+            <div class="api-note">URL ka index status check karta hai &mdash; last crawl time, PageRank, total indexed pages dikhata hai</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-get">GET</span><span class="api-path">/api/v1/trending?region=IN&amp;limit=10</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"region"</span>: <span class="val">"IN"</span>,
+  <span class="key">"trending"</span>: [
+    { <span class="key">"query"</span>: <span class="val">"IPL 2025 final"</span>, <span class="key">"searchVolume"</span>: <span class="val">5200000</span> },
+    { <span class="key">"query"</span>: <span class="val">"budget 2025"</span>, <span class="key">"searchVolume"</span>: <span class="val">3100000</span> },
+    { <span class="key">"query"</span>: <span class="val">"weather today"</span>, <span class="key">"searchVolume"</span>: <span class="val">2800000</span> }
+  ],
+  <span class="key">"updatedAt"</span>: <span class="val">"2025-06-15T10:00:00Z"</span>
+}</div>
+            </div>
+            <div class="api-note">Trending searches return karta hai &mdash; region-wise real-time popular queries, har 5 min update hoti hai</div>
+        </div>
+        <div class="api-card">
+            <div class="api-header"><span class="api-method method-post">POST</span><span class="api-path">/api/v1/feedback</span></div>
+            <div class="api-body">
+                <div class="api-json"><div class="label">Request</div>{
+  <span class="key">"queryId"</span>: <span class="val">"q-abc123"</span>,
+  <span class="key">"clickedUrl"</span>: <span class="val">"https://example.com/java-tutorials"</span>,
+  <span class="key">"clickPosition"</span>: <span class="val">1</span>,
+  <span class="key">"dwellTime"</span>: <span class="val">45</span>
+}</div>
+                <div class="api-json"><div class="label">Response 200</div>{
+  <span class="key">"status"</span>: <span class="val">"recorded"</span>
+}</div>
+            </div>
+            <div class="api-note">Search quality feedback &mdash; click-through rate aur dwell time track karta hai, ranking model training ke liye use hota hai</div>
+        </div>
     </div>
 </div>
 
