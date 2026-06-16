@@ -333,69 +333,212 @@ export default {
     </div>
 </div>
 
+<!-- ============ 6. DATABASE SCHEMA ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">6</span>Database Schema</div>
+    <div class="section-title"><span class="section-num">6</span>Database Schema (with FK &amp; Indexes)</div>
+
+    <div class="sub-heading" style="color:#ff80ab;border-color:#ff80ab">Database Technology Stack</div>
+    <div class="dbtech-grid">
+        <div class="dbtech-card">
+            <div class="dbtech-name">Bigtable / HBase <span class="dbtech-type">Wide-Column Store</span></div>
+            <div class="dbtech-usage">Crawled pages, inverted index &mdash; billions of rows, fast sequential reads, column-family storage</div>
+            <div class="dbtech-tables"><span>crawled_pages</span><span>inverted_index</span><span>page_links</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Redis <span class="dbtech-type">In-Memory</span></div>
+            <div class="dbtech-usage">URL frontier queue, Bloom filter for URL dedup, Trie cache for auto-complete, query result cache</div>
+            <div class="dbtech-tables"><span>url:frontier</span><span>bloom:urls</span><span>cache:query:{hash}</span><span>trie:suggestions</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">PostgreSQL <span class="dbtech-type">RDBMS</span></div>
+            <div class="dbtech-usage">Search query logs, robots.txt rules, crawl scheduling &mdash; ACID for analytics</div>
+            <div class="dbtech-tables"><span>search_query_log</span><span>robots_rules</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">Kafka <span class="dbtech-type">Message Queue</span></div>
+            <div class="dbtech-usage">Crawl jobs, index updates, PageRank computation pipeline &mdash; async distributed processing</div>
+            <div class="dbtech-tables"><span>crawl-jobs</span><span>index-updates</span><span>pagerank-events</span></div>
+        </div>
+        <div class="dbtech-card">
+            <div class="dbtech-name">HDFS <span class="dbtech-type">Distributed File System</span></div>
+            <div class="dbtech-usage">Raw HTML storage, PageRank computation data, MapReduce batch processing</div>
+            <div class="dbtech-tables"><span>/crawl-data/</span><span>/pagerank-input/</span><span>/pagerank-output/</span></div>
+        </div>
+    </div>
+
     <div class="db-grid">
         <div class="db-table">
             <h3>crawled_page</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">UUID PK</span></div>
-            <div class="db-row"><span class="col-name">url</span><span class="col-type">VARCHAR(2048) UNIQUE</span></div>
-            <div class="db-row"><span class="col-name">domain</span><span class="col-type">VARCHAR(255) INDEX</span></div>
-            <div class="db-row"><span class="col-name">title</span><span class="col-type">VARCHAR(512)</span></div>
-            <div class="db-row"><span class="col-name">content_hash</span><span class="col-type">BIGINT (SimHash)</span></div>
-            <div class="db-row"><span class="col-name">raw_html</span><span class="col-type">TEXT (compressed)</span></div>
-            <div class="db-row"><span class="col-name">extracted_text</span><span class="col-type">TEXT</span></div>
-            <div class="db-row"><span class="col-name">page_rank</span><span class="col-type">DOUBLE</span></div>
-            <div class="db-row"><span class="col-name">crawl_status</span><span class="col-type">ENUM</span></div>
-            <div class="db-row"><span class="col-name">last_crawled_at</span><span class="col-type">TIMESTAMP</span></div>
-            <div class="db-row"><span class="col-name">next_crawl_at</span><span class="col-type">TIMESTAMP</span></div>
-            <div class="db-row"><span class="col-name">http_status</span><span class="col-type">INT</span></div>
+            <ul>
+                <li><span class="pk">id UUID PK</span></li>
+                <li>url VARCHAR(2048) UNIQUE NOT NULL <span class="idx">IDX</span></li>
+                <li>domain VARCHAR(255) NOT NULL <span class="idx">IDX</span></li>
+                <li>title VARCHAR(512)</li>
+                <li>content_hash BIGINT (SimHash) <span class="idx">IDX</span></li>
+                <li>raw_html TEXT (compressed, stored in HDFS)</li>
+                <li>extracted_text TEXT</li>
+                <li>page_rank DOUBLE DEFAULT 0.0</li>
+                <li>crawl_status ENUM('QUEUED','CRAWLING','INDEXED','FAILED','BLOCKED')</li>
+                <li>last_crawled_at TIMESTAMP <span class="idx">IDX</span></li>
+                <li>next_crawl_at TIMESTAMP <span class="idx">IDX</span></li>
+                <li>http_status INT</li>
+                <li><span class="idx">INDEX idx_domain_status (domain, crawl_status)</span></li>
+                <li><span class="idx">INDEX idx_next_crawl (next_crawl_at, crawl_status)</span></li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>inverted_index</h3>
-            <div class="db-row"><span class="col-name">term</span><span class="col-type">VARCHAR(100) PK</span></div>
-            <div class="db-row"><span class="col-name">doc_frequency</span><span class="col-type">INT</span></div>
-            <div class="db-row"><span class="col-name">posting_list</span><span class="col-type">BLOB (compressed)</span></div>
+            <ul>
+                <li><span class="pk">term VARCHAR(100) PK</span></li>
+                <li>doc_frequency INT NOT NULL</li>
+                <li>posting_list BLOB (compressed)</li>
+                <li><span class="idx">Sharded by term range (a-m, n-z)</span></li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>posting_entry (within posting_list)</h3>
-            <div class="db-row"><span class="col-name">doc_id</span><span class="col-type">UUID</span></div>
-            <div class="db-row"><span class="col-name">term_frequency</span><span class="col-type">INT</span></div>
-            <div class="db-row"><span class="col-name">positions</span><span class="col-type">INT[] (word positions)</span></div>
-            <div class="db-row"><span class="col-name">tf_idf_score</span><span class="col-type">FLOAT</span></div>
+            <ul>
+                <li>doc_id UUID</li>
+                <li>term_frequency INT</li>
+                <li>positions INT[] (word positions in doc)</li>
+                <li>tf_idf_score FLOAT (pre-computed)</li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>page_link (for PageRank)</h3>
-            <div class="db-row"><span class="col-name">source_page_id</span><span class="col-type">UUID FK</span></div>
-            <div class="db-row"><span class="col-name">target_url</span><span class="col-type">VARCHAR(2048)</span></div>
-            <div class="db-row"><span class="col-name">anchor_text</span><span class="col-type">VARCHAR(500)</span></div>
-            <div class="db-row"><span class="col-name">is_external</span><span class="col-type">BOOLEAN</span></div>
+            <ul>
+                <li><span class="fk">source_page_id UUID FK &rarr; crawled_page.id</span> <span class="idx">IDX</span></li>
+                <li>target_url VARCHAR(2048) <span class="idx">IDX</span></li>
+                <li>anchor_text VARCHAR(500)</li>
+                <li>is_external BOOLEAN DEFAULT false</li>
+                <li><span class="idx">INDEX idx_source (source_page_id)</span></li>
+                <li><span class="idx">INDEX idx_target (target_url)</span></li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>search_query_log</h3>
-            <div class="db-row"><span class="col-name">id</span><span class="col-type">UUID PK</span></div>
-            <div class="db-row"><span class="col-name">query</span><span class="col-type">VARCHAR(500)</span></div>
-            <div class="db-row"><span class="col-name">user_id</span><span class="col-type">UUID FK NULL</span></div>
-            <div class="db-row"><span class="col-name">search_type</span><span class="col-type">ENUM</span></div>
-            <div class="db-row"><span class="col-name">results_count</span><span class="col-type">INT</span></div>
-            <div class="db-row"><span class="col-name">clicked_result</span><span class="col-type">VARCHAR(2048) NULL</span></div>
-            <div class="db-row"><span class="col-name">click_position</span><span class="col-type">INT NULL</span></div>
-            <div class="db-row"><span class="col-name">location</span><span class="col-type">VARCHAR(100)</span></div>
-            <div class="db-row"><span class="col-name">searched_at</span><span class="col-type">TIMESTAMP</span></div>
+            <ul>
+                <li><span class="pk">id UUID PK</span></li>
+                <li>query VARCHAR(500) NOT NULL <span class="idx">IDX</span></li>
+                <li><span class="fk">user_id UUID FK NULL</span></li>
+                <li>search_type ENUM('WEB','IMAGE','VIDEO','NEWS')</li>
+                <li>results_count INT</li>
+                <li>clicked_result VARCHAR(2048) NULL</li>
+                <li>click_position INT NULL</li>
+                <li>dwell_time INT NULL</li>
+                <li>location VARCHAR(100)</li>
+                <li>searched_at TIMESTAMP <span class="idx">IDX</span></li>
+                <li><span class="idx">INDEX idx_query_time (query, searched_at DESC)</span></li>
+            </ul>
         </div>
         <div class="db-table">
             <h3>robots_rules</h3>
-            <div class="db-row"><span class="col-name">domain</span><span class="col-type">VARCHAR(255) PK</span></div>
-            <div class="db-row"><span class="col-name">disallowed_paths</span><span class="col-type">TEXT[]</span></div>
-            <div class="db-row"><span class="col-name">crawl_delay</span><span class="col-type">INT (seconds)</span></div>
-            <div class="db-row"><span class="col-name">sitemap_url</span><span class="col-type">VARCHAR(2048)</span></div>
-            <div class="db-row"><span class="col-name">last_fetched_at</span><span class="col-type">TIMESTAMP</span></div>
+            <ul>
+                <li><span class="pk">domain VARCHAR(255) PK</span></li>
+                <li>disallowed_paths TEXT[]</li>
+                <li>crawl_delay INT (seconds)</li>
+                <li>sitemap_url VARCHAR(2048)</li>
+                <li>last_fetched_at TIMESTAMP</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">SQL &mdash; Core Queries</span></div><pre class="code-block">
+<span class="cm">-- Next batch of URLs to crawl (priority queue)</span>
+<span class="kw">SELECT</span> id, url, domain <span class="kw">FROM</span> crawled_page
+<span class="kw">WHERE</span> crawl_status = 'QUEUED' <span class="kw">AND</span> next_crawl_at &lt;= NOW()
+<span class="kw">ORDER BY</span> page_rank <span class="kw">DESC</span>, next_crawl_at
+<span class="kw">LIMIT</span> 1000 <span class="kw">FOR UPDATE SKIP LOCKED</span>;
+
+<span class="cm">-- SimHash duplicate check (Hamming distance &lt;= 3 = near-duplicate)</span>
+<span class="kw">SELECT</span> url <span class="kw">FROM</span> crawled_page
+<span class="kw">WHERE</span> BIT_COUNT(content_hash ^ :newHash) &lt;= 3 <span class="kw">LIMIT</span> 1;
+
+<span class="cm">-- Trending queries (last 1 hour)</span>
+<span class="kw">SELECT</span> query, COUNT(*) as search_count
+<span class="kw">FROM</span> search_query_log
+<span class="kw">WHERE</span> searched_at >= NOW() - INTERVAL '1 hour'
+<span class="kw">GROUP BY</span> query <span class="kw">ORDER BY</span> search_count <span class="kw">DESC</span> <span class="kw">LIMIT</span> 10;
+
+<span class="cm">-- Click-through rate per query (ranking quality metric)</span>
+<span class="kw">SELECT</span> query, COUNT(*) as total_searches,
+    SUM(CASE WHEN clicked_result IS NOT NULL THEN 1 ELSE 0 END) as clicks,
+    AVG(click_position) as avg_click_pos
+<span class="kw">FROM</span> search_query_log
+<span class="kw">WHERE</span> searched_at >= :startDate
+<span class="kw">GROUP BY</span> query <span class="kw">ORDER BY</span> total_searches <span class="kw">DESC</span>;
+</pre></div>
+</div>
+
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="assumption-box">
+        <h4>Assumptions</h4>
+        <div class="assumption-row"><span class="calc-label">Total indexed pages</span><span class="calc-value">100 Billion</span></div>
+        <div class="assumption-row"><span class="calc-label">New/updated pages crawled/day</span><span class="calc-value">5 Billion</span></div>
+        <div class="assumption-row"><span class="calc-label">Search queries/day</span><span class="calc-value">8.5 Billion (Google-scale)</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg page size (compressed HTML)</span><span class="calc-value">50 KB</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg query latency target</span><span class="calc-value">&lt; 200 ms</span></div>
+        <div class="assumption-row"><span class="calc-label">Unique terms in index</span><span class="calc-value">~1 Billion</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg outlinks per page</span><span class="calc-value">50</span></div>
+    </div>
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Search QPS</h4>
+            <div class="calc-row"><span class="calc-label">8.5B queries/day</span><span class="calc-value">~100K QPS avg</span></div>
+            <div class="calc-row"><span class="calc-label">Peak (3x avg)</span><span class="calc-value">~300K QPS</span></div>
+            <div class="calc-result"><span class="calc-label">Auto-complete QPS (10x search)</span><span class="calc-value">~1M QPS</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Crawl Rate</h4>
+            <div class="calc-row"><span class="calc-label">5B pages/day</span><span class="calc-value">~58K pages/sec</span></div>
+            <div class="calc-row"><span class="calc-label">Bandwidth: 58K &times; 50KB</span><span class="calc-value">~2.9 GB/sec ingress</span></div>
+            <div class="calc-result"><span class="calc-label">Politeness: 1 req/sec/domain</span><span class="calc-value">~58K concurrent domains</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Storage &mdash; Crawled Pages</h4>
+            <div class="calc-row"><span class="calc-label">100B pages &times; 50KB</span><span class="calc-value">~5 PB (compressed HTML)</span></div>
+            <div class="calc-row"><span class="calc-label">New per day: 5B &times; 50KB</span><span class="calc-value">~250 TB/day</span></div>
+            <div class="calc-result"><span class="calc-label">Total with history</span><span class="calc-value">~10 PB</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Storage &mdash; Inverted Index</h4>
+            <div class="calc-row"><span class="calc-label">1B terms &times; avg 1KB posting list</span><span class="calc-value">~1 PB index</span></div>
+            <div class="calc-row"><span class="calc-label">Shards (1TB per shard)</span><span class="calc-value">~1,000 shards</span></div>
+            <div class="calc-result"><span class="calc-label">Replicas (3x for availability)</span><span class="calc-value">~3,000 shard replicas</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>URL Dedup (Bloom Filter)</h4>
+            <div class="calc-row"><span class="calc-label">100B URLs, 1% false positive</span><span class="calc-value">~120 GB Bloom filter</span></div>
+            <div class="calc-row"><span class="calc-label">Lookup time</span><span class="calc-value">O(k) = O(7) = constant</span></div>
+            <div class="calc-result"><span class="calc-label">Fits in memory?</span><span class="calc-value">Yes &mdash; distributed across 10 nodes</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>PageRank Computation</h4>
+            <div class="calc-row"><span class="calc-label">100B pages &times; 50 links each</span><span class="calc-value">5 Trillion edges</span></div>
+            <div class="calc-row"><span class="calc-label">~50 iterations to converge</span><span class="calc-value">MapReduce batch job</span></div>
+            <div class="calc-result"><span class="calc-label">Compute time (1000 nodes)</span><span class="calc-value">~12-24 hours</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Trie (Auto-complete)</h4>
+            <div class="calc-row"><span class="calc-label">Top 100M queries in Trie</span><span class="calc-value">~10 GB memory</span></div>
+            <div class="calc-row"><span class="calc-label">Lookup per keystroke</span><span class="calc-value">O(prefix_length)</span></div>
+            <div class="calc-result"><span class="calc-label">Pre-computed top-K at node</span><span class="calc-value">O(1) suggestion retrieval</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">Search API servers</span><span class="calc-value">~5,000 servers</span></div>
+            <div class="calc-row"><span class="calc-label">Crawler workers</span><span class="calc-value">~10,000 workers</span></div>
+            <div class="calc-row"><span class="calc-label">Index shard servers</span><span class="calc-value">~3,000 servers</span></div>
+            <div class="calc-row"><span class="calc-label">Redis (cache + Trie + Bloom)</span><span class="calc-value">~50 nodes</span></div>
+            <div class="calc-result"><span class="calc-label">Total infrastructure</span><span class="calc-value">~20,000+ servers</span></div>
         </div>
     </div>
 </div>
 
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Deep Dive &mdash; Web Crawling Architecture</div>
+    <div class="section-title"><span class="section-num">8</span>Deep Dive &mdash; Web Crawling Architecture</div>
     <div class="section-body">
         <p>Web crawler internet pe systematically pages fetch karta hai. Isme key challenges hain: politeness, duplicate URL detection, aur distributed coordination.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Crawler Architecture</span></div><pre class="code-block">
@@ -466,7 +609,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">8</span>Deep Dive &mdash; Inverted Index &amp; TF-IDF</div>
+    <div class="section-title"><span class="section-num">9</span>Deep Dive &mdash; Inverted Index &amp; TF-IDF</div>
     <div class="section-body">
         <p>Inverted index search engine ka heart hai. Normal index me doc → words hota hai, inverted index me <strong>word → list of docs</strong> hota hai. Isi se fast keyword search possible hota hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Inverted Index Example</span></div><pre class="code-block">
@@ -530,7 +673,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Deep Dive &mdash; PageRank Algorithm</div>
+    <div class="section-title"><span class="section-num">10</span>Deep Dive &mdash; PageRank Algorithm</div>
     <div class="section-body">
         <p><strong>PageRank</strong> Google ka original algorithm hai. Idea simple hai: agar bahut saari important pages kisi page ko link kar rahi hain, toh wo page bhi important hai. Ye ek voting system jaisa hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">PageRank Explained</span></div><pre class="code-block">
@@ -596,7 +739,7 @@ export default {
 </div>
 
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">10</span>Deep Dive &mdash; Auto-Complete with Trie</div>
+    <div class="section-title"><span class="section-num">11</span>Deep Dive &mdash; Auto-Complete with Trie</div>
     <div class="section-body">
         <p>Search suggestions ke liye <strong>Trie (Prefix Tree)</strong> use hota hai. Trie me har node ek character represent karta hai, aur prefix match bahut fast hota hai &mdash; O(L) time me jahan L prefix ki length hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -672,7 +815,7 @@ export default {
 </div>
 
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">11</span>Deep Dive &mdash; Complete Search Flow</div>
+    <div class="section-title"><span class="section-num">12</span>Deep Dive &mdash; Complete Search Flow</div>
     <div class="section-body">
         <p>User "best java tutorials" search kare toh pura flow kya hota hai &mdash; end to end samjhte hain:</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">End-to-End Search Flow</span></div><pre class="code-block">
@@ -720,7 +863,7 @@ export default {
 </div>
 
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">12</span>Comparison &mdash; Search Engine Components</div>
+    <div class="section-title"><span class="section-num">13</span>Comparison &mdash; Search Engine Components</div>
     <div class="section-body">
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Component Comparison</span></div><pre class="code-block">
 <span class="cm">┌─────────────────┬────────────────────┬─────────────────────┬────────────────────┐</span>
@@ -752,7 +895,7 @@ export default {
 </div>
 
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Index too large for single machine (TBs)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Shard by term range or doc ID, parallel search + merge across 1000s shards</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Crawl speed vs politeness trade-off</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Per-domain rate limit (1 req/sec), parallel domains, respect robots.txt crawl-delay</span></div>
@@ -764,7 +907,7 @@ export default {
 </div>
 
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Inverted Index</h4><p>Core of search &mdash; word &rarr; list of doc IDs</p></div>
         <div class="summary-card sc-2"><h4>TF-IDF Scoring</h4><p>Term frequency &times; inverse document frequency</p></div>

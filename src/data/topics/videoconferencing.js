@@ -689,9 +689,73 @@ export default {
 </pre></div>
 </div>
 
-<!-- ============ 7. ARCHITECTURE ============ -->
+<!-- ============ 7. CAPACITY ESTIMATION ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">7</span>Capacity Estimation</div>
+    <div class="assumption-box">
+        <h4>Assumptions</h4>
+        <div class="assumption-row"><span class="calc-label">Total Users</span><span class="calc-value">500 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">DAU</span><span class="calc-value">100 Million</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg meetings/user/day</span><span class="calc-value">2</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg meeting duration</span><span class="calc-value">45 minutes</span></div>
+        <div class="assumption-row"><span class="calc-label">Avg participants per meeting</span><span class="calc-value">8</span></div>
+        <div class="assumption-row"><span class="calc-label">% meetings with recording</span><span class="calc-value">20%</span></div>
+        <div class="assumption-row"><span class="calc-label">Video bitrate (avg, Simulcast)</span><span class="calc-value">1.5 Mbps per stream</span></div>
+    </div>
+    <div class="cap-grid">
+        <div class="cap-card">
+            <h4>Concurrent Meetings</h4>
+            <div class="calc-row"><span class="calc-label">100M users &times; 2 meetings &times; 45min/1440min</span><span class="calc-value">~6.25M concurrent users</span></div>
+            <div class="calc-row"><span class="calc-label">6.25M users / 8 per meeting</span><span class="calc-value">~780K concurrent meetings</span></div>
+            <div class="calc-result"><span class="calc-label">Peak (2x avg)</span><span class="calc-value">~1.5M concurrent meetings</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>SFU Server Load</h4>
+            <div class="calc-row"><span class="calc-label">Each SFU handles ~200 participants</span><span class="calc-value">~6.25M / 200</span></div>
+            <div class="calc-row"><span class="calc-label">SFU servers needed (avg)</span><span class="calc-value">~31,250 servers</span></div>
+            <div class="calc-result"><span class="calc-label">Peak SFU servers</span><span class="calc-value">~62,500 servers</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Bandwidth &mdash; Media Traffic</h4>
+            <div class="calc-row"><span class="calc-label">Upload per user: 1 stream &times; 1.5 Mbps</span><span class="calc-value">1.5 Mbps</span></div>
+            <div class="calc-row"><span class="calc-label">Download per user: 7 streams &times; varied</span><span class="calc-value">~5 Mbps (active speaker HD)</span></div>
+            <div class="calc-row"><span class="calc-label">Total: 6.25M users &times; 6.5 Mbps</span><span class="calc-value">~40 Tbps aggregate</span></div>
+            <div class="calc-result"><span class="calc-label">Per SFU server</span><span class="calc-value">~1.3 Gbps</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Signaling QPS</h4>
+            <div class="calc-row"><span class="calc-label">Meeting joins/day: 200M</span><span class="calc-value">~2,300 joins/sec</span></div>
+            <div class="calc-row"><span class="calc-label">WebSocket events (mute/react/chat)</span><span class="calc-value">~100K events/sec</span></div>
+            <div class="calc-result"><span class="calc-label">Signaling WebSocket connections</span><span class="calc-value">~6.25M concurrent</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>Recording Storage</h4>
+            <div class="calc-row"><span class="calc-label">200M meetings &times; 20% recorded</span><span class="calc-value">40M recordings/day</span></div>
+            <div class="calc-row"><span class="calc-label">45 min &times; 50 MB/min (compressed MP4)</span><span class="calc-value">~2.25 GB per recording</span></div>
+            <div class="calc-row"><span class="calc-label">Daily storage: 40M &times; 2.25 GB</span><span class="calc-value">~90 PB/day (raw)</span></div>
+            <div class="calc-result"><span class="calc-label">After compression + 90-day retention</span><span class="calc-value">~2.7 EB active storage</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>TURN Server Load</h4>
+            <div class="calc-row"><span class="calc-label">~15% connections need TURN relay</span><span class="calc-value">~937K users via TURN</span></div>
+            <div class="calc-row"><span class="calc-label">TURN bandwidth per user: ~3 Mbps</span><span class="calc-value">~2.8 Tbps TURN traffic</span></div>
+            <div class="calc-result"><span class="calc-label">TURN servers (10 Gbps each)</span><span class="calc-value">~280 TURN servers</span></div>
+        </div>
+        <div class="cap-card">
+            <h4>CPU / Server Estimation</h4>
+            <div class="calc-row"><span class="calc-label">SFU media servers (peak)</span><span class="calc-value">~62,500 servers</span></div>
+            <div class="calc-row"><span class="calc-label">Signaling/API servers</span><span class="calc-value">~500 servers</span></div>
+            <div class="calc-row"><span class="calc-label">TURN relay servers</span><span class="calc-value">~280 servers</span></div>
+            <div class="calc-row"><span class="calc-label">Recording processing workers</span><span class="calc-value">~5,000 workers</span></div>
+            <div class="calc-row"><span class="calc-label">Redis (meeting state)</span><span class="calc-value">~50 nodes</span></div>
+            <div class="calc-result"><span class="calc-label">DB (PostgreSQL shards)</span><span class="calc-value">~30 shards + replicas</span></div>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 8. ARCHITECTURE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">7</span>Architecture &mdash; WebRTC + SFU Deep Dive</div>
+    <div class="section-title"><span class="section-num">8</span>Architecture &mdash; WebRTC + SFU Deep Dive</div>
 
     <div class="service-grid">
         <div class="service-card">
@@ -798,7 +862,7 @@ Client A &rarr; TURN Server &rarr; Client B
 
 <!-- ============ 8. REAL-TIME COMMUNICATION ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">8</span>Real-time Communication &mdash; WebSocket Events</div>
+    <div class="section-title"><span class="section-num">9</span>Real-time Communication &mdash; WebSocket Events</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">WebSocket Events &mdash; Server &harr; Client</span></div><pre class="code-block">
 <span class="cm">// ===== SIGNALING EVENTS (WebRTC Setup) =====</span>
 
@@ -857,7 +921,7 @@ Client A &rarr; TURN Server &rarr; Client B
 
 <!-- ============ 9. SCALABILITY ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">9</span>Scalability &amp; High Availability</div>
+    <div class="section-title"><span class="section-num">10</span>Scalability &amp; High Availability</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>SFU Server Scaling</h3>
@@ -942,7 +1006,7 @@ GET /recordings/rec-001/download
 
 <!-- ============ 10. SECURITY ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">10</span>Security &amp; Privacy</div>
+    <div class="section-title"><span class="section-num">11</span>Security &amp; Privacy</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>E2E Encryption (Insertable Streams)</h3>
@@ -1000,7 +1064,7 @@ Client &rarr; [E2E + DTLS] &rarr; SFU (can't read) &rarr; [E2E + DTLS] &rarr; Cl
 
 <!-- ============ 11. SYSTEM FLOW ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">11</span>Complete Meeting Flow &mdash; End to End</div>
+    <div class="section-title"><span class="section-num">12</span>Complete Meeting Flow &mdash; End to End</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Meeting Lifecycle</span></div><pre class="code-block">
 <span class="cm">// ===== PHASE 1: MEETING CREATION =====</span>
 Host &rarr; POST /meetings &rarr; MeetingService.createMeeting()
@@ -1048,7 +1112,7 @@ Host &rarr; POST /meetings/{id}/end
 
 <!-- ============ 12. KEY DIFFERENCES ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">12</span>Zoom vs Google Meet vs Teams &mdash; Key Differences</div>
+    <div class="section-title"><span class="section-num">13</span>Zoom vs Google Meet vs Teams &mdash; Key Differences</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Zoom</h3>
@@ -1097,7 +1161,7 @@ Host &rarr; POST /meetings/{id}/end
 
 <!-- ============ 13. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">13</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">SFU Server Overload (200+ participants)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Cascaded SFU architecture + geographic routing se nearest SFU assign</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Bandwidth explosion in large meetings</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Simulcast + Active Speaker Detection &mdash; sirf speaker ki HD stream forward</span></div>
@@ -1112,7 +1176,7 @@ Host &rarr; POST /meetings/{id}/end
 
 <!-- ============ 14. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>SFU over Mesh/MCU</h4><p>Best balance of quality, scalability &amp; cost</p></div>
         <div class="summary-card sc-2"><h4>WebRTC Signaling ≠ Media</h4><p>Signaling = SDP+ICE (WebSocket), Media = UDP/DTLS-SRTP</p></div>
