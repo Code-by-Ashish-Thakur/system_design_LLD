@@ -568,9 +568,70 @@ export default {
     </div>
 </div>
 
-<!-- ============ 8. CHUNKED UPLOAD & SYNC ============ -->
+<!-- ============ 8. DATA STRUCTURES & TRADE-OFFS ============ -->
+<div class="section theme-purple">
+    <div class="section-title"><span class="section-num">8</span>Data Structures &amp; Trade-offs</div>
+    <div class="service-grid">
+        <div class="service-card">
+            <h3>Merkle Tree &mdash; File Sync &amp; Change Detection</h3>
+            <p class="svc-desc">Cloud storage ka sabse critical problem hai: "kaunsi files change hui client aur server ke beech?" Merkle Tree ek hash tree hai jisme leaf nodes file chunks ke hashes hai, aur parent nodes children ke combined hash hai. Dropbox aur Google Drive iska use karte hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Client aur server dono ke paas Merkle Tree hai. Root hash compare karo &mdash; same = fully synced. Different = children me drill down karke exact changed chunks find karo<br><br>
+            <strong>Why Merkle Tree?</strong> 10GB folder me 1 file change hui toh bina Merkle Tree poori folder hash karna padega. Merkle Tree se sirf changed subtree check hota hai &mdash; O(log n) comparisons<br><br>
+            <strong>Pros:</strong> Efficient diff detection (only changed subtrees), tamper detection (hash chain), bandwidth saving (sync only changed chunks)<br><br>
+            <strong>Cons:</strong> Tree rebuild cost on large structural changes (folder rename), memory overhead for deep directory structures, hash computation CPU cost<br><br>
+            <strong>Real World:</strong> Dropbox block-level Merkle Tree use karta hai (4MB chunks), Git bhi internally Merkle Tree (blob → tree → commit)</p>
+        </div>
+        <div class="service-card">
+            <h3>Hash Table (CAS) &mdash; Content-Addressable Storage &amp; Dedup</h3>
+            <p class="svc-desc">Cloud storage me same file agar 1000 users upload kare toh 1000 copies store karna waste hai. Content-Addressable Storage (CAS) me file ka SHA-256 hash nikalo &mdash; hash hi address hai. Same hash = same content = store once.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> upload(file) → hash = SHA256(file) → check hash_table[hash] → exists? return reference : store file, add to hash_table<br><br>
+            <strong>Why Hash Table?</strong> O(1) dedup lookup &mdash; "does this exact content already exist?" Hash collision probability SHA-256 me practically zero (2^256 space)<br><br>
+            <strong>Pros:</strong> O(1) dedup check, massive storage saving (60%+ for enterprise), automatic versioning (new content = new hash)<br><br>
+            <strong>Cons:</strong> SHA-256 computation cost (CPU intensive for large files), no partial dedup (1 byte change = completely different hash), reference counting for garbage collection<br><br>
+            <strong>Optimization:</strong> Block-level dedup &mdash; file ko 4MB chunks me todo, har chunk ka hash. 1 block change = sirf 1 new block store, rest shared</p>
+        </div>
+        <div class="service-card">
+            <h3>Trie (Prefix Tree) &mdash; File Path Namespace</h3>
+            <p class="svc-desc">File system paths hierarchical hai: /home/user/docs/resume.pdf. Trie naturally is structure ko represent karta hai &mdash; har path component ek node hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> "List all files in /home/user/docs/" → Trie me /home/user/docs/ node tak traverse karo, children = files in that directory<br><br>
+            <strong>Why Trie?</strong> O(L) path lookup (L = path depth), prefix listing built-in (ls /folder/ = all children of node), space sharing for common prefixes (/home/user shared across all user's files)<br><br>
+            <strong>Pros:</strong> Natural hierarchy representation, O(L) lookup, efficient prefix operations (list directory), rename = subtree move<br><br>
+            <strong>Cons:</strong> Memory heavy for wide directories (millions of files in one folder), not ideal for flat namespace designs, serialization complexity<br><br>
+            <strong>Alternative:</strong> Flat key-value with path as key &mdash; simpler but listing directory requires prefix scan (slower)</p>
+        </div>
+        <div class="service-card">
+            <h3>Bloom Filter &mdash; Quick Dedup Check</h3>
+            <p class="svc-desc">Full SHA-256 hash compute karna 1GB file ke liye ~2 seconds lagta hai. Bloom Filter se pehle quick check &mdash; "is hash definitely NOT in our system?" Agar not exists, toh full hash compute karne ki zaroorat nahi.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Upload pe pehle fast hash (MD5/CRC32) → Bloom Filter check → "not exists" = unique file, store directly. "maybe exists" = compute full SHA-256 → exact dedup check<br><br>
+            <strong>Why Bloom Filter?</strong> 1 Billion unique blocks ka SHA-256 HashSet ~64GB RAM. Bloom Filter me ~1.2GB me same coverage (with 0.1% false positive)<br><br>
+            <strong>Pros:</strong> O(1) lookup, 50x memory saving over HashSet, no false negatives (safe for dedup &mdash; won't miss a duplicate)<br><br>
+            <strong>Cons:</strong> False positives require full hash verification (0.1% extra compute), can't delete entries (block deleted but Bloom Filter still says "maybe exists")<br><br>
+            <strong>Trade-off:</strong> Speed vs Accuracy &mdash; Bloom Filter = fast pre-filter, full hash = accurate verification. Two-tier approach</p>
+        </div>
+        <div class="service-card">
+            <h3>B+ Tree &mdash; Metadata Index</h3>
+            <p class="svc-desc">File listing, sorting by name/date/size, search by filename &mdash; ye sab operations B+ Tree indexed database tables se efficient hote hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> INDEX(user_id, parent_folder_id, file_name) &mdash; "List all files in this folder sorted by name" = B+ Tree range scan<br><br>
+            <strong>Why B+ Tree?</strong> Sorted order on disk, range queries for file listing, composite indexes for multi-column queries<br><br>
+            <strong>Pros:</strong> O(log n) search, excellent for range queries (files between date A and B), disk-optimized (sequential read of leaf nodes)<br><br>
+            <strong>Cons:</strong> Write amplification on frequent updates, overhead for point queries (Hash index faster), rebalancing cost<br><br>
+            <strong>When B+ Tree wins:</strong> "Sort files by date" (range scan), "Search files starting with 'report'" (prefix on index). Hash index can't do these</p>
+        </div>
+        <div class="service-card">
+            <h3>Ring Buffer &mdash; Chunked Upload Streaming</h3>
+            <p class="svc-desc">Large file upload me chunks (4-8 MB) sequentially aate hai. Ring Buffer fixed-size circular buffer hai jo incoming chunks temporarily hold karta hai before writing to storage.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Upload stream → Ring Buffer (8 slots x 4MB = 32MB) → Background writer flushes to S3/GCS. Buffer full = backpressure to client<br><br>
+            <strong>Why Ring Buffer?</strong> Fixed memory allocation (no GC pressure), producer-consumer pattern naturally fits, overflow = backpressure signal<br><br>
+            <strong>Pros:</strong> O(1) read/write, fixed memory (predictable), no memory allocation/deallocation, lock-free implementations possible<br><br>
+            <strong>Cons:</strong> Fixed capacity (overflow = data loss or blocking), not suitable for variable-size data without padding, size must be power of 2 for bitwise modulo<br><br>
+            <strong>Alternative:</strong> Unbounded queue &mdash; no data loss but memory can explode on slow consumer. Ring Buffer safer for production</p>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 9. CHUNKED UPLOAD & SYNC ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>Architecture &mdash; Chunked Upload &amp; Delta Sync</div>
+    <div class="section-title"><span class="section-num">9</span>Architecture &mdash; Chunked Upload &amp; Delta Sync</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Chunked Upload Flow</h3>
@@ -631,9 +692,9 @@ file.docx = [Block_A, Block_B', Block_C, Block_D]
     </div>
 </div>
 
-<!-- ============ 9. FILE SYNC PROTOCOL ============ -->
+<!-- ============ 10. FILE SYNC PROTOCOL ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>File Sync Protocol &amp; Conflict Resolution</div>
+    <div class="section-title"><span class="section-num">10</span>File Sync Protocol &amp; Conflict Resolution</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Sync Protocol (Long Polling + Cursor)</h3>
@@ -692,9 +753,9 @@ report.pdf  &rarr; report.pdf            (B's version, latest)
     </div>
 </div>
 
-<!-- ============ 10. DEDUPLICATION ============ -->
+<!-- ============ 11. DEDUPLICATION ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">10</span>File Deduplication &amp; Content-Addressable Storage</div>
+    <div class="section-title"><span class="section-num">11</span>File Deduplication &amp; Content-Addressable Storage</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Block-Level Deduplication</h3>
@@ -726,9 +787,9 @@ File-B = [Block1, Block2, Block4]   <span class="cm">// 12MB total</span>
     </div>
 </div>
 
-<!-- ============ 11. SHARING & PERMISSIONS ============ -->
+<!-- ============ 12. SHARING & PERMISSIONS ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">11</span>Sharing &amp; Permission Model</div>
+    <div class="section-title"><span class="section-num">12</span>Sharing &amp; Permission Model</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>ACL (Access Control List)</h3>
@@ -763,9 +824,9 @@ File-B = [Block1, Block2, Block4]   <span class="cm">// 12MB total</span>
     </div>
 </div>
 
-<!-- ============ 12. COMPLETE FLOW ============ -->
+<!-- ============ 13. COMPLETE FLOW ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">12</span>Complete File Upload Flow &mdash; End to End</div>
+    <div class="section-title"><span class="section-num">13</span>Complete File Upload Flow &mdash; End to End</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">File Lifecycle</span></div><pre class="code-block">
 <span class="cm">// ===== PHASE 1: UPLOAD =====</span>
 Client: Split file into 4MB blocks, compute SHA-256 per block
@@ -810,9 +871,9 @@ Client: Split file into 4MB blocks, compute SHA-256 per block
 </pre></div>
 </div>
 
-<!-- ============ 13. COMPARISONS ============ -->
+<!-- ============ 14. COMPARISONS ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">13</span>Google Drive vs Dropbox vs OneDrive &mdash; Key Differences</div>
+    <div class="section-title"><span class="section-num">14</span>Google Drive vs Dropbox vs OneDrive &mdash; Key Differences</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Google Drive</h3>
@@ -856,9 +917,9 @@ Client: Split file into 4MB blocks, compute SHA-256 per block
     </div>
 </div>
 
-<!-- ============ 14. BOTTLENECKS ============ -->
+<!-- ============ 15. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">15</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Large file upload failure mid-way</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Chunked resumable upload, checksum per chunk, retry individual chunks</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Sync storm (5 devices simultaneously)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Cursor-based sync, conflict detection, rate limiting per device</span></div>
@@ -871,9 +932,9 @@ Client: Split file into 4MB blocks, compute SHA-256 per block
     </div>
 </div>
 
-<!-- ============ 15. INTERVIEW TIPS ============ -->
+<!-- ============ 16. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Chunked Upload</h4><p>Resumable, parallel, checksum per chunk</p></div>
         <div class="summary-card sc-2"><h4>Delta Sync</h4><p>Block-level diff &mdash; 1GB file, 1KB edit = 4MB transfer</p></div>

@@ -575,8 +575,60 @@ export default {
     </div>
 </div>
 
+<!-- ============ 8. DATA STRUCTURES & TRADE-OFFS ============ -->
+<div class="section theme-purple">
+    <div class="section-title"><span class="section-num">8</span>Data Structures &amp; Trade-offs</div>
+    <div class="service-grid">
+        <div class="service-card">
+            <h3>Bitmap (BitSet) &mdash; Spot Availability Tracking</h3>
+            <p class="svc-desc">Parking lot me har spot ka status sirf 2 hai: available (0) ya occupied (1). Bitmap me 1 bit per spot use hota hai &mdash; 5000 spots ka poora status sirf 625 bytes me store ho jaata hai!</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Floor 3 pe kitne spots available hai? → bitmap[floor3] me 0-bits count karo (popcount) = available spots. O(1) operation<br><br>
+            <strong>Why Bitmap?</strong> Boolean array me 1 byte per spot = 5000 bytes. Bitmap me 1 bit per spot = 625 bytes (8x saving). Plus bitwise operations se bulk queries instant hai<br><br>
+            <strong>Pros:</strong> Extremely memory efficient (1 bit/spot), O(1) availability check, bitwise AND/OR for bulk operations (e.g., "compact spots near elevator"), CPU cache friendly<br><br>
+            <strong>Cons:</strong> Only boolean state (no metadata like vehicle info), bit manipulation complex to debug, not suitable for multi-state tracking (reserved/handicap/EV)<br><br>
+            <strong>Extension:</strong> Multi-state ke liye 2-bit encoding: 00=available, 01=occupied, 10=reserved, 11=maintenance. 5000 spots = 1250 bytes</p>
+        </div>
+        <div class="service-card">
+            <h3>Min-Heap &mdash; Nearest Available Spot Finding</h3>
+            <p class="svc-desc">Vehicle entry pe sabse nearest available spot dhundna hai (nearest to entrance/elevator). Min-Heap me spots distance ke basis pe sorted rehte hai &mdash; top element always nearest available spot hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Vehicle enters Floor 2 → Min-Heap[floor2] se peek() = nearest spot. allocate() = extractMin() + mark bitmap. O(log n) operation<br><br>
+            <strong>Why Min-Heap?</strong> Sorted array me nearest spot O(1) but insert O(n). LinkedList me insert O(1) but find nearest O(n). Heap dono O(log n) me balanced karta hai<br><br>
+            <strong>Pros:</strong> O(1) nearest spot peek, O(log n) allocate/deallocate, natural priority ordering (closest first, then by spot type)<br><br>
+            <strong>Cons:</strong> No random access (can't check specific spot directly), rebuild cost O(n) for mass operations (floor closure), not ideal for "find spot near X" (spatial index better)<br><br>
+            <strong>Alternative:</strong> For "nearest to my current location" → use R-Tree/KD-Tree (spatial index). Min-Heap works for "nearest to fixed entrance"</p>
+        </div>
+        <div class="service-card">
+            <h3>HashMap &mdash; Vehicle-to-Spot Mapping</h3>
+            <p class="svc-desc">Vehicle plate number se turant uska spot find karna &mdash; "MH-04-AB-1234 kahan parked hai?" HashMap me license_plate → spot_info O(1) me milta hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Exit pe: HashMap.get("MH-04-AB-1234") → {spot: A-205, floor: 2, entry_time: 10:30, vehicle_type: CAR}. Fee calculate karo aur spot release karo<br><br>
+            <strong>Why HashMap?</strong> Most frequent query: "is vehicle ka spot kya hai?" O(1) lookup. Array me search O(n), Tree me O(log n) &mdash; HashMap fastest<br><br>
+            <strong>Pros:</strong> O(1) average lookup/insert/delete, simple key-value model, perfect for plate→spot mapping<br><br>
+            <strong>Cons:</strong> No ordering (can't answer "sab vehicles entry time ke order me"), hash collisions (rare but degrade to O(n)), memory overhead (load factor 0.75 = 25% wasted)<br><br>
+            <strong>Complement:</strong> HashMap + Bitmap together: HashMap for "where is vehicle X?" + Bitmap for "how many spots available?"</p>
+        </div>
+        <div class="service-card">
+            <h3>TreeMap (Red-Black Tree) &mdash; Time-Ordered Entries for Billing</h3>
+            <p class="svc-desc">Fee calculation ke liye entry_time sorted chahiye. TreeMap internally Red-Black Tree use karta hai &mdash; sorted order maintain karta hai with O(log n) operations.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> "Last 1 hour me kitne vehicles enter hue?" → TreeMap.subMap(now-1hr, now).size(). Revenue report by time range bhi O(log n + k)<br><br>
+            <strong>Why TreeMap?</strong> HashMap me range query nahi hota. TreeMap me sorted order maintained hai toh time-based queries natural hai<br><br>
+            <strong>Pros:</strong> O(log n) insert/search/delete, sorted iteration, range queries (subMap/headMap/tailMap), self-balancing (guaranteed O(log n))<br><br>
+            <strong>Cons:</strong> Slower than HashMap for point queries (O(log n) vs O(1)), more memory per node (color bit + 2 child pointers + parent pointer), not cache-friendly<br><br>
+            <strong>When to use:</strong> Need sorted + range queries = TreeMap. Need fastest point lookup = HashMap. Parking system me dono chahiye toh dono use karo</p>
+        </div>
+        <div class="service-card">
+            <h3>Queue (FIFO) &mdash; Entry/Exit Gate Management</h3>
+            <p class="svc-desc">Peak hours me entry gate pe line lagti hai. Queue FIFO order maintain karta hai &mdash; pehle aaya pehle process. Gate barrier + ticket system queue pattern follow karta hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Vehicle arrives → Queue.enqueue(vehicle). Gate sensor triggers → Queue.dequeue() → scan plate → allocate spot → raise barrier. Concurrent gates = multiple consumers<br><br>
+            <strong>Why Queue?</strong> Fairness guarantee (FIFO), backpressure handling (queue full = "lot full" sign), rate limiting (1 vehicle per 10 sec per gate)<br><br>
+            <strong>Pros:</strong> O(1) enqueue/dequeue, fair ordering, natural fit for gate management, easy to implement with LinkedList or circular array<br><br>
+            <strong>Cons:</strong> No priority (VIP vehicles wait in same line), head-of-line blocking (stuck vehicle blocks queue), fixed capacity decision needed<br><br>
+            <strong>Extension:</strong> Priority Queue for VIP/handicap vehicles &mdash; separate lane with higher priority dequeue</p>
+        </div>
+    </div>
+</div>
+
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">8</span>Deep Dive &mdash; Spot Allocation Strategy</div>
+    <div class="section-title"><span class="section-num">9</span>Deep Dive &mdash; Spot Allocation Strategy</div>
     <div class="section-body">
         <p>Parking lot me sabse important design decision hai ki vehicle ko kaun sa spot assign karein. Iske liye <strong>Strategy Pattern</strong> use hota hai &mdash; alag-alag algorithms ko plug-and-play kar sakte hain.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -637,7 +689,7 @@ export default {
 </div>
 
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">9</span>Deep Dive &mdash; Concurrency &amp; Locking</div>
+    <div class="section-title"><span class="section-num">10</span>Deep Dive &mdash; Concurrency &amp; Locking</div>
     <div class="section-body">
         <p>Multiple entry gates pe simultaneously vehicles aayein toh same spot double-book nahi honi chahiye. Iske liye <strong>Pessimistic Locking</strong> ya <strong>Optimistic Locking</strong> use hota hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -691,7 +743,7 @@ export default {
 </div>
 
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">10</span>Deep Dive &mdash; Fee Calculation Strategy</div>
+    <div class="section-title"><span class="section-num">11</span>Deep Dive &mdash; Fee Calculation Strategy</div>
     <div class="section-body">
         <p>Parking fee calculate karna simple lagta hai but multiple pricing models support karne ke liye <strong>Strategy Pattern</strong> use karna padta hai &mdash; flat rate, hourly, tiered sab alag strategies hain.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -733,7 +785,7 @@ export default {
 </div>
 
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">11</span>Deep Dive &mdash; Design Patterns Used</div>
+    <div class="section-title"><span class="section-num">12</span>Deep Dive &mdash; Design Patterns Used</div>
     <div class="section-body">
         <p>Parking Lot LLD me kaafi design patterns use hote hain. Ye list interview me confidently bol sakte ho:</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Design Patterns Summary</span></div><pre class="code-block">
@@ -816,7 +868,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">12</span>Deep Dive &mdash; Entry &amp; Exit Flow</div>
+    <div class="section-title"><span class="section-num">13</span>Deep Dive &mdash; Entry &amp; Exit Flow</div>
     <div class="section-body">
         <p>Complete entry aur exit flow step-by-step samjhte hain &mdash; ye interview me diagram draw karke explain karna padta hai:</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Entry Flow</span></div><pre class="code-block">
@@ -900,7 +952,7 @@ export default {
 </div>
 
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">13</span>Comparison &mdash; Design Approaches</div>
+    <div class="section-title"><span class="section-num">14</span>Comparison &mdash; Design Approaches</div>
     <div class="section-body">
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Approach Comparison</span></div><pre class="code-block">
 <span class="cm">┌────────────────────┬──────────────────┬──────────────────┬──────────────────┐</span>
@@ -930,7 +982,7 @@ export default {
 </div>
 
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">15</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Double booking of same spot (race condition)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Pessimistic locking (SELECT FOR UPDATE) ya Optimistic locking (@Version)</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Spot search slow on large lots (10K+ spots)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Per-floor count cache, Min-heap for floor priority, Bitmap for O(1) lookup</span></div>
@@ -942,7 +994,7 @@ export default {
 </div>
 
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Singleton Pattern</h4><p>ParkingLot &mdash; ek hi instance poore system me</p></div>
         <div class="summary-card sc-2"><h4>Strategy Pattern</h4><p>Spot allocation + Fee calculation plug-and-play</p></div>

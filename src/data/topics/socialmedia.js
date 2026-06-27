@@ -895,9 +895,70 @@ export default {
     </div>
 </div>
 
-<!-- ============ 8. NEWS FEED ARCHITECTURE ============ -->
+<!-- ============ 8. DATA STRUCTURES & TRADE-OFFS ============ -->
+<div class="section theme-purple">
+    <div class="section-title"><span class="section-num">8</span>Data Structures &amp; Trade-offs</div>
+    <div class="service-grid">
+        <div class="service-card">
+            <h3>Adjacency List (Graph) &mdash; Social Graph / Follow System</h3>
+            <p class="svc-desc">Social media ka core data structure Graph hai &mdash; users nodes hai, follow/friend relationships edges hai. Adjacency List me har user ke paas ek list hoti hai uske followers/following ki.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> follows table (follower_id, followee_id) &mdash; "Who does user X follow?", "Mutual friends between A and B", "People you may know" (friend-of-friend BFS)<br><br>
+            <strong>Why Adjacency List?</strong> Social graphs sparse hote hai (avg 200 friends out of 2B users), adjacency matrix me 2B x 2B = impossible. List me sirf actual edges store hoti hai<br><br>
+            <strong>Pros:</strong> Space efficient for sparse graphs O(V+E), fast neighbor iteration O(degree), easy to add/remove edges<br><br>
+            <strong>Cons:</strong> Edge existence check O(degree) not O(1), BFS/DFS traversal expensive for large graphs, no constant-time "does A follow B?" without index<br><br>
+            <strong>Optimization:</strong> Redis SET per user for O(1) follow check &mdash; SISMEMBER following:userId targetId</p>
+        </div>
+        <div class="service-card">
+            <h3>Redis Sorted Set (Skip List) &mdash; Feed Ranking &amp; Trending</h3>
+            <p class="svc-desc">News feed me posts ko score-based ranking chahiye (time + engagement). Redis Sorted Set internally Skip List use karta hai jo sorted order maintain karta hai with O(log n) operations.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> feed:userId sorted set me post_ids store with score = timestamp + engagement_boost. ZREVRANGE se top posts milte hai<br><br>
+            <strong>Why Sorted Set / Skip List?</strong> Feed me sorted order chahiye (latest first ya highest engagement), insertion bhi fast chahiye jab naya post aaye. Skip List dono O(log n) me deta hai<br><br>
+            <strong>Pros:</strong> O(log n) insert/search/delete, range queries O(log n + k), concurrent-friendly (multiple levels independent), Redis me built-in support<br><br>
+            <strong>Cons:</strong> Memory overhead (multiple pointers per node), not cache-friendly vs arrays, probabilistic balancing (not guaranteed)<br><br>
+            <strong>Alternative:</strong> Simple sorted array &mdash; O(1) read but O(n) insert. For feed where reads >> writes, sorted array could work for small feeds</p>
+        </div>
+        <div class="service-card">
+            <h3>Bloom Filter &mdash; "Already Seen" Posts &amp; Dedup</h3>
+            <p class="svc-desc">User ko same post dobara feed me nahi dikhana chahiye. Har user ke liye "seen posts" track karna expensive hai. Bloom Filter se O(1) me check hota hai ki post pehle dikha ya nahi.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> seen_posts:userId Bloom Filter &mdash; feed generate karte waqt har candidate post check karo, agar "maybe seen" toh skip karo<br><br>
+            <strong>Why Bloom Filter?</strong> 500M DAU x 1000 seen posts = 500B entries. HashSet me ~50TB RAM lagega, Bloom Filter me ~500GB (100x savings)<br><br>
+            <strong>Pros:</strong> O(1) lookup, extremely memory efficient, no false negatives (agar "not seen" bola toh pakka not seen)<br><br>
+            <strong>Cons:</strong> False positives (1-2%) &mdash; fresh post skip ho sakta hai, cannot delete (seen post un-see nahi kar sakte), periodic rebuild needed<br><br>
+            <strong>Trade-off:</strong> 1% false positive = 1% good posts skipped. Acceptable because user won't notice missing 1 post out of 100</p>
+        </div>
+        <div class="service-card">
+            <h3>Trie (Prefix Tree) &mdash; User Search &amp; Hashtag Typeahead</h3>
+            <p class="svc-desc">Instagram/Twitter pe username ya hashtag type karte waqt suggestions aate hai. Trie prefix-based search me sabse efficient hai &mdash; O(L) me prefix match hota hai (L = query length).</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Type "@ra" → suggestions: [@rahul, @rajesh, @raman...]. Trie me "ra" node tak traverse karo, phir DFS se top suggestions nikalo<br><br>
+            <strong>Why Trie?</strong> HashMap me prefix search nahi hota (exact match only). Trie me har character ek node hai, prefix tak traverse karo aur subtree se all matches nikalo<br><br>
+            <strong>Pros:</strong> O(L) prefix search (L = query length, not dataset size), all completions from any prefix, space sharing for common prefixes<br><br>
+            <strong>Cons:</strong> High memory usage (26+ pointers per node), not cache-friendly, needs periodic rebuild from popularity data<br><br>
+            <strong>Optimization:</strong> Compressed Trie (Radix Tree) &mdash; single-child chains compress karo, 60-70% memory saving</p>
+        </div>
+        <div class="service-card">
+            <h3>Fan-out Queue (Kafka) &mdash; News Feed Distribution</h3>
+            <p class="svc-desc">Jab koi post karta hai toh uske 200+ followers ki feed me push karna padta hai. Kafka message queue se ye async hota hai &mdash; post create hota hai, Kafka me event jaata hai, consumers feed update karte hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Fan-out-on-Write: post.created event → Kafka → Feed Workers consume → har follower ki Redis sorted set me insert<br><br>
+            <strong>Why Kafka Queue?</strong> Synchronous fan-out me 200 followers = 200 DB writes = 2-3 sec latency. Kafka se async = 50ms response to user, background me feed update<br><br>
+            <strong>Pros:</strong> Async decoupling (fast response), replay capability (consumer crash = re-consume), ordered within partition, backpressure handling<br><br>
+            <strong>Cons:</strong> Latency (feed update 1-2 sec delayed), celebrity fan-out still expensive (10M followers), partition ordering challenges<br><br>
+            <strong>Hybrid Approach:</strong> Push for normal users (followers &lt; 10K), Pull for celebrities (followers &gt; 10K) &mdash; merge at read time</p>
+        </div>
+        <div class="service-card">
+            <h3>Hash Map &mdash; User Session Cache &amp; ID Lookups</h3>
+            <p class="svc-desc">Har API request pe user authentication check hota hai. Redis HashMap me session token → user object cached hota hai. O(1) lookup se database hit avoid hota hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> session:token → {userId, name, permissions} Redis Hash, post:id → {content, author, timestamp} cached object<br><br>
+            <strong>Why HashMap?</strong> Most frequent operation hai "give me user/post by ID" &mdash; O(1) average case, perfect for key-value lookups<br><br>
+            <strong>Pros:</strong> O(1) average lookup/insert/delete, simple implementation, cache-friendly with open addressing<br><br>
+            <strong>Cons:</strong> No ordering (can't get "recent posts" from HashMap), hash collisions degrade to O(n), resize overhead (rehashing), memory overhead for load factor<br><br>
+            <strong>When NOT to use:</strong> Range queries (use B+ Tree), sorted access (use Sorted Set), prefix search (use Trie)</p>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 9. NEWS FEED ARCHITECTURE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>News Feed Architecture &mdash; Fan-out Deep Dive</div>
+    <div class="section-title"><span class="section-num">9</span>News Feed Architecture &mdash; Fan-out Deep Dive</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Fan-out-on-Write (Push Model)</h3>
@@ -989,9 +1050,9 @@ SELECT * FROM posts WHERE user_id IN (:celebrityIds)
     </div>
 </div>
 
-<!-- ============ 9. SOCIAL GRAPH ============ -->
+<!-- ============ 10. SOCIAL GRAPH ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Social Graph &mdash; Follow System Deep Dive</div>
+    <div class="section-title"><span class="section-num">10</span>Social Graph &mdash; Follow System Deep Dive</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Graph Storage &amp; Queries</h3>
@@ -1031,9 +1092,9 @@ DECR followers_count:2001   <span class="cm">// unfollow pe -1</span>
     </div>
 </div>
 
-<!-- ============ 10. TRENDING ALGORITHM ============ -->
+<!-- ============ 11. TRENDING ALGORITHM ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">10</span>Trending Algorithm &amp; Stories Architecture</div>
+    <div class="section-title"><span class="section-num">11</span>Trending Algorithm &amp; Stories Architecture</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Trending Calculation</h3>
@@ -1102,9 +1163,9 @@ SISMEMBER story_views:story-789 :viewerId
     </div>
 </div>
 
-<!-- ============ 11. SCALABILITY ============ -->
+<!-- ============ 12. SCALABILITY ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">11</span>Scalability &amp; Caching Strategy</div>
+    <div class="section-title"><span class="section-num">12</span>Scalability &amp; Caching Strategy</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Database Sharding</h3>
@@ -1160,9 +1221,9 @@ trending:IN     &rarr; Sorted set of hashtags
     </div>
 </div>
 
-<!-- ============ 12. SYSTEM FLOW ============ -->
+<!-- ============ 13. SYSTEM FLOW ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">12</span>Complete Post Flow &mdash; End to End</div>
+    <div class="section-title"><span class="section-num">13</span>Complete Post Flow &mdash; End to End</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Post Lifecycle</span></div><pre class="code-block">
 <span class="cm">// ===== PHASE 1: POST CREATION =====</span>
 User &rarr; POST /api/v1/posts (with images)
@@ -1212,9 +1273,9 @@ Share &rarr; Create new post with original_post_id reference
 </pre></div>
 </div>
 
-<!-- ============ 13. KEY DIFFERENCES ============ -->
+<!-- ============ 14. KEY DIFFERENCES ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">13</span>Facebook vs Instagram vs Twitter &mdash; Key Differences</div>
+    <div class="section-title"><span class="section-num">14</span>Facebook vs Instagram vs Twitter &mdash; Key Differences</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Facebook</h3>
@@ -1265,9 +1326,9 @@ Share &rarr; Create new post with original_post_id reference
     </div>
 </div>
 
-<!-- ============ 14. BOTTLENECKS ============ -->
+<!-- ============ 15. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">15</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Celebrity fan-out (100M followers)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Hybrid: fan-out-on-read for celebrities, fan-out-on-write for normal users</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Viral post &mdash; millions of likes simultaneously</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Redis atomic INCR + batch DB writes via Kafka (eventual consistency)</span></div>
@@ -1280,9 +1341,9 @@ Share &rarr; Create new post with original_post_id reference
     </div>
 </div>
 
-<!-- ============ 15. INTERVIEW TIPS ============ -->
+<!-- ============ 16. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Fan-out Hybrid</h4><p>Push for normal users, pull for celebrities (&gt;10K followers)</p></div>
         <div class="summary-card sc-2"><h4>Feed Ranking (ML)</h4><p>Engagement probability + recency + relationship closeness</p></div>

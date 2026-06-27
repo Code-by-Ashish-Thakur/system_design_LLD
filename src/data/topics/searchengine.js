@@ -537,8 +537,80 @@ export default {
     </div>
 </div>
 
+<!-- ============ 8. DATA STRUCTURES & TRADE-OFFS ============ -->
+<div class="section theme-purple">
+    <div class="section-title"><span class="section-num">8</span>Data Structures &amp; Trade-offs</div>
+    <div class="service-grid">
+        <div class="service-card">
+            <h3>Inverted Index &mdash; Core Search Indexing</h3>
+            <p class="svc-desc">Search engine ka backbone. Har word ke against ek posting list maintain hoti hai &mdash; "kaunse documents me ye word hai?" Forward index (doc → words) se search O(N) hai, Inverted Index (word → docs) se O(1) term lookup + O(k) result scan.</p>
+            <p class="svc-desc"><strong>How it works:</strong> Document "cat sat on mat" → Index: "cat"→[doc1:pos0], "sat"→[doc1:pos1], "on"→[doc1:pos2], "mat"→[doc1:pos3]. Query "cat mat" = intersection of posting lists<br><br>
+            <strong>Why Inverted Index?</strong> 100 Billion web pages me full scan impossible. Inverted Index se "cat" search = directly posting list access, no scanning<br><br>
+            <strong>Pros:</strong> O(1) term lookup, boolean AND/OR/NOT queries efficient, TF-IDF/BM25 scoring built-in, phrase search with positional index, compression friendly (delta encoding)<br><br>
+            <strong>Cons:</strong> Index size 30-50% of original data (~1PB for Google scale), index update latency (new page searchable after seconds), memory intensive for real-time indexing, merge cost for AND queries on large posting lists<br><br>
+            <strong>Optimization:</strong> Skip pointers in posting lists for faster intersection, tiered index (hot terms in memory, cold on disk), sharding by term or document range</p>
+        </div>
+        <div class="service-card">
+            <h3>Trie (Prefix Tree) &mdash; Typeahead / Auto-Complete Search</h3>
+            <p class="svc-desc">User "how to" type karta hai toh suggestions aate hai: "how to lose weight", "how to code", "how to cook". Trie me har character ek node hai, prefix tak traverse karke popular completions return hoti hai.</p>
+            <p class="svc-desc"><strong>How it works:</strong> Trie build karo past queries se with frequency counts. "how to" type hone pe → traverse h→o→w→ →t→o node tak → DFS for top-K completions by frequency<br><br>
+            <strong>Why Trie for Typeahead?</strong> HashMap exact match deta hai (type "how to" → only exact "how to"). Trie prefix match deta hai (type "how to" → all queries starting with "how to")<br><br>
+            <strong>Data Source:</strong> Query logs (last 30 days) aggregate karke Trie build. Google pe 8.5B queries/day ka log → frequency count → top completions cache at each Trie node<br><br>
+            <strong>Pros:</strong> O(L) prefix search (L = query length, independent of dataset size), all completions from any prefix, incremental search (each keystroke = one more node)<br><br>
+            <strong>Cons:</strong> High memory (26+ pointers per node for English), stale data (new trending queries take time), rebuild needed periodically (hourly/daily from query logs)<br><br>
+            <strong>Optimizations:</strong> (1) Compressed Trie (Radix Tree) &mdash; merge single-child chains, 60% memory saving. (2) Top-K cache per node &mdash; pre-compute top 10 suggestions, no DFS needed at query time. (3) Shard by first 2 characters (aa-zz = 676 shards)</p>
+        </div>
+        <div class="service-card">
+            <h3>Bloom Filter &mdash; URL Dedup in Web Crawler</h3>
+            <p class="svc-desc">Web crawler ko track karna padta hai ki kaunse URLs already crawl ho chuke hai. 100 Billion URLs ka HashSet ~8TB RAM lagega. Bloom Filter me ~120GB me same work hota hai (with 0.1% false positive).</p>
+            <p class="svc-desc"><strong>How it works:</strong> New URL mila → Bloom Filter check → "definitely not crawled" = add to crawl queue. "maybe crawled" = skip (0.1% chance ye false positive hai = miss ek page, acceptable)<br><br>
+            <strong>Why Bloom Filter?</strong> HashSet me 100B URLs x 80 bytes avg = 8TB RAM. Bloom Filter me 10 bits/element x 100B = 120GB. 67x memory saving!<br><br>
+            <strong>Pros:</strong> O(1) membership check, extreme memory efficiency, no false negatives (already crawled URL will never be re-crawled), distributable across crawler nodes<br><br>
+            <strong>Cons:</strong> False positives = some valid URLs skipped (0.1%), can't remove URLs (deleted page still marked "crawled"), periodic rebuild needed with fresh data<br><br>
+            <strong>Trade-off:</strong> 0.1% false positive rate = 100 Million pages potentially skipped out of 100B. Acceptable because re-crawl happens anyway on next cycle. Lower FP = more memory</p>
+        </div>
+        <div class="service-card">
+            <h3>Graph (Adjacency List) &mdash; PageRank Algorithm</h3>
+            <p class="svc-desc">Web ek giant directed graph hai &mdash; pages nodes hai, hyperlinks edges hai. PageRank is graph pe iterative computation karta hai to determine page importance: "zyada quality pages se link = zyada important."</p>
+            <p class="svc-desc"><strong>How it works:</strong> Har page ka initial rank = 1/N. Iterate: rank(P) = (1-d)/N + d * SUM(rank(T)/outlinks(T)) for all T linking to P. d=0.85 (damping factor). Converge after ~50 iterations<br><br>
+            <strong>Why Adjacency List?</strong> Web graph sparse hai (avg 10-15 outlinks per page). Adjacency Matrix 100B x 100B = impossible. Adjacency List stores only actual edges<br><br>
+            <strong>Scale:</strong> 100B nodes, ~5 Trillion edges. Distributed computation (MapReduce/Pregel). Each iteration = full graph traversal<br><br>
+            <strong>Pros:</strong> Models real web link structure, iterative refinement converges to stable ranking, spam-resistant (hard to fake many quality inlinks)<br><br>
+            <strong>Cons:</strong> Massive memory (even adjacency list ~5TB for 5T edges), computation expensive (50 iterations x full graph), link spam attacks, slow to update (batch recomputation)<br><br>
+            <strong>Modern:</strong> Google now uses 200+ ranking signals beyond PageRank (BERT, freshness, user engagement, Core Web Vitals). PageRank is just one signal</p>
+        </div>
+        <div class="service-card">
+            <h3>Priority Queue &mdash; Crawl Frontier Scheduling</h3>
+            <p class="svc-desc">Web crawler ko decide karna hai ki next kaunsa URL crawl kare. High-importance pages pehle (news sites, updated pages). Priority Queue se URLs importance-based order me process hote hai.</p>
+            <p class="svc-desc"><strong>How it works:</strong> Priority = f(PageRank, freshness, update_frequency, domain_authority). New URL discovered → Priority Queue me insert with score → workers extract highest priority first<br><br>
+            <strong>Why Priority Queue?</strong> FIFO queue me CNN.com aur random blog same priority se crawl hoga. Priority Queue se important pages first, better crawl budget utilization<br><br>
+            <strong>Pros:</strong> O(log n) insert, O(1) highest priority peek, crawl budget optimization (most valuable pages first), adaptive re-prioritization<br><br>
+            <strong>Cons:</strong> Starvation of low-priority URLs (long-tail pages rarely crawled), priority computation overhead, distributed priority queue complex (multiple crawler nodes)<br><br>
+            <strong>Implementation:</strong> Multiple priority queues per domain (politeness) + back queue (round-robin across domains to avoid overloading one server)</p>
+        </div>
+        <div class="service-card">
+            <h3>SimHash / MinHash &mdash; Near-Duplicate Page Detection</h3>
+            <p class="svc-desc">Internet pe 30%+ content duplicate/near-duplicate hai (same article different sites, mirror pages). Exact hash different hoga (different ads/headers). SimHash content ka fingerprint banata hai jo similar content ke liye similar hash deta hai.</p>
+            <p class="svc-desc"><strong>How it works:</strong> Page content → extract features (word n-grams) → hash each feature → weighted sum → SimHash (64-bit fingerprint). Two pages similar if Hamming distance(SimHash_A, SimHash_B) &le; 3<br><br>
+            <strong>Why SimHash?</strong> MD5/SHA hash me 1 character change = completely different hash. SimHash me small content change = small hash change (locality-sensitive)<br><br>
+            <strong>Pros:</strong> O(1) comparison (XOR + popcount), locality-sensitive (similar content = similar hash), compact representation (64 bits per page), scalable to billions<br><br>
+            <strong>Cons:</strong> Approximation (false positives/negatives), not suitable for exact matching, threshold tuning needed (Hamming distance cutoff), no content reconstruction from hash<br><br>
+            <strong>Alternative:</strong> MinHash + LSH (Locality-Sensitive Hashing) &mdash; better for Jaccard similarity, used for document clustering. SimHash better for single-page fingerprinting</p>
+        </div>
+        <div class="service-card">
+            <h3>Skip List &mdash; Posting List Intersection</h3>
+            <p class="svc-desc">Query "machine learning python" me 3 posting lists ka intersection chahiye. Posting lists sorted hai by doc_id. Skip List sorted list me O(log n) jumps allow karta hai &mdash; intersection ke liye ideal.</p>
+            <p class="svc-desc"><strong>How it works:</strong> Posting list [1,3,5,8,12,15,20,25,30] with skip pointers every sqrt(n) elements. Intersection me agar current = 8 aur target &gt; 20, skip pointer se directly 20 pe jump karo instead of scanning 12,15<br><br>
+            <strong>Why Skip List?</strong> Simple merge = O(n+m) for two lists. Skip pointers se O(sqrt(n)) skips possible, especially when one list much smaller than other<br><br>
+            <strong>Pros:</strong> O(log n) skip during intersection, simple implementation over sorted arrays, probabilistic balancing (no rebalancing needed)<br><br>
+            <strong>Cons:</strong> Memory overhead for skip pointers, probabilistic height (not guaranteed O(log n)), worse cache performance than arrays<br><br>
+            <strong>Lucene Implementation:</strong> Block-based skip lists with 128-doc blocks, delta+variable-byte encoding for posting lists, SIMD for block intersection</p>
+        </div>
+    </div>
+</div>
+
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>Deep Dive &mdash; Web Crawling Architecture</div>
+    <div class="section-title"><span class="section-num">9</span>Deep Dive &mdash; Web Crawling Architecture</div>
     <div class="section-body">
         <p>Web crawler internet pe systematically pages fetch karta hai. Isme key challenges hain: politeness, duplicate URL detection, aur distributed coordination.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Crawler Architecture</span></div><pre class="code-block">
@@ -609,7 +681,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Deep Dive &mdash; Inverted Index &amp; TF-IDF</div>
+    <div class="section-title"><span class="section-num">10</span>Deep Dive &mdash; Inverted Index &amp; TF-IDF</div>
     <div class="section-body">
         <p>Inverted index search engine ka heart hai. Normal index me doc → words hota hai, inverted index me <strong>word → list of docs</strong> hota hai. Isi se fast keyword search possible hota hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Inverted Index Example</span></div><pre class="code-block">
@@ -673,7 +745,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">10</span>Deep Dive &mdash; PageRank Algorithm</div>
+    <div class="section-title"><span class="section-num">11</span>Deep Dive &mdash; PageRank Algorithm</div>
     <div class="section-body">
         <p><strong>PageRank</strong> Google ka original algorithm hai. Idea simple hai: agar bahut saari important pages kisi page ko link kar rahi hain, toh wo page bhi important hai. Ye ek voting system jaisa hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">PageRank Explained</span></div><pre class="code-block">
@@ -739,7 +811,7 @@ export default {
 </div>
 
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">11</span>Deep Dive &mdash; Auto-Complete with Trie</div>
+    <div class="section-title"><span class="section-num">12</span>Deep Dive &mdash; Auto-Complete with Trie</div>
     <div class="section-body">
         <p>Search suggestions ke liye <strong>Trie (Prefix Tree)</strong> use hota hai. Trie me har node ek character represent karta hai, aur prefix match bahut fast hota hai &mdash; O(L) time me jahan L prefix ki length hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -815,7 +887,7 @@ export default {
 </div>
 
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">12</span>Deep Dive &mdash; Complete Search Flow</div>
+    <div class="section-title"><span class="section-num">13</span>Deep Dive &mdash; Complete Search Flow</div>
     <div class="section-body">
         <p>User "best java tutorials" search kare toh pura flow kya hota hai &mdash; end to end samjhte hain:</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">End-to-End Search Flow</span></div><pre class="code-block">
@@ -863,7 +935,7 @@ export default {
 </div>
 
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">13</span>Comparison &mdash; Search Engine Components</div>
+    <div class="section-title"><span class="section-num">14</span>Comparison &mdash; Search Engine Components</div>
     <div class="section-body">
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Component Comparison</span></div><pre class="code-block">
 <span class="cm">┌─────────────────┬────────────────────┬─────────────────────┬────────────────────┐</span>
@@ -895,7 +967,7 @@ export default {
 </div>
 
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">15</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Index too large for single machine (TBs)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Shard by term range or doc ID, parallel search + merge across 1000s shards</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Crawl speed vs politeness trade-off</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Per-domain rate limit (1 req/sec), parallel domains, respect robots.txt crawl-delay</span></div>
@@ -907,7 +979,7 @@ export default {
 </div>
 
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Inverted Index</h4><p>Core of search &mdash; word &rarr; list of doc IDs</p></div>
         <div class="summary-card sc-2"><h4>TF-IDF Scoring</h4><p>Term frequency &times; inverse document frequency</p></div>

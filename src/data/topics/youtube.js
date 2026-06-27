@@ -875,9 +875,70 @@ export default {
     </div>
 </div>
 
+<!-- ============ 8. DATA STRUCTURES & TRADE-OFFS ============ -->
+<div class="section theme-purple">
+    <div class="section-title"><span class="section-num">8</span>Data Structures &amp; Trade-offs</div>
+    <div class="service-grid">
+        <div class="service-card">
+            <h3>B+ Tree &mdash; Video Metadata Index</h3>
+            <p class="svc-desc">MySQL/PostgreSQL internally B+ Tree use karta hai video metadata (title, upload_date, channel_id) ko index karne ke liye. Jab tum "latest videos" ya "channel ke saare videos" search karte ho, B+ Tree sorted traversal deta hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Video table pe INDEX(channel_id, upload_date DESC) &mdash; channel page pe latest videos dikhane ke liye<br><br>
+            <strong>Why B+ Tree?</strong> Sorted order maintain karta hai disk pe, range queries efficient hai (e.g., last 7 days ke videos), leaf nodes linked list se connected hai toh sequential scan fast hai<br><br>
+            <strong>Pros:</strong> O(log n) search, sorted traversal O(k), disk-optimized (high fan-out = fewer disk reads), range queries excellent<br><br>
+            <strong>Cons:</strong> Write amplification (rebalancing on insert/delete), overhead for small datasets, not ideal for write-heavy workloads (view counts)<br><br>
+            <strong>Alternative:</strong> Hash Index &mdash; O(1) point lookup but no range queries, toh "latest videos" nahi mil paayega</p>
+        </div>
+        <div class="service-card">
+            <h3>LSM Tree &mdash; Write-Heavy Counters (View Count, Likes)</h3>
+            <p class="svc-desc">YouTube pe har second millions of view count updates hote hai. B+ Tree se ye handle nahi hoga kyunki har write pe rebalancing hoti hai. LSM Tree (Cassandra, RocksDB) append-only writes karta hai &mdash; pehle MemTable me, phir SSTable flush.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> video_id → {view_count, like_count, comment_count} &mdash; Cassandra me store, Redis buffer se batch flush<br><br>
+            <strong>Why LSM Tree?</strong> Write throughput 10x better than B+ Tree, append-only toh disk seek nahi lagta, compaction background me hota hai<br><br>
+            <strong>Pros:</strong> O(1) writes (sequential append), excellent for write-heavy workloads, compression friendly, time-series data ke liye ideal<br><br>
+            <strong>Cons:</strong> Read amplification (multiple SSTables check karna padta), compaction spikes CPU/IO, space amplification (duplicate keys until compacted)<br><br>
+            <strong>Trade-off:</strong> B+ Tree = read-optimized, LSM = write-optimized. YouTube me view counts write-heavy hai toh LSM wins</p>
+        </div>
+        <div class="service-card">
+            <h3>Consistent Hashing &mdash; CDN &amp; Cache Distribution</h3>
+            <p class="svc-desc">YouTube ke 800M+ daily users ke videos serve karne ke liye CDN edge servers pe content distribute karna padta hai. Consistent Hashing se video_id hash karke nearest CDN node assign hota hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> hash(video_id) → CDN edge node, Redis cache sharding bhi same technique<br><br>
+            <strong>Why Consistent Hashing?</strong> Server add/remove pe sirf 1/N fraction data redistribute hota hai, traditional modular hashing me sab rehash hota<br><br>
+            <strong>Pros:</strong> Minimal data movement on rebalancing, horizontal scaling easy, fault tolerant (node down = next node takes over)<br><br>
+            <strong>Cons:</strong> Uneven distribution without virtual nodes (hotspot problem), complexity in implementation, clock-wise lookup overhead<br><br>
+            <strong>Virtual Nodes:</strong> Har physical server ko 100-200 virtual nodes dete hai ring pe, toh load evenly distribute hota hai</p>
+        </div>
+        <div class="service-card">
+            <h3>Priority Queue (Min-Heap) &mdash; Recommendation Ranking</h3>
+            <p class="svc-desc">YouTube ka recommendation engine 2-stage hai: pehle candidate generation (1000s videos), phir ranking model score deta hai. Top-K videos nikalne ke liye Min-Heap use hota hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Top 50 recommended videos nikalna 10,000 candidates me se based on ML score<br><br>
+            <strong>Why Min-Heap?</strong> Size K ka min-heap maintain karo, agar naya element heap top se bada hai toh replace karo. O(N log K) me Top-K mil jaata hai without sorting all N elements<br><br>
+            <strong>Pros:</strong> O(1) peek (minimum element), O(log K) insert/extract, memory efficient (only K elements in heap)<br><br>
+            <strong>Cons:</strong> No random access, full scan for arbitrary element, not cache-friendly for large heaps<br><br>
+            <strong>Alternative:</strong> Full sort O(N log N) vs Heap-based Top-K O(N log K) &mdash; K=50, N=10000 me heap 3x faster</p>
+        </div>
+        <div class="service-card">
+            <h3>DAG (Directed Acyclic Graph) &mdash; Transcoding Pipeline</h3>
+            <p class="svc-desc">Video upload hone ke baad multiple stages se guzarta hai: validation → thumbnail extraction → transcoding (6 resolutions) → DRM → CDN push. Ye stages DAG ke nodes hai, dependencies edges hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Transcoding pipeline orchestration &mdash; parallel tasks (6 resolution transcodes) + sequential dependencies (transcode complete → CDN push)<br><br>
+            <strong>Why DAG?</strong> Topological sort se execution order determine hota hai, independent tasks parallel run ho sakte hai, cycle detection ensures no deadlock<br><br>
+            <strong>Pros:</strong> Parallel execution of independent tasks, clear dependency management, fault isolation (one task fail = only dependents blocked)<br><br>
+            <strong>Cons:</strong> Complexity in scheduling, needs orchestrator (Airflow/Temporal), retry logic per node<br><br>
+            <strong>Real World:</strong> YouTube uses Borg (K8s predecessor) + custom DAG scheduler for transcoding pipelines</p>
+        </div>
+        <div class="service-card">
+            <h3>Bloom Filter &mdash; Duplicate &amp; Copyright Detection</h3>
+            <p class="svc-desc">800M+ videos me se duplicate check karna expensive hai. Bloom Filter probabilistic data structure hai jo O(1) me "definitely not exists" ya "maybe exists" bata deta hai. Content ID system me audio/video fingerprint check ke liye use hota hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Video fingerprint duplicate check &mdash; upload time pe pehle Bloom Filter check, positive aaye toh full comparison<br><br>
+            <strong>Why Bloom Filter?</strong> 800M video fingerprints store karna HashSet me ~50GB+ RAM lagega, Bloom Filter me ~1GB me same work (with 0.1% false positive rate)<br><br>
+            <strong>Pros:</strong> O(1) lookup, extremely space efficient (10 bits per element), no false negatives guaranteed<br><br>
+            <strong>Cons:</strong> False positives possible (0.1-1%), cannot delete elements (use Counting Bloom Filter for deletion), cannot retrieve stored elements<br><br>
+            <strong>Trade-off:</strong> Memory vs Accuracy &mdash; more bits per element = lower false positive rate. 10 bits/element = 1% FP, 15 bits = 0.1% FP</p>
+        </div>
+    </div>
+</div>
+
 <!-- ============ TRANSCODING PIPELINE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>Architecture &mdash; Transcoding Pipeline</div>
+    <div class="section-title"><span class="section-num">9</span>Architecture &mdash; Transcoding Pipeline</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Upload &rarr; Transcode &rarr; HLS Flow</h3>
@@ -963,7 +1024,7 @@ export default {
 
 <!-- ============ RECOMMENDATION SYSTEM ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Recommendation System</div>
+    <div class="section-title"><span class="section-num">10</span>Recommendation System</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>YouTube Recommendation Algorithm</h3>
@@ -1040,7 +1101,7 @@ export default {
 
 <!-- ============ MONETIZATION & ADS ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">10</span>Monetization &amp; Ads</div>
+    <div class="section-title"><span class="section-num">11</span>Monetization &amp; Ads</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Ad Insertion Engine</h3>
@@ -1120,7 +1181,7 @@ export default {
 
 <!-- ============ CDN & STREAMING ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">11</span>CDN &amp; Streaming Architecture</div>
+    <div class="section-title"><span class="section-num">12</span>CDN &amp; Streaming Architecture</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Edge Caching &amp; Content Delivery</h3>
@@ -1199,7 +1260,7 @@ export default {
 
 <!-- ============ COMPLETE VIDEO FLOW ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">12</span>Complete Video Flow &mdash; End to End</div>
+    <div class="section-title"><span class="section-num">13</span>Complete Video Flow &mdash; End to End</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">End-to-End Flow</span></div><pre class="code-block">
 <span class="cm">========= UPLOAD PHASE =========</span>
 
@@ -1277,7 +1338,7 @@ export default {
 
 <!-- ============ YOUTUBE vs NETFLIX vs TWITCH ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">13</span>YouTube vs Netflix vs Twitch</div>
+    <div class="section-title"><span class="section-num">14</span>YouTube vs Netflix vs Twitch</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>YouTube</h3>
@@ -1311,7 +1372,7 @@ export default {
 
 <!-- ============ BOTTLENECKS & SOLUTIONS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">15</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Transcoding CPU bottleneck (500 hrs/min)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">GPU workers (NVENC), K8s auto-scale by queue depth, priority queue</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">View count hot key (viral video)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Redis INCR buffer, batch flush to DB every 30s, 10 sharded counters</span></div>
@@ -1326,7 +1387,7 @@ export default {
 
 <!-- ============ INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Chunked Upload (TUS)</h4><p>Resumable, parallel chunks with checksum</p></div>
         <div class="summary-card sc-2"><h4>FFmpeg Transcoding</h4><p>Kafka fan-out to GPU workers, 4-8 resolutions</p></div>

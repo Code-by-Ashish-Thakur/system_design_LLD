@@ -753,9 +753,70 @@ export default {
     </div>
 </div>
 
-<!-- ============ 8. ARCHITECTURE ============ -->
+<!-- ============ 8. DATA STRUCTURES & TRADE-OFFS ============ -->
+<div class="section theme-purple">
+    <div class="section-title"><span class="section-num">8</span>Data Structures &amp; Trade-offs</div>
+    <div class="service-grid">
+        <div class="service-card">
+            <h3>Ring Buffer (Jitter Buffer) &mdash; Audio/Video Packet Reordering</h3>
+            <p class="svc-desc">Internet pe packets out-of-order aate hai (packet 5 pehle aa gaya, packet 3 baad me). Jitter Buffer ek Ring Buffer hai jo packets ko temporarily hold karke correct order me play karta hai. Ye video call quality ka backbone hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Audio packets arrive: [5,3,4,1,2] → Ring Buffer reorders → play: [1,2,3,4,5]. Buffer size = 50-200ms of audio/video data<br><br>
+            <strong>Why Ring Buffer?</strong> Fixed memory allocation (no GC pressure during real-time streaming), O(1) read/write, natural circular behavior (old data overwritten automatically)<br><br>
+            <strong>Pros:</strong> O(1) read/write, fixed memory (predictable, no allocation during streaming), zero GC pauses (critical for real-time), lock-free implementation possible (SPSC pattern)<br><br>
+            <strong>Cons:</strong> Fixed capacity (overflow = packet drop = audio glitch), size tuning tricky (too small = gaps, too large = latency), not suitable for variable-rate streams without adaptation<br><br>
+            <strong>Adaptive:</strong> Dynamic jitter buffer &mdash; network stable = buffer shrink (low latency), network unstable = buffer grow (fewer drops). WebRTC does this automatically</p>
+        </div>
+        <div class="service-card">
+            <h3>Priority Queue &mdash; Media Packet Scheduling (QoS)</h3>
+            <p class="svc-desc">Video call me audio &gt; video &gt; screen share priority hai. Network congestion pe audio packets pehle bhejne chahiye (voice intelligibility critical). Priority Queue se QoS enforce hota hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Bandwidth drop 1Mbps → Priority Queue: audio packets (highest) first, then low-res video keyframes, then screen share, then high-res video<br><br>
+            <strong>Why Priority Queue?</strong> FIFO queue me large video frame audio packets ko block kar dega (head-of-line blocking). Priority Queue se audio always cut the line<br><br>
+            <strong>Pros:</strong> O(log n) insert, O(1) highest priority access, QoS enforcement (audio never dropped before video), adaptive to bandwidth changes<br><br>
+            <strong>Cons:</strong> Video starvation during prolonged congestion, priority inversion edge cases, overhead for high packet rates (60fps video = 60 inserts/sec per stream)<br><br>
+            <strong>WebRTC Implementation:</strong> RTCP feedback + REMB (Receiver Estimated Max Bitrate) se dynamic priority adjustment hota hai</p>
+        </div>
+        <div class="service-card">
+            <h3>Consistent Hash Ring &mdash; SFU Server Assignment</h3>
+            <p class="svc-desc">780K concurrent meetings ko SFU servers pe distribute karna hai. Meeting ID hash karke ring pe nearest SFU server assign hota hai. Server fail ho jaaye toh sirf us server ki meetings next server pe migrate hoti hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> hash(meeting_id) → SFU server. New participant joins → same hash → same SFU server pe route. Server down → ring pe next server takes over<br><br>
+            <strong>Why Consistent Hashing?</strong> Modular hashing (meeting_id % N) me server add/remove pe sab meetings rehash = mass disruption. Consistent hashing me sirf 1/N fraction affected<br><br>
+            <strong>Pros:</strong> Minimal disruption on server add/remove (only affected meetings migrate), horizontal scaling (add SFU servers seamlessly), fault tolerant (automatic failover to next node)<br><br>
+            <strong>Cons:</strong> Uneven distribution without virtual nodes (one SFU overloaded), meeting migration = brief audio/video glitch, complexity in geo-aware hashing (prefer nearby SFU)<br><br>
+            <strong>Optimization:</strong> 150-200 virtual nodes per SFU server + geo-weighted hashing (prefer SFU in same region as majority participants)</p>
+        </div>
+        <div class="service-card">
+            <h3>HashMap &mdash; Meeting State &amp; Participant Lookup</h3>
+            <p class="svc-desc">Har meeting ka real-time state maintain karna hai &mdash; participants list, mute status, screen share status, recording state. HashMap me meeting_id → MeetingState O(1) me milta hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> meetings[meeting_id] = {participants: [...], host: userId, recording: true, startTime: T}. Participant join/leave = HashMap update<br><br>
+            <strong>Why HashMap?</strong> Most frequent operation: "is meeting ka state kya hai?" har WebSocket message pe check hota hai. O(1) lookup critical for real-time performance<br><br>
+            <strong>Pros:</strong> O(1) average lookup/insert/delete, simple key-value model, in-memory state for real-time access<br><br>
+            <strong>Cons:</strong> No persistence (server restart = state lost, need Redis backup), no ordering, memory overhead for large meetings (1000 participants), distributed state sync needed across SFU replicas<br><br>
+            <strong>Implementation:</strong> In-memory HashMap on SFU server + Redis backup for crash recovery + Kafka event log for state reconstruction</p>
+        </div>
+        <div class="service-card">
+            <h3>Circular Buffer &mdash; Recording &amp; Screen Share Buffer</h3>
+            <p class="svc-desc">Meeting recording me audio/video frames continuously aate hai. Circular Buffer fixed-size me frames hold karta hai, writer continuously overwrite karta hai oldest data. Recording worker background me S3 pe flush karta hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> 1080p video @ 30fps = 30 frames/sec. Circular Buffer (300 frames = 10 sec buffer) → Recording worker reads → encodes (H.264) → uploads to S3 in 10-sec chunks<br><br>
+            <strong>Why Circular Buffer?</strong> Unbounded buffer = memory explosion (1 hr meeting = 108K frames). Circular Buffer = fixed 300 frames, writer wraps around. Worker must read before overwrite<br><br>
+            <strong>Pros:</strong> Fixed memory (predictable), O(1) write, no allocation during recording, natural sliding window behavior<br><br>
+            <strong>Cons:</strong> Data loss if consumer slow (unread frames overwritten), fixed size = capacity planning needed, not suitable for variable frame rates without adaptation<br><br>
+            <strong>Trade-off:</strong> Buffer too small (1 sec) = frequent S3 uploads (overhead). Buffer too large (60 sec) = more memory + longer data loss window on crash. 10 sec sweet spot</p>
+        </div>
+        <div class="service-card">
+            <h3>B+ Tree &mdash; Meeting History &amp; Recording Index</h3>
+            <p class="svc-desc">User ke past meetings sorted by date dikhane hai, recording search karna hai. B+ Tree indexed database columns se ye queries efficient hoti hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> INDEX(user_id, start_time DESC) &mdash; "Show my meetings this week" = B+ Tree range scan. INDEX(meeting_id, recording_url) for recording lookup<br><br>
+            <strong>Why B+ Tree?</strong> Sorted order on disk, range queries for date-based listing, pagination efficient (leaf nodes linked list)<br><br>
+            <strong>Pros:</strong> O(log n) search, sorted traversal for meeting history, range queries (meetings between date A and B), disk-optimized<br><br>
+            <strong>Cons:</strong> Write overhead for every meeting create/end (rebalancing), not needed for real-time state (use HashMap), overkill for small datasets<br><br>
+            <strong>Separation:</strong> Real-time state = HashMap (in-memory, SFU server). Historical data = B+ Tree (PostgreSQL, persistent). Two different access patterns = two different data structures</p>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 9. ARCHITECTURE ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>Architecture &mdash; WebRTC + SFU Deep Dive</div>
+    <div class="section-title"><span class="section-num">9</span>Architecture &mdash; WebRTC + SFU Deep Dive</div>
 
     <div class="service-grid">
         <div class="service-card">
@@ -862,7 +923,7 @@ Client A &rarr; TURN Server &rarr; Client B
 
 <!-- ============ 8. REAL-TIME COMMUNICATION ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Real-time Communication &mdash; WebSocket Events</div>
+    <div class="section-title"><span class="section-num">10</span>Real-time Communication &mdash; WebSocket Events</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">WebSocket Events &mdash; Server &harr; Client</span></div><pre class="code-block">
 <span class="cm">// ===== SIGNALING EVENTS (WebRTC Setup) =====</span>
 
@@ -921,7 +982,7 @@ Client A &rarr; TURN Server &rarr; Client B
 
 <!-- ============ 9. SCALABILITY ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">10</span>Scalability &amp; High Availability</div>
+    <div class="section-title"><span class="section-num">11</span>Scalability &amp; High Availability</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>SFU Server Scaling</h3>
@@ -1006,7 +1067,7 @@ GET /recordings/rec-001/download
 
 <!-- ============ 10. SECURITY ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">11</span>Security &amp; Privacy</div>
+    <div class="section-title"><span class="section-num">12</span>Security &amp; Privacy</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>E2E Encryption (Insertable Streams)</h3>
@@ -1064,7 +1125,7 @@ Client &rarr; [E2E + DTLS] &rarr; SFU (can't read) &rarr; [E2E + DTLS] &rarr; Cl
 
 <!-- ============ 11. SYSTEM FLOW ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">12</span>Complete Meeting Flow &mdash; End to End</div>
+    <div class="section-title"><span class="section-num">13</span>Complete Meeting Flow &mdash; End to End</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Meeting Lifecycle</span></div><pre class="code-block">
 <span class="cm">// ===== PHASE 1: MEETING CREATION =====</span>
 Host &rarr; POST /meetings &rarr; MeetingService.createMeeting()
@@ -1112,7 +1173,7 @@ Host &rarr; POST /meetings/{id}/end
 
 <!-- ============ 12. KEY DIFFERENCES ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">13</span>Zoom vs Google Meet vs Teams &mdash; Key Differences</div>
+    <div class="section-title"><span class="section-num">14</span>Zoom vs Google Meet vs Teams &mdash; Key Differences</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Zoom</h3>
@@ -1161,7 +1222,7 @@ Host &rarr; POST /meetings/{id}/end
 
 <!-- ============ 13. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">15</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">SFU Server Overload (200+ participants)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Cascaded SFU architecture + geographic routing se nearest SFU assign</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Bandwidth explosion in large meetings</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Simulcast + Active Speaker Detection &mdash; sirf speaker ki HD stream forward</span></div>
@@ -1176,7 +1237,7 @@ Host &rarr; POST /meetings/{id}/end
 
 <!-- ============ 14. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>SFU over Mesh/MCU</h4><p>Best balance of quality, scalability &amp; cost</p></div>
         <div class="summary-card sc-2"><h4>WebRTC Signaling ≠ Media</h4><p>Signaling = SDP+ICE (WebSocket), Media = UDP/DTLS-SRTP</p></div>

@@ -693,9 +693,70 @@ export default {
     </div>
 </div>
 
-<!-- ============ 8. EMAIL PROTOCOLS ============ -->
+<!-- ============ 8. DATA STRUCTURES & TRADE-OFFS ============ -->
+<div class="section theme-purple">
+    <div class="section-title"><span class="section-num">8</span>Data Structures &amp; Trade-offs</div>
+    <div class="service-grid">
+        <div class="service-card">
+            <h3>Inverted Index &mdash; Email Full-Text Search</h3>
+            <p class="svc-desc">Gmail me "flight booking confirmation" search karte ho toh milliseconds me result aata hai &mdash; ye Inverted Index ki power hai. Har word ke against ek list maintain hoti hai ki wo word kin emails me hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> "flight" → [email_101, email_205, email_892], "booking" → [email_101, email_445]. Search "flight booking" = intersection = [email_101]<br><br>
+            <strong>Why Inverted Index?</strong> Forward search (scan every email for keyword) = O(N) per query on billions of emails. Inverted Index = O(1) term lookup + O(k) posting list scan<br><br>
+            <strong>Pros:</strong> Sub-second search on billions of emails, boolean queries (AND/OR/NOT), relevance scoring (TF-IDF/BM25), phrase search with positional index<br><br>
+            <strong>Cons:</strong> Index size (~30-50% of original data), index update latency (new email searchable after few seconds), memory intensive for real-time indexing<br><br>
+            <strong>Implementation:</strong> Elasticsearch/Lucene internally &mdash; per-user index shard for data isolation, background indexing via Kafka pipeline</p>
+        </div>
+        <div class="service-card">
+            <h3>B+ Tree &mdash; Inbox Sorting &amp; Label Index</h3>
+            <p class="svc-desc">Inbox me emails date-wise sorted dikhte hai, label-wise filter hote hai. B+ Tree indexed database columns ye sab efficient banata hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> INDEX(user_id, label, received_date DESC) &mdash; "Show me all INBOX emails sorted by date" = single B+ Tree range scan<br><br>
+            <strong>Why B+ Tree?</strong> Sorted order on disk, composite index pe multi-column queries fast, leaf nodes linked for sequential scan (pagination efficient)<br><br>
+            <strong>Pros:</strong> O(log n) search, sorted traversal for inbox display, range queries (emails from last week), composite indexes for label + date<br><br>
+            <strong>Cons:</strong> Write amplification on every new email (rebalancing), index bloat for users with 1M+ emails, multiple indexes = multiple write costs<br><br>
+            <strong>Alternative:</strong> For write-heavy inboxes (high volume mailing lists), LSM Tree-based storage (Bigtable) better &mdash; append-only writes</p>
+        </div>
+        <div class="service-card">
+            <h3>Trie (Prefix Tree) &mdash; Email Address Auto-Complete</h3>
+            <p class="svc-desc">To field me "ra" type karte hi suggestions aate hai: rahul@gmail.com, rajesh@company.com. Trie har character pe branching karta hai, prefix match O(L) me hota hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Per-user contact Trie built from sent emails + contacts. Type "ra" → traverse to 'r'→'a' node → DFS for all completions ranked by frequency<br><br>
+            <strong>Why Trie?</strong> HashMap me prefix search nahi hota (exact key match only). Trie me partial prefix se bhi all matching contacts mil jaate hai<br><br>
+            <strong>Pros:</strong> O(L) prefix lookup (L = typed characters), all completions from prefix, frequency-weighted suggestions possible<br><br>
+            <strong>Cons:</strong> Memory overhead (pointer per character), rebuild needed when new contacts added, not efficient for small contact lists (simple array filter faster)<br><br>
+            <strong>Optimization:</strong> Compressed Trie (Radix Tree) + top-K cache per node &mdash; popular contacts pre-computed at each prefix level</p>
+        </div>
+        <div class="service-card">
+            <h3>Bloom Filter &mdash; Spam URL Detection</h3>
+            <p class="svc-desc">Gmail ko har email me URLs check karne padte hai ki koi malicious/spam link toh nahi hai. Billions of known spam URLs ka blacklist maintain karna &mdash; Bloom Filter perfect fit hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Email aaya with link → extract URL → Bloom Filter check against 10B+ known spam URLs → "maybe spam" = full verification, "definitely clean" = pass<br><br>
+            <strong>Why Bloom Filter?</strong> 10B spam URLs ka HashSet ~1TB RAM. Bloom Filter me ~12GB (with 0.01% false positive). Har email 0.1ms me check ho jaata hai<br><br>
+            <strong>Pros:</strong> O(1) URL check, fits in memory, no false negatives (no spam URL will pass through unchecked)<br><br>
+            <strong>Cons:</strong> False positives = legitimate URL flagged as spam (0.01%), can't remove URL from blacklist (use Cuckoo Filter for deletion support)<br><br>
+            <strong>Layers:</strong> Bloom Filter (fast pre-filter) → Google Safe Browsing API (detailed check) → ML spam model (content analysis)</p>
+        </div>
+        <div class="service-card">
+            <h3>Priority Queue &mdash; Email Priority &amp; Smart Inbox</h3>
+            <p class="svc-desc">Gmail ka "Important" marker ML model se aata hai. Incoming emails ko priority score milta hai, Priority Queue se high-priority emails pehle process/notify hote hai.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Incoming email → ML model assigns priority score → Priority Queue me insert → high priority emails ke liye immediate push notification, low priority batch process<br><br>
+            <strong>Why Priority Queue?</strong> FIFO queue me important CEO email aur spam newsletter same priority se process hoga. Priority Queue se important emails cut the line<br><br>
+            <strong>Pros:</strong> O(log n) insert, O(1) peek highest priority, natural fit for importance-based processing<br><br>
+            <strong>Cons:</strong> Priority inversion (low priority email starved), rebalancing on priority updates, no efficient search by email ID<br><br>
+            <strong>Real World:</strong> Gmail categories (Primary/Social/Promotions) = 3-tier priority system</p>
+        </div>
+        <div class="service-card">
+            <h3>Queue (FIFO) &mdash; SMTP Delivery &amp; Retry</h3>
+            <p class="svc-desc">Email send karne pe turant deliver nahi hota &mdash; SMTP queue me jaata hai, background workers process karte hai. Failed delivery retry queue me jaata hai with exponential backoff.</p>
+            <p class="svc-desc"><strong>Use Case:</strong> Send email → SMTP Outbound Queue → Worker picks → DNS MX lookup → deliver to recipient server. Fail? → Retry Queue (1min, 5min, 30min, 2hr, 24hr)<br><br>
+            <strong>Why FIFO Queue?</strong> Ordered processing (pehle bheja pehle deliver), backpressure handling (queue full = slow down accepts), crash recovery (persistent queue)<br><br>
+            <strong>Pros:</strong> Ordered delivery, async processing (user ko wait nahi karna), retry with backoff, rate limiting built-in<br><br>
+            <strong>Cons:</strong> Head-of-line blocking (stuck email blocks queue), no priority (use Priority Queue for important emails), queue depth monitoring needed<br><br>
+            <strong>Implementation:</strong> Kafka topic per region, dead letter queue for permanently failed emails after 72 hours of retries</p>
+        </div>
+    </div>
+</div>
+
+<!-- ============ 9. EMAIL PROTOCOLS ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">8</span>Architecture &mdash; Email Protocols (SMTP / IMAP)</div>
+    <div class="section-title"><span class="section-num">9</span>Architecture &mdash; Email Protocols (SMTP / IMAP)</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>SMTP (Simple Mail Transfer Protocol)</h3>
@@ -756,9 +817,9 @@ _dmarc.gmail.com TXT "v=DMARC1; p=reject; rua=..."
     </div>
 </div>
 
-<!-- ============ 9. SPAM DETECTION ============ -->
+<!-- ============ 10. SPAM DETECTION ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">9</span>Spam Detection &amp; Filtering</div>
+    <div class="section-title"><span class="section-num">10</span>Spam Detection &amp; Filtering</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Multi-Layer Spam Filter</h3>
@@ -796,9 +857,9 @@ _dmarc.gmail.com TXT "v=DMARC1; p=reject; rua=..."
     </div>
 </div>
 
-<!-- ============ 10. EMAIL THREADING ============ -->
+<!-- ============ 11. EMAIL THREADING ============ -->
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">10</span>Email Threading &amp; Categorization</div>
+    <div class="section-title"><span class="section-num">11</span>Email Threading &amp; Categorization</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Threading via Headers</h3>
@@ -857,9 +918,9 @@ Subject: Re: Re: Sprint Planning
     </div>
 </div>
 
-<!-- ============ 11. SEARCH ARCHITECTURE ============ -->
+<!-- ============ 12. SEARCH ARCHITECTURE ============ -->
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">11</span>Search Architecture</div>
+    <div class="section-title"><span class="section-num">12</span>Search Architecture</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Gmail Search Operators</h3>
@@ -888,9 +949,9 @@ Subject: Re: Re: Sprint Planning
     </div>
 </div>
 
-<!-- ============ 12. COMPLETE FLOW ============ -->
+<!-- ============ 13. COMPLETE FLOW ============ -->
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">12</span>Complete Email Flow &mdash; End to End</div>
+    <div class="section-title"><span class="section-num">13</span>Complete Email Flow &mdash; End to End</div>
     <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Email Lifecycle</span></div><pre class="code-block">
 <span class="cm">// ===== SENDING (Outbound) =====</span>
 User clicks Send &rarr; POST /emails/send
@@ -940,9 +1001,9 @@ User opens inbox &rarr; GET /inbox (category: PRIMARY)
 </pre></div>
 </div>
 
-<!-- ============ 13. COMPARISONS ============ -->
+<!-- ============ 14. COMPARISONS ============ -->
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">13</span>Gmail vs Outlook vs Yahoo Mail &mdash; Key Differences</div>
+    <div class="section-title"><span class="section-num">14</span>Gmail vs Outlook vs Yahoo Mail &mdash; Key Differences</div>
     <div class="service-grid">
         <div class="service-card">
             <h3>Gmail</h3>
@@ -988,9 +1049,9 @@ User opens inbox &rarr; GET /inbox (category: PRIMARY)
     </div>
 </div>
 
-<!-- ============ 14. BOTTLENECKS ============ -->
+<!-- ============ 15. BOTTLENECKS ============ -->
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">14</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">15</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">300B emails/day processing</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Horizontal SMTP servers, Kafka async processing, sharded storage</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Spam at scale (50%+ of all email)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Multi-layer filter (IP &rarr; auth &rarr; content &rarr; ML), reject at connection level</span></div>
@@ -1003,9 +1064,9 @@ User opens inbox &rarr; GET /inbox (category: PRIMARY)
     </div>
 </div>
 
-<!-- ============ 15. INTERVIEW TIPS ============ -->
+<!-- ============ 16. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>SMTP / IMAP / POP3</h4><p>SMTP = send (push), IMAP = read (pull), MX record routing</p></div>
         <div class="summary-card sc-2"><h4>SPF + DKIM + DMARC</h4><p>Email security trifecta &mdash; prevents spoofing</p></div>
