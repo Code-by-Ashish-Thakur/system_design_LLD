@@ -609,8 +609,418 @@ export default {
     </div>
 </div>
 
+<!-- ============ 9. SEARCH TYPES DEEP DIVE ============ -->
+<div class="section theme-green">
+    <div class="section-title"><span class="section-num">9</span>Search Types &mdash; Complete Deep Dive</div>
+    <p style="color:#b0bec5;font-size:.92em;margin-bottom:20px;line-height:1.6">Har search type ka apna architecture, data structures, capacity estimation aur trade-offs hote hai. Click karke detail me padho.</p>
+    <div class="search-type-accordion">
+
+<!-- ===== TYPEAHEAD / AUTO-COMPLETE SEARCH ===== -->
+<details>
+    <summary>Typeahead / Auto-Complete Search<span class="st-badge">TRIE + TOP-K</span></summary>
+    <div class="st-content">
+        <div class="st-subtitle">What is Typeahead Search?</div>
+        <p style="color:#b0bec5;font-size:.9em;line-height:1.6;margin-bottom:12px">User jab search box me type karta hai, har keystroke pe real-time suggestions dikhte hai. "how to" likhte hi "how to lose weight", "how to code in java" suggest hota hai. Google pe har character type karne pe ~200ms me suggestions aate hai. Ye puri system Trie data structure + precomputed top-K cache pe chalti hai.</p>
+
+        <div class="st-subtitle">Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Prefix Matching</span>User type kare "how t" toh sab queries jo "how t" se start hoti hai wo suggest karni hai &mdash; partial prefix se match</div>
+            <div class="st-card"><span class="st-label">Top-K Suggestions</span>Har prefix ke liye top 10 most popular queries return karna &mdash; ranked by search frequency</div>
+            <div class="st-card"><span class="st-label">Real-time Response</span>Har keystroke pe &lt; 100ms me suggestions aane chahiye &mdash; user ko typing lag feel nahi hona chahiye</div>
+            <div class="st-card"><span class="st-label">Trending Queries</span>Jo abhi trending hai (cricket score, election results) wo suggestions me upar aana chahiye &mdash; freshness factor</div>
+            <div class="st-card"><span class="st-label">Personalization</span>User ki past searches ko higher weight dena &mdash; agar pehle "python" zyada search kiya hai toh "py" pe "python" pehle suggest ho</div>
+            <div class="st-card"><span class="st-label">Spell Tolerance</span>"amzn" type karne pe bhi "amazon" suggest hona chahiye &mdash; fuzzy matching support</div>
+        </div>
+
+        <div class="st-subtitle">Non-Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Latency &lt; 100ms (P99)</span>Har keystroke pe instant response &mdash; 100ms se zyada delay = user frustration. CDN edge caching se achieve karo</div>
+            <div class="st-card"><span class="st-label">Availability 99.99%</span>Search suggestions down = search UX broken. Replicated Trie servers across regions</div>
+            <div class="st-card"><span class="st-label">Scalability &mdash; 8.5B queries/day</span>Millions of concurrent prefix queries handle karne hain &mdash; horizontal sharding by prefix</div>
+            <div class="st-card"><span class="st-label">Freshness &mdash; Minutes</span>Naye trending query 5-10 min me suggestions me aana chahiye &mdash; streaming pipeline for real-time updates</div>
+        </div>
+
+        <div class="st-subtitle">Data Structures Used</div>
+        <p style="margin-bottom:8px"><span class="st-ds-tag">Trie (Prefix Tree)</span><span class="st-ds-tag">Compressed Trie (Radix)</span><span class="st-ds-tag">Min-Heap (Top-K)</span><span class="st-ds-tag">HashMap (Cache)</span><span class="st-ds-tag">Bloom Filter (Offensive Query)</span></p>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Trie</span>Har character ek node &mdash; "how" = h→o→w node path. Prefix "ho" tak traverse karo → subtree me sab queries milti hai. O(L) lookup where L = prefix length<br><br><span class="st-pro">Pros: O(L) prefix search, all completions from any prefix, space sharing for common prefixes</span><br><span class="st-con">Cons: High memory (26+ pointers/node), not cache-friendly, rebuild cost</span></div>
+            <div class="st-card"><span class="st-label">Compressed Trie (Radix Tree)</span>Single-child chains compress karo: h→o→w→ →t→o compress to "how to" ek node me. 60-70% memory saving<br><br><span class="st-pro">Pros: 60% less memory, fewer node traversals, better cache performance</span><br><span class="st-con">Cons: Split/merge complexity on insert/delete, implementation harder</span></div>
+            <div class="st-card"><span class="st-label">Min-Heap (Top-K per node)</span>Har Trie node pe top-10 popular queries pre-computed. Prefix match hone pe direct top-K return karo without DFS<br><br><span class="st-pro">Pros: O(1) top-K lookup at query time, no DFS needed</span><br><span class="st-con">Cons: Update cost (rebuild heap on frequency change), extra memory per node</span></div>
+        </div>
+
+        <div class="st-subtitle">Capacity Estimation</div>
+        <div class="st-grid">
+            <div class="st-card">
+                <span class="st-label">Query Volume</span>
+                <div class="st-cap-row"><span class="calc-label">Total search queries/day</span><span class="calc-value">8.5 Billion</span></div>
+                <div class="st-cap-row"><span class="calc-label">Avg characters typed/query</span><span class="calc-value">5 (before selecting suggestion)</span></div>
+                <div class="st-cap-row"><span class="calc-label">Typeahead requests/day</span><span class="calc-value">8.5B &times; 5 = 42.5 Billion</span></div>
+                <div class="st-cap-row"><span class="calc-label">Typeahead QPS</span><span class="calc-value">~490K QPS</span></div>
+                <div class="st-cap-row"><span class="calc-label">Peak QPS (3x)</span><span class="calc-value">~1.5M QPS</span></div>
+            </div>
+            <div class="st-card">
+                <span class="st-label">Storage</span>
+                <div class="st-cap-row"><span class="calc-label">Unique queries (last 30 days)</span><span class="calc-value">~5 Billion</span></div>
+                <div class="st-cap-row"><span class="calc-label">Avg query length</span><span class="calc-value">20 characters</span></div>
+                <div class="st-cap-row"><span class="calc-label">Trie memory (compressed)</span><span class="calc-value">~50 GB per shard</span></div>
+                <div class="st-cap-row"><span class="calc-label">Top-K cache per node</span><span class="calc-value">~30 GB additional</span></div>
+                <div class="st-cap-row"><span class="calc-label">Total per replica</span><span class="calc-value">~80 GB RAM</span></div>
+            </div>
+            <div class="st-card">
+                <span class="st-label">Infrastructure</span>
+                <div class="st-cap-row"><span class="calc-label">Shards (by prefix a-z, 0-9)</span><span class="calc-value">36 shards</span></div>
+                <div class="st-cap-row"><span class="calc-label">Replicas per shard</span><span class="calc-value">3 (for availability)</span></div>
+                <div class="st-cap-row"><span class="calc-label">Total Trie servers</span><span class="calc-value">~108 servers</span></div>
+                <div class="st-cap-row"><span class="calc-label">Rebuild frequency</span><span class="calc-value">Hourly (incremental)</span></div>
+            </div>
+        </div>
+
+        <div class="st-subtitle">Architecture Flow</div>
+        <div class="flow-container">
+            <div class="flow-box">User types "how t"</div>
+            <div class="flow-arrow">&darr;</div>
+            <div class="flow-box flow-green">Debounce (100ms wait)</div>
+            <div class="flow-arrow">&darr;</div>
+            <div class="flow-box flow-blue">CDN Edge Cache Check</div>
+            <div class="flow-arrow">&darr;</div>
+            <div class="flow-box flow-purple">Shard Router (hash prefix[0] &rarr; shard)</div>
+            <div class="flow-arrow">&darr;</div>
+            <div class="flow-box flow-green">Trie Server: traverse to "how t" node</div>
+            <div class="flow-arrow">&darr;</div>
+            <div class="flow-box flow-blue">Return pre-computed Top-10 from node</div>
+            <div class="flow-arrow">&darr;</div>
+            <div class="flow-box">Display suggestions (&lt; 50ms)</div>
+        </div>
+    </div>
+</details>
+
+<!-- ===== FULL-TEXT SEARCH ===== -->
+<details>
+    <summary>Full-Text Search (Keyword Search)<span class="st-badge">INVERTED INDEX + BM25</span></summary>
+    <div class="st-content">
+        <div class="st-subtitle">What is Full-Text Search?</div>
+        <p style="color:#b0bec5;font-size:.9em;line-height:1.6;margin-bottom:12px">User query type karta hai "best machine learning course" &mdash; search engine 100 Billion indexed pages me se relevant results dhundh ke ranking ke saath return karta hai. Core me Inverted Index hai jo har word ke against documents ki list maintain karta hai, aur BM25/TF-IDF se relevance score calculate hota hai.</p>
+
+        <div class="st-subtitle">Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Multi-word Query</span>"machine learning python" &mdash; saare words ka intersection ya union based on AND/OR operator</div>
+            <div class="st-card"><span class="st-label">Phrase Search</span>"machine learning" (quotes me) &mdash; exact phrase match, words adjacent hone chahiye same order me</div>
+            <div class="st-card"><span class="st-label">Boolean Operators</span>"python AND machine learning NOT java" &mdash; include/exclude terms support</div>
+            <div class="st-card"><span class="st-label">Relevance Ranking</span>BM25 score se rank &mdash; term frequency, document length normalization, inverse doc frequency</div>
+            <div class="st-card"><span class="st-label">Snippet Generation</span>Result me query ke around ka text highlight karke dikhao &mdash; user ko context mile bina click kiye</div>
+            <div class="st-card"><span class="st-label">Pagination</span>10 results per page, "next page" pe agle 10 &mdash; offset-based ya cursor-based pagination</div>
+        </div>
+
+        <div class="st-subtitle">Non-Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Latency &lt; 200ms (P99)</span>Google benchmark: full search results 200ms me. Index in-memory + distributed query execution</div>
+            <div class="st-card"><span class="st-label">Throughput ~100K QPS</span>8.5B queries/day = ~100K QPS average, 300K+ peak. Sharded index + replicas</div>
+            <div class="st-card"><span class="st-label">Index Freshness &lt; 1 hour</span>Breaking news 1 hour me searchable hona chahiye. Real-time indexing pipeline via Kafka</div>
+            <div class="st-card"><span class="st-label">Recall &gt; 95%</span>95%+ relevant pages results me hone chahiye &mdash; missing relevant page = bad search quality</div>
+        </div>
+
+        <div class="st-subtitle">Data Structures Used</div>
+        <p style="margin-bottom:8px"><span class="st-ds-tag">Inverted Index</span><span class="st-ds-tag">Skip List</span><span class="st-ds-tag">B+ Tree</span><span class="st-ds-tag">Compressed Bitmap</span><span class="st-ds-tag">Priority Queue</span></p>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Inverted Index</span>Core DS: "machine" → [doc1:pos3, doc5:pos1, doc99:pos7]. Har term ke liye sorted posting list with positions<br><br><span class="st-pro">Pros: O(1) term lookup, boolean queries fast, phrase search with positional index</span><br><span class="st-con">Cons: Index size 30-50% of original data, update latency, merge cost for AND queries</span></div>
+            <div class="st-card"><span class="st-label">Skip List (Posting List Merge)</span>AND query me 2+ posting lists ka intersection chahiye. Skip List se O(sqrt(n)) jumps possible during merge<br><br><span class="st-pro">Pros: Faster intersection than linear merge, simple implementation</span><br><span class="st-con">Cons: Memory overhead for skip pointers, probabilistic height</span></div>
+            <div class="st-card"><span class="st-label">Priority Queue (Top-K Results)</span>BM25 score calculate karke Top-10 results nikalna &mdash; Min-Heap of size K maintain karo<br><br><span class="st-pro">Pros: O(N log K) for top-K extraction, memory efficient</span><br><span class="st-con">Cons: Score computation per document, distributed aggregation complex</span></div>
+        </div>
+
+        <div class="st-subtitle">Capacity Estimation</div>
+        <div class="st-grid">
+            <div class="st-card">
+                <span class="st-label">Index Size</span>
+                <div class="st-cap-row"><span class="calc-label">Total indexed pages</span><span class="calc-value">100 Billion</span></div>
+                <div class="st-cap-row"><span class="calc-label">Avg page size (text)</span><span class="calc-value">50 KB</span></div>
+                <div class="st-cap-row"><span class="calc-label">Raw text corpus</span><span class="calc-value">~5 PB</span></div>
+                <div class="st-cap-row"><span class="calc-label">Inverted index size (40%)</span><span class="calc-value">~2 PB</span></div>
+                <div class="st-cap-row"><span class="calc-label">Positional index (2x)</span><span class="calc-value">~4 PB total</span></div>
+            </div>
+            <div class="st-card">
+                <span class="st-label">Query Processing</span>
+                <div class="st-cap-row"><span class="calc-label">Avg terms per query</span><span class="calc-value">3.5 words</span></div>
+                <div class="st-cap-row"><span class="calc-label">Posting list fetch per term</span><span class="calc-value">~10K-1M docs</span></div>
+                <div class="st-cap-row"><span class="calc-label">Intersection + scoring</span><span class="calc-value">~50ms per shard</span></div>
+                <div class="st-cap-row"><span class="calc-label">Shards queried parallel</span><span class="calc-value">~100 shards</span></div>
+                <div class="st-cap-row"><span class="calc-label">Merge + re-rank</span><span class="calc-value">~20ms</span></div>
+            </div>
+            <div class="st-card">
+                <span class="st-label">Infrastructure</span>
+                <div class="st-cap-row"><span class="calc-label">Index shards</span><span class="calc-value">~10,000 shards</span></div>
+                <div class="st-cap-row"><span class="calc-label">Replicas per shard</span><span class="calc-value">3</span></div>
+                <div class="st-cap-row"><span class="calc-label">Index servers</span><span class="calc-value">~15,000 servers</span></div>
+                <div class="st-cap-row"><span class="calc-label">RAM per server</span><span class="calc-value">256 GB (hot index in memory)</span></div>
+            </div>
+        </div>
+
+        <div class="st-subtitle">BM25 Scoring Formula</div>
+        <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">BM25 Ranking Algorithm</span></div><pre class="code-block">
+<span class="cm">// BM25 Score for a query Q and document D:</span>
+<span class="cm">// score(Q, D) = SUM for each term t in Q:</span>
+<span class="cm">//   IDF(t) * (tf(t,D) * (k1 + 1)) / (tf(t,D) + k1 * (1 - b + b * |D| / avgdl))</span>
+
+<span class="cm">// IDF(t) = log((N - n(t) + 0.5) / (n(t) + 0.5))</span>
+<span class="cm">//   N = total documents, n(t) = docs containing term t</span>
+<span class="cm">//   Rare terms get higher IDF (more informative)</span>
+
+<span class="cm">// tf(t,D) = frequency of term t in document D</span>
+<span class="cm">//   More occurrences = more relevant (with diminishing returns)</span>
+
+<span class="cm">// |D| / avgdl = document length normalization</span>
+<span class="cm">//   Longer docs naturally have more term matches</span>
+<span class="cm">//   b=0.75: moderate length normalization</span>
+
+<span class="cm">// k1 = 1.2 (term frequency saturation)</span>
+<span class="cm">// b = 0.75 (length normalization weight)</span>
+
+<span class="cm">// Example: Query "machine learning"</span>
+<span class="cm">// Doc A (500 words): "machine"=5, "learning"=3 → high tf, normal length</span>
+<span class="cm">// Doc B (10000 words): "machine"=10, "learning"=8 → high tf, BUT long doc penalized</span>
+<span class="cm">// Result: Doc A ranks higher (better tf-to-length ratio)</span>
+</pre></div>
+    </div>
+</details>
+
+<!-- ===== FUZZY SEARCH / SPELL CORRECTION ===== -->
+<details>
+    <summary>Fuzzy Search / Spell Correction<span class="st-badge">EDIT DISTANCE + SYMSPELL</span></summary>
+    <div class="st-content">
+        <div class="st-subtitle">What is Fuzzy Search?</div>
+        <p style="color:#b0bec5;font-size:.9em;line-height:1.6;margin-bottom:12px">User galat spelling type karta hai "amazn" ya "gogle" &mdash; search engine samajhta hai ki "amazon" ya "google" search karna hai. "Did you mean: amazon?" dikhata hai. Core me Edit Distance (Levenshtein Distance) algorithm hai jo minimum character operations (insert/delete/replace) count karta hai do strings ke beech.</p>
+
+        <div class="st-subtitle">Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">"Did you mean?" Suggestions</span>Misspelled query pe correct spelling suggest karna &mdash; "amazn" → "Did you mean: amazon?"</div>
+            <div class="st-card"><span class="st-label">Auto-Correct</span>Obvious typos auto-correct karna &mdash; "gogle" automatically "google" results dikha de bina ask kiye</div>
+            <div class="st-card"><span class="st-label">Edit Distance &le; 2</span>Maximum 2 character changes tak fuzzy match &mdash; "amazn" (1 edit), "amzon" (1 edit), "amzn" (2 edits)</div>
+            <div class="st-card"><span class="st-label">Context-Aware</span>"python" ke baad "prnt" type kare toh "print" suggest karo, "paint" nahi &mdash; context se correct suggestion</div>
+        </div>
+
+        <div class="st-subtitle">Non-Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Latency &lt; 50ms</span>Spell correction search ke pehle hona chahiye &mdash; total budget 200ms me se 50ms spell check ke liye</div>
+            <div class="st-card"><span class="st-label">Accuracy &gt; 95%</span>95%+ typos correctly identify hone chahiye without false corrections (correct word ko change nahi karna)</div>
+            <div class="st-card"><span class="st-label">Dictionary: 10M+ words</span>English vocabulary + brand names + technical terms + trending words &mdash; continuously updated</div>
+        </div>
+
+        <div class="st-subtitle">Data Structures &amp; Algorithms</div>
+        <p style="margin-bottom:8px"><span class="st-ds-tag">Edit Distance (DP)</span><span class="st-ds-tag">SymSpell</span><span class="st-ds-tag">BK-Tree</span><span class="st-ds-tag">N-gram Index</span><span class="st-ds-tag">Soundex / Metaphone</span></p>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Edit Distance (Levenshtein)</span>Dynamic Programming: dp[i][j] = min operations to convert word1[0..i] to word2[0..j]. Operations: insert, delete, replace. O(m*n) time/space<br><br><span class="st-pro">Pros: Exact minimum distance, handles all edit types, proven correctness</span><br><span class="st-con">Cons: O(m*n) too slow for comparing against 10M dictionary words one by one</span></div>
+            <div class="st-card"><span class="st-label">SymSpell (Symmetric Delete)</span>Pre-compute: har dictionary word ke saare deletions (edit distance 1,2) store karo. Query time: query ke deletions generate karo → HashMap lookup → O(1) match!<br><br><span class="st-pro">Pros: O(1) lookup at query time, 1M+ corrections/sec, pre-computed</span><br><span class="st-con">Cons: High memory for pre-computed deletions (10M words &times; deletions = ~500MB), offline build time</span></div>
+            <div class="st-card"><span class="st-label">BK-Tree (Burkhard-Keller Tree)</span>Metric tree where edit distance is the metric. Query "amazn" with threshold 2 → tree prune karo, sirf relevant subtrees explore karo<br><br><span class="st-pro">Pros: Efficient search (prunes 90%+ tree), works with any distance metric</span><br><span class="st-con">Cons: Build time O(n log n), unbalanced tree possible, slower than SymSpell</span></div>
+            <div class="st-card"><span class="st-label">N-gram Index</span>"amazon" → bi-grams: [am, ma, az, zo, on]. Typo "amazn" → [am, ma, az, zn]. Overlap score = 3/5 = 0.6 → candidate match<br><br><span class="st-pro">Pros: Fast candidate generation, language independent, works with any n</span><br><span class="st-con">Cons: Not exact (overlap != edit distance), false positives need verification</span></div>
+        </div>
+
+        <div class="st-subtitle">Capacity Estimation</div>
+        <div class="st-grid">
+            <div class="st-card">
+                <span class="st-label">Scale</span>
+                <div class="st-cap-row"><span class="calc-label">Queries needing spell check</span><span class="calc-value">~15% of all queries</span></div>
+                <div class="st-cap-row"><span class="calc-label">Spell check QPS</span><span class="calc-value">100K &times; 15% = 15K QPS</span></div>
+                <div class="st-cap-row"><span class="calc-label">Dictionary size</span><span class="calc-value">10M words</span></div>
+                <div class="st-cap-row"><span class="calc-label">SymSpell pre-computed index</span><span class="calc-value">~500 MB RAM</span></div>
+                <div class="st-cap-row"><span class="calc-label">Correction latency</span><span class="calc-value">&lt; 5ms (SymSpell in-memory)</span></div>
+            </div>
+        </div>
+    </div>
+</details>
+
+<!-- ===== SEMANTIC / VECTOR SEARCH ===== -->
+<details>
+    <summary>Semantic / Vector Search<span class="st-badge">EMBEDDINGS + ANN</span></summary>
+    <div class="st-content">
+        <div class="st-subtitle">What is Semantic Search?</div>
+        <p style="color:#b0bec5;font-size:.9em;line-height:1.6;margin-bottom:12px">Traditional search "keyword match" karta hai &mdash; "How to fix car" search karo toh sirf pages jisme ye exact words hai milenge. Semantic search MEANING samajhta hai &mdash; "automobile repair tutorial" bhi result me aayega kyunki meaning same hai. BERT/Word2Vec se text ko vector (numbers) me convert karte hai, phir vector similarity se match hota hai.</p>
+
+        <div class="st-subtitle">Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Meaning-based Matching</span>"cheap flights" search pe "affordable airfare" bhi match hona chahiye &mdash; synonyms, paraphrases understand karo</div>
+            <div class="st-card"><span class="st-label">Intent Understanding</span>"apple" search pe context se decide karo &mdash; tech enthusiast ke liye Apple Inc, chef ke liye apple fruit</div>
+            <div class="st-card"><span class="st-label">Multi-lingual</span>"voiture rouge" (French for "red car") search pe English "red car" results bhi dikhao &mdash; cross-language embeddings</div>
+            <div class="st-card"><span class="st-label">Zero-shot Queries</span>Rare queries jo training data me nahi thi unko bhi handle karo &mdash; generalization through embeddings</div>
+        </div>
+
+        <div class="st-subtitle">Data Structures &amp; Algorithms</div>
+        <p style="margin-bottom:8px"><span class="st-ds-tag">Vector Embeddings (768-dim)</span><span class="st-ds-tag">HNSW Graph</span><span class="st-ds-tag">IVF (Inverted File)</span><span class="st-ds-tag">Product Quantization</span><span class="st-ds-tag">KD-Tree</span></p>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Vector Embeddings</span>BERT/Sentence-BERT se text → 768-dimensional vector. Similar meaning = similar vectors. Cosine similarity se match score<br><br><span class="st-pro">Pros: Captures meaning, handles synonyms, multi-lingual</span><br><span class="st-con">Cons: Model inference latency (~10ms), embedding storage cost, no exact match guarantee</span></div>
+            <div class="st-card"><span class="st-label">HNSW (Hierarchical Navigable Small World)</span>Graph-based ANN (Approximate Nearest Neighbor). Multi-layer graph where top layers are sparse (fast navigation), bottom layers dense (precise)<br><br><span class="st-pro">Pros: O(log n) query time, 95%+ recall, best in-memory ANN performance</span><br><span class="st-con">Cons: High memory (graph + vectors), build time O(n log n), not great for streaming updates</span></div>
+            <div class="st-card"><span class="st-label">IVF (Inverted File Index)</span>Cluster vectors into K groups (K-means). Query time: find nearest clusters → search only those clusters<br><br><span class="st-pro">Pros: Reduces search space drastically, works with PQ for compression</span><br><span class="st-con">Cons: Cluster boundary misses (edge vectors), training required, quality depends on K</span></div>
+        </div>
+
+        <div class="st-subtitle">Capacity Estimation</div>
+        <div class="st-grid">
+            <div class="st-card">
+                <span class="st-label">Vector Storage</span>
+                <div class="st-cap-row"><span class="calc-label">Documents to embed</span><span class="calc-value">100 Billion pages</span></div>
+                <div class="st-cap-row"><span class="calc-label">Vector dimensions</span><span class="calc-value">768 (BERT) &times; 4 bytes</span></div>
+                <div class="st-cap-row"><span class="calc-label">Per vector</span><span class="calc-value">3 KB</span></div>
+                <div class="st-cap-row"><span class="calc-label">Total raw vectors</span><span class="calc-value">~300 PB (impractical!)</span></div>
+                <div class="st-cap-row"><span class="calc-label">With PQ (32x compression)</span><span class="calc-value">~10 PB (still huge)</span></div>
+                <div class="st-cap-row"><span class="calc-label">Practical: top 1B pages only</span><span class="calc-value">~3 TB vectors + HNSW graph</span></div>
+            </div>
+        </div>
+
+        <div class="st-subtitle">Hybrid Approach (Real World)</div>
+        <p style="color:#b0bec5;font-size:.9em;line-height:1.6">Google actual me pure semantic search nahi use karta &mdash; <strong style="color:#e0e0e0">Hybrid approach</strong> hai: pehle Inverted Index se candidate documents nikalo (fast, keyword match), phir BERT re-ranker se semantic score calculate karo (accurate, meaning match). Ye 2-stage approach latency aur accuracy dono balance karta hai.</p>
+    </div>
+</details>
+
+<!-- ===== IMAGE / VISUAL SEARCH ===== -->
+<details>
+    <summary>Image / Visual Search<span class="st-badge">CNN + PERCEPTUAL HASH</span></summary>
+    <div class="st-content">
+        <div class="st-subtitle">What is Image Search?</div>
+        <p style="color:#b0bec5;font-size:.9em;line-height:1.6;margin-bottom:12px">2 types hai: (1) Text-to-Image: "sunset beach" type karo → relevant images dikhao. (2) Reverse Image Search: image upload karo → similar images dhundho (Google Lens). CNN (Convolutional Neural Network) se image ko feature vector me convert karte hai, phir similarity search hota hai.</p>
+
+        <div class="st-subtitle">Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Text-to-Image Search</span>"red car sunset" query pe matching images dikhao &mdash; alt text, surrounding text, aur CLIP embeddings se match</div>
+            <div class="st-card"><span class="st-label">Reverse Image Search</span>User image upload kare → similar images, same product, ya source website dhundho &mdash; Google Lens style</div>
+            <div class="st-card"><span class="st-label">Visual Similarity</span>Color, shape, texture, objects &mdash; same dress different angle bhi match hona chahiye</div>
+            <div class="st-card"><span class="st-label">Safe Search Filter</span>NSFW/adult images filter karna &mdash; ML classifier se categorize before showing results</div>
+        </div>
+
+        <div class="st-subtitle">Data Structures &amp; Algorithms</div>
+        <p style="margin-bottom:8px"><span class="st-ds-tag">CNN Feature Vectors</span><span class="st-ds-tag">Perceptual Hash (pHash)</span><span class="st-ds-tag">CLIP Embeddings</span><span class="st-ds-tag">HNSW (ANN)</span><span class="st-ds-tag">LSH (Locality Sensitive)</span></p>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">CNN Feature Extraction</span>ResNet/EfficientNet se image → 2048-dim feature vector. Similar images have similar vectors. L2 distance ya cosine similarity se match<br><br><span class="st-pro">Pros: Captures visual features (edges, textures, objects), rotation/scale invariant</span><br><span class="st-con">Cons: Model inference ~20ms/image, feature vector storage large, training data needed</span></div>
+            <div class="st-card"><span class="st-label">Perceptual Hash (pHash)</span>Image → resize to 8x8 grayscale → DCT → binary hash. Similar images = similar hash (Hamming distance &le; 5)<br><br><span class="st-pro">Pros: O(1) comparison (XOR), very compact (64 bits/image), exact duplicate detection</span><br><span class="st-con">Cons: Sensitive to heavy edits (crop, overlay), not semantic (same object different scene = different hash)</span></div>
+            <div class="st-card"><span class="st-label">CLIP (OpenAI)</span>Text aur image dono ko same embedding space me project karta hai. "red car" text vector aur red car image vector similar hote hai<br><br><span class="st-pro">Pros: Text-to-image + image-to-image dono ek model se, zero-shot, multi-modal</span><br><span class="st-con">Cons: Large model (~400M params), inference cost high, fine-tuning needs GPU</span></div>
+        </div>
+
+        <div class="st-subtitle">Capacity Estimation</div>
+        <div class="st-grid">
+            <div class="st-card">
+                <span class="st-label">Scale</span>
+                <div class="st-cap-row"><span class="calc-label">Total indexed images</span><span class="calc-value">~50 Billion</span></div>
+                <div class="st-cap-row"><span class="calc-label">Feature vector per image</span><span class="calc-value">2048-dim &times; 4 bytes = 8 KB</span></div>
+                <div class="st-cap-row"><span class="calc-label">Total feature storage</span><span class="calc-value">~400 TB</span></div>
+                <div class="st-cap-row"><span class="calc-label">Image search QPS</span><span class="calc-value">~5K QPS</span></div>
+                <div class="st-cap-row"><span class="calc-label">pHash index (64 bits/img)</span><span class="calc-value">~50 GB</span></div>
+            </div>
+        </div>
+    </div>
+</details>
+
+<!-- ===== GEO / LOCATION SEARCH ===== -->
+<details>
+    <summary>Geo / Location-based Search<span class="st-badge">GEOHASH + R-TREE</span></summary>
+    <div class="st-content">
+        <div class="st-subtitle">What is Geo Search?</div>
+        <p style="color:#b0bec5;font-size:.9em;line-height:1.6;margin-bottom:12px">"Pizza near me", "ATM within 1km" &mdash; user ki location ke basis pe nearby results dikhana. Latitude/longitude coordinates pe spatial indexing hoti hai. Geohash se 2D coordinates ko 1D string me convert karke efficient range queries possible hoti hai.</p>
+
+        <div class="st-subtitle">Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Proximity Search</span>"restaurants within 2km" &mdash; given radius me saare matching places return karo sorted by distance</div>
+            <div class="st-card"><span class="st-label">Bounding Box</span>Map viewport ke andar ke saare results &mdash; top-left (lat1,lng1) to bottom-right (lat2,lng2) rectangle</div>
+            <div class="st-card"><span class="st-label">Distance Calculation</span>Haversine formula se earth surface pe actual distance calculate karo (not straight line)</div>
+            <div class="st-card"><span class="st-label">Local Results Boosting</span>"pizza" search pe nearby pizzerias higher rank pe &mdash; distance-based relevance boosting</div>
+        </div>
+
+        <div class="st-subtitle">Data Structures &amp; Algorithms</div>
+        <p style="margin-bottom:8px"><span class="st-ds-tag">Geohash</span><span class="st-ds-tag">R-Tree</span><span class="st-ds-tag">Quadtree</span><span class="st-ds-tag">S2 Geometry (Google)</span><span class="st-ds-tag">H3 (Uber)</span></p>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Geohash</span>Lat/lng → base32 string. "9q8yyk" = San Francisco area. Same prefix = nearby locations. B+ Tree index on geohash string se range queries fast<br><br><span class="st-pro">Pros: 1D string (indexable in any DB), prefix = proximity, easy caching</span><br><span class="st-con">Cons: Edge cases at boundaries (neighbors can have different prefixes), not uniform cell sizes</span></div>
+            <div class="st-card"><span class="st-label">R-Tree</span>Spatial index for rectangles. Internal nodes = bounding boxes, leaf nodes = actual points. "Find all within box" = tree traversal, prune non-overlapping subtrees<br><br><span class="st-pro">Pros: Efficient range queries, handles 2D naturally, supports polygons/rectangles</span><br><span class="st-con">Cons: Complex implementation, insertion rebalancing expensive, not great for point-only queries</span></div>
+            <div class="st-card"><span class="st-label">Quadtree</span>Space recursively divide into 4 quadrants. Dense areas = deeper tree (more granular). Sparse areas = shallow<br><br><span class="st-pro">Pros: Adaptive resolution (dense areas more detail), simple implementation</span><br><span class="st-con">Cons: Unbalanced tree (hot spots deep), not disk-friendly, rebuild on changes</span></div>
+        </div>
+
+        <div class="st-subtitle">Capacity Estimation</div>
+        <div class="st-grid">
+            <div class="st-card">
+                <span class="st-label">Scale</span>
+                <div class="st-cap-row"><span class="calc-label">Total places indexed (Google Maps)</span><span class="calc-value">~200 Million</span></div>
+                <div class="st-cap-row"><span class="calc-label">Geo search QPS</span><span class="calc-value">~50K QPS</span></div>
+                <div class="st-cap-row"><span class="calc-label">Geohash index size</span><span class="calc-value">~10 GB</span></div>
+                <div class="st-cap-row"><span class="calc-label">R-Tree in-memory</span><span class="calc-value">~20 GB</span></div>
+                <div class="st-cap-row"><span class="calc-label">Avg result latency</span><span class="calc-value">&lt; 50ms</span></div>
+            </div>
+        </div>
+    </div>
+</details>
+
+<!-- ===== REAL-TIME / TRENDING SEARCH ===== -->
+<details>
+    <summary>Real-time / Trending Search<span class="st-badge">SLIDING WINDOW + COUNT-MIN</span></summary>
+    <div class="st-content">
+        <div class="st-subtitle">What is Trending Search?</div>
+        <p style="color:#b0bec5;font-size:.9em;line-height:1.6;margin-bottom:12px">"Trending Now" section me abhi jo zyada search ho raha hai wo dikhata hai &mdash; cricket match score, election results, breaking news. Sliding window + Count-Min Sketch se real-time frequency tracking hota hai bina saare queries store kiye.</p>
+
+        <div class="st-subtitle">Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Top-K Trending</span>Last 1 hour me sabse zyada searched queries &mdash; ranked by velocity (rate of increase, not just count)</div>
+            <div class="st-card"><span class="st-label">Real-time Updates</span>Trending list har 30 sec me refresh hona chahiye &mdash; naya trend 2-5 min me appear hona chahiye</div>
+            <div class="st-card"><span class="st-label">Regional Trending</span>India me alag trending, US me alag &mdash; geo-based trending with regional aggregation</div>
+            <div class="st-card"><span class="st-label">Spike Detection</span>Normally 100 QPS wali query suddenly 10,000 QPS ho jaaye → trending flag laga do</div>
+        </div>
+
+        <div class="st-subtitle">Data Structures &amp; Algorithms</div>
+        <p style="margin-bottom:8px"><span class="st-ds-tag">Count-Min Sketch</span><span class="st-ds-tag">Sliding Window</span><span class="st-ds-tag">Min-Heap (Top-K)</span><span class="st-ds-tag">Exponential Decay</span><span class="st-ds-tag">HyperLogLog</span></p>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Count-Min Sketch</span>Probabilistic frequency counter. 2D array with d hash functions. Increment: hash query → increment d cells. Query: min of d cells = approximate count<br><br><span class="st-pro">Pros: O(1) increment/query, fixed memory (width &times; depth), handles millions of unique queries in ~1MB</span><br><span class="st-con">Cons: Over-counts (never under-counts), no exact count, can't enumerate all stored queries</span></div>
+            <div class="st-card"><span class="st-label">Sliding Window (Time-bucketed)</span>Time ko 1-min buckets me divide karo. Har bucket ka apna Count-Min Sketch. "Last 1 hour" = last 60 buckets sum. Oldest bucket expire karo<br><br><span class="st-pro">Pros: Time-decayed counting, old trends naturally expire, memory bounded</span><br><span class="st-con">Cons: Bucket granularity trade-off (1 min vs 1 sec), memory = buckets &times; sketch size</span></div>
+            <div class="st-card"><span class="st-label">HyperLogLog</span>Unique searchers count karo (not just searches). "IPL" searched 1M times but by only 100K unique users vs "election" 500K times by 400K unique users → election more genuinely trending<br><br><span class="st-pro">Pros: O(1) cardinality estimate, only 12 KB memory per counter, &lt; 1% error</span><br><span class="st-con">Cons: Approximate (not exact), can't tell WHO searched, only unique count</span></div>
+        </div>
+
+        <div class="st-subtitle">Capacity Estimation</div>
+        <div class="st-grid">
+            <div class="st-card">
+                <span class="st-label">Scale</span>
+                <div class="st-cap-row"><span class="calc-label">Queries to track</span><span class="calc-value">100K QPS streaming</span></div>
+                <div class="st-cap-row"><span class="calc-label">Count-Min Sketch size</span><span class="calc-value">~1 MB per time bucket</span></div>
+                <div class="st-cap-row"><span class="calc-label">60 buckets (1 hour window)</span><span class="calc-value">~60 MB total</span></div>
+                <div class="st-cap-row"><span class="calc-label">Top-K heap</span><span class="calc-value">&lt; 1 MB (K=1000)</span></div>
+                <div class="st-cap-row"><span class="calc-label">Update latency</span><span class="calc-value">&lt; 1ms per query</span></div>
+                <div class="st-cap-row"><span class="calc-label">Regional instances</span><span class="calc-value">~50 (per major region)</span></div>
+            </div>
+        </div>
+    </div>
+</details>
+
+<!-- ===== FACETED SEARCH ===== -->
+<details>
+    <summary>Faceted Search (Filtered Search)<span class="st-badge">BITMAP INDEX + AGGREGATION</span></summary>
+    <div class="st-content">
+        <div class="st-subtitle">What is Faceted Search?</div>
+        <p style="color:#b0bec5;font-size:.9em;line-height:1.6;margin-bottom:12px">Amazon pe "laptop" search karo toh left side me filters dikhte hai: Brand (Dell, HP, Lenovo), Price (10K-20K, 20K-50K), Rating (4+ stars). Ye facets hai &mdash; search results ko multiple dimensions se filter karna. Har facet ke saath count bhi dikhta hai ki kitne results available hai.</p>
+
+        <div class="st-subtitle">Functional Requirements</div>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Dynamic Facet Generation</span>Search results ke basis pe available filters dynamically generate karo with counts &mdash; "Brand: Dell (45), HP (32)"</div>
+            <div class="st-card"><span class="st-label">Multi-facet Selection</span>Multiple filters combine karo &mdash; Brand=Dell AND Price=20K-50K AND Rating=4+ → intersection of all filters</div>
+            <div class="st-card"><span class="st-label">Range Facets</span>Price 10K-50K, Date last 7 days &mdash; continuous values ke liye range-based filtering</div>
+            <div class="st-card"><span class="st-label">Facet Count Updates</span>Ek filter select karne pe baaki facets ke counts update hone chahiye &mdash; real-time recalculation</div>
+        </div>
+
+        <div class="st-subtitle">Data Structures &amp; Algorithms</div>
+        <p style="margin-bottom:8px"><span class="st-ds-tag">Bitmap Index</span><span class="st-ds-tag">Roaring Bitmap</span><span class="st-ds-tag">Inverted Index per Facet</span><span class="st-ds-tag">B+ Tree (Range)</span></p>
+        <div class="st-grid">
+            <div class="st-card"><span class="st-label">Bitmap Index</span>Har facet value ke liye ek bitmap: Dell=[1,0,1,0,0,1...], HP=[0,1,0,1,0,0...]. AND = bitwise AND of bitmaps → O(n/64) with 64-bit words<br><br><span class="st-pro">Pros: Blazing fast AND/OR (bitwise ops), compact for low-cardinality facets, popcount = instant count</span><br><span class="st-con">Cons: Sparse bitmaps waste space (solved by Roaring Bitmap), high cardinality facets inefficient</span></div>
+            <div class="st-card"><span class="st-label">Roaring Bitmap</span>Compressed bitmap: dense chunks use bitmap, sparse chunks use sorted arrays. Best of both worlds<br><br><span class="st-pro">Pros: 10-100x compression over plain bitmaps, fast set operations, used by Elasticsearch/Lucene</span><br><span class="st-con">Cons: Complexity in implementation, chunk switching overhead, not trivially parallelizable</span></div>
+        </div>
+
+        <div class="st-subtitle">Capacity Estimation</div>
+        <div class="st-grid">
+            <div class="st-card">
+                <span class="st-label">E-commerce Scale (Amazon)</span>
+                <div class="st-cap-row"><span class="calc-label">Total products</span><span class="calc-value">~350 Million</span></div>
+                <div class="st-cap-row"><span class="calc-label">Facets per category</span><span class="calc-value">~20-50 facets</span></div>
+                <div class="st-cap-row"><span class="calc-label">Bitmap index per facet</span><span class="calc-value">~44 MB (350M bits)</span></div>
+                <div class="st-cap-row"><span class="calc-label">Roaring Bitmap (compressed)</span><span class="calc-value">~2-5 MB per facet</span></div>
+                <div class="st-cap-row"><span class="calc-label">Faceted search latency</span><span class="calc-value">&lt; 100ms (including counts)</span></div>
+            </div>
+        </div>
+    </div>
+</details>
+
+    </div>
+</div>
+
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">9</span>Deep Dive &mdash; Web Crawling Architecture</div>
+    <div class="section-title"><span class="section-num">10</span>Deep Dive &mdash; Web Crawling Architecture</div>
     <div class="section-body">
         <p>Web crawler internet pe systematically pages fetch karta hai. Isme key challenges hain: politeness, duplicate URL detection, aur distributed coordination.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Crawler Architecture</span></div><pre class="code-block">
@@ -681,7 +1091,7 @@ export default {
 </div>
 
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">10</span>Deep Dive &mdash; Inverted Index &amp; TF-IDF</div>
+    <div class="section-title"><span class="section-num">11</span>Deep Dive &mdash; Inverted Index &amp; TF-IDF</div>
     <div class="section-body">
         <p>Inverted index search engine ka heart hai. Normal index me doc → words hota hai, inverted index me <strong>word → list of docs</strong> hota hai. Isi se fast keyword search possible hota hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Inverted Index Example</span></div><pre class="code-block">
@@ -745,7 +1155,7 @@ export default {
 </div>
 
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">11</span>Deep Dive &mdash; PageRank Algorithm</div>
+    <div class="section-title"><span class="section-num">12</span>Deep Dive &mdash; PageRank Algorithm</div>
     <div class="section-body">
         <p><strong>PageRank</strong> Google ka original algorithm hai. Idea simple hai: agar bahut saari important pages kisi page ko link kar rahi hain, toh wo page bhi important hai. Ye ek voting system jaisa hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">PageRank Explained</span></div><pre class="code-block">
@@ -811,7 +1221,7 @@ export default {
 </div>
 
 <div class="section theme-yellow">
-    <div class="section-title"><span class="section-num">12</span>Deep Dive &mdash; Auto-Complete with Trie</div>
+    <div class="section-title"><span class="section-num">13</span>Deep Dive &mdash; Auto-Complete with Trie</div>
     <div class="section-body">
         <p>Search suggestions ke liye <strong>Trie (Prefix Tree)</strong> use hota hai. Trie me har node ek character represent karta hai, aur prefix match bahut fast hota hai &mdash; O(L) time me jahan L prefix ki length hai.</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Java</span></div><pre class="code-block">
@@ -887,7 +1297,7 @@ export default {
 </div>
 
 <div class="section theme-teal">
-    <div class="section-title"><span class="section-num">13</span>Deep Dive &mdash; Complete Search Flow</div>
+    <div class="section-title"><span class="section-num">14</span>Deep Dive &mdash; Complete Search Flow</div>
     <div class="section-body">
         <p>User "best java tutorials" search kare toh pura flow kya hota hai &mdash; end to end samjhte hain:</p>
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">End-to-End Search Flow</span></div><pre class="code-block">
@@ -935,7 +1345,7 @@ export default {
 </div>
 
 <div class="section theme-pink">
-    <div class="section-title"><span class="section-num">14</span>Comparison &mdash; Search Engine Components</div>
+    <div class="section-title"><span class="section-num">15</span>Comparison &mdash; Search Engine Components</div>
     <div class="section-body">
         <div class="code-wrapper"><div class="code-titlebar"><span class="code-dot red"></span><span class="code-dot yellow"></span><span class="code-dot green"></span><span class="code-titlebar-text">Component Comparison</span></div><pre class="code-block">
 <span class="cm">┌─────────────────┬────────────────────┬─────────────────────┬────────────────────┐</span>
@@ -967,7 +1377,7 @@ export default {
 </div>
 
 <div class="section theme-red">
-    <div class="section-title"><span class="section-num">15</span>Bottlenecks &amp; Solutions</div>
+    <div class="section-title"><span class="section-num">16</span>Bottlenecks &amp; Solutions</div>
     <div class="bottleneck-grid">
         <div class="bottleneck-item"><span class="bottleneck-problem">Index too large for single machine (TBs)</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Shard by term range or doc ID, parallel search + merge across 1000s shards</span></div>
         <div class="bottleneck-item"><span class="bottleneck-problem">Crawl speed vs politeness trade-off</span><span class="bottleneck-arrow">&rarr;</span><span class="bottleneck-solution">Per-domain rate limit (1 req/sec), parallel domains, respect robots.txt crawl-delay</span></div>
@@ -979,7 +1389,7 @@ export default {
 </div>
 
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">17</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Inverted Index</h4><p>Core of search &mdash; word &rarr; list of doc IDs</p></div>
         <div class="summary-card sc-2"><h4>TF-IDF Scoring</h4><p>Term frequency &times; inverse document frequency</p></div>
