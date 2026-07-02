@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom'
 import { useState, useEffect } from 'react'
 import BackButton from '../layout/BackButton'
+import TopicSidebar from './TopicSidebar'
 
 const topicModules = import.meta.glob('../../data/topics/*.js')
 
@@ -24,7 +25,8 @@ export default function TopicPage() {
   return (
     <>
       <BackButton />
-      <div className="topic-content">
+      <TopicSidebar key={topicId} />
+      <div className="topic-content has-sidebar">
         <div className="header" style={{ background: topic.headerGradient }}>
           <h1 dangerouslySetInnerHTML={{ __html: topic.title }} />
           <p style={{ color: topic.subtitleColor }} dangerouslySetInnerHTML={{ __html: topic.subtitle }} />

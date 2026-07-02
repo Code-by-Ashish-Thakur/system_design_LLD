@@ -1,5 +1,5 @@
 export const topics = [
-  { id: 'lldtheory', icon: '\u{1F4D6}', title: 'LLD Theory', desc: 'Latency, CAP, Caching, Sharding, SOLID, Design Patterns \u2014 Basic to Advanced Hinglish', tag: '25 Topics', cardClass: 'tc-lldtheory' },
+  { id: 'lldtheory', icon: '\u{1F4D6}', title: 'LLD Theory', desc: 'Latency, CAP, PACELC, ACID, BASE, Little\'s Law, Amdahl\'s Law, Caching, SOLID — Hinglish', tag: '30 Topics', cardClass: 'tc-lldtheory' },
   { id: 'systemdesign', icon: '\u{1F6E0}', title: 'System Design', desc: 'Basic design steps, API optimization, caching, scaling', tag: '3 Sections', cardClass: 'tc-systemdesign' },
   { id: 'oops', icon: '\u2615', title: 'OOPs in Java', desc: 'Encapsulation, Inheritance, Polymorphism, Abstraction \u2014 Hinglish with Code', tag: '8 Sections', cardClass: 'tc-oops' },
   { id: 'whatsapp', icon: '\u{1F4AC}', title: 'WhatsApp', desc: 'Real-time messaging, WebSocket, E2E encryption, group chat', tag: '16 Sections', cardClass: 'tc-whatsapp' },

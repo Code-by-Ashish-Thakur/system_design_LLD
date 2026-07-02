@@ -1425,6 +1425,407 @@ Event sync karta hai write model se read model ko<br><br>
 <span class="cm">// Sab PARALLEL &amp; INDEPENDENT — ek fail toh baaki chalu!</span></pre></div>
 </div>
 
+<!-- 26. Little's Law -->
+<div class="section theme-blue">
+<div class="section-title"><span class="section-num">26</span> Little's Law (Queue Ka Fundamental Rule)</div>
+<p style="color:#b0bec5;margin-bottom:12px;font-size:1.05em"><strong>Kya hai?</strong> — Little's Law ek bahut simple aur powerful formula hai jo batata hai ki kisi bhi stable system mein average kitne items/requests "andar" hain. Formula: <b>L = λ × W</b>. Yeh law har jagah kaam karta hai — restaurants, servers, queues, traffic, sab jagah!</p>
+
+<div class="bottleneck-grid">
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">Formula Samjho</h4>
+<p><b>L = λ × W</b><br><br>
+<b>L</b> = Average number of items in system (kitne requests system mein hain right now)<br>
+<b>λ (Lambda)</b> = Arrival rate (kitne requests per second aa rahe hain)<br>
+<b>W</b> = Average time ek item system mein spend karta hai (latency/wait time)<br><br>
+<em>Simple mein:</em> Agar 10 customers per hour aate hain (λ=10) aur har ek 30 min spend karta hai (W=0.5hr), toh average 5 customers honge andar (L=10×0.5=5)</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">Real Life Examples</h4>
+<p><b>Restaurant:</b><br>60 customers/hour aate hain, har ek 20 min spend karta hai<br>L = 60 × (20/60) = <b>20 customers</b> andar honge average<br><br>
+<b>API Server:</b><br>500 requests/sec (λ), har request 200ms (W=0.2s) leti hai<br>L = 500 × 0.2 = <b>100 concurrent requests</b><br><br>
+<b>Message Queue:</b><br>1000 msgs/sec produce hote hain, processing time 5ms<br>L = 1000 × 0.005 = <b>5 messages</b> average queue mein</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">System Design Mein Use</h4>
+<p><b>1. Server Capacity Planning:</b><br>
+"Kitne concurrent connections handle karne padenge?" → L = λ × W se pata chalega<br><br>
+<b>2. Thread Pool Sizing:</b><br>
+1000 RPS, each request 50ms → L = 1000 × 0.05 = 50 threads minimum chahiye<br><br>
+<b>3. Queue Sizing:</b><br>
+Producer rate aur consumer latency se queue length predict karo<br><br>
+<b>4. Database Connections:</b><br>
+500 QPS, avg query time 10ms → L = 500 × 0.01 = 5 connections minimum</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">Interview Mein Kaise Use Karein?</h4>
+<p><b>Q: "Tumhare system ko 10K RPS handle karna hai, har request 100ms leti hai. Kitne servers chahiye?"</b><br><br>
+<b>Answer:</b><br>
+L = 10,000 × 0.1 = <b>1000 concurrent requests</b><br>
+Agar ek server 200 concurrent handle karta hai → 1000/200 = <b>5 servers minimum</b><br><br>
+<em>Tip:</em> Little's Law se capacity planning ka answer 10 second mein nikaal sakte ho. Interviewer impress hoga!</p>
+</div>
+</div>
+
+<div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">Little's Law — Capacity Planning Calculator</span></div>
+<pre class="code-block"><span class="cm">// Little's Law: L = λ × W</span>
+<span class="cm">// L = avg items in system, λ = arrival rate, W = avg time in system</span>
+
+<span class="cm">// Example 1: API Server Capacity</span>
+<span class="kw">double</span> requestsPerSec = <span class="cn">5000</span>;    <span class="cm">// λ = 5000 RPS</span>
+<span class="kw">double</span> avgLatency     = <span class="cn">0.2</span>;     <span class="cm">// W = 200ms = 0.2s</span>
+<span class="kw">double</span> concurrent     = requestsPerSec * avgLatency; <span class="cm">// L = 1000</span>
+<span class="cm">// → 1000 concurrent requests handle karne ka capacity chahiye</span>
+
+<span class="cm">// Example 2: Thread Pool Size for Database</span>
+<span class="kw">double</span> queriesPerSec  = <span class="cn">2000</span>;    <span class="cm">// λ = 2000 QPS</span>
+<span class="kw">double</span> avgQueryTime   = <span class="cn">0.01</span>;    <span class="cm">// W = 10ms = 0.01s</span>
+<span class="kw">double</span> poolSize       = queriesPerSec * avgQueryTime; <span class="cm">// L = 20</span>
+<span class="cm">// → HikariCP pool size minimum 20 rakhna padega</span>
+
+<span class="cm">// Example 3: Message Queue Planning</span>
+<span class="kw">double</span> produceRate    = <span class="cn">10000</span>;   <span class="cm">// λ = 10K msgs/sec</span>
+<span class="kw">double</span> processTime    = <span class="cn">0.05</span>;    <span class="cm">// W = 50ms per message</span>
+<span class="kw">double</span> queueLength    = produceRate * processTime; <span class="cm">// L = 500</span>
+<span class="cm">// → Average 500 messages queue mein pending honge</span>
+
+<span class="cm">// Pro Tip: Agar L bahut bada ho raha hai → ya toh λ kam karo (rate limit)</span>
+<span class="cm">// ya W kam karo (optimize latency) ya resources badhao (scale)</span></pre></div>
+</div>
+
+<!-- 27. PACELC Theorem -->
+<div class="section theme-purple">
+<div class="section-title"><span class="section-num">27</span> PACELC Theorem (CAP Ka Advanced Version)</div>
+<p style="color:#b0bec5;margin-bottom:12px;font-size:1.05em"><strong>Kya hai?</strong> — CAP Theorem sirf partition ke time ki baat karta hai. But <b>PACELC</b> kehta hai: "Partition ke time <b>A vs C</b> choose karo, <b>Else</b> (normal time) <b>Latency vs Consistency</b> choose karo." Yeh real-world systems ko zyada accurately describe karta hai.</p>
+
+<div class="bottleneck-grid">
+<div class="bottleneck-card">
+<h4 style="color:#b388ff">Full Form Samjho</h4>
+<p><b>P</b> — if there is a <b>Partition</b><br>
+<b>A</b> — choose <b>Availability</b><br>
+<b>C</b> — or choose <b>Consistency</b><br>
+<b>E</b> — <b>Else</b> (jab partition nahi hai)<br>
+<b>L</b> — choose <b>Latency</b> (fast response)<br>
+<b>C</b> — or choose <b>Consistency</b> (correct data)<br><br>
+<em>Matlab:</em> "Partition hai toh A ya C choose karo. Nahi hai toh L ya C choose karo."</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#b388ff">CAP vs PACELC</h4>
+<p><b>CAP Problem:</b><br>
+CAP sirf extreme case (network partition) ki baat karta hai. Normal operations mein kya tradeoff hai — yeh CAP nahi batata.<br><br>
+<b>PACELC Addition:</b><br>
+Normal time mein bhi ek tradeoff hai — agar data ko sab nodes pe sync karoge (Consistency) toh latency badhegi. Agar fast response chahiye (Low Latency) toh eventual consistency accept karna padega.<br><br>
+<em>PACELC = CAP + normal operation tradeoff</em></p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#b388ff">Real World Database Examples</h4>
+<p><b>DynamoDB — PA/EL:</b><br>
+Partition → Availability choose karo<br>
+Else → Low Latency choose karo<br>
+(Fast read, eventual consistency by default)<br><br>
+<b>MongoDB — PA/EC:</b><br>
+Partition → Availability<br>
+Else → Consistency (strong reads from primary)<br><br>
+<b>HBase — PC/EC:</b><br>
+Partition → Consistency<br>
+Else → Consistency<br>
+(Always consistent — banking ke liye best)</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#b388ff">Interview Mein Kaise Bolein?</h4>
+<p><b>Q: "CAP se zyada realistic theorem kya hai?"</b><br><br>
+<b>Answer:</b> "PACELC theorem, because CAP sirf partition failure ke scenario cover karta hai. Lekin real life mein 99.9% time partition hota hi nahi — tab bhi Latency vs Consistency ka tradeoff rehta hai. PACELC dono scenarios cover karta hai."<br><br>
+<b>Q: "Cassandra ka PACELC classification kya hai?"</b><br>
+<b>A:</b> "PA/EL — Partition pe Available, normal time pe Low Latency. Isliye real-time analytics aur high-write systems mein use hota hai."</p>
+</div>
+</div>
+
+<div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">PACELC — Database Classification Table</span></div>
+<pre class="code-block"><span class="cm">// PACELC Classification of Popular Databases</span>
+<span class="cm">// Format: Database → P(A/C) / E(L/C)</span>
+
+<span class="cm">// ┌──────────────────┬────────────┬────────────┬────────────────────┐</span>
+<span class="cm">// │ Database         │ Partition  │ Else       │ Use Case           │</span>
+<span class="cm">// ├──────────────────┼────────────┼────────────┼────────────────────┤</span>
+<span class="cm">// │ DynamoDB         │ PA         │ EL         │ E-commerce, Gaming │</span>
+<span class="cm">// │ Cassandra        │ PA         │ EL         │ Analytics, IoT     │</span>
+<span class="cm">// │ MongoDB          │ PA         │ EC         │ General purpose    │</span>
+<span class="cm">// │ HBase            │ PC         │ EC         │ Banking, Finance   │</span>
+<span class="cm">// │ PostgreSQL       │ PC         │ EC         │ Traditional RDBMS  │</span>
+<span class="cm">// │ CockroachDB      │ PC         │ EC         │ Global SQL         │</span>
+<span class="cm">// │ Couchbase        │ PA         │ EL         │ Mobile, Caching    │</span>
+<span class="cm">// └──────────────────┴────────────┴────────────┴────────────────────┘</span>
+
+<span class="cm">// Key Insight:</span>
+<span class="cm">// PA/EL → Speed-focused (social media, gaming, caching)</span>
+<span class="cm">// PC/EC → Safety-focused (banking, transactions, inventory)</span>
+<span class="cm">// PA/EC → Balanced (general purpose apps)</span></pre></div>
+</div>
+
+<!-- 28. Amdahl's Law -->
+<div class="section theme-orange">
+<div class="section-title"><span class="section-num">28</span> Amdahl's Law (Parallel Processing Ki Limit)</div>
+<p style="color:#b0bec5;margin-bottom:12px;font-size:1.05em"><strong>Kya hai?</strong> — Amdahl's Law batata hai ki kisi task ko parallel processing se kitna fast kar sakte ho. Agar task ka kuch part serial hai (parallel nahi ho sakta), toh chahe infinite CPUs/servers lagao — usse zyada speedup kabhi nahi milega. <b>Bottleneck wahi serial part hai!</b></p>
+
+<div class="bottleneck-grid">
+<div class="bottleneck-card">
+<h4 style="color:#ffab40">Formula</h4>
+<p><b>Speedup = 1 / (S + P/N)</b><br><br>
+<b>S</b> = Serial fraction (jo part parallel nahi ho sakta) — e.g., 0.1 means 10% serial<br>
+<b>P</b> = Parallel fraction (1 - S) — e.g., 0.9 means 90% parallel<br>
+<b>N</b> = Number of processors/servers<br><br>
+<b>Example:</b> Agar 20% kaam serial hai (S=0.2):<br>
+2 CPUs → Speedup = 1/(0.2+0.8/2) = <b>1.67x</b><br>
+10 CPUs → Speedup = 1/(0.2+0.8/10) = <b>3.57x</b><br>
+∞ CPUs → Speedup = 1/0.2 = <b>5x MAX</b><br>
+<em>20% serial → maximum 5x fast ho sakta hai, chahe 1000 CPUs lagao!</em></p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#ffab40">System Design Mein Kahan Use Hota Hai?</h4>
+<p><b>1. Horizontal Scaling Decision:</b><br>
+Agar 30% code sequential hai → max 3.3x improvement. More servers = waste!<br><br>
+<b>2. Microservices Decomposition:</b><br>
+Jo service sequential bottleneck hai usko identify karo — parallel karne se pehle serial part optimize karo<br><br>
+<b>3. Database Query Optimization:</b><br>
+Parallel queries tabhi help karengi jab koi sequential dependency na ho (joins, locks)<br><br>
+<b>4. MapReduce / Big Data:</b><br>
+Map phase parallel hai, Reduce phase serial-ish → Amdahl's Law limit karta hai</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#ffab40">Real World Examples</h4>
+<p><b>E-commerce Order Flow:</b><br>
+Serial: Validate order → Check payment<br>
+Parallel: Update inventory + Send email + Generate invoice<br>
+Serial part = 40%, toh max speedup = 2.5x<br><br>
+<b>Web Server:</b><br>
+Serial: Parse request, build response<br>
+Parallel: DB calls, API calls, cache lookups<br>
+Serial part = 10%, max speedup = 10x<br><br>
+<b>Video Processing:</b><br>
+Serial: Read file header<br>
+Parallel: Process frames (highly parallelizable!)<br>
+Serial part = 2%, max speedup = 50x</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#ffab40">Key Takeaways</h4>
+<p><b>1.</b> Pehle serial bottleneck dhundho, usse optimize karo — servers add karna baad mein<br><br>
+<b>2.</b> Agar 50% kaam serial hai → max 2x improvement. More servers = waste of money<br><br>
+<b>3.</b> Interview mein bolo: "Before scaling horizontally, main Amdahl's Law check karunga — identify karunga ki kitna kaam actually parallel ho sakta hai"<br><br>
+<b>4.</b> Amdahl's Law + Little's Law = powerful combo for capacity planning<br><br>
+<em>Rule of thumb: Serial part ko kam karo, tabhi scaling ka fayda milega!</em></p>
+</div>
+</div>
+
+<div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">Amdahl's Law — Speedup Calculator</span></div>
+<pre class="code-block"><span class="cm">// Amdahl's Law: Speedup = 1 / (S + P/N)</span>
+<span class="cm">// S = serial fraction, P = parallel fraction (1-S), N = processors</span>
+
+<span class="kw">public class</span> <span class="tp">AmdahlsLaw</span> {
+    <span class="kw">public static double</span> <span class="fn">maxSpeedup</span>(<span class="kw">double</span> serialFraction, <span class="kw">int</span> processors) {
+        <span class="kw">double</span> parallelFraction = <span class="cn">1.0</span> - serialFraction;
+        <span class="kw">return</span> <span class="cn">1.0</span> / (serialFraction + parallelFraction / processors);
+    }
+
+    <span class="kw">public static void</span> <span class="fn">main</span>(<span class="tp">String</span>[] args) {
+        <span class="kw">double</span> serial = <span class="cn">0.1</span>;  <span class="cm">// 10% kaam serial hai</span>
+
+        System.out.<span class="fn">println</span>(<span class="st">"Serial fraction: "</span> + (serial * <span class="cn">100</span>) + <span class="st">"%"</span>);
+        System.out.<span class="fn">println</span>(<span class="st">"-----------------------------------"</span>);
+
+        <span class="kw">int</span>[] cores = {<span class="cn">1</span>, <span class="cn">2</span>, <span class="cn">4</span>, <span class="cn">8</span>, <span class="cn">16</span>, <span class="cn">64</span>, <span class="cn">1024</span>};
+        <span class="kw">for</span> (<span class="kw">int</span> n : cores) {
+            System.out.<span class="fn">printf</span>(<span class="st">"%4d cores → %.2fx speedup%n"</span>, n, <span class="fn">maxSpeedup</span>(serial, n));
+        }
+        <span class="cm">// Output:
+        //    1 cores → 1.00x speedup
+        //    2 cores → 1.82x speedup
+        //    4 cores → 3.08x speedup
+        //    8 cores → 4.71x speedup
+        //   16 cores → 6.40x speedup
+        //   64 cores → 8.77x speedup
+        // 1024 cores → 9.91x speedup  ← 10% serial → max ~10x!</span>
+
+        System.out.<span class="fn">println</span>(<span class="st">"Max theoretical speedup: "</span> + (<span class="cn">1.0</span>/serial) + <span class="st">"x"</span>);
+        <span class="cm">// Max = 10x — chahe infinite cores lagao!</span>
+    }
+}</pre></div>
+</div>
+
+<!-- 29. ACID Properties -->
+<div class="section theme-teal">
+<div class="section-title"><span class="section-num">29</span> ACID Properties (Database Transaction Ka Foundation)</div>
+<p style="color:#b0bec5;margin-bottom:12px;font-size:1.05em"><strong>Kya hai?</strong> — ACID woh 4 guarantees hain jo ek reliable database transaction ko milti hain. Banking, payment, inventory — jahan bhi data 100% correct chahiye wahan ACID mandatory hai. Agar ACID nahi toh data corrupt ho sakta hai!</p>
+
+<div class="bottleneck-grid">
+<div class="bottleneck-card">
+<h4 style="color:#64ffda">A — Atomicity (All or Nothing)</h4>
+<p><b>Matlab:</b> Transaction ya toh <b>poora complete</b> hoga ya <b>poora rollback</b> hoga. Beech mein half-done state kabhi nahi hoga.<br><br>
+<b>Example — Bank Transfer:</b><br>
+Step 1: A ke account se ₹500 minus<br>
+Step 2: B ke account mein ₹500 plus<br><br>
+Agar Step 2 fail ho gaya → Step 1 bhi <b>rollback</b> hoga. Paisa gaya nahi gayab — A ke account mein wapas.<br><br>
+<em>Bina Atomicity:</em> ₹500 A se gaye, B ko nahi mile = paisa havaa mein!</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#64ffda">C — Consistency (Valid State Only)</h4>
+<p><b>Matlab:</b> Transaction ke baad database <b>hamesha valid state</b> mein hoga. Koi rule/constraint violate nahi hoga.<br><br>
+<b>Example:</b><br>
+Rule: Account balance kabhi negative nahi ho sakta.<br>
+A ka balance: ₹300<br>
+A tries to send ₹500 → Transaction <b>REJECT</b>!<br>
+DB consistent rahi — negative balance nahi hua.<br><br>
+<b>Constraints kya hote hain?</b><br>
+Foreign keys, unique constraints, check constraints, NOT NULL — sab consistency enforce karte hain.</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#64ffda">I — Isolation (Ek Doosre Se Independent)</h4>
+<p><b>Matlab:</b> Multiple transactions ek saath chal rahi hain toh ek doosre ko <b>affect nahi karengi</b>. Har transaction ko lagta hai ki woh akeli chal rahi hai.<br><br>
+<b>Example:</b><br>
+T1: A ka balance read karo (₹1000)<br>
+T2: A ke account mein ₹500 add karo<br>
+T1 ko purana ₹1000 dikhega ya naya ₹1500 — depend karta hai isolation level pe:<br><br>
+<b>Levels:</b> READ UNCOMMITTED → READ COMMITTED → REPEATABLE READ → SERIALIZABLE<br>
+<em>Jitna strict isolation, utna slow — tradeoff hai!</em></p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#64ffda">D — Durability (Permanent Save)</h4>
+<p><b>Matlab:</b> Ek baar transaction commit ho gaya → data <b>permanently saved</b> hai. Server crash ho jaaye, light chali jaaye — data safe rahega.<br><br>
+<b>Kaise hota hai?</b><br>
+<b>1. WAL (Write-Ahead Log):</b> Pehle log likhta hai, phir data — crash pe log se recover<br>
+<b>2. Disk Flush:</b> RAM se disk pe force write<br>
+<b>3. Replication:</b> Multiple copies alag servers pe<br><br>
+<b>Example:</b> UPI payment successful hua → phone band ho gaya → transaction safe hai because durability guarantee.</p>
+</div>
+</div>
+
+<div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">ACID — Spring Boot Transaction Example</span></div>
+<pre class="code-block"><span class="cm">// ACID Transaction in Spring Boot — Bank Transfer</span>
+
+<span class="ann">@Service</span>
+<span class="kw">public class</span> <span class="tp">BankService</span> {
+
+    <span class="ann">@Transactional</span>  <span class="cm">// ← Yeh ACID guarantee deta hai!</span>
+    <span class="kw">public void</span> <span class="fn">transferMoney</span>(<span class="tp">Long</span> fromId, <span class="tp">Long</span> toId, <span class="tp">BigDecimal</span> amount) {
+
+        <span class="cm">// ATOMICITY: Dono operations ek unit mein — fail hoga toh dono rollback</span>
+        <span class="tp">Account</span> from = accountRepo.<span class="fn">findById</span>(fromId)
+            .<span class="fn">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">RuntimeException</span>(<span class="st">"Account not found"</span>));
+        <span class="tp">Account</span> to = accountRepo.<span class="fn">findById</span>(toId)
+            .<span class="fn">orElseThrow</span>(() -> <span class="kw">new</span> <span class="tp">RuntimeException</span>(<span class="st">"Account not found"</span>));
+
+        <span class="cm">// CONSISTENCY: Balance negative nahi hoga</span>
+        <span class="kw">if</span> (from.<span class="fn">getBalance</span>().<span class="fn">compareTo</span>(amount) < <span class="cn">0</span>) {
+            <span class="kw">throw new</span> <span class="tp">InsufficientFundsException</span>(<span class="st">"Balance kam hai!"</span>);
+            <span class="cm">// Transaction rollback → kuch nahi hoga</span>
+        }
+
+        <span class="cm">// ISOLATION: Doosri transaction yeh half state nahi dekh sakti</span>
+        from.<span class="fn">setBalance</span>(from.<span class="fn">getBalance</span>().<span class="fn">subtract</span>(amount));
+        to.<span class="fn">setBalance</span>(to.<span class="fn">getBalance</span>().<span class="fn">add</span>(amount));
+
+        accountRepo.<span class="fn">save</span>(from);
+        accountRepo.<span class="fn">save</span>(to);
+        <span class="cm">// DURABILITY: Commit hone ke baad disk pe permanently saved</span>
+    }
+}
+
+<span class="cm">// Isolation Levels in Spring Boot:</span>
+<span class="ann">@Transactional</span>(isolation = Isolation.READ_COMMITTED)     <span class="cm">// Default — safe enough</span>
+<span class="ann">@Transactional</span>(isolation = Isolation.REPEATABLE_READ)     <span class="cm">// Stricter</span>
+<span class="ann">@Transactional</span>(isolation = Isolation.SERIALIZABLE)        <span class="cm">// Safest but slowest</span>
+
+<span class="cm">// Rollback control:</span>
+<span class="ann">@Transactional</span>(rollbackFor = Exception.<span class="kw">class</span>)  <span class="cm">// Checked exceptions pe bhi rollback</span>
+<span class="ann">@Transactional</span>(noRollbackFor = EmailException.<span class="kw">class</span>)  <span class="cm">// Email fail pe rollback mat karo</span></pre></div>
+</div>
+
+<!-- 30. BASE Properties -->
+<div class="section theme-pink">
+<div class="section-title"><span class="section-num">30</span> BASE Properties (NoSQL Ka Foundation — ACID Ka Opposite)</div>
+<p style="color:#b0bec5;margin-bottom:12px;font-size:1.05em"><strong>Kya hai?</strong> — BASE woh approach hai jo NoSQL databases use karti hain. ACID strict consistency deta hai (banking), but BASE flexibility deta hai — "data thodi der mein consistent hoga, but system hamesha available rahega." Social media, e-commerce jaise systems BASE follow karte hain.</p>
+
+<div class="bottleneck-grid">
+<div class="bottleneck-card">
+<h4 style="color:#ff80ab">BA — Basically Available</h4>
+<p><b>Matlab:</b> System <b>hamesha response dega</b> — chahe kuch nodes down ho jaayein. Ho sakta hai response mein thoda purana data ho, but system available rahega.<br><br>
+<b>Example:</b><br>
+Amazon pe ek product ka price 2 alag servers pe alag dikh raha hai — ₹499 aur ₹479. Dono serve kar rahe hain (available!), consistency thodi der mein aayegi.<br><br>
+<b>ACID mein:</b> Jab tak sab nodes agree na karein, koi response nahi → user wait karega.<br>
+<b>BASE mein:</b> Turant response — "available first!"</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#ff80ab">S — Soft State</h4>
+<p><b>Matlab:</b> System ki state <b>time ke saath change ho sakti hai</b> — bina kisi external input ke bhi. Data expire ho sakta hai, sync ho sakta hai, update ho sakta hai automatically.<br><br>
+<b>Example:</b><br>
+<b>1. Cache expiry:</b> Redis mein data tha → TTL expire hua → data automatically gaya<br>
+<b>2. Replication lag:</b> Primary pe write hua → Replica pe 2 sec baad reflect hua — beech mein "soft" state<br>
+<b>3. Session data:</b> User ka session 30 min baad expire → state change<br><br>
+<em>ACID mein state "hard" hoti hai — sirf explicit transaction se badalti hai.</em></p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#ff80ab">E — Eventual Consistency</h4>
+<p><b>Matlab:</b> Abhi data inconsistent ho sakta hai, but <b>eventually (thodi der mein) sab nodes pe same data</b> hoga.<br><br>
+<b>Example:</b><br>
+Instagram pe photo upload ki → Tumhare friend ko 3 sec baad dikhi → Eventually consistent!<br><br>
+<b>Real Implementation:</b><br>
+<b>1. DNS:</b> Domain update → 24-48 hrs mein globally propagate<br>
+<b>2. DynamoDB:</b> Write → milliseconds mein sab replicas sync<br>
+<b>3. WhatsApp:</b> Last seen update → thodi delay se sabko dikhe<br><br>
+<em>Acceptable jab: Social media, search index, analytics, recommendations</em><br>
+<em>NOT acceptable jab: Banking, inventory count, ticket booking</em></p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#ff80ab">ACID vs BASE — Comparison</h4>
+<p><b>ACID:</b> Strong consistency, slow, less scalable<br>
+→ SQL databases (PostgreSQL, MySQL, Oracle)<br>
+→ Banking, Healthcare, Finance<br><br>
+<b>BASE:</b> Eventual consistency, fast, highly scalable<br>
+→ NoSQL databases (Cassandra, DynamoDB, MongoDB)<br>
+→ Social media, E-commerce catalog, Analytics<br><br>
+<b>Interview Answer:</b><br>
+"Payment system → ACID (₹1 bhi galat nahi hona chahiye)<br>
+Product catalog → BASE (price 2 sec delay se update ho toh chalega, but app down nahi hona chahiye)"</p>
+</div>
+</div>
+
+<div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">ACID vs BASE — When To Use What</span></div>
+<pre class="code-block"><span class="cm">// ACID vs BASE Decision Guide</span>
+
+<span class="cm">// ┌────────────────────┬──────────────────┬──────────────────┐</span>
+<span class="cm">// │ Feature            │ ACID             │ BASE             │</span>
+<span class="cm">// ├────────────────────┼──────────────────┼──────────────────┤</span>
+<span class="cm">// │ Consistency        │ Strong (turant)  │ Eventual (delay) │</span>
+<span class="cm">// │ Availability       │ Sacrifice karta  │ Priority hai     │</span>
+<span class="cm">// │ Scalability        │ Vertical (1 box) │ Horizontal (N)   │</span>
+<span class="cm">// │ Performance        │ Slower (locks)   │ Faster (no lock) │</span>
+<span class="cm">// │ Data Model         │ Structured (SQL) │ Flexible (NoSQL) │</span>
+<span class="cm">// │ Use Case           │ Transactions     │ Big data, feeds  │</span>
+<span class="cm">// └────────────────────┴──────────────────┴──────────────────┘</span>
+
+<span class="cm">// Real System Example: E-Commerce Platform</span>
+
+<span class="cm">// ACID use karo yahan:</span>
+<span class="ann">@Transactional</span>  <span class="cm">// PostgreSQL — ACID</span>
+<span class="kw">public void</span> <span class="fn">processPayment</span>(<span class="tp">Order</span> order) {
+    deductBalance(order.getUserId(), order.getAmount());   <span class="cm">// ₹ accurate hona chahiye</span>
+    updateInventory(order.getProductId(), -<span class="cn">1</span>);             <span class="cm">// Stock count correct</span>
+    createOrderRecord(order);                               <span class="cm">// Order save</span>
+    <span class="cm">// Sab ya kuch nahi — ACID Atomicity!</span>
+}
+
+<span class="cm">// BASE use karo yahan:</span>
+<span class="kw">public void</span> <span class="fn">updateProductCatalog</span>(<span class="tp">Product</span> product) {
+    dynamoDB.<span class="fn">putItem</span>(product);  <span class="cm">// DynamoDB — BASE</span>
+    <span class="cm">// Price update 2-3 sec mein sab regions mein propagate hoga</span>
+    <span class="cm">// Eventual consistency acceptable hai yahan</span>
+    <span class="cm">// But system hamesha available rahega — 100M users ke liye zaroori!</span>
+}
+
+<span class="cm">// Interview Pro Tip:</span>
+<span class="cm">// "Mere system mein payment service ACID follow karegi (PostgreSQL)</span>
+<span class="cm">// aur product catalog service BASE follow karegi (DynamoDB)</span>
+<span class="cm">// — kyunki dono ki requirements alag hain!"</span></pre></div>
+</div>
+
 <!-- FINAL: Interview Cheat Sheet -->
 <div class="section theme-purple">
 <div class="section-title"><span class="section-num">&#127942;</span> Master Cheat Sheet — Interview Quick Revision</div>
@@ -1435,6 +1836,8 @@ Event sync karta hai write model se read model ko<br><br>
 <div class="summary-card"><h4>Communication</h4><p><b>Sync:</b> REST/gRPC | <b>Async:</b> Kafka/RabbitMQ | <b>Real-time:</b> WebSocket | <b>Events:</b> Pub/Sub | At-least-once + Idempotency = safe</p></div>
 <div class="summary-card"><h4>Architecture</h4><p><b>Start:</b> Monolith → Scale: Microservices | <b>Gateway:</b> Auth + Rate limit + Route | <b>Patterns:</b> Strategy, Factory, Observer, Builder</p></div>
 <div class="summary-card"><h4>Resilience</h4><p><b>Circuit Breaker:</b> CLOSED→OPEN→HALF-OPEN | <b>Retry:</b> Exponential backoff | <b>Saga:</b> Distributed tx | <b>Idempotency:</b> UUID key + Redis cache</p></div>
+<div class="summary-card"><h4>Theorems & Laws</h4><p><b>Little's Law:</b> L=λ×W (capacity planning) | <b>Amdahl's Law:</b> Speedup=1/(S+P/N) (scaling limit) | <b>CAP:</b> Pick 2 of C,A,P | <b>PACELC:</b> CAP + Latency vs Consistency tradeoff in normal ops</p></div>
+<div class="summary-card"><h4>ACID vs BASE</h4><p><b>ACID:</b> Atomicity, Consistency, Isolation, Durability → SQL, Banking | <b>BASE:</b> Basically Available, Soft state, Eventual consistency → NoSQL, Social media | Payment=ACID, Catalog=BASE</p></div>
 </div>
 </div>
 
