@@ -932,9 +932,295 @@ Client: Split file into 4MB blocks, compute SHA-256 per block
     </div>
 </div>
 
-<!-- ============ 16. INTERVIEW TIPS ============ -->
+<!-- ============ 16. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">16</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">storageQuota</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">storageUsed</span><span class="uml-type">Long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFiles()</span><span class="uml-type">List&lt;File&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFolders()</span><span class="uml-type">List&lt;Folder&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRemainingQuota()</span><span class="uml-type">Long</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>File</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">folderId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">contentHash</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">syncStatus</span><span class="uml-type">SyncStatus</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getVersions()</span><span class="uml-type">List&lt;FileVersion&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getShares()</span><span class="uml-type">List&lt;Share&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">computeDelta()</span><span class="uml-type">byte[]</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Folder</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">parentFolderId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFiles()</span><span class="uml-type">List&lt;File&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSubFolders()</span><span class="uml-type">List&lt;Folder&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPath()</span><span class="uml-type">String</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>FileVersion</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">versionNumber</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileSize</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">contentHash</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">createdBy</span><span class="uml-type">Long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">restore()</span><span class="uml-type">File</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">download()</span><span class="uml-type">byte[]</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Share</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">sharedBy</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">sharedWith</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">permission</span><span class="uml-type">SharePermission</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">expiresAt</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isExpired()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">revoke()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>SyncEvent</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">action</span><span class="uml-type">FileAction</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">deviceId</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">timestamp</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFile()</span><span class="uml-type">File</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isConflict()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>FileType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DOCUMENT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">IMAGE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VIDEO</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ARCHIVE</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>SyncStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SYNCED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PENDING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CONFLICT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ERROR</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>SharePermission</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VIEWER</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EDITOR</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">OWNER</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ShareType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">USER</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LINK</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DOMAIN</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>FileAction</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CREATE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">UPDATE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DELETE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">RENAME</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MOVE</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ConflictStrategy</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">KEEP_BOTH</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LAST_WRITER_WINS</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MANUAL_MERGE</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>FileService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">upload()</span><span class="uml-type">File</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">download()</span><span class="uml-type">byte[]</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">delete()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>FolderService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createFolder()</span><span class="uml-type">Folder</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">moveFolder()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">listContents()</span><span class="uml-type">List&lt;Object&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SyncService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getChanges()</span><span class="uml-type">List&lt;SyncEvent&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">applyDelta()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">resolveConflict()</span><span class="uml-type">File</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ShareService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">shareFile()</span><span class="uml-type">Share</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">revokeAccess()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">generateLink()</span><span class="uml-type">String</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>StorageService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">storeBlock()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">retrieveBlock()</span><span class="uml-type">byte[]</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">deduplicateBlock()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SearchService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">search()</span><span class="uml-type">List&lt;File&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">indexFile()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>VersionService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createVersion()</span><span class="uml-type">FileVersion</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">restoreVersion()</span><span class="uml-type">File</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">listVersions()</span><span class="uml-type">List&lt;FileVersion&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>TrashService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">moveToTrash()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">restore()</span><span class="uml-type">File</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">emptyTrash()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">File</span>
+                <span class="uml-rel-label">owns</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Folder</span>
+                <span class="uml-rel-label">owns</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Folder</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">File</span>
+                <span class="uml-rel-label">contains</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Folder</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Folder</span>
+                <span class="uml-rel-label">has sub-folders</span>
+                <span class="uml-rel-type">ONE-TO-MANY (SELF)</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">File</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">FileVersion</span>
+                <span class="uml-rel-label">has versions</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">File</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Share</span>
+                <span class="uml-rel-label">shared via</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">File</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">SyncEvent</span>
+                <span class="uml-rel-label">generates</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Google Drive/Dropbox jaisi Cloud Storage app ka design dikhata hai &mdash; User ke paas Folders hote hain jinme Files hoti hain. Har File ki multiple Versions maintain hoti hain version history ke liye. SyncService client aur server ke beech files sync karta hai delta sync protocol se. Share se dusre users ko permission milti hai file access ki.
+        </div>
+    </div>
+</div>
+
+<!-- ============ 17. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">17</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Chunked Upload</h4><p>Resumable, parallel, checksum per chunk</p></div>
         <div class="summary-card sc-2"><h4>Delta Sync</h4><p>Block-level diff &mdash; 1GB file, 1KB edit = 4MB transfer</p></div>

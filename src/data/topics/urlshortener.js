@@ -968,11 +968,184 @@ Url url = <span class="kw">new</span> UrlBuilder()
     </div>
 </div>
 
-<!-- ============ 14. INTERVIEW SUMMARY ============ -->
+<!-- ============ 14. UML CLASS DIAGRAM ============ -->
 
-<!-- ============ 14. INTERVIEW SUMMARY ============ -->
+<!-- ============ 14. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">14</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">apiKey</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">tier</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getShortUrls()</span><span class="uml-type">List&lt;ShortUrl&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">regenerateApiKey()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getUsageStats()</span><span class="uml-type">Stats</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>ShortUrl</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">shortCode</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">originalUrl</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">URLStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">expiresAt</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isExpired()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">deactivate()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getClickCount()</span><span class="uml-type">long</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>ClickEvent</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">shortUrlId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">ipAddress</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userAgent</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">country</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">referrer</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getClickedAt()</span><span class="uml-type">LocalDateTime</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDeviceType()</span><span class="uml-type">String</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>CustomAlias</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">alias</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">shortUrlId</span><span class="uml-type">Long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isAvailable()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getShortUrl()</span><span class="uml-type">ShortUrl</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>URLStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ACTIVE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EXPIRED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DISABLED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>RedirectType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PERMANENT_301</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">TEMPORARY_302</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>UrlShorteningService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">shorten()</span><span class="uml-type">ShortUrl</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">generateCode()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">deactivateUrl()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>RedirectService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">resolve()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">redirect()</span><span class="uml-type">ResponseEntity</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">recordClick()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>AliasService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createAlias()</span><span class="uml-type">CustomAlias</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">checkAvailability()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">deleteAlias()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>AnalyticsService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getClickStats()</span><span class="uml-type">ClickStats</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getGeoDistribution()</span><span class="uml-type">Map</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDailyTrends()</span><span class="uml-type">List&lt;DataPoint&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>CacheService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">get()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">put()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">evict()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">ShortUrl</span>
+                <span class="uml-rel-label">creates</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">ShortUrl</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">ClickEvent</span>
+                <span class="uml-rel-label">records</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">CustomAlias</span>
+                <span class="uml-rel-label">owns</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">CustomAlias</span>
+                <span class="uml-rel-arrow">1 ────── 1</span>
+                <span class="uml-rel-to">ShortUrl</span>
+                <span class="uml-rel-label">maps to</span>
+                <span class="uml-rel-type">ONE-TO-ONE</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram URL Shortener ka core design dikhata hai &mdash; User ShortUrl create karta hai, har ShortUrl pe click hone pe ClickEvent record hota hai analytics ke liye, aur CustomAlias se user apna custom short code de sakta hai. Base62 encoding se short codes generate hote hain.
+        </div>
+    </div>
+</div>
+
+<!-- ============ 15. INTERVIEW SUMMARY ============ -->
+
+<!-- ============ 15. INTERVIEW SUMMARY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Base62 Counter</h4><p>7-char codes, 3.5T capacity, zero collisions</p></div>
         <div class="summary-card sc-2"><h4>HTTP 302 Redirect</h4><p>Not 301 &mdash; enables click analytics tracking</p></div>

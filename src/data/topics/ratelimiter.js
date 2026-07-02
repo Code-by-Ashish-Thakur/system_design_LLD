@@ -409,8 +409,190 @@ export default {
     </div>
 </div>
 
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">14</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">RateLimitRule</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">endpoint</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">keyType</span><span class="uml-type">: KeyType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">maxRequests</span><span class="uml-type">: int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">windowSizeMs</span><span class="uml-type">: long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">algorithm</span><span class="uml-type">: Algorithm</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">tier</span><span class="uml-type">: UserTier</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isActive()</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">matches(endpoint, tier)</span><span class="uml-type">: boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RateLimitRecord</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">key</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">requestCount</span><span class="uml-type">: int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">windowStart</span><span class="uml-type">: long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">lastRequestTime</span><span class="uml-type">: long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">increment()</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isWindowExpired()</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRemaining(max)</span><span class="uml-type">: int</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">ApiKey</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">key</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">tier</span><span class="uml-type">: UserTier</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isActive</span><span class="uml-type">: boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">validate()</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isWhitelisted()</span><span class="uml-type">: boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RateLimitMetric</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">key</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">totalAllowed</span><span class="uml-type">: long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">totalThrottled</span><span class="uml-type">: long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">totalBlocked</span><span class="uml-type">: long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">timestamp</span><span class="uml-type">: Timestamp</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getThrottleRate()</span><span class="uml-type">: double</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">recordDecision(decision)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">Algorithm</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">TOKEN_BUCKET, LEAKY_BUCKET, FIXED_WINDOW, SLIDING_WINDOW_LOG, SLIDING_WINDOW_COUNTER</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">KeyType</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">USER_ID, API_KEY, IP_ADDRESS, ENDPOINT, COMPOSITE</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">UserTier</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">FREE, BASIC, PRO, ENTERPRISE</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RateLimitDecision</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">ALLOWED, THROTTLED, BLOCKED, WHITELISTED</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">RateLimiterFilter</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">doFilter(request, response)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addRateLimitHeaders(resp)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendRateLimitExceeded(resp)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">TokenBucketLimiter</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">tryAcquire(key, rule)</span><span class="uml-type">: RateLimitResult</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRemainingTokens(key)</span><span class="uml-type">: long</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">resetBucket(key)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">SlidingWindowLimiter</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">tryAcquire(key, rule)</span><span class="uml-type">: RateLimitResult</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getCurrentCount(key, window)</span><span class="uml-type">: long</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">cleanupExpiredEntries(key)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">FixedWindowLimiter</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">tryAcquire(key, rule)</span><span class="uml-type">: RateLimitResult</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRemainingQuota(key)</span><span class="uml-type">: long</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTimeUntilReset(key)</span><span class="uml-type">: Duration</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">KeyResolverService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">resolve(request, keyType)</span><span class="uml-type">: String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">extractIpAddress(request)</span><span class="uml-type">: String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTierByApiKey(apiKey)</span><span class="uml-type">: UserTier</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RuleProviderService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRule(endpoint, tier)</span><span class="uml-type">: Optional&lt;RateLimitRule&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">refreshRulesCache()</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">upsertRule(endpoint, tier)</span><span class="uml-type">: RateLimitRule</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">MetricsService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">recordDecision(result)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMetrics(endpoint)</span><span class="uml-type">: RateLimitMetrics</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTopBlockedUsers(limit)</span><span class="uml-type">: List&lt;UserMetric&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Relationships</div>
+        <div class="uml-relations">
+            <div class="uml-rel"><span class="uml-rel-from">ApiKey</span><span class="uml-rel-arrow">N &mdash;&mdash; 1</span><span class="uml-rel-to">UserTier</span><span class="uml-rel-label">belongs to</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">RateLimitRule</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">RateLimitRecord</span><span class="uml-rel-label">enforced by</span><span class="uml-rel-type">Composition</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">ApiKey</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">RateLimitRecord</span><span class="uml-rel-label">tracked for</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">RateLimitRecord</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">RateLimitMetric</span><span class="uml-rel-label">generates</span><span class="uml-rel-type">Association</span></div>
+        </div>
+
+        <div class="uml-note">Yeh UML diagram API Rate Limiter ka design dikhata hai &mdash; RateLimiterFilter har request ko intercept karta hai, KeyResolverService se identify karta hai ki request kiska hai (IP, API Key, User ID), phir RuleProviderService se us key ka rule fetch karta hai aur Token Bucket / Sliding Window algorithm se check karta hai ki allow karna hai ya block.</div>
+    </div>
+</div>
+
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Algorithms</strong><br>Token Bucket (smooth), Sliding Window Log (precise), Fixed Window (simple), Leaky Bucket (constant outflow)</div>
         <div class="summary-card"><strong>Redis Lua</strong><br>Atomic operations prevent race conditions; EVALSHA caches compiled scripts; &lt; 1ms latency</div>

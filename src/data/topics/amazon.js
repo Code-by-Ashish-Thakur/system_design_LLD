@@ -981,6 +981,275 @@ export default {
     </div>
 </div>
 
+<!-- ============ 15. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">15</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">address</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getOrders()</span><span class="uml-type">List&lt;Order&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getWishlist()</span><span class="uml-type">List&lt;Wishlist&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getReviews()</span><span class="uml-type">List&lt;Review&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Product</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">sellerId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">price</span><span class="uml-type">BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">ProductStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">stockCount</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isInStock()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getReviews()</span><span class="uml-type">List&lt;Review&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSeller()</span><span class="uml-type">Seller</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Seller</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">storeName</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">rating</span><span class="uml-type">double</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getProducts()</span><span class="uml-type">List&lt;Product&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getAverageRating()</span><span class="uml-type">double</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Order</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">OrderStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">totalAmount</span><span class="uml-type">BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">shippingAddress</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getOrderItems()</span><span class="uml-type">List&lt;OrderItem&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDelivery()</span><span class="uml-type">Delivery</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculateTotal()</span><span class="uml-type">BigDecimal</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>OrderItem</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">orderId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">productId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">quantity</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">price</span><span class="uml-type">BigDecimal</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getProduct()</span><span class="uml-type">Product</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSubtotal()</span><span class="uml-type">BigDecimal</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Review</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">productId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">rating</span><span class="uml-type">ReviewRating</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">comment</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getUser()</span><span class="uml-type">User</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getProduct()</span><span class="uml-type">Product</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Wishlist</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">productId</span><span class="uml-type">Long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getProduct()</span><span class="uml-type">Product</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getUser()</span><span class="uml-type">User</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Delivery</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">orderId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">DeliveryStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">trackingId</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">estimatedDate</span><span class="uml-type">LocalDate</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getOrder()</span><span class="uml-type">Order</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isDelivered()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ProductStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ACTIVE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">OUT_OF_STOCK</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DISCONTINUED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ReviewRating</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ONE_STAR</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">TWO_STAR</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">THREE_STAR</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FOUR_STAR</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FIVE_STAR</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>DeliveryStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PENDING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SHIPPED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">IN_TRANSIT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DELIVERED</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ProductService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">search()</span><span class="uml-type">Page&lt;Product&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getById()</span><span class="uml-type">Product</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStock()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ReviewService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addReview()</span><span class="uml-type">Review</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getReviewsByProduct()</span><span class="uml-type">Page&lt;Review&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getAverageRating()</span><span class="uml-type">double</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>DeliveryService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createDelivery()</span><span class="uml-type">Delivery</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStatus()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">trackDelivery()</span><span class="uml-type">Delivery</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>WishlistService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addToWishlist()</span><span class="uml-type">Wishlist</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">removeFromWishlist()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getWishlist()</span><span class="uml-type">List&lt;Wishlist&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>CartService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addToCart()</span><span class="uml-type">Cart</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">removeFromCart()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">checkout()</span><span class="uml-type">Order</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Seller</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Product</span>
+                <span class="uml-rel-label">lists</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Order</span>
+                <span class="uml-rel-label">places</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Order</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">OrderItem</span>
+                <span class="uml-rel-label">contains</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">OrderItem</span>
+                <span class="uml-rel-arrow">N ────── 1</span>
+                <span class="uml-rel-to">Product</span>
+                <span class="uml-rel-label">references</span>
+                <span class="uml-rel-type">MANY-TO-ONE</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Review</span>
+                <span class="uml-rel-label">writes</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Product</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Review</span>
+                <span class="uml-rel-label">receives</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Order</span>
+                <span class="uml-rel-arrow">1 ────── 1</span>
+                <span class="uml-rel-to">Delivery</span>
+                <span class="uml-rel-label">ships via</span>
+                <span class="uml-rel-type">ONE-TO-ONE</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Wishlist</span>
+                <span class="uml-rel-label">saves</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Amazon/Flipkart jaisi E-commerce marketplace ka design dikhata hai &mdash; Seller Products list karta hai, User Orders place karta hai jo OrderItems se bana hota hai. Har Order ka Delivery tracking hota hai aur User Products pe Reviews de sakta hai. ProductService search aur filter handle karta hai.
+        </div>
+    </div>
+</div>
+
 <!-- ============ 14. SUMMARY ============ -->
 
 <!-- ============ 14. SUMMARY ============ -->

@@ -438,6 +438,286 @@ export default {
     </div>
 </div>
 
+<!-- ============ 15. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">15</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">planType</span><span class="uml-type">PlanType</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getProfiles()</span><span class="uml-type">List&lt;Profile&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSubscription()</span><span class="uml-type">Subscription</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Profile</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">avatar</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">maturityLevel</span><span class="uml-type">AgeRating</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getWatchHistory()</span><span class="uml-type">List&lt;WatchHistory&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDownloads()</span><span class="uml-type">List&lt;Download&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Content</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">title</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">ContentType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">genre</span><span class="uml-type">Genre</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">ageRating</span><span class="uml-type">AgeRating</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">duration</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getEpisodes()</span><span class="uml-type">List&lt;Episode&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isAvailableInRegion()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Episode</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">contentId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">seasonNum</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">episodeNum</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">title</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getStreamUrl()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDuration()</span><span class="uml-type">int</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Subscription</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">planType</span><span class="uml-type">PlanType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">SubStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">startDate</span><span class="uml-type">LocalDate</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isActive()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMaxScreens()</span><span class="uml-type">int</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>WatchHistory</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">profileId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">contentId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">progress</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">watchedAt</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isCompleted()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getContent()</span><span class="uml-type">Content</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Download</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">profileId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">contentId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">expiresAt</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isExpired()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getContent()</span><span class="uml-type">Content</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ContentType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MOVIE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SERIES</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DOCUMENTARY</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>Genre</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ACTION</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">COMEDY</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DRAMA</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">THRILLER</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>AgeRating</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">U</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">UA_13</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">UA_16</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">A</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>PlanType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MOBILE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">BASIC</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">STANDARD</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PREMIUM</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>SubStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ACTIVE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PAUSED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CANCELLED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EXPIRED</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ContentService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getById()</span><span class="uml-type">Content</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getByGenre()</span><span class="uml-type">Page&lt;Content&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTrending()</span><span class="uml-type">List&lt;Content&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>StreamingService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getStream()</span><span class="uml-type">StreamResponse</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">hasAvailableScreen()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">endStream()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>RecommendationEngine</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPersonalized()</span><span class="uml-type">List&lt;Content&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSimilar()</span><span class="uml-type">List&lt;Content&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">refreshRecommendations()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SearchService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">search()</span><span class="uml-type">Page&lt;Content&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">autoSuggest()</span><span class="uml-type">List&lt;String&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">indexContent()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ProfileService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">create()</span><span class="uml-type">Profile</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">deleteProfile()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getProfiles()</span><span class="uml-type">List&lt;Profile&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SubscriptionService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">canStream()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">changePlan()</span><span class="uml-type">Subscription</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">cancelSubscription()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>WatchHistoryService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateProgress()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getContinueWatching()</span><span class="uml-type">List&lt;WatchProgress&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getHistory()</span><span class="uml-type">Page&lt;WatchHistory&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>DownloadService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">requestDownload()</span><span class="uml-type">DownloadPackage</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRemainingDownloads()</span><span class="uml-type">int</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">cleanupExpiredDownloads()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Profile</span>
+                <span class="uml-rel-label">has</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── 1</span>
+                <span class="uml-rel-to">Subscription</span>
+                <span class="uml-rel-label">subscribes</span>
+                <span class="uml-rel-type">ONE-TO-ONE</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Profile</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">WatchHistory</span>
+                <span class="uml-rel-label">tracks</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Content</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Episode</span>
+                <span class="uml-rel-label">contains</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">WatchHistory</span>
+                <span class="uml-rel-arrow">N ────── 1</span>
+                <span class="uml-rel-to">Content</span>
+                <span class="uml-rel-label">references</span>
+                <span class="uml-rel-type">MANY-TO-ONE</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Profile</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Download</span>
+                <span class="uml-rel-label">downloads</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Netflix ka core design dikhata hai &mdash; User ke multiple Profiles hote hain (family sharing), har Profile ki apni WatchHistory hoti hai. Content me Movies aur Series dono aate hain, Series ke Episodes hote hain. SubscriptionService check karta hai ki user ka plan active hai ya nahi aur kitne screens pe stream ho sakta hai.
+        </div>
+    </div>
+</div>
+
 <div class="section theme-purple">
     <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">

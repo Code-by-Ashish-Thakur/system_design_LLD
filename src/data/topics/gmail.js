@@ -1064,9 +1064,307 @@ User opens inbox &rarr; GET /inbox (category: PRIMARY)
     </div>
 </div>
 
-<!-- ============ 16. INTERVIEW TIPS ============ -->
+<!-- ============ 16. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">16</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fullName</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">signature</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">storageUsed</span><span class="uml-type">Long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getInbox()</span><span class="uml-type">List&lt;Email&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getThreads()</span><span class="uml-type">List&lt;Thread&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getLabels()</span><span class="uml-type">List&lt;EmailLabel&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Email</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">threadId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">subject</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">EmailStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">category</span><span class="uml-type">EmailCategory</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getAttachments()</span><span class="uml-type">List&lt;Attachment&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRecipients()</span><span class="uml-type">List&lt;EmailRecipient&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">markAsRead()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Thread</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">subject</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">emailCount</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isArchived</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getEmails()</span><span class="uml-type">List&lt;Email&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">archive()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getLatestEmail()</span><span class="uml-type">Email</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>EmailLabel</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">labelName</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">labelType</span><span class="uml-type">LabelType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">color</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getEmails()</span><span class="uml-type">List&lt;Email&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getUnreadCount()</span><span class="uml-type">int</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Attachment</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">emailId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileName</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileSize</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">mimeType</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">AttachmentStatus</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">download()</span><span class="uml-type">byte[]</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPreviewUrl()</span><span class="uml-type">String</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>EmailRecipient</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">emailId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">recipientEmail</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">recipientType</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getType()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDisplayName()</span><span class="uml-type">String</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>EmailStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DRAFT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">QUEUED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SENT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FAILED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>LabelType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SYSTEM</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">USER</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>SpamVerdict</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">HAM</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SPAM</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PHISHING</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>EmailCategory</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PRIMARY</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SOCIAL</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PROMOTIONS</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">UPDATES</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>EmailPriority</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">HIGH</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">NORMAL</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LOW</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>FilterAction</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LABEL</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ARCHIVE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DELETE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FORWARD</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>AttachmentStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">UPLOADING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">UPLOADED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SCAN_PASSED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SCAN_FAILED</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>EmailService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendEmail()</span><span class="uml-type">Email</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">receiveEmail()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">replyToEmail()</span><span class="uml-type">Email</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>InboxService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getInbox()</span><span class="uml-type">List&lt;Email&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getUnreadCount()</span><span class="uml-type">int</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">categorize()</span><span class="uml-type">EmailCategory</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ThreadService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getThread()</span><span class="uml-type">Thread</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">matchThread()</span><span class="uml-type">Thread</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">archiveThread()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>LabelService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createLabel()</span><span class="uml-type">EmailLabel</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">applyLabel()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">removeLabel()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>FilterService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createFilter()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">applyFilters()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SearchService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">search()</span><span class="uml-type">List&lt;Email&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">advancedSearch()</span><span class="uml-type">List&lt;Email&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>DraftService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">saveDraft()</span><span class="uml-type">Email</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDrafts()</span><span class="uml-type">List&lt;Email&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">discardDraft()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>AttachmentService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">upload()</span><span class="uml-type">Attachment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">download()</span><span class="uml-type">byte[]</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">virusScan()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SpamService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">classify()</span><span class="uml-type">SpamVerdict</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">reportSpam()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">markNotSpam()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Email</span>
+                <span class="uml-rel-label">owns</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Thread</span>
+                <span class="uml-rel-label">has</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Thread</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Email</span>
+                <span class="uml-rel-label">groups</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Email</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Attachment</span>
+                <span class="uml-rel-label">has</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Email</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">EmailRecipient</span>
+                <span class="uml-rel-label">sent to</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">EmailLabel</span>
+                <span class="uml-rel-label">creates</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Email</span>
+                <span class="uml-rel-arrow">N ────── N</span>
+                <span class="uml-rel-to">EmailLabel</span>
+                <span class="uml-rel-label">tagged with</span>
+                <span class="uml-rel-type">MANY-TO-MANY</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Gmail jaisi Email Service ka design dikhata hai &mdash; User ke Emails Thread me group hote hain (same subject ke emails ek thread me). Har Email ke Attachments ho sakte hain aur EmailRecipients (TO, CC, BCC). Labels se emails organize hoti hain aur SpamService suspicious emails filter karta hai ML models se.
+        </div>
+    </div>
+</div>
+
+<!-- ============ 17. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">17</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>SMTP / IMAP / POP3</h4><p>SMTP = send (push), IMAP = read (pull), MX record routing</p></div>
         <div class="summary-card sc-2"><h4>SPF + DKIM + DMARC</h4><p>Email security trifecta &mdash; prevents spoofing</p></div>

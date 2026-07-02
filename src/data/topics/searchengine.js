@@ -1388,8 +1388,274 @@ export default {
     </div>
 </div>
 
+<!-- ============ 17. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">17</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>CrawledPage</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">url</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">pageType</span><span class="uml-type">PageType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">CrawlStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">pageRank</span><span class="uml-type">double</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">lastCrawledAt</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getOutLinks()</span><span class="uml-type">List&lt;PageLink&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getInLinks()</span><span class="uml-type">List&lt;PageLink&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPostings()</span><span class="uml-type">List&lt;PostingEntry&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>InvertedIndex</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">term</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">documentCount</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">frequency</span><span class="uml-type">Long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPostings()</span><span class="uml-type">List&lt;PostingEntry&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getIDF()</span><span class="uml-type">double</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">merge()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>PostingEntry</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">pageId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">position</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">frequency</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTF()</span><span class="uml-type">double</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPage()</span><span class="uml-type">CrawledPage</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>PageLink</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">sourcePageId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">targetPageId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">anchorText</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSourcePage()</span><span class="uml-type">CrawledPage</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTargetPage()</span><span class="uml-type">CrawledPage</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>RobotsRules</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">domain</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">disallowedPaths</span><span class="uml-type">List&lt;String&gt;</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">crawlDelay</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isAllowed()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDelay()</span><span class="uml-type">int</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>SearchQueryLog</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">query</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">resultsCount</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">clickedPosition</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">searchType</span><span class="uml-type">SearchType</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getUser()</span><span class="uml-type">User</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getCTR()</span><span class="uml-type">double</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>CrawlStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PENDING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CRAWLING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CRAWLED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FAILED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>PageType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">HTML</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PDF</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">IMAGE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VIDEO</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>CrawlPriority</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CRITICAL</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">HIGH</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MEDIUM</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LOW</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>IndexStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">INDEXED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">NOT_INDEXED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DEINDEXED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>SearchType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">WEB</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">IMAGE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VIDEO</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">NEWS</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>SafeSearchLevel</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">OFF</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MODERATE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">STRICT</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>CrawlerService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">crawl()</span><span class="uml-type">CrawledPage</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">fetchPage()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">extractLinks()</span><span class="uml-type">List&lt;String&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>IndexerService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">indexPage()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">tokenize()</span><span class="uml-type">List&lt;String&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">buildInvertedIndex()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>QueryService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">parseQuery()</span><span class="uml-type">List&lt;String&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">executeQuery()</span><span class="uml-type">List&lt;CrawledPage&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">intersectPostings()</span><span class="uml-type">List&lt;PostingEntry&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>RankingService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">computePageRank()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">scoreTFIDF()</span><span class="uml-type">double</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">rankResults()</span><span class="uml-type">List&lt;CrawledPage&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>DuplicateDetectionService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">computeSimHash()</span><span class="uml-type">Long</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isDuplicate()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">selectCanonical()</span><span class="uml-type">CrawledPage</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SearchService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">search()</span><span class="uml-type">List&lt;CrawledPage&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">filterResults()</span><span class="uml-type">List&lt;CrawledPage&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SpellCheckService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">correct()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">editDistance()</span><span class="uml-type">int</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>AutoCompleteService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">suggest()</span><span class="uml-type">List&lt;String&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateTrie()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTopK()</span><span class="uml-type">List&lt;String&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>URLFrontierService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addUrl()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getNextUrl()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">prioritize()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">CrawledPage</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">PostingEntry</span>
+                <span class="uml-rel-label">indexed as</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">InvertedIndex</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">PostingEntry</span>
+                <span class="uml-rel-label">contains</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">CrawledPage</span>
+                <span class="uml-rel-arrow">N ────── N</span>
+                <span class="uml-rel-to">CrawledPage</span>
+                <span class="uml-rel-label">links to (via PageLink)</span>
+                <span class="uml-rel-type">MANY-TO-MANY (SELF)</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">SearchQueryLog</span>
+                <span class="uml-rel-label">searches</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Google jaise Search Engine ka design dikhata hai &mdash; CrawlerService web pages crawl karta hai aur IndexerService unhe InvertedIndex me store karta hai. Jab user search karta hai to QueryService InvertedIndex se relevant pages dhundta hai, RankingService PageRank algorithm se results rank karta hai, aur AutoCompleteService Trie data structure se suggestions deta hai.
+        </div>
+    </div>
+</div>
+
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">17</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">18</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Inverted Index</h4><p>Core of search &mdash; word &rarr; list of doc IDs</p></div>
         <div class="summary-card sc-2"><h4>TF-IDF Scoring</h4><p>Term frequency &times; inverse document frequency</p></div>

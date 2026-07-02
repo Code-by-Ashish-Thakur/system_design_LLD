@@ -668,11 +668,213 @@ export default {
     </div>
 </div>
 
-<!-- ============ 14. INTERVIEW SUMMARY ============ -->
+<!-- ============ 14. UML CLASS DIAGRAM ============ -->
 
-<!-- ============ 14. INTERVIEW SUMMARY ============ -->
+<!-- ============ 14. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">14</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">phone</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">deviceToken</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPreferences()</span><span class="uml-type">UserPreference</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getNotifications()</span><span class="uml-type">List&lt;Notification&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateDeviceToken()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Notification</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">channel</span><span class="uml-type">NotificationChannel</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">title</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">body</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getStatus()</span><span class="uml-type">NotificationStatus</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPriority()</span><span class="uml-type">NotificationPriority</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDeliveryLogs()</span><span class="uml-type">List&lt;DeliveryLog&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>NotificationTemplate</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">channel</span><span class="uml-type">NotificationChannel</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">templateBody</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">variables</span><span class="uml-type">List&lt;String&gt;</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">render()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">validate()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>UserPreference</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">channel</span><span class="uml-type">NotificationChannel</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">enabled</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">quietHoursStart</span><span class="uml-type">LocalTime</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">quietHoursEnd</span><span class="uml-type">LocalTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isQuietHour()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isChannelEnabled()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>DeliveryLog</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">notificationId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">channel</span><span class="uml-type">NotificationChannel</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">NotificationStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">sentAt</span><span class="uml-type">LocalDateTime</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">failReason</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isDelivered()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getLatency()</span><span class="uml-type">long</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>NotificationChannel</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PUSH</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EMAIL</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SMS</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">IN_APP</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>NotificationStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PENDING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SENT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DELIVERED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FAILED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>NotificationPriority</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LOW</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">NORMAL</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">HIGH</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CRITICAL</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>PushNotificationService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendPush()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendToFCM()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendToAPNs()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>EmailService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendEmail()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">renderTemplate()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">validateAddress()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SMSService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendSMS()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">validatePhone()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">checkBalance()</span><span class="uml-type">double</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>NotificationService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">send()</span><span class="uml-type">Notification</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">schedule()</span><span class="uml-type">Notification</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">retry()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>PreferenceService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPreferences()</span><span class="uml-type">UserPreference</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updatePreferences()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isAllowed()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Notification</span>
+                <span class="uml-rel-label">receives</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Notification</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">DeliveryLog</span>
+                <span class="uml-rel-label">tracks delivery via</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">NotificationTemplate</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Notification</span>
+                <span class="uml-rel-label">generates</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── 1</span>
+                <span class="uml-rel-to">UserPreference</span>
+                <span class="uml-rel-label">configures</span>
+                <span class="uml-rel-type">ONE-TO-ONE</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Notification System ka design dikhata hai &mdash; User ke liye Notification create hoti hai, jo multiple channels (Push, Email, SMS) pe deliver hoti hai. DeliveryLog se track hota hai ki notification successfully deliver hua ya fail hua. UserPreference se user control karta hai ki kaunsi notifications chahiye.
+        </div>
+    </div>
+</div>
+
+<!-- ============ 15. INTERVIEW SUMMARY ============ -->
+
+<!-- ============ 15. INTERVIEW SUMMARY ============ -->
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Architecture</strong><br>Event-driven Kafka priority queues + Strategy pattern for multi-channel</div>
         <div class="summary-card"><strong>Multi-Channel</strong><br>Push (FCM/APNs), Email (SES), SMS (Twilio), In-App (WebSocket)</div>

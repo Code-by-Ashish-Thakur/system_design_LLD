@@ -991,9 +991,253 @@ export default {
     </div>
 </div>
 
-<!-- ============ 15. SUMMARY ============ -->
+<!-- ============ 15. UML CLASS DIAGRAM ============ -->
 
-<!-- ============ 15. SUMMARY ============ -->
+<!-- ============ 15. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">15</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">username</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">phoneNumber</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">UserStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">lastSeen</span><span class="uml-type">LocalDateTime</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">profilePic</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStatus()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateLastSeen()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getChats()</span><span class="uml-type">List&lt;Chat&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Message</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">senderId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">chatId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">content</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">MessageType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">MessageStatus</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">markDelivered()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">markRead()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getAttachment()</span><span class="uml-type">FileAttachment</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Chat</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">ChatType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">createdAt</span><span class="uml-type">LocalDateTime</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">lastMessageAt</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMessages()</span><span class="uml-type">List&lt;Message&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getParticipants()</span><span class="uml-type">List&lt;User&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>GroupChat</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">adminId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">maxMembers</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addMember()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">removeMember()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMembers()</span><span class="uml-type">List&lt;GroupMember&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>GroupMember</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">groupId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">role</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">joinedAt</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isAdmin()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getUser()</span><span class="uml-type">User</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>FileAttachment</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">messageId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileUrl</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileType</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileSize</span><span class="uml-type">Long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDownloadUrl()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isImage()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>MessageStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SENT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DELIVERED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">READ</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ChatType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PRIVATE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">GROUP</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>MessageType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">TEXT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">IMAGE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VIDEO</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">AUDIO</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>CallType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VOICE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VIDEO</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>CallStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">RINGING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ONGOING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ENDED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MISSED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>UserStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ONLINE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">OFFLINE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">TYPING</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ChatService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createChat()</span><span class="uml-type">Chat</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getChatHistory()</span><span class="uml-type">List&lt;Message&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createGroup()</span><span class="uml-type">GroupChat</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>MessageService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendMessage()</span><span class="uml-type">Message</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStatus()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">deleteMessage()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>UserService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">register()</span><span class="uml-type">User</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">verifyOtp()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateProfile()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>FileService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">uploadFile()</span><span class="uml-type">FileAttachment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">downloadFile()</span><span class="uml-type">byte[]</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">generatePresignedUrl()</span><span class="uml-type">String</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>NotificationService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendPush()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">notifyGroup()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">handleOfflineQueue()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Message</span>
+                <span class="uml-rel-label">sends</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Chat</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Message</span>
+                <span class="uml-rel-label">contains</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">N ────── N</span>
+                <span class="uml-rel-to">Chat</span>
+                <span class="uml-rel-label">participates in</span>
+                <span class="uml-rel-type">MANY-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">GroupChat</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">GroupMember</span>
+                <span class="uml-rel-label">has</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Message</span>
+                <span class="uml-rel-arrow">1 ────── 0..1</span>
+                <span class="uml-rel-to">FileAttachment</span>
+                <span class="uml-rel-label">may have</span>
+                <span class="uml-rel-type">ONE-TO-ONE (OPTIONAL)</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram WhatsApp ke core classes aur unke relationships ko dikhata hai &mdash; User messages bhejta hai Chat ke through, GroupChat me multiple members hote hain, aur har Message ka ek type aur status hota hai. Interview me ye diagram banaoge to interviewer samjh jayega ki aapko class relationships aur design clear hai.
+        </div>
+    </div>
+</div>
+
+<!-- ============ 16. SUMMARY ============ -->
+
+<!-- ============ 16. SUMMARY ============ -->
 <div id="summary" class="section theme-green">
     <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
     <div class="summary-grid">

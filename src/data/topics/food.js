@@ -963,6 +963,258 @@ export default {
     </div>
 </div>
 
+<!-- ============ 15. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">15</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">phone</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">address</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getOrders()</span><span class="uml-type">List&lt;Order&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getAddresses()</span><span class="uml-type">List&lt;String&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Restaurant</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">ownerId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">cuisineType</span><span class="uml-type">CuisineType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">rating</span><span class="uml-type">double</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isOpen</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMenuItems()</span><span class="uml-type">List&lt;MenuItem&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isCurrentlyOpen()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>MenuItem</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">restaurantId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">price</span><span class="uml-type">BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">foodType</span><span class="uml-type">FoodType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isAvailable</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRestaurant()</span><span class="uml-type">Restaurant</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isVeg()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Order</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">restaurantId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">OrderStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">totalAmount</span><span class="uml-type">BigDecimal</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getOrderItems()</span><span class="uml-type">List&lt;OrderItem&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTracking()</span><span class="uml-type">DeliveryTracking</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculateTotal()</span><span class="uml-type">BigDecimal</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>OrderItem</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">orderId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">menuItemId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">quantity</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">price</span><span class="uml-type">BigDecimal</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMenuItem()</span><span class="uml-type">MenuItem</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSubtotal()</span><span class="uml-type">BigDecimal</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>DeliveryPartner</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">phone</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">vehicleType</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isAvailable</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getCurrentLocation()</span><span class="uml-type">Location</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getActiveDeliveries()</span><span class="uml-type">List&lt;DeliveryTracking&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>DeliveryTracking</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">orderId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">partnerId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">DeliveryStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">latitude</span><span class="uml-type">double</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPartner()</span><span class="uml-type">DeliveryPartner</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getOrder()</span><span class="uml-type">Order</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>OrderStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PLACED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CONFIRMED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PREPARING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DELIVERED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>DeliveryStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ASSIGNED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PICKED_UP</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EN_ROUTE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DELIVERED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>FoodType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VEG</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">NON_VEG</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VEGAN</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EGG</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>CuisineType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">NORTH_INDIAN</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SOUTH_INDIAN</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CHINESE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ITALIAN</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>RestaurantService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">searchNearby()</span><span class="uml-type">List&lt;Restaurant&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getById()</span><span class="uml-type">Restaurant</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStatus()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>MenuService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMenu()</span><span class="uml-type">List&lt;MenuItem&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addMenuItem()</span><span class="uml-type">MenuItem</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateAvailability()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>OrderService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">placeOrder()</span><span class="uml-type">Order</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">cancelOrder()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getOrderStatus()</span><span class="uml-type">OrderStatus</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>DeliveryService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">assignPartner()</span><span class="uml-type">DeliveryPartner</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateLocation()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTracking()</span><span class="uml-type">DeliveryTracking</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SearchService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">searchFood()</span><span class="uml-type">List&lt;MenuItem&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">searchRestaurants()</span><span class="uml-type">List&lt;Restaurant&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">autoSuggest()</span><span class="uml-type">List&lt;String&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Order</span>
+                <span class="uml-rel-label">places</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Restaurant</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">MenuItem</span>
+                <span class="uml-rel-label">offers</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Order</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">OrderItem</span>
+                <span class="uml-rel-label">contains</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">OrderItem</span>
+                <span class="uml-rel-arrow">N ────── 1</span>
+                <span class="uml-rel-to">MenuItem</span>
+                <span class="uml-rel-label">references</span>
+                <span class="uml-rel-type">MANY-TO-ONE</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Order</span>
+                <span class="uml-rel-arrow">1 ────── 1</span>
+                <span class="uml-rel-to">DeliveryTracking</span>
+                <span class="uml-rel-label">tracked by</span>
+                <span class="uml-rel-type">ONE-TO-ONE</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">DeliveryPartner</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">DeliveryTracking</span>
+                <span class="uml-rel-label">delivers</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Zomato/Swiggy jaisi Food Delivery app ka design dikhata hai &mdash; User Restaurant browse karta hai, MenuItem se order banata hai. DeliveryPartner order pickup karta hai aur DeliveryTracking se real-time location track hoti hai. Restaurant apna menu manage karta hai MenuService ke through.
+        </div>
+    </div>
+</div>
+
 <!-- ============ 14. SUMMARY ============ -->
 
 <!-- ============ 14. SUMMARY ============ -->

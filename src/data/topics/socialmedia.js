@@ -1341,6 +1341,317 @@ Share &rarr; Create new post with original_post_id reference
     </div>
 </div>
 
+<!-- ============ 17. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">17</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">username</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">bio</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">followerCount</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isVerified</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPosts()</span><span class="uml-type">List&lt;Post&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFollowers()</span><span class="uml-type">List&lt;User&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getStories()</span><span class="uml-type">List&lt;Story&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Post</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">content</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">PostType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">visibility</span><span class="uml-type">Visibility</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">likeCount</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getComments()</span><span class="uml-type">List&lt;Comment&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getHashtags()</span><span class="uml-type">List&lt;Hashtag&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getAuthor()</span><span class="uml-type">User</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Comment</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">postId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">parentCommentId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">content</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">likeCount</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getReplies()</span><span class="uml-type">List&lt;Comment&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getAuthor()</span><span class="uml-type">User</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Follow</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">followerId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">followingId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">FollowStatus</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFollower()</span><span class="uml-type">User</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFollowing()</span><span class="uml-type">User</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Story</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">mediaUrl</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">StoryStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">viewCount</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">expiresAt</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isExpired()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getViewers()</span><span class="uml-type">List&lt;User&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Hashtag</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">tag</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">postCount</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">trending</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPosts()</span><span class="uml-type">List&lt;Post&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isTrending()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Notification</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">actorId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">NotificationType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isRead</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">markRead()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getActor()</span><span class="uml-type">User</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>PostType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">TEXT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">IMAGE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VIDEO</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">REEL</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ReactionType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LIKE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LOVE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">HAHA</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">WOW</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>Visibility</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PUBLIC</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FOLLOWERS_ONLY</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PRIVATE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CLOSE_FRIENDS</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>FollowStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FOLLOWING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">REQUESTED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">BLOCKED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MUTED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>NotificationType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LIKE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">COMMENT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FOLLOW</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MENTION</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ContentStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ACTIVE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">REPORTED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">UNDER_REVIEW</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">REMOVED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>StoryStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ACTIVE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EXPIRED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">HIGHLIGHTED</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>PostService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createPost()</span><span class="uml-type">Post</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">deletePost()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sharePost()</span><span class="uml-type">Post</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>CommentService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addComment()</span><span class="uml-type">Comment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">replyToComment()</span><span class="uml-type">Comment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getComments()</span><span class="uml-type">Page&lt;Comment&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>LikeService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">likePost()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">unlikePost()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getLikeCounts()</span><span class="uml-type">Map&lt;ReactionType, Long&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>FollowService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">follow()</span><span class="uml-type">FollowStatus</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">unfollow()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">blockUser()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>StoryService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createStory()</span><span class="uml-type">Story</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFeedStories()</span><span class="uml-type">List&lt;StoryGroup&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">cleanupExpiredStories()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>FeedService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFeed()</span><span class="uml-type">List&lt;FeedItem&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">fanOutToFollowers()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">rankFeed()</span><span class="uml-type">List&lt;FeedItem&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SearchService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">search()</span><span class="uml-type">SearchResult</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTrending()</span><span class="uml-type">List&lt;TrendingTopic&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPostsByHashtag()</span><span class="uml-type">Page&lt;Post&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ModerationService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">report()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">autoModerate()</span><span class="uml-type">ModerationResult</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">reviewAction()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>MediaService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">uploadImage()</span><span class="uml-type">MediaUrl</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">uploadVideo()</span><span class="uml-type">MediaUrl</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">generateVariants()</span><span class="uml-type">Map&lt;String, String&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Post</span>
+                <span class="uml-rel-label">creates</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Post</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Comment</span>
+                <span class="uml-rel-label">has</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">N ────── N</span>
+                <span class="uml-rel-to">User</span>
+                <span class="uml-rel-label">follows (via Follow)</span>
+                <span class="uml-rel-type">MANY-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Story</span>
+                <span class="uml-rel-label">posts</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Post</span>
+                <span class="uml-rel-arrow">N ────── N</span>
+                <span class="uml-rel-to">Hashtag</span>
+                <span class="uml-rel-label">tagged with</span>
+                <span class="uml-rel-type">MANY-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Notification</span>
+                <span class="uml-rel-label">receives</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Facebook/Instagram/Twitter jaisi Social Media app ka design dikhata hai &mdash; User Posts create karta hai, dusre Users Follow karte hain, FeedService fan-out strategy se personalized feed banata hai. Stories 24 ghante me expire hoti hain aur Hashtags se content discoverable hota hai. ModerationService reported content review karta hai.
+        </div>
+    </div>
+</div>
+
 <!-- ============ 16. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
     <div class="section-title"><span class="section-num">16</span>Interview Summary</div>

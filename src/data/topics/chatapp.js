@@ -878,11 +878,212 @@ export default {
     </div>
 </div>
 
-<!-- ============ 14. SUMMARY ============ -->
+<!-- ============ 14. UML CLASS DIAGRAM ============ -->
 
-<!-- ============ 14. SUMMARY ============ -->
+<!-- ============ 14. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">14</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">username</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">PresenceStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">avatarUrl</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRooms()</span><span class="uml-type">List&lt;Room&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStatus()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMessages()</span><span class="uml-type">List&lt;Message&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Room</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">RoomType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">createdBy</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">maxMembers</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMembers()</span><span class="uml-type">List&lt;RoomMember&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMessages()</span><span class="uml-type">List&lt;Message&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isFull()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Message</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">roomId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">senderId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">content</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">MessageType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">timestamp</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getAttachment()</span><span class="uml-type">FileAttachment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSender()</span><span class="uml-type">User</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isEdited()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>RoomMember</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">roomId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">role</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">joinedAt</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isAdmin()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getUser()</span><span class="uml-type">User</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>FileAttachment</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">messageId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileName</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileUrl</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileSize</span><span class="uml-type">Long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDownloadUrl()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isImage()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>RoomType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PRIVATE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">GROUP</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CHANNEL</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>MessageType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">TEXT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">IMAGE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FILE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SYSTEM</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>PresenceStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ONLINE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">OFFLINE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">AWAY</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">DND</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>RoomService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createRoom()</span><span class="uml-type">Room</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addMember()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">removeMember()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>MessageService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendMessage()</span><span class="uml-type">Message</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">editMessage()</span><span class="uml-type">Message</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">deleteMessage()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>PresenceService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">setOnline()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">setOffline()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getOnlineUsers()</span><span class="uml-type">Set&lt;Long&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>HistoryService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getHistory()</span><span class="uml-type">List&lt;Message&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">searchMessages()</span><span class="uml-type">List&lt;Message&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">paginate()</span><span class="uml-type">Page&lt;Message&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>FileService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">uploadFile()</span><span class="uml-type">FileAttachment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">downloadFile()</span><span class="uml-type">byte[]</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">deleteFile()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">N ────── N</span>
+                <span class="uml-rel-to">Room</span>
+                <span class="uml-rel-label">participates via RoomMember</span>
+                <span class="uml-rel-type">MANY-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Room</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Message</span>
+                <span class="uml-rel-label">contains</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Message</span>
+                <span class="uml-rel-label">sends</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Message</span>
+                <span class="uml-rel-arrow">1 ────── 0..1</span>
+                <span class="uml-rel-to">FileAttachment</span>
+                <span class="uml-rel-label">may have</span>
+                <span class="uml-rel-type">ONE-TO-ONE (OPTIONAL)</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Chat Application ka class structure dikhata hai &mdash; User multiple Rooms me participate karta hai RoomMember ke through, har Room me Messages aate hain, aur PresenceService track karta hai kaun online hai. WebSocket se real-time messaging hoti hai.
+        </div>
+    </div>
+</div>
+
+<!-- ============ 15. SUMMARY ============ -->
+
+<!-- ============ 15. SUMMARY ============ -->
 <div class="section theme-green">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>WebSocket + Room Subscriptions</h4><p>Real-time room-based messaging</p></div>
         <div class="summary-card sc-2"><h4>Observer + Mediator + Strategy</h4><p>Clean design pattern usage</p></div>

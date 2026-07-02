@@ -436,8 +436,235 @@ export default {
     </div>
 </div>
 
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">14</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">User</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">createdAt</span><span class="uml-type">: Timestamp</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getCart()</span><span class="uml-type">: Cart</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getOrders()</span><span class="uml-type">: List&lt;Order&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Cart</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">: CartStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">totalAmount</span><span class="uml-type">: BigDecimal</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addItem(productId, qty)</span><span class="uml-type">: CartItem</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">removeItem(productId)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">applyCoupon(code)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">CartItem</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">cartId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">productId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">quantity</span><span class="uml-type">: int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">price</span><span class="uml-type">: BigDecimal</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateQuantity(qty)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSubtotal()</span><span class="uml-type">: BigDecimal</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Product</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">price</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">stockCount</span><span class="uml-type">: int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isAvailable(qty)</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">reserveStock(qty)</span><span class="uml-type">: boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Order</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">cartId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">: OrderStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">totalAmount</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">paymentId</span><span class="uml-type">: String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">cancel(reason)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStatus(status)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTrackingInfo()</span><span class="uml-type">: TrackingInfo</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Coupon</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">code</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">: CouponType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">discountValue</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">minOrderValue</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">expiresAt</span><span class="uml-type">: Timestamp</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isValid(orderTotal)</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculateDiscount(total)</span><span class="uml-type">: BigDecimal</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">InventoryLock</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">productId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">orderId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">quantity</span><span class="uml-type">: int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">expiresAt</span><span class="uml-type">: Timestamp</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isExpired()</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">release()</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">CartStatus</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">ACTIVE, CHECKED_OUT, ABANDONED, MERGED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">OrderStatus</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">CREATED, PAYMENT_PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED, RETURNED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">CouponType</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">PERCENTAGE, FLAT_AMOUNT, FREE_SHIPPING, BUY_X_GET_Y</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">InventoryAction</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">RESERVE, CONFIRM, RELEASE, DEDUCT</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">CartService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">addItem(userId, productId, qty)</span><span class="uml-type">: Cart</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">removeItem(cartId, productId)</span><span class="uml-type">: Cart</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">applyCoupon(cartId, code)</span><span class="uml-type">: Cart</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">InventoryService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">reserve(productId, qty)</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">confirm(reservationId)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">release(reservationId)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">PricingEngine</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculate(cartId, items)</span><span class="uml-type">: PriceBreakdown</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">applyDiscount(price, coupon)</span><span class="uml-type">: PriceBreakdown</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculateTax(subtotal, state)</span><span class="uml-type">: BigDecimal</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">CouponService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">validate(code, cartId, userId)</span><span class="uml-type">: CouponResult</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isActive(code)</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">markUsed(code, userId)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">CheckoutService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">checkout(cartId, userId)</span><span class="uml-type">: Order</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">validateStock(cartId)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">initiatePayment(orderId)</span><span class="uml-type">: PaymentResult</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">OrderService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createOrder(cartId, userId)</span><span class="uml-type">: Order</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">cancelOrder(orderId)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStatus(orderId, status)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">AbandonedCartService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">processAbandoned()</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendReminder(userId, cartId)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">releaseExpiredReservations()</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Relationships</div>
+        <div class="uml-relations">
+            <div class="uml-rel"><span class="uml-rel-from">User</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">Cart</span><span class="uml-rel-label">owns</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Cart</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">CartItem</span><span class="uml-rel-label">contains</span><span class="uml-rel-type">Composition</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">CartItem</span><span class="uml-rel-arrow">N &mdash;&mdash; 1</span><span class="uml-rel-to">Product</span><span class="uml-rel-label">refers to</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Cart</span><span class="uml-rel-arrow">1 &mdash;&mdash; 0..1</span><span class="uml-rel-to">Order</span><span class="uml-rel-label">converts to</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Order</span><span class="uml-rel-arrow">1 &mdash;&mdash; 1</span><span class="uml-rel-to">Payment</span><span class="uml-rel-label">paid via</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Cart</span><span class="uml-rel-arrow">0..1 &mdash;&mdash; 1</span><span class="uml-rel-to">Coupon</span><span class="uml-rel-label">applies</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Product</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">InventoryLock</span><span class="uml-rel-label">locked by</span><span class="uml-rel-type">Aggregation</span></div>
+        </div>
+
+        <div class="uml-note">Yeh UML diagram E-commerce Checkout ka flow dikhata hai &mdash; User ka Cart hota hai jisme CartItems hote hain, CheckoutService cart ko Order me convert karta hai. InventoryService product stock lock karta hai taaki overselling na ho. CouponService discount validate karta hai aur PricingEngine final amount calculate karta hai.</div>
+    </div>
+</div>
+
 <div class="section theme-purple">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Inventory</strong><br>Optimistic locking (@Version); reserve on checkout, confirm on payment, release on failure/timeout</div>
         <div class="summary-card"><strong>Pricing</strong><br>Strategy pattern for discount types; server-side calculation; tax by shipping state</div>

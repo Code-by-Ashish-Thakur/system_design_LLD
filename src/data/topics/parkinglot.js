@@ -993,8 +993,314 @@ export default {
     </div>
 </div>
 
+<!-- ============ 16. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">16</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>ParkingLot</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">address</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">totalSpots</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">availableSpots</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFloors()</span><span class="uml-type">List&lt;ParkingFloor&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getGates()</span><span class="uml-type">List&lt;Gate&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRates()</span><span class="uml-type">List&lt;ParkingRate&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>ParkingFloor</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">parkingLotId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">floorNumber</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">totalSpots</span><span class="uml-type">int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">availableSpots</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSpots()</span><span class="uml-type">List&lt;ParkingSpot&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isFull()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getAvailableByType()</span><span class="uml-type">Map&lt;SpotType, Integer&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>ParkingSpot</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">floorId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">spotNumber</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">spotType</span><span class="uml-type">SpotType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">SpotStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">vehicleId</span><span class="uml-type">Long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">assignVehicle()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">releaseSpot()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isAvailable()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Vehicle</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">vehicleType</span><span class="uml-type">VehicleType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">licensePlate</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">color</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTickets()</span><span class="uml-type">List&lt;ParkingTicket&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getActiveTicket()</span><span class="uml-type">ParkingTicket</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>ParkingTicket</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">vehicleId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">spotId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">entryTime</span><span class="uml-type">LocalDateTime</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">exitTime</span><span class="uml-type">LocalDateTime</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">TicketStatus</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPayment()</span><span class="uml-type">Payment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDuration()</span><span class="uml-type">Duration</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">close()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Payment</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">ticketId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">amount</span><span class="uml-type">BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">mode</span><span class="uml-type">PaymentMode</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">processPayment()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">generateReceipt()</span><span class="uml-type">String</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Gate</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">parkingLotId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">gateName</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">gateType</span><span class="uml-type">GateType</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">openGate()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">closeGate()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>ParkingRate</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">parkingLotId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">vehicleType</span><span class="uml-type">VehicleType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">hourlyRate</span><span class="uml-type">BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">dailyRate</span><span class="uml-type">BigDecimal</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculateFee()</span><span class="uml-type">BigDecimal</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRate()</span><span class="uml-type">BigDecimal</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>VehicleType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">BIKE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CAR</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">TRUCK</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EV</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>SpotType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SMALL</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MEDIUM</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LARGE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EV_CHARGING</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>SpotStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">AVAILABLE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">OCCUPIED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">RESERVED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MAINTENANCE</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>TicketStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ACTIVE</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PAID</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LOST</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CANCELLED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>PaymentMode</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CASH</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CARD</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">UPI</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">WALLET</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>GateType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ENTRY</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EXIT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">BOTH</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ParkingLotService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getInstance()</span><span class="uml-type">ParkingLot</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getAvailability()</span><span class="uml-type">Map&lt;SpotType, Integer&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isFull()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SpotAllocationService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">allocateSpot()</span><span class="uml-type">ParkingSpot</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">releaseSpot()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">findNearestSpot()</span><span class="uml-type">ParkingSpot</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>GateService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">processEntry()</span><span class="uml-type">ParkingTicket</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">processExit()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">scanTicket()</span><span class="uml-type">ParkingTicket</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>TicketService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">generateTicket()</span><span class="uml-type">ParkingTicket</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">closeTicket()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">handleLostTicket()</span><span class="uml-type">ParkingTicket</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>PaymentService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">processPayment()</span><span class="uml-type">Payment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">refund()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>FeeCalculatorService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculateFee()</span><span class="uml-type">BigDecimal</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">applyDiscount()</span><span class="uml-type">BigDecimal</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>DisplayBoardService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateBoard()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFloorStatus()</span><span class="uml-type">Map&lt;Integer, Integer&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">ParkingLot</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">ParkingFloor</span>
+                <span class="uml-rel-label">has</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">ParkingFloor</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">ParkingSpot</span>
+                <span class="uml-rel-label">contains</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">ParkingLot</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Gate</span>
+                <span class="uml-rel-label">has</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">ParkingSpot</span>
+                <span class="uml-rel-arrow">1 ────── 0..1</span>
+                <span class="uml-rel-to">Vehicle</span>
+                <span class="uml-rel-label">occupied by</span>
+                <span class="uml-rel-type">ONE-TO-ONE (OPTIONAL)</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Vehicle</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">ParkingTicket</span>
+                <span class="uml-rel-label">has</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">ParkingTicket</span>
+                <span class="uml-rel-arrow">1 ────── 1</span>
+                <span class="uml-rel-to">Payment</span>
+                <span class="uml-rel-label">paid via</span>
+                <span class="uml-rel-type">ONE-TO-ONE</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">ParkingLot</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">ParkingRate</span>
+                <span class="uml-rel-label">defines</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Parking Lot System ka classic OOP design dikhata hai &mdash; ParkingLot ke multiple ParkingFloors hote hain, har floor pe ParkingSpots hote hain different types ke (SMALL, MEDIUM, LARGE, EV_CHARGING). Vehicle enter karne pe GateService ParkingTicket generate karta hai, SpotAllocationService best available spot assign karta hai aur exit pe FeeCalculatorService time ke basis pe fee calculate karta hai.
+        </div>
+    </div>
+</div>
+
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">16</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">17</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Singleton Pattern</h4><p>ParkingLot &mdash; ek hi instance poore system me</p></div>
         <div class="summary-card sc-2"><h4>Strategy Pattern</h4><p>Spot allocation + Fee calculation plug-and-play</p></div>

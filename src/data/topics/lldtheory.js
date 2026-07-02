@@ -1826,6 +1826,331 @@ Product catalog → BASE (price 2 sec delay se update ho toh chalega, but app do
 <span class="cm">// — kyunki dono ki requirements alag hain!"</span></pre></div>
 </div>
 
+<!-- 31. UML Diagrams -->
+<div class="section theme-blue">
+<div class="section-title"><span class="section-num">31</span> UML Diagrams (System Ko Visualize Karna)</div>
+<p style="color:#b0bec5;margin-bottom:12px;font-size:1.05em"><strong>Kya hai?</strong> — <b>UML (Unified Modeling Language)</b> ek standard visual language hai jo software system ko diagrams ke through represent karti hai. Code likhne se pehle system ka blueprint banate ho — woh UML hai. Jaise ghar banane se pehle naqsha (map) banate ho, waise hi software banane se pehle UML diagrams banate ho. Interview mein LLD round mein UML diagrams banana aana chahiye!</p>
+
+<div class="bottleneck-grid">
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">UML Kyun Zaroori Hai?</h4>
+<p><b>1. Communication:</b> Team ke saath design share karna easy — diagram bol deta hai sab kuch<br><br>
+<b>2. Documentation:</b> Naye developer ko system samajhne mein help karta hai — code padhne ki zaroorat nahi<br><br>
+<b>3. Planning:</b> Code likhne se pehle design sochte ho → bugs kam hote hain, rework kam hota hai<br><br>
+<b>4. Interview:</b> LLD round mein interviewer kehta hai "Draw the class diagram" ya "Show me the sequence diagram" — yeh aana chahiye!<br><br>
+<b>Tools:</b> draw.io, Lucidchart, PlantUML, Mermaid, StarUML</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">2 Main Categories</h4>
+<p><b>1. Structural Diagrams (Structure Dikhate Hain):</b><br>
+System ka "kya hai" — classes, objects, components kaise organized hain<br>
+→ Class Diagram, Object Diagram, Component Diagram, Package Diagram<br><br>
+<b>2. Behavioral Diagrams (Behavior Dikhate Hain):</b><br>
+System "kaise kaam karta hai" — flow, interaction, state changes<br>
+→ Use Case Diagram, Sequence Diagram, Activity Diagram, State Diagram<br><br>
+<em>Interview mein 4 sabse important:</em> Class, Sequence, Use Case, Activity</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">Class Diagram Symbols</h4>
+<p><b>Class Box:</b> 3 sections — Name | Attributes | Methods<br><br>
+<b>Relationships:</b><br>
+<b>──────▶</b> Association (uses / has reference)<br>
+<b>◆──────▶</b> Composition (strong "part of" — child dies with parent)<br>
+<b>◇──────▶</b> Aggregation (weak "has a" — child survives independently)<br>
+<b>- - - - -▶</b> Dependency (temporary use)<br>
+<b>──────▷</b> Inheritance (extends / is-a)<br>
+<b>- - - - -▷</b> Implementation (implements interface)<br><br>
+<b>Visibility:</b> + public, - private, # protected, ~ package</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">Multiplicity (Cardinality)</h4>
+<p><b>1</b> → Exactly one<br>
+<b>0..1</b> → Zero or one (optional)<br>
+<b>*</b> → Zero or more (many)<br>
+<b>1..*</b> → One or more (at least one)<br>
+<b>0..*</b> → Zero or more<br><br>
+<b>Example:</b><br>
+User <b>1</b> ────── <b>0..*</b> Order<br>
+(Ek user ke 0 ya zyada orders ho sakte hain)<br><br>
+Order <b>1</b> ────── <b>1..*</b> OrderItem<br>
+(Ek order mein kam se kam 1 item hoga)</p>
+</div>
+</div>
+
+<div class="bottleneck-grid">
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">1. Class Diagram (Sabse Important!)</h4>
+<p><b>Kya dikhata hai:</b> Classes, unke attributes, methods, aur classes ke beech relationships<br><br>
+<b>Kab use karo:</b><br>
+→ LLD interview mein (90% time yahi puchte hain)<br>
+→ Database schema design karte time<br>
+→ OOP relationships define karte time<br><br>
+<b>Example:</b> "Design a Parking Lot" → ParkingLot, Floor, Slot, Vehicle, Ticket classes aur unke relationships<br><br>
+<em>Tip: Interview mein pehle classes identify karo → phir relationships → phir methods</em></p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">2. Sequence Diagram</h4>
+<p><b>Kya dikhata hai:</b> Objects ke beech <b>time-order mein messages/calls</b> — kaun kisko kab call karta hai<br><br>
+<b>Kab use karo:</b><br>
+→ API flow dikhana ho (user → controller → service → DB)<br>
+→ Microservice communication flow<br>
+→ Authentication/Login flow<br><br>
+<b>Elements:</b><br>
+<b>Actor:</b> Stick figure (User)<br>
+<b>Lifeline:</b> Dotted vertical line (object ka lifecycle)<br>
+<b>→ Solid arrow:</b> Synchronous call<br>
+<b>--→ Dashed arrow:</b> Response/return<br>
+<b>Activation box:</b> Thin rectangle (processing time)</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">3. Use Case Diagram</h4>
+<p><b>Kya dikhata hai:</b> System kya-kya kar sakta hai (features) aur <b>kaun use karega</b> (actors)<br><br>
+<b>Kab use karo:</b><br>
+→ Requirement gathering phase mein<br>
+→ Stakeholders ko features explain karna<br>
+→ System boundary define karna<br><br>
+<b>Elements:</b><br>
+<b>Actor:</b> Stick figure (User, Admin, System)<br>
+<b>Use Case:</b> Oval/ellipse (Login, Place Order, Pay)<br>
+<b>System Boundary:</b> Rectangle box<br>
+<b>Relationships:</b> include (mandatory), extend (optional)<br><br>
+<b>Example:</b> ATM System → Actors: Customer, Bank. Use Cases: Withdraw, Deposit, Check Balance</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">4. Activity Diagram (Flowchart Jaisa)</h4>
+<p><b>Kya dikhata hai:</b> Step-by-step <b>workflow/flow</b> — kaise ek process execute hota hai, decisions, parallel paths<br><br>
+<b>Kab use karo:</b><br>
+→ Business logic flow dikhana (order processing, payment flow)<br>
+→ Complex conditional logic samjhana<br>
+→ Parallel activities dikhana<br><br>
+<b>Elements:</b><br>
+<b>●</b> Start node (filled circle)<br>
+<b>◉</b> End node (filled circle with border)<br>
+<b>▭</b> Activity (rounded rectangle)<br>
+<b>◇</b> Decision (diamond) — if/else<br>
+<b>▬</b> Fork/Join bar — parallel activities<br>
+<b>Swimlanes:</b> Vertical columns (kaun kya karega)</p>
+</div>
+</div>
+
+<div class="bottleneck-grid">
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">5. State Diagram</h4>
+<p><b>Kya dikhata hai:</b> Ek object ki <b>different states</b> aur state transitions (ek state se doosri mein kaise jaata hai)<br><br>
+<b>Kab use karo:</b><br>
+→ Order status flow (Placed → Confirmed → Shipped → Delivered)<br>
+→ Payment status (Pending → Processing → Success/Failed)<br>
+→ User account states (Active → Suspended → Banned)<br><br>
+<b>Example — Order States:</b><br>
+CREATED → PAYMENT_PENDING → CONFIRMED → SHIPPED → DELIVERED<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;↓ (payment fail)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CANCELLED</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">6. Component Diagram</h4>
+<p><b>Kya dikhata hai:</b> System ke <b>high-level components/modules</b> aur unke dependencies<br><br>
+<b>Kab use karo:</b><br>
+→ Microservices architecture dikhana<br>
+→ System ke modules aur unki dependencies<br>
+→ HLD (High Level Design) round mein<br><br>
+<b>Example — E-Commerce:</b><br>
+[Auth Service] → [User Service]<br>
+[Order Service] → [Payment Service]<br>
+[Order Service] → [Inventory Service]<br>
+[API Gateway] → [All Services]<br>
+[Notification Service] ← [Order Service]</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">7. Object Diagram</h4>
+<p><b>Kya dikhata hai:</b> Class diagram ka ek <b>snapshot</b> — actual objects with real values at a specific moment<br><br>
+<b>Kab use karo:</b><br>
+→ Class diagram ko concrete example se samjhana<br>
+→ Testing scenarios visualize karna<br><br>
+<b>Example:</b><br>
+Class: <b>User</b>(name, email)<br>
+Object: <b>user1:User</b>(name="Rahul", email="rahul@gmail.com")<br><br>
+<em>Interview mein rarely puchte hain — but class diagram samjhne ke liye helpful hai</em></p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">8. Package Diagram</h4>
+<p><b>Kya dikhata hai:</b> Code ke <b>packages/modules</b> ka organization — kaise group kiya hai<br><br>
+<b>Kab use karo:</b><br>
+→ Project structure dikhana<br>
+→ Module dependencies visualize karna<br><br>
+<b>Example — Spring Boot:</b><br>
+📦 com.app<br>
+├── 📦 controller (REST APIs)<br>
+├── 📦 service (Business logic)<br>
+├── 📦 repository (DB access)<br>
+├── 📦 model (Entities/DTOs)<br>
+├── 📦 config (Security, DB config)<br>
+└── 📦 exception (Error handling)<br><br>
+<em>Mostly used for large projects with many modules</em></p>
+</div>
+</div>
+
+<div class="bottleneck-grid">
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">Konsa Diagram Kab Use Karna Hai? — Quick Guide</h4>
+<p><b>LLD Interview:</b> Class Diagram + Sequence Diagram (99% yahi chahiye)<br><br>
+<b>HLD Interview:</b> Component Diagram + Sequence Diagram<br><br>
+<b>Requirements Discussion:</b> Use Case Diagram<br><br>
+<b>Business Logic Flow:</b> Activity Diagram<br><br>
+<b>Object Lifecycle:</b> State Diagram<br><br>
+<b>Code Organization:</b> Package Diagram<br><br>
+<b>Debugging/Testing:</b> Object Diagram + Sequence Diagram</p>
+</div>
+<div class="bottleneck-card">
+<h4 style="color:#42a5f5">Interview Strategy</h4>
+<p><b>Step 1:</b> Requirements suno → Use Case Diagram mentally socho<br><br>
+<b>Step 2:</b> Core entities identify karo → Class Diagram banao (attributes + methods + relationships)<br><br>
+<b>Step 3:</b> Key flows ke liye Sequence Diagram banao (login flow, order flow, payment flow)<br><br>
+<b>Step 4:</b> Agar complex state hai (order, payment) → State Diagram dikhao<br><br>
+<em>"Interviewer ko lagta hai — ye banda sochta hai code likhne se pehle. Hire karo!"</em></p>
+</div>
+</div>
+
+<div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">UML Class Diagram — Parking Lot LLD Example</span></div>
+<pre class="code-block"><span class="cm">// Class Diagram → Java Code Mapping</span>
+<span class="cm">// Yeh diagram ka code representation hai — interview mein dono dikhao!</span>
+
+<span class="cm">// ┌─────────────────────────┐</span>
+<span class="cm">// │      ParkingLot          │</span>
+<span class="cm">// ├─────────────────────────┤</span>
+<span class="cm">// │ - name: String           │</span>
+<span class="cm">// │ - floors: List&lt;Floor&gt;    │</span>
+<span class="cm">// ├─────────────────────────┤</span>
+<span class="cm">// │ + addFloor(f): void      │</span>
+<span class="cm">// │ + findSlot(v): Slot      │</span>
+<span class="cm">// └──────────┬──────────────┘</span>
+<span class="cm">//            │ 1</span>
+<span class="cm">//            │ ◆ Composition (Floor can't exist without ParkingLot)</span>
+<span class="cm">//            │ *</span>
+<span class="cm">// ┌──────────┴──────────────┐</span>
+<span class="cm">// │        Floor             │</span>
+<span class="cm">// ├─────────────────────────┤</span>
+<span class="cm">// │ - floorNumber: int       │</span>
+<span class="cm">// │ - slots: List&lt;Slot&gt;      │</span>
+<span class="cm">// ├─────────────────────────┤</span>
+<span class="cm">// │ + getAvailableSlots()    │</span>
+<span class="cm">// └──────────┬──────────────┘</span>
+<span class="cm">//            │ 1</span>
+<span class="cm">//            │ ◆ Composition</span>
+<span class="cm">//            │ *</span>
+<span class="cm">// ┌──────────┴──────────────┐       ┌─────────────────────┐</span>
+<span class="cm">// │        Slot              │       │   &lt;&lt;enum&gt;&gt;          │</span>
+<span class="cm">// ├─────────────────────────┤       │   SlotType           │</span>
+<span class="cm">// │ - slotId: String         │       ├─────────────────────┤</span>
+<span class="cm">// │ - type: SlotType         │──────▶│ SMALL, MEDIUM,      │</span>
+<span class="cm">// │ - isOccupied: boolean    │       │ LARGE, HANDICAPPED  │</span>
+<span class="cm">// │ - vehicle: Vehicle       │       └─────────────────────┘</span>
+<span class="cm">// ├─────────────────────────┤</span>
+<span class="cm">// │ + park(v): boolean       │</span>
+<span class="cm">// │ + unpark(): Vehicle      │</span>
+<span class="cm">// └──────────┬──────────────┘</span>
+<span class="cm">//            │ 0..1  (slot mein 0 ya 1 vehicle hogi)</span>
+<span class="cm">//            │ ◇ Aggregation (Vehicle exists independently)</span>
+<span class="cm">//            │</span>
+<span class="cm">// ┌──────────┴──────────────┐</span>
+<span class="cm">// │      Vehicle             │</span>
+<span class="cm">// ├─────────────────────────┤</span>
+<span class="cm">// │ - licensePlate: String   │</span>
+<span class="cm">// │ - type: VehicleType      │</span>
+<span class="cm">// │ - color: String          │</span>
+<span class="cm">// └─────────────────────────┘</span>
+
+<span class="cm">// Code Implementation:</span>
+<span class="kw">public class</span> <span class="tp">ParkingLot</span> {
+    <span class="kw">private</span> <span class="tp">String</span> name;
+    <span class="kw">private</span> <span class="tp">List</span>&lt;<span class="tp">Floor</span>&gt; floors;  <span class="cm">// ◆ Composition: ParkingLot owns Floors</span>
+
+    <span class="kw">public</span> <span class="tp">Slot</span> <span class="fn">findAvailableSlot</span>(<span class="tp">VehicleType</span> type) {
+        <span class="kw">return</span> floors.<span class="fn">stream</span>()
+            .<span class="fn">flatMap</span>(f -> f.<span class="fn">getSlots</span>().<span class="fn">stream</span>())
+            .<span class="fn">filter</span>(s -> !s.<span class="fn">isOccupied</span>() &amp;&amp; s.<span class="fn">getType</span>().<span class="fn">fits</span>(type))
+            .<span class="fn">findFirst</span>().<span class="fn">orElse</span>(<span class="kw">null</span>);
+    }
+}
+
+<span class="kw">public class</span> <span class="tp">Slot</span> {
+    <span class="kw">private</span> <span class="tp">Vehicle</span> vehicle;  <span class="cm">// ◇ Aggregation: Vehicle can exist without Slot</span>
+
+    <span class="kw">public boolean</span> <span class="fn">park</span>(<span class="tp">Vehicle</span> v) {
+        <span class="kw">if</span> (isOccupied) <span class="kw">return false</span>;
+        <span class="kw">this</span>.vehicle = v;
+        <span class="kw">this</span>.isOccupied = <span class="kw">true</span>;
+        <span class="kw">return true</span>;
+    }
+}</pre></div>
+
+<div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">UML Sequence Diagram — Login Flow Example</span></div>
+<pre class="code-block"><span class="cm">// Sequence Diagram → Login Flow</span>
+<span class="cm">// Time flows TOP to BOTTOM (↓)</span>
+<span class="cm">// Arrows show method calls between objects</span>
+
+<span class="cm">// User        Controller       Service         Repository       Redis</span>
+<span class="cm">//  │              │               │                │              │</span>
+<span class="cm">//  │──POST /login─▶│               │                │              │</span>
+<span class="cm">//  │              │──authenticate()▶│               │              │</span>
+<span class="cm">//  │              │               │──findByEmail()─▶│              │</span>
+<span class="cm">//  │              │               │◀──User object───│              │</span>
+<span class="cm">//  │              │               │                │              │</span>
+<span class="cm">//  │              │               │──verifyPassword()              │</span>
+<span class="cm">//  │              │               │  (BCrypt match) │              │</span>
+<span class="cm">//  │              │               │                │              │</span>
+<span class="cm">//  │              │               │──generateJWT()  │              │</span>
+<span class="cm">//  │              │               │                │              │</span>
+<span class="cm">//  │              │               │──cacheSession()─┼─────────────▶│</span>
+<span class="cm">//  │              │               │                │     SET token│</span>
+<span class="cm">//  │              │               │◀─────────────── ┼──────────────│</span>
+<span class="cm">//  │              │◀──JWT token────│                │              │</span>
+<span class="cm">//  │◀──200 + token─│               │                │              │</span>
+<span class="cm">//  │              │               │                │              │</span>
+
+<span class="cm">// Spring Boot Code for this Sequence:</span>
+<span class="ann">@PostMapping</span>(<span class="st">"/login"</span>)
+<span class="kw">public</span> <span class="tp">ResponseEntity</span>&lt;<span class="tp">AuthResponse</span>&gt; <span class="fn">login</span>(<span class="ann">@RequestBody</span> <span class="tp">LoginDTO</span> dto) {
+    <span class="tp">String</span> token = authService.<span class="fn">authenticate</span>(dto);   <span class="cm">// Controller → Service</span>
+    <span class="kw">return</span> ResponseEntity.<span class="fn">ok</span>(<span class="kw">new</span> <span class="tp">AuthResponse</span>(token));
+}
+
+<span class="kw">public</span> <span class="tp">String</span> <span class="fn">authenticate</span>(<span class="tp">LoginDTO</span> dto) {
+    <span class="tp">User</span> user = userRepo.<span class="fn">findByEmail</span>(dto.getEmail());  <span class="cm">// Service → Repository</span>
+    <span class="kw">if</span> (!encoder.<span class="fn">matches</span>(dto.getPassword(), user.<span class="fn">getPassword</span>()))
+        <span class="kw">throw new</span> <span class="tp">BadCredentialsException</span>(<span class="st">"Wrong password"</span>);
+    <span class="tp">String</span> jwt = jwtUtil.<span class="fn">generateToken</span>(user);        <span class="cm">// Generate JWT</span>
+    redis.<span class="fn">set</span>(<span class="st">"session:"</span> + user.getId(), jwt);         <span class="cm">// Service → Redis</span>
+    <span class="kw">return</span> jwt;
+}</pre></div>
+
+<div class="code-wrapper"><div class="code-titlebar"><span class="dot red"></span><span class="dot yellow"></span><span class="dot green"></span><span class="code-title">All UML Diagrams — Quick Reference Table</span></div>
+<pre class="code-block"><span class="cm">// ┌────────────────────┬──────────────┬─────────────────────────────────────┐</span>
+<span class="cm">// │ Diagram            │ Category     │ Kab Use Karna Hai                   │</span>
+<span class="cm">// ├────────────────────┼──────────────┼─────────────────────────────────────┤</span>
+<span class="cm">// │ Class Diagram      │ Structural   │ LLD interview, DB design, OOP      │</span>
+<span class="cm">// │ Sequence Diagram   │ Behavioral   │ API flow, service communication    │</span>
+<span class="cm">// │ Use Case Diagram   │ Behavioral   │ Requirements, feature listing      │</span>
+<span class="cm">// │ Activity Diagram   │ Behavioral   │ Business flow, complex logic       │</span>
+<span class="cm">// │ State Diagram      │ Behavioral   │ Order/payment status, lifecycle    │</span>
+<span class="cm">// │ Component Diagram  │ Structural   │ HLD, microservice architecture     │</span>
+<span class="cm">// │ Object Diagram     │ Structural   │ Class diagram ka real example      │</span>
+<span class="cm">// │ Package Diagram    │ Structural   │ Project structure, module deps     │</span>
+<span class="cm">// ├────────────────────┼──────────────┼─────────────────────────────────────┤</span>
+<span class="cm">// │ INTERVIEW FOCUS:   │              │                                     │</span>
+<span class="cm">// │ ★ Class Diagram    │ #1 Priority  │ "Design Parking Lot / BookMyShow"  │</span>
+<span class="cm">// │ ★ Sequence Diagram │ #2 Priority  │ "Show login/order/payment flow"    │</span>
+<span class="cm">// │ ★ Use Case Diagram │ #3 Priority  │ "What can users do in this system?"│</span>
+<span class="cm">// │ ★ State Diagram    │ #4 Priority  │ "Show order/ticket lifecycle"      │</span>
+<span class="cm">// └────────────────────┴──────────────┴─────────────────────────────────────┘</span>
+
+<span class="cm">// Composition vs Aggregation vs Association — Summary:</span>
+<span class="cm">// ◆ Composition  → "Part of" (Room dies when House is destroyed)</span>
+<span class="cm">// ◇ Aggregation  → "Has a"   (Student exists without University)</span>
+<span class="cm">// → Association  → "Uses"    (Teacher teaches Student)</span>
+<span class="cm">// --▷ Implements → "Can do"  (Dog implements Animal interface)</span>
+<span class="cm">// ──▷ Extends    → "Is a"    (Dog extends Animal class)</span></pre></div>
+</div>
+
 <!-- FINAL: Interview Cheat Sheet -->
 <div class="section theme-purple">
 <div class="section-title"><span class="section-num">&#127942;</span> Master Cheat Sheet — Interview Quick Revision</div>
@@ -1838,6 +2163,7 @@ Product catalog → BASE (price 2 sec delay se update ho toh chalega, but app do
 <div class="summary-card"><h4>Resilience</h4><p><b>Circuit Breaker:</b> CLOSED→OPEN→HALF-OPEN | <b>Retry:</b> Exponential backoff | <b>Saga:</b> Distributed tx | <b>Idempotency:</b> UUID key + Redis cache</p></div>
 <div class="summary-card"><h4>Theorems & Laws</h4><p><b>Little's Law:</b> L=λ×W (capacity planning) | <b>Amdahl's Law:</b> Speedup=1/(S+P/N) (scaling limit) | <b>CAP:</b> Pick 2 of C,A,P | <b>PACELC:</b> CAP + Latency vs Consistency tradeoff in normal ops</p></div>
 <div class="summary-card"><h4>ACID vs BASE</h4><p><b>ACID:</b> Atomicity, Consistency, Isolation, Durability → SQL, Banking | <b>BASE:</b> Basically Available, Soft state, Eventual consistency → NoSQL, Social media | Payment=ACID, Catalog=BASE</p></div>
+<div class="summary-card"><h4>UML Diagrams</h4><p><b>LLD:</b> Class Diagram (#1) + Sequence Diagram (#2) | <b>HLD:</b> Component Diagram | <b>Requirements:</b> Use Case Diagram | <b>Flow:</b> Activity Diagram | <b>Lifecycle:</b> State Diagram | ◆=Composition ◇=Aggregation →=Association</p></div>
 </div>
 </div>
 

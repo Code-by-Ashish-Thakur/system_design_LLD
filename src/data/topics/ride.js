@@ -476,8 +476,215 @@ SET ride:lock:R123 <span class="st">"driver:5001"</span> NX EX <span class="cn">
     </div>
 </div>
 
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">14</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">User</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">phone</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">role</span><span class="uml-type">: String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">requestRide(pickup, drop)</span><span class="uml-type">: Ride</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDriverProfile()</span><span class="uml-type">: Driver</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Driver</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">vehicleType</span><span class="uml-type">: VehicleType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">licenseNumber</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">rating</span><span class="uml-type">: double</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isAvailable</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">currentLocation</span><span class="uml-type">: Point</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">acceptRide(rideId)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateLocation(lat, lng)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">toggleAvailability()</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Ride</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">riderId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">driverId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">: RideStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">pickupLocation</span><span class="uml-type">: Point</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">dropLocation</span><span class="uml-type">: Point</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">estimatedFare</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">actualFare</span><span class="uml-type">: BigDecimal</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStatus(status)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculateFare()</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">cancel(reason)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RideTracking</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">rideId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">latitude</span><span class="uml-type">: double</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">longitude</span><span class="uml-type">: double</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">timestamp</span><span class="uml-type">: Timestamp</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPoint()</span><span class="uml-type">: Point</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">distanceTo(other)</span><span class="uml-type">: double</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Payment</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">rideId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">amount</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">method</span><span class="uml-type">: PaymentMethod</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">: String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">process()</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">refund()</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Rating</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">rideId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">raterId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">ratedId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">score</span><span class="uml-type">: int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">comment</span><span class="uml-type">: String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isValid()</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getStarRating()</span><span class="uml-type">: int</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">RideStatus</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">REQUESTED, DRIVER_ASSIGNED, DRIVER_ARRIVED, IN_PROGRESS, COMPLETED, CANCELLED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RiderRating</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">ONE_STAR, TWO_STAR, THREE_STAR, FOUR_STAR, FIVE_STAR</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">PaymentMethod</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">CASH, UPI, CREDIT_CARD, DEBIT_CARD, WALLET</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">VehicleType</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">MINI, SEDAN, SUV, PREMIUM, AUTO, BIKE</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">RideService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">requestRide(riderId, pickup, drop)</span><span class="uml-type">: Ride</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">startRide(rideId, otp)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">completeRide(rideId)</span><span class="uml-type">: Ride</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">MatchingService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">findNearbyDrivers(location)</span><span class="uml-type">: List&lt;Driver&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">assignDriver(rideId)</span><span class="uml-type">: Driver</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculateScore(driver)</span><span class="uml-type">: double</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">LocationTrackingService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateLocation(driverId, lat, lng)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDriverLocation(driverId)</span><span class="uml-type">: Point</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRideTrail(rideId)</span><span class="uml-type">: List&lt;Point&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">PricingService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">estimateFare(pickup, drop)</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculateActualFare(ride)</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSurgeMultiplier(area)</span><span class="uml-type">: double</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RatingService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">rateRide(rideId, score)</span><span class="uml-type">: Rating</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDriverRating(driverId)</span><span class="uml-type">: double</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">SupportService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">raiseIssue(rideId, type)</span><span class="uml-type">: Ticket</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">triggerSOS(rideId)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Relationships</div>
+        <div class="uml-relations">
+            <div class="uml-rel"><span class="uml-rel-from">User</span><span class="uml-rel-arrow">1 &mdash;&mdash; 0..1</span><span class="uml-rel-to">Driver</span><span class="uml-rel-label">can be</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">User</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">Ride</span><span class="uml-rel-label">requests (as rider)</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Driver</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">Ride</span><span class="uml-rel-label">accepts</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Ride</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">RideTracking</span><span class="uml-rel-label">tracked via</span><span class="uml-rel-type">Composition</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Ride</span><span class="uml-rel-arrow">1 &mdash;&mdash; 1</span><span class="uml-rel-to">Payment</span><span class="uml-rel-label">paid via</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Ride</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">Rating</span><span class="uml-rel-label">rated by</span><span class="uml-rel-type">Aggregation</span></div>
+        </div>
+
+        <div class="uml-note">Yeh UML diagram Uber jaisi Ride Handling service ka design dikhata hai &mdash; Rider Ride request karta hai, MatchingService nearest available Driver dhundta hai, LocationTrackingService real-time location track karta hai WebSocket se, aur PricingService surge pricing ke saath fare calculate karta hai.</div>
+    </div>
+</div>
+
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Matching</strong><br>Redis GEORADIUS for nearby drivers; score by distance + rating; 30s accept timeout</div>
         <div class="summary-card"><strong>Location</strong><br>Redis GEO for real-time; WebSocket push to rider; Kafka &rarr; TimescaleDB for history</div>

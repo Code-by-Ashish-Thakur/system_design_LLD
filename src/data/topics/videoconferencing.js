@@ -1235,6 +1235,283 @@ Host &rarr; POST /meetings/{id}/end
     </div>
 </div>
 
+<!-- ============ 17. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">17</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">avatarUrl</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getHostedMeetings()</span><span class="uml-type">List&lt;Meeting&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRecordings()</span><span class="uml-type">List&lt;Recording&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Meeting</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">hostId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">meetingCode</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">title</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">MeetingType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">MeetingStatus</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getParticipants()</span><span class="uml-type">List&lt;Participant&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRecordings()</span><span class="uml-type">List&lt;Recording&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">endMeeting()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Participant</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">meetingId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">role</span><span class="uml-type">ParticipantRole</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">ParticipantStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">audioEnabled</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">toggleMedia()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">raiseHand()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getUser()</span><span class="uml-type">User</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Recording</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">meetingId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">startedBy</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">RecordingStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">storageUrl</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDownloadUrl()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDuration()</span><span class="uml-type">int</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>BreakoutRoom</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">meetingId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isActive</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getParticipants()</span><span class="uml-type">List&lt;Participant&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">close()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>ChatMessage</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">meetingId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">senderId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">content</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isPrivate</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSender()</span><span class="uml-type">User</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTimestamp()</span><span class="uml-type">LocalDateTime</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>MeetingStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SCHEDULED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">IN_PROGRESS</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ENDED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CANCELLED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ParticipantRole</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">HOST</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CO_HOST</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PARTICIPANT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">GUEST</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>MediaType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">AUDIO</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">VIDEO</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">SCREEN_SHARE</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ParticipantStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">IN_LOBBY</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">JOINED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">LEFT</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">KICKED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>RecordingStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">RECORDING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PAUSED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">STOPPED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">READY</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>Reaction</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">THUMBS_UP</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CLAP</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">HEART</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">RAISED_HAND</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>MeetingService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createMeeting()</span><span class="uml-type">Meeting</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">scheduleMeeting()</span><span class="uml-type">Meeting</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">endMeeting()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ParticipantService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">joinMeeting()</span><span class="uml-type">Participant</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">admitFromLobby()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">kickParticipant()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>MediaService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">negotiateSession()</span><span class="uml-type">SessionDescription</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">toggleMedia()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">adjustQuality()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ScreenShareService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">startScreenShare()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">stopScreenShare()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getActiveShare()</span><span class="uml-type">ScreenShareInfo</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ChatService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendMessage()</span><span class="uml-type">ChatMessage</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendPrivateMessage()</span><span class="uml-type">ChatMessage</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getChatHistory()</span><span class="uml-type">List&lt;ChatMessage&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>RecordingService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">startRecording()</span><span class="uml-type">Recording</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">stopRecording()</span><span class="uml-type">Recording</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getDownloadUrl()</span><span class="uml-type">String</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>BreakoutRoomService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createRooms()</span><span class="uml-type">List&lt;BreakoutRoom&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">assignParticipants()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">closeAllRooms()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ReactionService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">toggleHandRaise()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">sendReaction()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRaisedHands()</span><span class="uml-type">List&lt;Long&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Meeting</span>
+                <span class="uml-rel-label">hosts</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Meeting</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Participant</span>
+                <span class="uml-rel-label">has</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Participant</span>
+                <span class="uml-rel-arrow">N ────── 1</span>
+                <span class="uml-rel-to">User</span>
+                <span class="uml-rel-label">is a</span>
+                <span class="uml-rel-type">MANY-TO-ONE</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Meeting</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Recording</span>
+                <span class="uml-rel-label">records</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Meeting</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">BreakoutRoom</span>
+                <span class="uml-rel-label">splits into</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Meeting</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">ChatMessage</span>
+                <span class="uml-rel-label">contains</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram Zoom/Google Meet jaisi Video Conferencing app ka design dikhata hai &mdash; User Meeting create karta hai as Host, Participants join karte hain meeting code se. MediaService WebRTC ke through audio/video handle karta hai SFU server ke saath. Recording cloud pe save hoti hai aur BreakoutRooms se small group discussions hote hain.
+        </div>
+    </div>
+</div>
+
 <!-- ============ 14. INTERVIEW TIPS ============ -->
 <div class="section theme-orange">
     <div class="section-title"><span class="section-num">16</span>Interview Summary</div>

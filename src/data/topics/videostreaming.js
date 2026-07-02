@@ -441,8 +441,231 @@ export default {
     </div>
 </div>
 
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">14</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">User</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">username</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">createdAt</span><span class="uml-type">: Timestamp</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createChannel(name)</span><span class="uml-type">: Channel</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">subscribe(channelId)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Video</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">channelId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">title</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">: VideoStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">visibility</span><span class="uml-type">: Visibility</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">viewCount</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">duration</span><span class="uml-type">: int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStatus(status)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">incrementViews()</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getVariants()</span><span class="uml-type">: List&lt;VideoVariant&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Channel</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">name</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">subscriberCount</span><span class="uml-type">: Long</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">uploadVideo(file)</span><span class="uml-type">: Video</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getVideos(page)</span><span class="uml-type">: Page&lt;Video&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">VideoVariant</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">videoId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">resolution</span><span class="uml-type">: Resolution</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">codec</span><span class="uml-type">: Codec</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">bitrateKbps</span><span class="uml-type">: int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">fileUrl</span><span class="uml-type">: String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getStreamUrl()</span><span class="uml-type">: String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getManifest()</span><span class="uml-type">: String</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">ViewEvent</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">videoId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">watchDuration</span><span class="uml-type">: int</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">timestamp</span><span class="uml-type">: Timestamp</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isCompleted()</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getWatchPercentage()</span><span class="uml-type">: double</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Comment</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">videoId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">content</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">likeCount</span><span class="uml-type">: int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">reply(content)</span><span class="uml-type">: Comment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">like()</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">VideoStatus</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">UPLOADING, PROCESSING, TRANSCODING, READY, FAILED, DELETED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Resolution</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">R_360P, R_480P, R_720P, R_1080P, R_1440P, R_4K</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Codec</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">H264, H265, VP9, AV1</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Visibility</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">PUBLIC, UNLISTED, PRIVATE, SCHEDULED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">TranscodeStatus</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">QUEUED, IN_PROGRESS, COMPLETED, FAILED</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">VideoUploadService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">upload(file, title, channelId)</span><span class="uml-type">: Video</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">resumeUpload(uploadId, chunk)</span><span class="uml-type">: UploadSession</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">validateVideo(file)</span><span class="uml-type">: boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">TranscodingService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">transcode(videoId, resolutions)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getStatus(videoId)</span><span class="uml-type">: TranscodeStatus</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">retryTranscode(videoId, res)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">ThumbnailService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">generate(videoId, count)</span><span class="uml-type">: List&lt;String&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">uploadCustom(videoId, image)</span><span class="uml-type">: String</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">StreamingService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getManifest(videoId, res)</span><span class="uml-type">: String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">generateSignedUrl(videoId)</span><span class="uml-type">: String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">selectAdaptiveQuality(bw)</span><span class="uml-type">: Resolution</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">SearchService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">search(query, filters)</span><span class="uml-type">: Page&lt;Video&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">autoSuggest(prefix)</span><span class="uml-type">: List&lt;String&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">ViewCountService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">recordView(videoId, userId)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getViewCount(videoId)</span><span class="uml-type">: long</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">flushToDatabase()</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">ModerationService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">moderate(videoId)</span><span class="uml-type">: ModerationResult</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">flagVideo(videoId, reason)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RecommendationService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRecommendations(userId)</span><span class="uml-type">: List&lt;Video&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTrending(region)</span><span class="uml-type">: List&lt;Video&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Relationships</div>
+        <div class="uml-relations">
+            <div class="uml-rel"><span class="uml-rel-from">User</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">Channel</span><span class="uml-rel-label">owns</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Channel</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">Video</span><span class="uml-rel-label">contains</span><span class="uml-rel-type">Composition</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Video</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">VideoVariant</span><span class="uml-rel-label">transcoded into</span><span class="uml-rel-type">Composition</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Video</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">Comment</span><span class="uml-rel-label">has</span><span class="uml-rel-type">Aggregation</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Video</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">ViewEvent</span><span class="uml-rel-label">generates</span><span class="uml-rel-type">Association</span></div>
+        </div>
+
+        <div class="uml-note">Yeh UML diagram Video Streaming platform ka design dikhata hai &mdash; User ke paas Channel hota hai jisme Videos upload hoti hain. Har Video ke multiple VideoVariants hote hain different resolutions me (360p, 720p, 1080p). TranscodingService video ko multiple formats me convert karta hai aur CDN se deliver hota hai.</div>
+    </div>
+</div>
+
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Upload</strong><br>Chunked resumable upload to S3; TUS protocol for reliability</div>
         <div class="summary-card"><strong>Transcoding</strong><br>Kafka fan-out to FFmpeg workers; 4 resolutions × H264; GPU acceleration</div>

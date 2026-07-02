@@ -433,8 +433,245 @@ export default {
     </div>
 </div>
 
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">14</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">User</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">phone</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">createdAt</span><span class="uml-type">: Timestamp</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">initiatePayment(req)</span><span class="uml-type">: Payment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getWallet()</span><span class="uml-type">: Wallet</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Payment</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">orderId</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">amount</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">currency</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">method</span><span class="uml-type">: PaymentMethod</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">: PaymentStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">gatewayId</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">idempotencyKey</span><span class="uml-type">: String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">capture()</span><span class="uml-type">: Payment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateStatus(status)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isRefundable()</span><span class="uml-type">: boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Refund</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">paymentId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">amount</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">: RefundStatus</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">: RefundType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">reason</span><span class="uml-type">: String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">process()</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isPartial()</span><span class="uml-type">: boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">Wallet</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">balance</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">currency</span><span class="uml-type">: String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">debit(amount)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">credit(amount)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getBalance()</span><span class="uml-type">: BigDecimal</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">LedgerEntry</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">paymentId</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">type</span><span class="uml-type">: LedgerEntryType</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">amount</span><span class="uml-type">: BigDecimal</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">debitAccount</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">creditAccount</span><span class="uml-type">: String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">timestamp</span><span class="uml-type">: Timestamp</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isDebit()</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isCredit()</span><span class="uml-type">: boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">GatewayConfig</div>
+                <div class="uml-stereotype">&laquo;entity&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">: Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">provider</span><span class="uml-type">: GatewayProvider</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isActive</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">successRate</span><span class="uml-type">: double</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">priority</span><span class="uml-type">: int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isHealthy()</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateSuccessRate(rate)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">PaymentStatus</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">INITIATED, PENDING, AUTHORIZED, CAPTURED, FAILED, REFUNDED, PARTIALLY_REFUNDED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">PaymentMethod</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">UPI, CREDIT_CARD, DEBIT_CARD, NET_BANKING, WALLET, EMI</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">GatewayProvider</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">RAZORPAY, STRIPE, PAYU, PHONEPE</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RefundStatus</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">INITIATED, PROCESSING, COMPLETED, FAILED</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RefundType</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">FULL, PARTIAL</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">LedgerEntryType</div>
+                <div class="uml-stereotype">&laquo;enum&raquo;</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-name">PAYMENT_CREDIT, PAYMENT_DEBIT, REFUND_CREDIT, REFUND_DEBIT, WALLET_TOPUP, WALLET_DEBIT</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name">PaymentService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">initiatePayment(req)</span><span class="uml-type">: Payment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">capturePayment(paymentId)</span><span class="uml-type">: Payment</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getPaymentById(id)</span><span class="uml-type">: Payment</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">GatewayRoutingService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">selectGateway(method, amount)</span><span class="uml-type">: GatewayProvider</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSuccessRate(provider)</span><span class="uml-type">: double</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getFallbackGateway(failed)</span><span class="uml-type">: GatewayProvider</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">RefundService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">refund(paymentId, amount)</span><span class="uml-type">: Refund</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isRefundable(paymentId)</span><span class="uml-type">: boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">partialRefund(id, amt, reason)</span><span class="uml-type">: Refund</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">WalletService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">debit(userId, amount)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">credit(userId, amount)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getBalance(userId)</span><span class="uml-type">: BigDecimal</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">LedgerService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">recordEntry(entry)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createDoubleEntry(id, dr, cr)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getEntriesByPayment(id)</span><span class="uml-type">: List&lt;LedgerEntry&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">WebhookService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">processWebhook(payload, sig)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">verifySignature(payload, sig)</span><span class="uml-type">: boolean</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">ReconciliationService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">reconcile(date)</span><span class="uml-type">: ReconciliationReport</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">findMismatches(date)</span><span class="uml-type">: List&lt;MismatchRecord&gt;</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name">FraudDetectionService</div>
+                <div class="uml-stereotype">&laquo;service&raquo;</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">checkFraud(req)</span><span class="uml-type">: void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">calculateRiskScore(req)</span><span class="uml-type">: int</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">blockUser(userId, reason)</span><span class="uml-type">: void</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Relationships</div>
+        <div class="uml-relations">
+            <div class="uml-rel"><span class="uml-rel-from">User</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">Payment</span><span class="uml-rel-label">initiates</span><span class="uml-rel-type">Association</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Payment</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">Refund</span><span class="uml-rel-label">refunded via</span><span class="uml-rel-type">Composition</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Payment</span><span class="uml-rel-arrow">1 &mdash;&mdash; N</span><span class="uml-rel-to">LedgerEntry</span><span class="uml-rel-label">recorded in</span><span class="uml-rel-type">Composition</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">User</span><span class="uml-rel-arrow">1 &mdash;&mdash; 1</span><span class="uml-rel-to">Wallet</span><span class="uml-rel-label">owns</span><span class="uml-rel-type">Composition</span></div>
+            <div class="uml-rel"><span class="uml-rel-from">Payment</span><span class="uml-rel-arrow">N &mdash;&mdash; 1</span><span class="uml-rel-to">GatewayConfig</span><span class="uml-rel-label">routed via</span><span class="uml-rel-type">Association</span></div>
+        </div>
+
+        <div class="uml-note">Yeh UML diagram Payment System ka complete design dikhata hai &mdash; User Payment initiate karta hai, GatewayRoutingService best gateway select karta hai, LedgerService double-entry bookkeeping maintain karta hai. Idempotency key se duplicate payments rok jaate hain aur Refund kisi bhi paid Payment pe ho sakta hai.</div>
+    </div>
+</div>
+
 <div class="section theme-blue">
-    <div class="section-title"><span class="section-num">14</span>Interview Cheat-Sheet</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Cheat-Sheet</div>
     <div class="summary-grid">
         <div class="summary-card"><strong>Idempotency</strong><br>UUID key in UNIQUE index; return existing on duplicate; prevents double charge</div>
         <div class="summary-card"><strong>State Machine</strong><br>INITIATED&rarr;PENDING&rarr;AUTHORIZED&rarr;CAPTURED&rarr;REFUNDED; reject invalid transitions</div>

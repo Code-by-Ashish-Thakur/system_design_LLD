@@ -1004,11 +1004,244 @@ export default {
     </div>
 </div>
 
-<!-- ============ 14. INTERVIEW SUMMARY ============ -->
+<!-- ============ 14. UML CLASS DIAGRAM ============ -->
 
-<!-- ============ 14. INTERVIEW SUMMARY ============ -->
+<!-- ============ 14. UML CLASS DIAGRAM ============ -->
+<div class="section theme-deepblue">
+    <div class="section-title"><span class="section-num">14</span>UML Class Diagram</div>
+    <div class="uml-diagram">
+
+        <div class="uml-section-label">Entity Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>User</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">username</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">email</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">rating</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSubmissions()</span><span class="uml-type">List&lt;Submission&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateRating()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSolvedCount()</span><span class="uml-type">int</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Problem</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">title</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">description</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">difficulty</span><span class="uml-type">Difficulty</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">acceptRate</span><span class="uml-type">double</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getTestCases()</span><span class="uml-type">List&lt;TestCase&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getSubmissions()</span><span class="uml-type">List&lt;Submission&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">updateAcceptRate()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Submission</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">problemId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">code</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">language</span><span class="uml-type">ProgrammingLanguage</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">status</span><span class="uml-type">SubmissionStatus</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getRuntime()</span><span class="uml-type">int</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getMemory()</span><span class="uml-type">int</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isAccepted()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>TestCase</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">problemId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">input</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">expectedOutput</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">isHidden</span><span class="uml-type">boolean</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">validate()</span><span class="uml-type">boolean</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">compare()</span><span class="uml-type">VerdictType</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Discussion</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">userId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">problemId</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">title</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">content</span><span class="uml-type">String</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getReplies()</span><span class="uml-type">List&lt;Discussion&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getVoteCount()</span><span class="uml-type">int</span></div>
+                </div>
+            </div>
+
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;entity&raquo;</span>Contest</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">id</span><span class="uml-type">Long</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">title</span><span class="uml-type">String</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">startTime</span><span class="uml-type">LocalDateTime</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">endTime</span><span class="uml-type">LocalDateTime</span></div>
+                    <div class="uml-attr"><span class="uml-vis">-</span><span class="uml-name">duration</span><span class="uml-type">int</span></div>
+                </div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getProblems()</span><span class="uml-type">List&lt;Problem&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getLeaderboard()</span><span class="uml-type">List&lt;User&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">isActive()</span><span class="uml-type">boolean</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Enums</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>Difficulty</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">EASY</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">MEDIUM</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">HARD</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>ProgrammingLanguage</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">JAVA</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PYTHON</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">CPP</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">JAVASCRIPT</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>SubmissionStatus</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PENDING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">RUNNING</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">ACCEPTED</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">WRONG_ANSWER</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">TLE</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;enum&raquo;</span>VerdictType</div>
+                <div class="uml-attributes">
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">PASS</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">FAIL</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">RUNTIME_ERROR</span></div>
+                    <div class="uml-attr"><span class="uml-vis">+</span><span class="uml-name">COMPILATION_ERROR</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-section-label">Service Classes</div>
+        <div class="uml-grid">
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ProblemService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getProblems()</span><span class="uml-type">List&lt;Problem&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">filterByDifficulty()</span><span class="uml-type">List&lt;Problem&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getProblemById()</span><span class="uml-type">Problem</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>CodeExecutionService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">execute()</span><span class="uml-type">ExecutionResult</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">runInSandbox()</span><span class="uml-type">String</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">validateOutput()</span><span class="uml-type">VerdictType</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>SubmissionService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">submit()</span><span class="uml-type">Submission</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getHistory()</span><span class="uml-type">List&lt;Submission&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getStatus()</span><span class="uml-type">SubmissionStatus</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>DiscussionService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createPost()</span><span class="uml-type">Discussion</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getByProblem()</span><span class="uml-type">List&lt;Discussion&gt;</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">vote()</span><span class="uml-type">void</span></div>
+                </div>
+            </div>
+            <div class="uml-class">
+                <div class="uml-class-name"><span class="uml-stereotype">&laquo;service&raquo;</span>ContestService</div>
+                <div class="uml-methods">
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">createContest()</span><span class="uml-type">Contest</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">registerUser()</span><span class="uml-type">void</span></div>
+                    <div class="uml-method"><span class="uml-vis">+</span><span class="uml-name">getLeaderboard()</span><span class="uml-type">List&lt;User&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="uml-relations">
+            <h4>Relationships</h4>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Submission</span>
+                <span class="uml-rel-label">submits</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Problem</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Submission</span>
+                <span class="uml-rel-label">receives</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Problem</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">TestCase</span>
+                <span class="uml-rel-label">has</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">User</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Discussion</span>
+                <span class="uml-rel-label">creates</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+            <div class="uml-rel">
+                <span class="uml-rel-from">Contest</span>
+                <span class="uml-rel-arrow">1 ────── N</span>
+                <span class="uml-rel-to">Problem</span>
+                <span class="uml-rel-label">contains</span>
+                <span class="uml-rel-type">ONE-TO-MANY</span>
+            </div>
+        </div>
+
+        <div class="uml-note">
+            <strong>Hinglish Explanation:</strong> Yeh UML diagram LeetCode ke main classes dikhata hai &mdash; User Problem solve karta hai through Submission, har Problem ke saath TestCases hote hain jo code validate karte hain, aur Contest me multiple Problems hote hain. CodeExecutionService sandboxed environment me code run karta hai.
+        </div>
+    </div>
+</div>
+
+<!-- ============ 15. INTERVIEW SUMMARY ============ -->
+
+<!-- ============ 15. INTERVIEW SUMMARY ============ -->
 <div class="section theme-orange">
-    <div class="section-title"><span class="section-num">14</span>Interview Summary</div>
+    <div class="section-title"><span class="section-num">15</span>Interview Summary</div>
     <div class="summary-grid">
         <div class="summary-card sc-1"><h4>Async Judge Pipeline</h4><p>Queue-based code execution with RabbitMQ</p></div>
         <div class="summary-card sc-2"><h4>Docker Sandboxing</h4><p>Isolated execution with resource limits</p></div>
